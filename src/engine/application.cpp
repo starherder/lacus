@@ -10,7 +10,6 @@ Application::Application()
 
 Application::~Application() 
 {
-
 }
 
 fs::path Application::runPath() 

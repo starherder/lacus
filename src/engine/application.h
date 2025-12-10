@@ -5,9 +5,9 @@
 #include <map>
 #include <unordered_map>
 
+#include "misc.h"
 #include "render.h"
 #include "window.h"
-#include "utility.h"
 #include "plugin.h"
 #include "config.h"
 #include "engine_wrapper.h"

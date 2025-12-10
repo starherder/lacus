@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/application.h"
+#include "engine/widget.h"
 
 namespace samples {
     class SamplePluginDraw final : public engine::Plugin {
@@ -14,6 +15,9 @@ namespace samples {
 
         void onInit() override {
             spdlog::info("Init sample plugin draw");
+
+            engine::WidgetManager::inst().init(application()->renderer());
+            engine::WidgetManager::inst().create_label(entt::null, "label");
         }
 
         void onInstall() override {
@@ -39,6 +43,9 @@ namespace samples {
             SDL_FRect rect = { 200, 150, 200, 100 };
             renderer->setRenderDrawColor(0, 0, 255, 255);
             renderer->renderRect(&rect);
+
+            
+            engine::WidgetManager::inst().draw();
         }
 
         void onClose() override {
