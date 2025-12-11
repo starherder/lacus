@@ -10,15 +10,10 @@
 namespace engine {
 
 
-     Texture::Texture(Renderer& renderer, const std::string& name, const fs::path& path)
+     Texture::Texture(const std::string& name, SDL_Texture* texture)
      {
         _name = name;
-
-        _texture = IMG_LoadTexture(renderer.getSdlRenderer(), path.string().c_str());
-        if (!_texture) {
-            spdlog::error("Failed to load texture {}: {}", path.string(), SDL_GetError());
-            return;
-        }
+        _texture = texture;
 
         // 载入纹理时，设置纹理缩放模式为最邻近插值
         if (!SDL_SetTextureScaleMode(_texture, SDL_SCALEMODE_NEAREST)) {
@@ -71,8 +66,13 @@ namespace engine {
             return nullptr;
         }
         
-        spdlog::info("load texture: name = {}, file = {}", name, filepath);
-        auto [iter, res] = _textures.insert({name, std::make_unique<Texture>(_renderer, name, path)});
+        auto texture = IMG_LoadTexture(_renderer.getSdlRenderer(), path.string().c_str());
+        if (!texture) {
+            spdlog::error("Failed to load texture {}: {}", path.string(), SDL_GetError());
+            return nullptr;
+        }
+
+        auto [iter, res] = _textures.insert({name, std::make_unique<Texture>(name, texture)});
         return res ? iter->second.get() : nullptr;
     }
 

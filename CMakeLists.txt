@@ -73,6 +73,7 @@ if(WIN32 AND MINGW)
         SDL3_image-static
         SDL3_mixer-static
         SDL3_ttf-static
+        SDL_uclibc
         winmm
         setupapi
         imm32
@@ -80,6 +81,8 @@ if(WIN32 AND MINGW)
         # GCC可能需要的额外库
         mingw32
         mwindows
+        Rpcrt4 
+        Usp10
     )
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE 
@@ -87,6 +90,7 @@ else()
         SDL3_image-static
         SDL3_mixer-static
         SDL3_ttf-static
+        SDL_uclibc
         winmm
         setupapi
         imm32

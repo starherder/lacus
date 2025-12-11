@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <nlohmann/json_fwd.hpp>
 
-#include "engine_wrapper.h"
+#include "wrapper.h"
 
 namespace engine {
 

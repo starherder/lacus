@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine_wrapper.h"
+#include "wrapper.h"
 #include "texture.h"
 
 struct SDL_Renderer;

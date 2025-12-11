@@ -24,9 +24,12 @@ namespace imgui {
 
             ImGuiManager::inst().init(window, renderer);
 
-            ImGuiManager::inst().setFont(application()->resPath()/"fonts/VonwaonBitmap-16px.ttf", 20);
+            auto font_path = application()->resPath()/"fonts/VonwaonBitmap-16px.ttf";
+            ImGuiManager::inst().setFont(font_path, 20);
+            //ImGuiManager::inst().setScale(2);
             
             ImGuiManager::inst().showForm<ImFormDemo>("ImFormDemo");
+            ImGuiManager::inst().showForm<ImFormTest>("ImFormTest");
         }
 
         void onInstall() override {

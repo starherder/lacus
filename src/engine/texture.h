@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine_wrapper.h"
+#include "wrapper.h"
 
 
 struct SDL_Texture;
@@ -17,15 +17,13 @@ class Texture {
 public:
     Texture() = delete;
     Texture(const Texture& other) = default;
-    Texture(Renderer& renderer, const std::string& name, const fs::path& path);
+    Texture(const std::string& name, SDL_Texture* texture);
     ~Texture();
 
     Vec2f size() const;
 
 private:
-
     SDL_Texture* _texture = nullptr;
-
     std::string _name;
 };
 

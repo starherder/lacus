@@ -9,11 +9,20 @@ namespace imgui
 	class ImFormDemo : public ImForm
 	{
 	public:
-		ImFormDemo();
-		~ImFormDemo();
+		ImFormDemo() = default;
+		~ImFormDemo() = default;
 
 	protected:
-		void draw();
+		void draw() override;
 	};
 
+	class ImFormTest : public ImForm
+	{
+	public:
+		ImFormTest() = default;
+		~ImFormTest() = default;
+
+	protected:
+		void draw() override;
+	};
 }
