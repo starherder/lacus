@@ -3,6 +3,10 @@
 #include "im_form.h"
 #include <filesystem>
 
+namespace engine{
+	class Application;
+}
+
 namespace imgui
 {
 	// ImGui 提供的Demo
@@ -19,10 +23,15 @@ namespace imgui
 	class ImFormTest : public ImForm
 	{
 	public:
-		ImFormTest() = default;
-		~ImFormTest() = default;
+		ImFormTest();
+		~ImFormTest();
+
+		void init(engine::Application* app);
 
 	protected:
 		void draw() override;
+
+	private:
+		engine::Application* _application = nullptr;
 	};
 }

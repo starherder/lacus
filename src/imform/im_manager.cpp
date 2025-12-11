@@ -48,7 +48,7 @@ namespace imgui
 		auto it = _forms.find(name);
 		if (it == _forms.end())
 		{
-			return NULL;
+			return nullptr;
 		}
 
 		auto pForm = it->second;
@@ -126,7 +126,7 @@ namespace imgui
 
         auto& io = ImGui::GetIO();
 		auto fonts = ImGui::GetIO().Fonts;
-		auto font = fonts->AddFontFromFileTTF(file.string().c_str(), size, NULL, fonts->GetGlyphRangesChineseFull());
+		auto font = fonts->AddFontFromFileTTF(file.string().c_str(), size, nullptr, fonts->GetGlyphRangesChineseFull());
         if(!font)
         {
 			spdlog::error("load font {} failed. use default.", file.string());

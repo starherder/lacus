@@ -37,7 +37,7 @@ public:
 
     SystemConfig& systemConfig() { return _config; }
 
-    ResourceManager& resourceMgr() { return *_resourceMgr; } 
+    ResourceManager& resourceManager() { return *_resourceMgr; } 
 
     fs::path runPath();
     fs::path resPath();

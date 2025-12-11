@@ -2,6 +2,7 @@
 #include "application.h"
 #include "texture.h"   
 #include "font.h"
+#include "audio.h"
 
 
 namespace engine {
@@ -10,6 +11,7 @@ namespace engine {
     {
         _textureManager = std::make_unique<TextureManager>(app.renderer());
         _fontManager = std::make_unique<FontManager>();
+        _audioManager = std::make_unique<AudioManager>();
     }
 
     ResourceManager::~ResourceManager()

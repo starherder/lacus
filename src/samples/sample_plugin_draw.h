@@ -74,7 +74,7 @@ namespace samples {
         void drawTexture()
         {
             auto& renderer = application()->renderer();
-            auto& resourceMgr = application()->resourceMgr();
+            auto& resourceMgr = application()->resourceManager();
             {
                 auto tex = resourceMgr.textureManager().get("test_1", "res/textures/Buildings/house3.png");
                 if(tex)
@@ -88,7 +88,7 @@ namespace samples {
         void drawText()
         {
             auto& renderer = application()->renderer();
-            auto& resourceMgr = application()->resourceMgr();
+            auto& resourceMgr = application()->resourceManager();
             {
                 auto font = resourceMgr.fontManager().get("vonwaon", 30, "res/fonts/VonwaonBitmap-16px.ttf");
                 if(font)
