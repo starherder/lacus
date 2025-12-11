@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <nlohmann/json_fwd.hpp>
 
+#include "engine_wrapper.h"
+
 namespace engine {
 
 class JsonConfig
@@ -13,14 +15,14 @@ public:
     JsonConfig();
     ~JsonConfig();
 
-    bool load(const std::filesystem::path& filepath);
+    bool load(const fs::path& filepath);
     bool save();
 
     auto& getJson() { return *_json; }
 
 private:
     std::unique_ptr<nlohmann::json> _json = nullptr;
-    std::filesystem::path _filepath;
+    fs::path _filepath;
 };
 
 class SystemConfig
@@ -42,22 +44,14 @@ public:
 
     struct resCfg
 	{
-        std::filesystem::path path;
+        fs::path path;
     }res;
-
-    struct ImGuiCfg
-	{
-        float ui_scale = 1.0f;
-        float ui_alpha = 1.0f;
-        std::string font_file;
-        float font_size = 16.0f;
-    } imgui;
 
 public:    
     SystemConfig() = default;
     ~SystemConfig() = default;
 
-    bool load(const std::filesystem::path& filepath);
+    bool load(const fs::path& filepath);
     bool save();
 
 private:

@@ -1,4 +1,6 @@
 #include "application.h"
+#include "resource.h"
+#include <memory>
 
 namespace engine {
 
@@ -6,6 +8,7 @@ Application::Application()
 {
     _renderer = std::make_unique<Renderer>();
     _window = std::make_unique<Window>();
+    _resourceMgr = std::make_unique<ResourceManager>(*this);
 }
 
 Application::~Application() 
@@ -97,7 +100,7 @@ bool Application::init()
 
 bool Application::initConfig() 
 {
-    auto path = runPath() / "system.json";
+    auto path = fs::current_path() / "res/system.json";
     if(!_config.load(path)) 
     {
         return false;
@@ -135,7 +138,7 @@ bool Application::initWindow()
         return false;
     }
 
-    bool res = _window->createWindow(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::RESIZABLE);
+    bool res = _window->createWindow(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::Resizable);
     if (!res) {
         spdlog::error("Failed to create window");
         return false;
@@ -143,7 +146,7 @@ bool Application::initWindow()
 
     _window->setWindowPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-    res = _renderer->createRenderer(_window->getSdlWindow(), nullptr);
+    res = _renderer->create(_window->getSdlWindow());
     if (!res) {
         spdlog::error("Failed to create renderer");
         return false;
@@ -222,16 +225,16 @@ bool Application::preFrame()
         return false;
     }
 
-    _renderer->setRenderDrawColor(0, 0, 0, 0);
+    _renderer->setDrawColor({0, 0, 0, 0});
 
-    _renderer->renderClear();
+    _renderer->clear();
     
     return true;
 }
 
 bool Application::postFrame() 
 {
-    _renderer->renderPresent();
+    _renderer->present();
 
     return true;
 }

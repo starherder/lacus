@@ -2,6 +2,7 @@
 
 #include "SDL3/sdl.h"
 #include "SDL3/SDL_events.h"
+#include "spdlog/spdlog.h"
 
 namespace imgui
 {
@@ -115,13 +116,20 @@ namespace imgui
         style.FontScaleDpi = scale;  
     }
     
-	void ImGuiManager::setFontFile(const std::string& file, float size)
+	void ImGuiManager::setFont(const std::filesystem::path& file, float size)
 	{
+		if(!std::filesystem::exists(file))
+		{
+			spdlog::error("font file({}) NOT found.", file.string());
+			return;
+		}
+
         auto& io = ImGui::GetIO();
 		auto fonts = ImGui::GetIO().Fonts;
-		auto font = fonts->AddFontFromFileTTF(file.c_str(), size, NULL, fonts->GetGlyphRangesChineseFull());
+		auto font = fonts->AddFontFromFileTTF(file.string().c_str(), size, NULL, fonts->GetGlyphRangesChineseFull());
         if(!font)
         {
+			spdlog::error("load font {} failed. use default.", file.string());
             io.Fonts->AddFontDefault();
         }
 	}

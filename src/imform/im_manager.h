@@ -2,6 +2,7 @@
 
 #include "im_form.h"
 
+#include <filesystem>
 
 #include "utility/signalslot.h"
 #include "utility/i_singleton.h"
@@ -37,7 +38,7 @@ namespace imgui
 
 		ImFormSharePtr getImForm(const std::string& name);
 
-		void setFontFile(const std::string& file, float size);
+		void setFont(const std::filesystem::path& file, float size);
 
 		void setStyle(ImGuiTheme style);
 

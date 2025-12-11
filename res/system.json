@@ -8,8 +8,7 @@
     "log" : {
         "level" : 0,
         "pattern" : "[%H:%M:%S.%e] [%^%l%$] %v"
-    }
-    ,
+    },
     "res" : {
         "path" : "res"
     }

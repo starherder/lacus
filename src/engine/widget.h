@@ -6,9 +6,6 @@
 
 namespace engine
 {
-    using Rect = SDL_FRect;
-    using Color = SDL_Color;
-
     enum WidgetState
     {
         WidgetState_Normal,
@@ -40,7 +37,7 @@ namespace engine
     {
         WidgetState state = WidgetState_Normal;
 
-        Rect back_rect = {0, 0, 250, 200};
+        FRect back_rect = {100, 100, 250, 100};
         int border_size = 1;
 
         Color back_color = {0, 100, 0, 100};
@@ -57,7 +54,6 @@ namespace engine
         {
             state = WidgetState_Hover;
 
-            back_rect = {0, 0, 250, 200};
             border_size = 2;
 
             back_color = {0, 100, 0, 200};
@@ -73,7 +69,6 @@ namespace engine
         {
             state = WidgetState_Press;
 
-            back_rect = {0, 0, 250, 200};
             int border_size = 2;
 
             back_color = {0, 80, 0, 250};
@@ -89,7 +84,6 @@ namespace engine
         {
             state = WidgetState_Disable;
 
-            back_rect = {0, 0, 250, 200};
             int border_size = 1;
 
             back_color = {100, 100, 100, 250};
@@ -99,12 +93,14 @@ namespace engine
         ~WidgetDisable() = default;
     };
 
+
+
     class WidgetManager : public utility::ISingleton<WidgetManager>
     {
     public:
-        void init(Renderer* renderer)
+        void init(Renderer& renderer)
         {
-            _renderer = renderer;
+            _renderer = &renderer;
         }
 
         entt::entity create_label(entt::entity parent, const std::string& name)
@@ -138,23 +134,23 @@ namespace engine
                         {
                             //_renderer->setRenderClipRect(&state.back_rect);
 
-                            Color old_color;
-                            _renderer->getRenderDrawColor(&old_color.r, &old_color.g, &old_color.b, &old_color.a);
+                            Color old_color = _renderer->getDrawColor();
 
                             // background
-                            _renderer->setRenderDrawColor(state->back_color.r, state->back_color.g, state->back_color.b, state->back_color.a);
-                            _renderer->renderFillRect(&(state->back_rect));
+                            _renderer->setDrawColor(state->back_color);
+                            _renderer->drawFillRect(state->back_rect);
 
                             // border
-                            _renderer->setRenderDrawColor(state->border_color.r, state->border_color.g, state->border_color.b, state->border_color.a);
+                            _renderer->setDrawColor(state->border_color);
                             //_renderer->setRenderLineWidth(state.border_size);
-                            _renderer->renderRect(&(state->back_rect));
+                            _renderer->drawRect(state->back_rect);
                             
                             // text
-                            //_renderer->setRenderDrawColor(state->text_color.r, state->text_color.g, state->text_color.b, state->text_color.a);
+                            _renderer->setDrawColor(state->text_color);
                             // _renderer->renderText(state->text, state->back_rect.x + 10, state->back_rect.y + 10);
-
-                            _renderer->setRenderDrawColor(old_color.r, old_color.g, old_color.b, old_color.a);
+                            _renderer->drawDebugText({state->back_rect.x + 10, state->back_rect.y + 10}, state->text.c_str());
+                            
+                            _renderer->setDrawColor(old_color);
                         }
                     }
                 }
@@ -164,6 +160,6 @@ namespace engine
     private:
         entt::registry _registry;
 
-        Renderer* _renderer;
+        Renderer* _renderer = nullptr;
     };
 }

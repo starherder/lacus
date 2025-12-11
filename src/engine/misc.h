@@ -24,8 +24,6 @@ private:
     float _delta_time = 0.0f;
 };
 
-namespace fs = std::filesystem;
-
 class PathUtils 
 {
 public:    

@@ -1,16 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <map>
-#include <unordered_map>
-
 #include "misc.h"
 #include "render.h"
+#include "texture.h"
 #include "window.h"
 #include "plugin.h"
 #include "config.h"
-#include "engine_wrapper.h"
+#include "resource.h"
 
 namespace engine {
 
@@ -35,11 +31,13 @@ public:
 
     bool removePlugin(const std::string& name);
 
-    Renderer* renderer() { return _renderer.get(); }
+    Renderer& renderer() { return *_renderer; }
     
-    Window* window() { return _window.get(); }
+    Window& window() { return *_window; }
 
-    const auto& systemConfig() const { return _config; }
+    SystemConfig& systemConfig() { return _config; }
+
+    ResourceManager& resourceMgr() { return *_resourceMgr; } 
 
     fs::path runPath();
     fs::path resPath();
@@ -65,6 +63,8 @@ private:
     std::unique_ptr<Renderer> _renderer = nullptr;
 
     std::unique_ptr<Window> _window = nullptr;
+
+    std::unique_ptr<ResourceManager> _resourceMgr = nullptr;
 
     PluginMap _plugins;
 

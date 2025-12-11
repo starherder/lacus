@@ -16,7 +16,7 @@ JsonConfig::~JsonConfig()
 {
 }
 
-bool JsonConfig::load(const std::filesystem::path& filepath) 
+bool JsonConfig::load(const fs::path& filepath) 
 {
     _filepath = filepath.string();
 
@@ -62,7 +62,7 @@ bool JsonConfig::save()
 }
 
 //-------------------------------------------------------------------------------
-bool SystemConfig::load(const std::filesystem::path& filepath) 
+bool SystemConfig::load(const fs::path& filepath) 
 {
     if(!_json_config.load(filepath))
     {
@@ -83,6 +83,11 @@ bool SystemConfig::load(const std::filesystem::path& filepath)
             window.height = window_json["height"];
             window.fps = window_json["fps"];
         }
+        else 
+        {
+            spdlog::error("window NOT set.");
+            return false;
+        }
 
         if(json.contains("log"))
         {
@@ -95,16 +100,12 @@ bool SystemConfig::load(const std::filesystem::path& filepath)
         {
             auto& res_json = json["res"];
             std::string res_path_str = res_json["path"];
-            res.path = std::filesystem::current_path() / res_path_str;
+            res.path = fs::current_path() / res_path_str;
         }
-
-        if(json.contains("imgui"))
+        else 
         {
-            auto& im_json = json["imgui"];
-            imgui.font_file = im_json["font_file"];
-            imgui.font_size = im_json["font_size"];
-            imgui.ui_scale = im_json["ui_scale"];
-            imgui.ui_alpha = im_json["ui_alpha"];
+            spdlog::error("res path NOT set.");
+            return false;
         }
     }
     catch(const std::exception& e)
@@ -128,11 +129,6 @@ bool SystemConfig::save()
     json["log"]["level"] = log.level;
     json["log"]["pattern"] = log.pattern;
 
-    json["imgui"]["font_file"] = imgui.font_file;
-    json["imgui"]["font_size"] = imgui.font_size;
-    json["imgui"]["ui_scale"] = imgui.ui_scale;
-    json["imgui"]["ui_alpha"] = imgui.ui_alpha;
- 
     return _json_config.save();
 }
 

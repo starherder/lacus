@@ -13,12 +13,7 @@ Window::~Window()
 
 // Window creation and destruction
 bool Window::createWindow(const char* title, int w, int h, WindowFlags flags) {
-    _window = SDL_CreateWindow(title, w, h, static_cast<Uint64>(flags));
-    return _window != nullptr;
-}
-
-bool Window::createWindowWithProperties(SDL_PropertiesID props) {
-    _window = SDL_CreateWindowWithProperties(props);
+    _window = SDL_CreateWindow(title, w, h, (Uint64)(flags));
     return _window != nullptr;
 }
 
@@ -129,7 +124,7 @@ bool Window::setWindowFullscreenMode(const SDL_DisplayMode* mode) {
 
 // Window properties
 WindowFlags Window::getWindowFlags() {
-    if (!_window) return WindowFlags::HIDDEN; // Return a default flag when no _window exists
+    if (!_window) return WindowFlags::Hidden; // Return a default flag when no _window exists
     return static_cast<WindowFlags>(SDL_GetWindowFlags(_window));
 }
 

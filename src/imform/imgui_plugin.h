@@ -19,14 +19,13 @@ namespace imgui {
         void onInit() override {
             spdlog::info("Init imgui plugin ");
 
-            auto window = application()->window()->getSdlWindow();
-            auto renderer = application()->renderer()->getSdlRenderer();
+            auto window = application()->window().getSdlWindow();
+            auto renderer = application()->renderer().getSdlRenderer();
 
             ImGuiManager::inst().init(window, renderer);
-            
-            ImGuiManager::inst().setScale(1.0f);
-            ImGuiManager::inst().setAlpha(1.0f);
 
+            ImGuiManager::inst().setFont(application()->resPath()/"fonts/VonwaonBitmap-16px.ttf", 20);
+            
             ImGuiManager::inst().showForm<ImFormDemo>("ImFormDemo");
         }
 

@@ -15,7 +15,6 @@ public:
 
     // Window creation and destruction
     bool createWindow(const char* title, int w, int h, WindowFlags flags);
-    bool createWindowWithProperties(SDL_PropertiesID props);
     
     // Window size
     bool getWindowSize(int* w, int* h);
