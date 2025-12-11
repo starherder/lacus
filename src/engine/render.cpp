@@ -194,7 +194,7 @@ bool Renderer::drawText(const std::string& text, Font* font, const Vec2f& pos, c
         return false;
     }
 
-    TTF_SetTextColorFloat(temp_text_object, color.r, color.g, color.b, color.a);
+    TTF_SetTextColor(temp_text_object, color.r, color.g, color.b, color.a);
     if (!TTF_DrawRendererText(temp_text_object, pos.x, pos.y)) {
         spdlog::error("render text failed. {}", SDL_GetError());
     }
