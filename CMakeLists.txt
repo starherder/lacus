@@ -95,6 +95,8 @@ else()
         setupapi
         imm32
         version
+        Rpcrt4 
+        Usp10
     )
 endif()
 

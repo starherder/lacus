@@ -24,7 +24,7 @@ namespace imgui {
 
             ImGuiManager::inst().init(window, renderer);
 
-            auto font_path = application()->resPath()/"fonts/VonwaonBitmap-16px.ttf";
+            auto font_path = application()->resPath()/"fonts/msyh.ttf";
             ImGuiManager::inst().setFont(font_path, 20);
             //ImGuiManager::inst().setScale(2);
             

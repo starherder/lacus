@@ -4,10 +4,12 @@
 #include "texture.h"
 
 struct SDL_Renderer;
+struct TTF_TextEngine;
 
 namespace engine {
 
 class Texture;
+class Font;
 
 class Renderer final
 {
@@ -74,6 +76,9 @@ public:
                         const FColor* color, int color_stride, const float* uv, int uv_stride,
                         int num_vertices, const void* indices, int num_indices, int size_indices) const;
     
+    // 使用指定字体绘制文字
+    bool drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color={255,255,255,255});
+
     bool present() const;
     
     bool flushRenderer() const;
@@ -94,7 +99,8 @@ private:
 
 private:
     SDL_Renderer* _renderer = nullptr;
-
+    
+    TTF_TextEngine* _text_engine = nullptr;   
 };
 
 } // namespace engine

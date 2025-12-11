@@ -1,5 +1,9 @@
 #include "render.h"
+
 #include "texture.h"
+#include "font.h"
+
+#include "SDL3_ttf/SDL_ttf.h"
 
 namespace engine {
 
@@ -10,6 +14,12 @@ Renderer::Renderer()
 
 Renderer::~Renderer() 
 {
+    if (_text_engine) 
+    {
+        TTF_DestroyRendererTextEngine(_text_engine);
+        _text_engine = nullptr;
+    }
+
     destroy();
 }
 
@@ -23,11 +33,36 @@ const char* Renderer::getRenderDriver(int index) {
 }
 
 bool Renderer::create(SDL_Window* window) {
-    if (_renderer) {
+    if (_renderer) 
+    {
         return false;
     }
+
     _renderer = SDL_CreateRenderer(window, nullptr);
-    return _renderer != nullptr;
+    if(!_renderer)
+    {
+        spdlog::error("create render failed");
+        assert("create render failed");
+        return false;
+    }
+
+    // 初始化 SDL_ttf
+    if (!TTF_WasInit() && !TTF_Init() ) 
+    {
+        spdlog::error("init ttf failed: {}", SDL_GetError());
+        assert("init ttf failed");
+        return false;
+    }
+
+    _text_engine = TTF_CreateRendererTextEngine(_renderer);
+    if (!_text_engine) 
+    {
+        spdlog::error("create render text engine failed: {}", SDL_GetError());
+        assert("create render text engine failed");
+        return false;
+    }
+
+    return true;
 }
 
 // 裁剪区域
@@ -139,6 +174,34 @@ bool Renderer::drawTexture(Texture* texture, const FRect& srcrect, const FRect& 
     }
 
     return SDL_RenderTexture(_renderer, texture->_texture, &srcrect, &dstrect);
+}
+
+bool Renderer::drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color)
+{
+    if(!font) {
+        return false;
+    }
+
+    auto ttf = font->_font;
+    if(!ttf) {
+        return false;
+    }
+    
+    // 创建临时 TTF_Text 对象   (目前效率不高，未来可以考虑使用缓存优化)
+    TTF_Text* temp_text_object = TTF_CreateText(_text_engine, ttf, text.c_str(), 0);
+    if (!temp_text_object) {
+        spdlog::error("create text failed. {}", SDL_GetError());
+        return false;
+    }
+
+    TTF_SetTextColorFloat(temp_text_object, color.r, color.g, color.b, color.a);
+    if (!TTF_DrawRendererText(temp_text_object, pos.x, pos.y)) {
+        spdlog::error("render text failed. {}", SDL_GetError());
+    }
+
+    // 销毁临时 TTF_Text 对象
+    TTF_DestroyText(temp_text_object);
+    return true;
 }
 
 bool Renderer::drawTextureRotated(Texture* texture, const FRect* srcrect, const FRect* dstrect, 

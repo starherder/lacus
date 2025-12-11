@@ -45,6 +45,8 @@ namespace samples {
             drawShape();
 
             drawTexture();
+
+            drawText();
                 
             engine::WidgetManager::inst().draw();
         }
@@ -73,12 +75,33 @@ namespace samples {
         {
             auto& renderer = application()->renderer();
             auto& resourceMgr = application()->resourceMgr();
-
-            auto tex_1 = resourceMgr.textureMgr().get("test_1", "res/textures/Buildings/house3.png");
-            if(tex_1)
             {
-                auto tex_sz = tex_1->size();
-                renderer.drawTexture(tex_1, {0, 0, tex_sz.x, tex_sz.y}, {50, 300, tex_sz.x,tex_sz.y} );
+                auto tex = resourceMgr.textureManager().get("test_1", "res/textures/Buildings/house3.png");
+                if(tex)
+                {
+                    auto tex_sz = tex->size();
+                    renderer.drawTexture(tex, {0, 0, tex_sz.x, tex_sz.y}, {50, 300, tex_sz.x,tex_sz.y} );
+                }
+            }
+        }
+
+        void drawText()
+        {
+            auto& renderer = application()->renderer();
+            auto& resourceMgr = application()->resourceMgr();
+            {
+                auto font = resourceMgr.fontManager().get("vonwaon", 30, "res/fonts/VonwaonBitmap-16px.ttf");
+                if(font)
+                {
+                    renderer.drawText("WTF! 妙~", font, {300, 300}, {255, 100, 0, 255});
+                }
+            }
+            {
+                auto font = resourceMgr.fontManager().get("msyh", 20, "res/fonts/msyh.ttf");
+                if(font)
+                {
+                    renderer.drawText("就是这个feel，倍er爽~", font, {300, 350}, {255, 200, 0, 255});
+                }
             }
         }
     };

@@ -24,6 +24,7 @@ struct FontKeyHash {
 
 // 字体
 class Font {
+    friend class Renderer;
 
 public:
     Font() = delete;
@@ -35,9 +36,8 @@ public:
 
 private:
     TTF_Font* _font = nullptr;
-    int _size;
-
     std::string _name;
+    int _size;
 };
 
 
