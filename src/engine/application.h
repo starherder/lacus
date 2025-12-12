@@ -10,12 +10,14 @@
 #include "audio.h"
 #include "audio_player.h"
 
+#include "utility/unsort_map.h"
+
 namespace engine {
 
 class Application final 
 {
     using PluginUniquePtr = std::unique_ptr<Plugin>;
-    using PluginMap = std::unordered_map<std::string, PluginUniquePtr>;
+    using PluginMap = utility::unsort_map<std::string, PluginUniquePtr>;
 
 public:
     Application();
@@ -43,8 +45,11 @@ public:
 
     AudioPlayer& audioPlayer() { return *_audioPlayer; }
 
+    const FpsChecker& fpsChecker() { return _fps_checker; }
+
     fs::path runPath();
     fs::path resPath();
+
 
 private:
     bool init();
@@ -80,7 +85,7 @@ private:
 
     SystemConfig _config;
 
-    FrameChecker _frame_checker;
+    FpsChecker _fps_checker;
     
     fs::path _res_path;
 

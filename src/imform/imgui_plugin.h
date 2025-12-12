@@ -29,6 +29,7 @@ namespace imgui {
             //ImGuiManager::inst().setScale(2);
             
             ImGuiManager::inst().showForm<ImFormDemo>("ImFormDemo");
+            ImGuiManager::inst().showForm<ImFormHUD>("ImFormHUD", application());
         }
 
         void onInstall() override {

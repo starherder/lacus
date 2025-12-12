@@ -2,6 +2,7 @@
 
 #include "sample_plugin_draw.h"
 #include "sample_plugin_audio.h"
+#include "sample_plugin_scene.h"
 
 namespace samples
 {
@@ -10,6 +11,8 @@ namespace samples
         app.addPlugin<SamplePluginDraw>();
         
         app.addPlugin<SamplePluginAudio>();
+
+        app.addPlugin<SamplePluginScene>();
     }
     
 }

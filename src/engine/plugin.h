@@ -11,13 +11,12 @@ class Plugin
 
 public:
     Plugin() {}
+    Plugin(Plugin&&) = delete;
+    Plugin(const Plugin&) = delete;
     virtual ~Plugin() = default;
     
 public:
-    Application* application() 
-	{ 
-        return _application; 
-    }
+    Application* application() {  return _application; }
 
     virtual void onInit() {}
     virtual void onUpdate() {}

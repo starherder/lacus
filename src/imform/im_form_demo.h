@@ -20,11 +20,11 @@ namespace imgui
 		void draw() override;
 	};
 
-	class ImFormTest : public ImForm
+	class ImFormAudio : public ImForm
 	{
 	public:
-		ImFormTest();
-		~ImFormTest();
+		ImFormAudio() = default;
+		~ImFormAudio() = default;
 
 		void init(engine::Application* app);
 
@@ -34,4 +34,20 @@ namespace imgui
 	private:
 		engine::Application* _application = nullptr;
 	};
+
+	class ImFormHUD : public ImForm
+	{
+	public:
+		ImFormHUD() = default;
+		ImFormHUD(engine::Application* app) : _application(app) {}
+		~ImFormHUD() = default;
+
+	protected:
+		void draw() override;
+
+	private:
+		engine::Application* _application = nullptr;
+	};
+
+	
 }

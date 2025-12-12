@@ -3,6 +3,7 @@
 #include "im_form.h"
 
 #include <filesystem>
+#include <memory>
 
 #include "utility/signalslot.h"
 #include "utility/i_singleton.h"
@@ -31,8 +32,8 @@ namespace imgui
 
 		void draw();
 
-		template<class T>
-		ImFormSharePtr showForm(const std::string& name, bool visible=true);
+		template<class T, typename... Args>
+		ImFormSharePtr showForm(const std::string& name, Args... args);
 
 		void closeForm(const std::string& name);
 
@@ -65,23 +66,23 @@ namespace imgui
 		ImFormMap _forms;
 	};
 
-	template<class T>
-	ImFormSharePtr ImGuiManager::showForm(const std::string& name, bool visible)
+	template<class T, typename... Args>
+	ImFormSharePtr ImGuiManager::showForm(const std::string& name, Args... args)
 	{
 		auto pForm = getImForm(name);
 		if (pForm)
 		{
-			pForm->show(visible);
+			pForm->show(true);
 			return pForm;
 		}
 
-		pForm = std::make_shared<T>();
+		pForm = std::make_shared<T>(args...);
 		assert(pForm);
 
 		pForm->setName(name);
 
 		_forms[name] = pForm;
-		pForm->show(visible);
+		pForm->show(true);
 		return pForm;
 	}
 }

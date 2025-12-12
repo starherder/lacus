@@ -36,7 +36,7 @@ namespace samples {
         {
             if(_frame++ == 10)
             {
-                auto pForm = std::dynamic_pointer_cast<imgui::ImFormTest>(imgui::ImGuiManager::inst().showForm<imgui::ImFormTest>("ImFormTest"));
+                auto pForm = std::dynamic_pointer_cast<imgui::ImFormAudio>(imgui::ImGuiManager::inst().showForm<imgui::ImFormAudio>("ImFormAudio"));
                 if(pForm)
                 {
                     pForm->init(application());

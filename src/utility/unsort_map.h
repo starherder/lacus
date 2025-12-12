@@ -6,6 +6,8 @@
 #include <xutility>
 #include <initializer_list>
 
+namespace utility {
+
 // 非排序map，元素顺序就是元素插入的顺序 
 // std::map 会自动根据key值排序
 // std::unordered_map 无序，也不按照记录插入顺序存放
@@ -110,12 +112,22 @@ public:
 	{
 		m_data.push_back(p);
 	}
+	
+	void insert(pair_type&& p)
+	{
+		m_data.push_back(std::forward<pair_type>(p));
+	}
 
 	void insert(iterator it, const pair_type& p)
 	{
 		m_data.insert(it, p);
 	}
 
+	void insert(iterator it, pair_type&& p)
+	{
+		m_data.insert(it, std::forward<pair_type>(p));
+	}
+	
 	value_type& at(const key_type& key)
 	{
 		for (auto& p : m_data) {
@@ -175,3 +187,4 @@ private:
 	data_type m_data;
 };
 
+}

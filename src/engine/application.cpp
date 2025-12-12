@@ -103,7 +103,7 @@ bool Application::init()
         return false;
     }
 
-    _frame_checker.init(_config.window.fps);
+    _fps_checker.init(_config.window.fps);
 
     spdlog::info("---------------- engine init OK ----------------");
     return true;
@@ -262,7 +262,7 @@ void Application::input()
 
 bool Application::preFrame() 
 {
-    if (!_frame_checker.check()) 
+    if (!_fps_checker.check()) 
     {
         return false;
     }

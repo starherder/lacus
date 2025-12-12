@@ -10,6 +10,7 @@
 #include <memory.h>
 #include <unordered_map>
 #include <set>
+#include <array>
 #include <iostream>
 #include <fstream>
 #include <filesystem>

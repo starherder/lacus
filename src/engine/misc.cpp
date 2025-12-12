@@ -1,16 +1,22 @@
 #include "misc.h"
+#include <winscard.h>
 
 
 namespace engine {
 
 
-void FrameChecker::init(int fixed_fps) 
+void FpsChecker::init(int fixed_fps) 
 {
-    _frame_ticks = (uint64_t)(1000.0f / fixed_fps);
+    if(fixed_fps > 0) {
+        _fixed_fps = fixed_fps;
+    }
+
+    _frame_ticks = (uint64_t)(1000.0f / _fixed_fps);
     _last_ticks = SDL_GetTicks();
+    _last_second = _last_ticks / 1000;
 }
 
-bool FrameChecker::check() 
+bool FpsChecker::check() 
 {
     uint64_t current_ticks = SDL_GetTicks();
     if (current_ticks - _last_ticks < _frame_ticks)
@@ -20,13 +26,28 @@ bool FrameChecker::check()
 
     _delta_time = (current_ticks - _last_ticks) / 1000.0f;
     _last_ticks = current_ticks;
+    
+    _cur_fps = int(1.0f /_delta_time);
+
+    int cur_second = current_ticks / 1000;
+
+    if(cur_second != _last_second)
+    {
+        int total = 0;
+        int count = (int)_cur_second_fps.size();
+        for(auto& fps : _cur_second_fps) { total += fps;}
+
+        _avg_fps = (count==0) ? 0 : (total / count);
+
+        _cur_second_fps.clear();
+        _last_second = cur_second;
+    }
+    else
+    {
+        _cur_second_fps.push_back(_cur_fps);
+    }
+
     return true;
-}
-
-float FrameChecker::delta_time() 
-{ 
-
-    return _delta_time; 
 }
 
 
@@ -93,5 +114,144 @@ uintmax_t PathUtils::calculate_directory_size(const fs::path& dir)
 }
 
 
+FColor ColorUtils::to_fcolor(const Color& c)
+{
+    return {c.r/255.0f, c.g/255.0f, c.b/255.0f, c.a/255.0f};
+}
+
+Color ColorUtils::to_color(const FColor& c)
+{
+    return {uint8_t(c.r*255), uint8_t(c.g*255), uint8_t(c.b*255), uint8_t(c.a*255)};
+}
+
+uint32_t ColorUtils::to_uint32(const Color& c)
+{
+    return c.r<<24 | c.g<<16 | c.b<<8 | c.a;
+}
+
+uint32_t ColorUtils::to_uint32(const FColor& fc)
+{
+    return to_uint32(to_color(fc));
+}
+
+HSVColor ColorUtils::FRGB_to_HSV(const FColor& rgb)
+{
+    auto c = to_color(rgb);
+    return RGB_to_HSV(c);
+}
+
+FColor ColorUtils::HSV_to_FRGB(const HSVColor& hsv)
+{
+    auto c = HSV_to_RGB(hsv);
+    return to_fcolor(c);
+}
+
+HSVColor ColorUtils::RGB_to_HSV(const Color& rgb)
+{
+    HSVColor hsv;
+    hsv.a = rgb.a / 255.0f; // 保持Alpha通道不变，转换为[0,1]范围
+    
+    // 将RGB分量归一化到[0,1]范围
+    float r = rgb.r / 255.0f;
+    float g = rgb.g / 255.0f;
+    float b = rgb.b / 255.0f;
+    
+    // 计算最大值、最小值和差值
+    float max = std::max({r, g, b});
+    float min = std::min({r, g, b});
+    float delta = max - min;
+    
+    // 计算亮度（Value）
+    hsv.v = max;
+    
+    // 处理灰度色（饱和度为零的情况）
+    if (delta < 1e-5f) {
+        hsv.s = 0.0f;
+        hsv.h = 0.0f; // 灰度色时色相未定义，设为0
+        return hsv;
+    }
+    
+    // 计算饱和度
+    hsv.s = delta / max;
+    
+    // 计算色相[1,7,9](@ref)
+    if (max == r) {
+        hsv.h = 60.0f * (g - b) / delta;
+    } else if (max == g) {
+        hsv.h = 60.0f * (b - r) / delta + 120.0f;
+    } else { // max == b
+        hsv.h = 60.0f * (r - g) / delta + 240.0f;
+    }
+    
+    // 确保色相在[0,360)范围内[1](@ref)
+    if (hsv.h < 0.0f) {
+        hsv.h += 360.0f;
+    }
+    if (hsv.h >= 360.0f) {
+        hsv.h -= 360.0f;
+    }
+    
+    return hsv;
+}
+
+Color ColorUtils::HSV_to_RGB(const HSVColor& hsv)
+{
+    Color rgb;
+    rgb.a = static_cast<Uint8>(hsv.a * 255.0f); // 保持Alpha通道不变
+    
+    // 处理饱和度为0的情况（灰度色）
+    if (hsv.s <= 1e-5f) {
+        Uint8 value = static_cast<Uint8>(hsv.v * 255.0f);
+        rgb.r = value;
+        rgb.g = value;
+        rgb.b = value;
+        return rgb;
+    }
+    
+    // 规范化色相到[0,360)范围
+    float h = hsv.h;
+    if (h >= 360.0f) h = 0.0f;
+    h /= 60.0f; // 将色相缩放到[0,6)范围
+    
+    // 计算色相所在的扇形区域和小数部分[1,11](@ref)
+    int sector = static_cast<int>(h);
+    float fraction = h - sector;
+    
+    // 计算中间值
+    float p = hsv.v * (1.0f - hsv.s);
+    float q = hsv.v * (1.0f - hsv.s * fraction);
+    float t = hsv.v * (1.0f - hsv.s * (1.0f - fraction));
+    
+    float r, g, b;
+    
+    // 根据色相扇形区域计算RGB分量[1](@ref)
+    switch (sector) {
+        case 0:
+            r = hsv.v; g = t; b = p;
+            break;
+        case 1:
+            r = q; g = hsv.v; b = p;
+            break;
+        case 2:
+            r = p; g = hsv.v; b = t;
+            break;
+        case 3:
+            r = p; g = q; b = hsv.v;
+            break;
+        case 4:
+            r = t; g = p; b = hsv.v;
+            break;
+        default: // case 5
+            r = hsv.v; g = p; b = q;
+            break;
+    }
+    
+    // 将浮点RGB值转换为8位整数
+    rgb.r = static_cast<Uint8>(std::clamp(r * 255.0f, 0.0f, 255.0f));
+    rgb.g = static_cast<Uint8>(std::clamp(g * 255.0f, 0.0f, 255.0f));
+    rgb.b = static_cast<Uint8>(std::clamp(b * 255.0f, 0.0f, 255.0f));
+    
+    return rgb; 
+}
 
 }

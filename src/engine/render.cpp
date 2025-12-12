@@ -1,5 +1,6 @@
 #include "render.h"
 
+#include "wrapper.h"
 #include "text_render.h"
 #include "texture.h"
 #include "font.h"
@@ -44,6 +45,7 @@ bool Renderer::init(SDL_Window* window) {
         return false;
     }
 
+    setDrawBlendMode(BlendMode::Blend);
     return true;
 }
 
