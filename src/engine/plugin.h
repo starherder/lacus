@@ -22,7 +22,7 @@ public:
     virtual void onUpdate() {}
     virtual void onDraw() {}
     virtual void onClose() {}
-    virtual void onEvent(Event& event) {}
+    virtual void onEvent(const Event& event) {}
 
     virtual void onInstall() {}
     virtual void onUninstall() {}

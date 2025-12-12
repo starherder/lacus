@@ -17,17 +17,17 @@ public:
     bool createWindow(const char* title, int w, int h, WindowFlags flags);
     
     // Window size
-    bool getWindowSize(int* w, int* h);
-    bool setWindowSize(int w, int h);
-    bool getWindowSizeInPixels(int* w, int* h);
+    Vec2i getWindowSize() const;
+    void setWindowSize(const Vec2i& size);
+    Vec2i getWindowSizeInPixels() const;
     
     // Window position
-    bool getWindowPosition(int* x, int* y);
-    bool setWindowPosition(int x, int y);
+    Vec2i getWindowPosition() const;
+    void setWindowPosition(const Vec2i& pos);
     
     // Window title
     bool setWindowTitle(const char* title);
-    const char* getWindowTitle();
+    const char* getWindowTitle() const;
     
     // Window visibility and state
     bool showWindow();

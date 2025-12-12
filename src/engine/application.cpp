@@ -165,7 +165,7 @@ bool Application::initWindow()
         return false;
     }
 
-    _window->setWindowPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    _window->setWindowPosition({0, 0});
 
     spdlog::info("window created.");
     return true;
@@ -213,7 +213,7 @@ void Application::draw()
     }   
 }
 
-void Application::processEvent(Event& event) 
+void Application::processEvent(const Event& event) 
 {
     for(auto& plugin : _plugins)
     {

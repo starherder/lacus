@@ -25,35 +25,40 @@ void Window::destroyWindow() {
 }
 
 // Window size
-bool Window::getWindowSize(int* w, int* h) {
-    if (!_window) return false;
-    SDL_GetWindowSize(_window, w, h);
-    return true;
+Vec2i Window::getWindowSize() const {
+    assert(_window);
+
+    int w, h;
+    SDL_GetWindowSize(_window, &w, &h);
+    return {w, h};
 }
 
-bool Window::setWindowSize(int w, int h) {
-    if (!_window) return false;
-    SDL_SetWindowSize(_window, w, h);
-    return true;
+void Window::setWindowSize(const Vec2i& size) {
+    assert(_window);
+
+    SDL_SetWindowSize(_window, size.x, size.y);
 }
 
-bool Window::getWindowSizeInPixels(int* w, int* h) {
-    if (!_window) return false;
-    SDL_GetWindowSizeInPixels(_window, w, h);
-    return true;
+Vec2i Window::getWindowSizeInPixels() const {
+    assert(_window);
+
+    int w, h;
+    SDL_GetWindowSizeInPixels(_window, &w, &h);
+    return {w, h};
 }
 
-// Window position
-bool Window::getWindowPosition(int* x, int* y) {
-    if (!_window) return false;
-    SDL_GetWindowPosition(_window, x, y);
-    return true;
+Vec2i Window::getWindowPosition() const {
+    assert(_window);
+
+    int x, y;
+    SDL_GetWindowPosition(_window, &x, &y);
+    return {x, y};
 }
 
-bool Window::setWindowPosition(int x, int y) {
-    if (!_window) return false;
-    SDL_SetWindowPosition(_window, x, y);
-    return true;
+void Window::setWindowPosition(const Vec2i& pos) {
+    assert(_window);
+
+    SDL_SetWindowPosition(_window, pos.x, pos.y);
 }
 
 // Window title
@@ -63,7 +68,7 @@ bool Window::setWindowTitle(const char* title) {
     return true;
 }
 
-const char* Window::getWindowTitle() {
+const char* Window::getWindowTitle() const {
     if (!_window) return nullptr;
     return SDL_GetWindowTitle(_window);
 }

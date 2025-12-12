@@ -8,11 +8,11 @@ namespace samples
 {
     void addSamplePlugins(engine::Application& app)
     {
-        app.addPlugin<SamplePluginDraw>();
-        
+        app.addPlugin<SamplePluginScene>();
+
         app.addPlugin<SamplePluginAudio>();
 
-        app.addPlugin<SamplePluginScene>();
+        app.addPlugin<SamplePluginDraw>();
     }
     
 }

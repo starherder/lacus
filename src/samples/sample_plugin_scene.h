@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/application.h"
+#include "engine/camera.h"
 
 #include "entt/entt.hpp"
 
@@ -25,6 +26,8 @@ namespace samples {
         void onDraw() override;
 
         void onClose() override;
+
+        void onEvent(const engine::Event& event) override;
     
     private:
         void initEntities();
@@ -35,10 +38,12 @@ namespace samples {
         entt::registry _registry;
         entt::dispatcher _dispatcher;
 
-        static const int _xcount = 200;
+        static const int _xcount = 100;
         static const int _ycount = 100;
         
-        static const int _gridw = 40;
-        static const int _gridh = 40;
+        static const int _gridw = 50;
+        static const int _gridh = 50;
+
+        std::unique_ptr<engine::Camera> _camera = nullptr;
     };
 }

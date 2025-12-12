@@ -40,7 +40,7 @@ namespace imgui {
             spdlog::info("uninstall imgui plugin");   
         }
         
-        void onEvent(engine::Event& event) {
+        void onEvent(const engine::Event& event) {
             ImGuiManager::inst().processEvent(event);
         }
 

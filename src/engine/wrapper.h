@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <optional>
 
 namespace engine {
 
@@ -27,6 +28,7 @@ using FColor = SDL_FColor;
 using Rect = SDL_Rect;
 using FRect = SDL_FRect;
 
+using Vec2 = glm::fvec2;
 using Vec2f = glm::fvec2;
 using Vec3f = glm::fvec3;
 using Vec4f = glm::fvec4;

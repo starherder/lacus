@@ -62,7 +62,7 @@ private:
     bool preFrame();
     bool postFrame();
     
-    void processEvent(Event& event);
+    void processEvent(const Event& event);
 
     bool initConfig();
     bool initLog();
