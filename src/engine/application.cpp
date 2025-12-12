@@ -165,7 +165,7 @@ bool Application::initWindow()
         return false;
     }
 
-    _window->setWindowPosition({0, 0});
+    _window->setWindowPosition({SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED});
 
     spdlog::info("window created.");
     return true;
