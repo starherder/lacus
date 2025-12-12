@@ -8,6 +8,7 @@ namespace samples
     void addSamplePlugins(engine::Application& app)
     {
         app.addPlugin<SamplePluginDraw>();
+        
         app.addPlugin<SamplePluginAudio>();
     }
     

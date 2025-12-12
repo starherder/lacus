@@ -37,6 +37,8 @@ class TextureManager
 public:
     TextureManager() = delete;
     TextureManager(Renderer& render);
+    TextureManager(TextureManager&&) = delete;
+    TextureManager(const TextureManager&) = delete;
     ~TextureManager() = default;
 
     Texture* load(const std::string& name, const std::string& filepath);
@@ -47,7 +49,6 @@ public:
 
 private:
     Renderer& _renderer;
-
     TextureMap _textures;
 };
 

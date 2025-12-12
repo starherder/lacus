@@ -34,32 +34,13 @@ namespace engine {
 
     AudioManager::AudioManager()
     {
-        MIX_InitFlags flags = MIX_INIT_OGG | MIX_INIT_MP3;
-        if ((Mix_Init(flags) & flags) != flags) 
-        {
-            spdlog::error("init mix failed, err = : ", SDL_GetError());
-            assert("init mix failed");
-        }
-
-        if (!Mix_OpenAudio(0, nullptr)) {
-            Mix_Quit(); 
-
-            spdlog::error("mix open audio failed: ", SDL_GetError());
-            assert("open audio failed.");
-        }
     }
 
     AudioManager::~AudioManager()
     {
-        Mix_HaltChannel(-1);
-
-        Mix_HaltMusic();  
-
         clearSounds();
 
         clearMusics();
-
-        Mix_CloseAudio();
 
         Mix_Quit();
     }
@@ -166,103 +147,5 @@ namespace engine {
         _musics.clear();
     }
 
-    int AudioManager::playSound(const std::string& name, int channel)
-    {
-        auto sound = getSound(name);
-        if(!sound || !sound->_chunk)
-        {
-            spdlog::error("sound {} NOT found", name);
-            return -1;
-        }
-
-        auto chunk = sound->_chunk;
-        int played_channel = Mix_PlayChannel(channel, chunk, 0);  
-        if(played_channel == -1)
-        {
-            spdlog::error("can NOT play sound {}", name);
-        }
-
-        return played_channel;
-    }
-
-    void AudioManager::setSoundVolume(float volume, int channel)
-    {
-        // 将浮点音量(0-1)转换为SDL_mixer的音量(0-128)
-        int sdl_volume = static_cast<int>(std::max(0.0f, std::min(1.0f, volume)) * MIX_MAX_VOLUME);
-        Mix_Volume(channel, sdl_volume);
-    }
-
-    float AudioManager::getSoundVolume(int channel)
-    {
-        // SDL_mixer的音量(0-128)转为 0～1.0 的浮点数
-        return static_cast<float>(Mix_Volume(channel, -1)) / static_cast<float>(MIX_MAX_VOLUME);
-    }
-
-    bool AudioManager::playMusic(const std::string& name, int loops, int fade_in_ms)
-    {
-        if(name == _current_music)
-        {
-            return true;
-        }   
-
-        auto fmusic = getMusic(name);
-        if(!fmusic || !fmusic->_music)
-        {
-            spdlog::error("music {} NOT found.", name);
-            return false;
-        }
-
-        auto music = fmusic->_music;
-        Mix_HaltMusic(); 
-
-        bool result = false;
-        if (fade_in_ms > 0) {
-            result = Mix_FadeInMusic(music, loops, fade_in_ms);    // 淡入播放音乐
-        } else {
-            result = Mix_PlayMusic(music, loops);
-        }
-
-        if(!result)
-        {
-            spdlog::error("playe music {} failed, err = {}", name, SDL_GetError());
-        }
-        else 
-        {
-            _current_music = name;
-        }
-
-        return true;
-    }
-
-    void AudioManager::stopMusic(int fade_out_ms)
-    {
-        if (fade_out_ms > 0) {
-            Mix_FadeOutMusic(fade_out_ms);  // 淡出音乐
-        } else {
-            Mix_HaltMusic();
-        }
-    }
-
-    void AudioManager::pauseMusic()
-    {
-        Mix_PauseMusic();
-    }
-
-    void AudioManager::resumeMusic()
-    {
-        Mix_ResumeMusic();
-    }
-
-    void AudioManager::setMusicVolume(float volume)
-    {
-        int sdl_volume = static_cast<int>(std::max(0.0f, std::min(1.0f, volume)) * MIX_MAX_VOLUME);
-        Mix_VolumeMusic(sdl_volume);
-    }
-
-    float AudioManager::getMusicVolume()
-    {
-        // SDL_mixer的音量(0-128)转为 0～1.0 的浮点数
-        return static_cast<float>(Mix_VolumeMusic(-1)) / static_cast<float>(MIX_MAX_VOLUME);
-    }
 
 }

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "text_render.h"
 #include "wrapper.h"
 #include "texture.h"
+#include <memory>
 
 struct SDL_Renderer;
-struct TTF_TextEngine;
 
 namespace engine {
 
@@ -24,7 +25,7 @@ public:
     static int getNumRenderDrivers();
     static const char* getRenderDriver(int index);
     
-    bool create(SDL_Window* window);
+    bool init(SDL_Window* window);
     
     bool setClipRect(const Rect& rect) const;
     Rect getClipRect() const;
@@ -76,8 +77,10 @@ public:
                         const FColor* color, int color_stride, const float* uv, int uv_stride,
                         int num_vertices, const void* indices, int num_indices, int size_indices) const;
     
-    // 使用指定字体绘制文字
+    // 字体渲染
     bool drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color={255,255,255,255});
+    bool drawDebugText(const Vec2f& pos,const char* str) const;
+    bool drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3);
 
     bool present() const;
     
@@ -88,19 +91,18 @@ public:
     bool setRenderVSync(int vsync) const;
     bool getRenderVSync(int* vsync) const;
     
-    bool drawDebugText(const Vec2f& pos,const char* str) const;
-    bool drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3);
-    
     auto getSdlRenderer() const { return _renderer; };
     
 private:
     // 渲染器销毁
     void destroy();
 
+    bool initTextRenderer();
+
 private:
     SDL_Renderer* _renderer = nullptr;
     
-    TTF_TextEngine* _text_engine = nullptr;   
+    std::unique_ptr<TextRenderer> _textRenderer = nullptr;
 };
 
 } // namespace engine

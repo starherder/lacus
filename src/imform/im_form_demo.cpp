@@ -10,7 +10,7 @@ namespace imgui
 		ImGui::ShowDemoWindow(&_visible);
 	}
 
-
+	////////////////////////////////////////////////////////////////////////////////////////////
 	
 	ImFormTest::ImFormTest()
 	{
@@ -18,7 +18,6 @@ namespace imgui
 
 	ImFormTest::~ImFormTest()
 	{
-
 	}
 
 	void ImFormTest::init(engine::Application* app)
@@ -36,18 +35,15 @@ namespace imgui
 		ImGui::Begin("长风几万里");
 		{
 			if (ImGui::Button("喝一杯茶")) {
-				auto& audioMgr = _application->resourceManager().audioManager();
-				audioMgr.playMusic("hero");
+				_application->audioPlayer().playMusic("hero");
 			}
 
-			if (ImGui::Button("胜利！")){
-				auto& audioMgr = _application->resourceManager().audioManager();
-				audioMgr.playMusic("win", true, 1000);
+			if (ImGui::Button("胜利！")) {
+				_application->audioPlayer().playMusic("win", true, 1000);
 			}
 
-			if (ImGui::Button("大风！")){
-				auto& audioMgr = _application->resourceManager().audioManager();
-				audioMgr.playSound("bow");
+			if (ImGui::Button("大风！")) {
+				_application->audioPlayer().playSound("bow");
 			}
 		}
 		ImGui::End();

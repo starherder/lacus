@@ -9,6 +9,7 @@ Application::Application()
     _renderer = std::make_unique<Renderer>();
     _window = std::make_unique<Window>();
     _resourceMgr = std::make_unique<ResourceManager>(*this);
+    _audioPlayer = std::make_unique<AudioPlayer>();
 }
 
 Application::~Application() 
@@ -86,15 +87,35 @@ bool Application::init()
     {
         return false;
     }
+    
+    if(!initRenderer()) 
+    {
+        return false;
+    }
+
+    if(!initAudioPlayer())
+    {
+        return false;
+    }
+
+    if(!initPlugins())
+    {
+        return false;
+    }
 
     _frame_checker.init(_config.window.fps);
 
+    spdlog::info("---------------- engine init OK ----------------");
+    return true;
+}
+
+bool Application::initPlugins()
+{
     for(auto& plugin : _plugins)
     {
         plugin.second->onInit();
     }
-    
-    spdlog::info("---------------- engine init OK ----------------");
+
     return true;
 }
 
@@ -146,12 +167,33 @@ bool Application::initWindow()
 
     _window->setWindowPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-    res = _renderer->create(_window->getSdlWindow());
+    spdlog::info("window created.");
+    return true;
+}
+
+bool Application::initRenderer()
+{
+    auto res = _renderer->init(_window->getSdlWindow());
     if (!res) {
         spdlog::error("Failed to create renderer");
         return false;
     }
 
+    spdlog::info("renderer created.");
+    return true;
+}
+
+bool Application::initAudioPlayer()
+{
+    auto& audioMgr = resourceManager().audioManager();
+    auto res = _audioPlayer->init(&audioMgr);
+    if(!res)
+    {
+        spdlog::error("fail to create audio player");
+        return false;
+    }
+
+    spdlog::info("audio player created.");
     return true;
 }
 

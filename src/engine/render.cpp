@@ -1,9 +1,10 @@
 #include "render.h"
 
+#include "text_render.h"
 #include "texture.h"
 #include "font.h"
 
-#include "SDL3_ttf/SDL_ttf.h"
+#include <memory>
 
 namespace engine {
 
@@ -14,12 +15,6 @@ Renderer::Renderer()
 
 Renderer::~Renderer() 
 {
-    if (_text_engine) 
-    {
-        TTF_DestroyRendererTextEngine(_text_engine);
-        _text_engine = nullptr;
-    }
-
     destroy();
 }
 
@@ -32,33 +27,20 @@ const char* Renderer::getRenderDriver(int index) {
     return SDL_GetRenderDriver(index);
 }
 
-bool Renderer::create(SDL_Window* window) {
-    if (_renderer) 
-    {
+bool Renderer::init(SDL_Window* window) {
+    if (_renderer) {
         return false;
     }
 
     _renderer = SDL_CreateRenderer(window, nullptr);
-    if(!_renderer)
-    {
+    if(!_renderer){
         spdlog::error("create render failed");
-        assert("create render failed");
         return false;
     }
 
-    // 初始化 SDL_ttf
-    if (!TTF_WasInit() && !TTF_Init() ) 
-    {
-        spdlog::error("init ttf failed: {}", SDL_GetError());
-        assert("init ttf failed");
-        return false;
-    }
-
-    _text_engine = TTF_CreateRendererTextEngine(_renderer);
-    if (!_text_engine) 
-    {
-        spdlog::error("create render text engine failed: {}", SDL_GetError());
-        assert("create render text engine failed");
+    auto res = initTextRenderer();
+    if(!res){
+        spdlog::error("create text render failed");
         return false;
     }
 
@@ -176,34 +158,6 @@ bool Renderer::drawTexture(Texture* texture, const FRect& srcrect, const FRect& 
     return SDL_RenderTexture(_renderer, texture->_texture, &srcrect, &dstrect);
 }
 
-bool Renderer::drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color)
-{
-    if(!font) {
-        return false;
-    }
-
-    auto ttf = font->_font;
-    if(!ttf) {
-        return false;
-    }
-    
-    // 创建临时 TTF_Text 对象   (目前效率不高，未来可以考虑使用缓存优化)
-    TTF_Text* temp_text_object = TTF_CreateText(_text_engine, ttf, text.c_str(), 0);
-    if (!temp_text_object) {
-        spdlog::error("create text failed. {}", SDL_GetError());
-        return false;
-    }
-
-    TTF_SetTextColor(temp_text_object, color.r, color.g, color.b, color.a);
-    if (!TTF_DrawRendererText(temp_text_object, pos.x, pos.y)) {
-        spdlog::error("render text failed. {}", SDL_GetError());
-    }
-
-    // 销毁临时 TTF_Text 对象
-    TTF_DestroyText(temp_text_object);
-    return true;
-}
-
 bool Renderer::drawTextureRotated(Texture* texture, const FRect* srcrect, const FRect* dstrect, 
                                    double angle, const Vec2f* center, FlipMode flip) const {
     if(!texture) {
@@ -258,6 +212,18 @@ bool Renderer::drawGeometryRaw(Texture* texture,
                                 num_vertices, indices, num_indices, size_indices);
 }
 
+bool Renderer::drawDebugText(const Vec2f& pos,const char* str) const {
+    return SDL_RenderDebugText(_renderer, pos.x, pos.y, str);
+}
+
+bool Renderer::drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3) {
+    va_list args;
+    va_start(args, fmt);
+    bool result = SDL_RenderDebugTextFormat(_renderer, pos.x, pos.y, fmt, args);
+    va_end(args);
+    return result;
+}
+
 bool Renderer::present() const {
     return SDL_RenderPresent(_renderer);
 }
@@ -281,16 +247,18 @@ bool Renderer::getRenderVSync(int* vsync) const {
     return SDL_GetRenderVSync(_renderer, vsync);
 }
 
-bool Renderer::drawDebugText(const Vec2f& pos, const char* str) const {
-    return SDL_RenderDebugText(_renderer, pos.x, pos.y, str);
+bool Renderer::initTextRenderer()
+{
+    _textRenderer = std::make_unique<TextRenderer>();
+    return _textRenderer->init(this);
 }
 
-bool Renderer::drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3) {
-    va_list args;
-    va_start(args, fmt);
-    bool result = SDL_RenderDebugTextFormat(_renderer, pos.x, pos.y, fmt, args);
-    va_end(args);
-    return result;
+bool Renderer::drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color) {
+    if(!_textRenderer) {
+        return false;
+    }
+    return _textRenderer->drawText(text, font, pos, color);
 }
+
 
 } // namespace engine

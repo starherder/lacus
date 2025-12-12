@@ -7,6 +7,8 @@
 #include "plugin.h"
 #include "config.h"
 #include "resource.h"
+#include "audio.h"
+#include "audio_player.h"
 
 namespace engine {
 
@@ -39,6 +41,8 @@ public:
 
     ResourceManager& resourceManager() { return *_resourceMgr; } 
 
+    AudioPlayer& audioPlayer() { return *_audioPlayer; }
+
     fs::path runPath();
     fs::path resPath();
 
@@ -50,14 +54,18 @@ private:
     void update();
     void draw();
 
-    void processEvent(Event& event);
-
     bool preFrame();
     bool postFrame();
     
+    void processEvent(Event& event);
+
     bool initConfig();
     bool initLog();
     bool initWindow();
+    bool initRenderer();
+    bool initAudioPlayer();
+
+    bool initPlugins();
 
 private:
     std::unique_ptr<Renderer> _renderer = nullptr;
@@ -65,6 +73,8 @@ private:
     std::unique_ptr<Window> _window = nullptr;
 
     std::unique_ptr<ResourceManager> _resourceMgr = nullptr;
+
+    std::unique_ptr<AudioPlayer> _audioPlayer = nullptr;
 
     PluginMap _plugins;
 

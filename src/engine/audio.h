@@ -1,3 +1,5 @@
+#pragma once
+
 #include "wrapper.h"
 
 struct Mix_Chunk;
@@ -9,7 +11,7 @@ namespace engine {
 // 音效
 class Sound 
 {
-    friend class AudioManager;
+    friend class AudioPlayer;
 public:
     Sound() = delete;
     Sound(const Sound& other) = default;
@@ -24,7 +26,7 @@ private:
 // 音乐
 class Music 
 {
-    friend class AudioManager;
+    friend class AudioPlayer;
 public:
     Music() = delete;
     Music(const Music& other) = default;
@@ -48,6 +50,8 @@ class AudioManager
 
 public:
     AudioManager();
+    AudioManager(AudioManager&&) = delete;
+    AudioManager(const AudioManager&) = delete;
     ~AudioManager();
 
     Sound* loadSound(const std::string& name, const std::string& filepath);
@@ -62,22 +66,10 @@ public:
     void unloadMusic(const std::string& name, int size);
     void clearMusics();
 
-    int playSound(const std::string& name, int channel = -1);
-    void setSoundVolume(float volume, int channel = -1);
-    float getSoundVolume(int channel = -1);
-
-    bool playMusic(const std::string& name, int loops = -1, int fade_in_ms = 0);
-    void stopMusic(int fade_out_ms = 0);
-    void pauseMusic();
-    void resumeMusic();
-    void setMusicVolume(float volume);
-    float getMusicVolume();
-
 private:
     SoundMap _sounds;
     MusicMap _musics;
 
-    std::string _current_music;
 };
 
 

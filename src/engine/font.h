@@ -24,7 +24,7 @@ struct FontKeyHash {
 
 // 字体
 class Font {
-    friend class Renderer;
+    friend class TextRenderer;
 
 public:
     Font() = delete;
@@ -49,6 +49,8 @@ class FontManager
 
 public:
     FontManager();
+    FontManager(FontManager&&) = delete;
+    FontManager(const FontManager&) = delete;
     ~FontManager();
 
     Font* load(const std::string& name, int size, const std::string& filepath);
