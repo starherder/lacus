@@ -2,38 +2,38 @@
 
 namespace imgui
 {
-	ImGuiForm::ImGuiForm()
+	ImForm::ImForm()
 	{
 		_visible = false;
 		_pending_destroy = false;
 	}
 
-	ImGuiForm::~ImGuiForm()
+	ImForm::~ImForm()
 	{
 
 	}
 	
-	bool ImGuiForm::getPendingDestroy()
+	bool ImForm::getPendingDestroy()
 	{
 		return _pending_destroy;
 	}
 
-	bool ImGuiForm::getVisible()
+	bool ImForm::getVisible()
 	{
 		return _visible;
 	}
 
-	void ImGuiForm::setName(const std::string& name)
+	void ImForm::setName(const std::string& name)
 	{
 		_name = name;
 	}
 
-	std::string ImGuiForm::getName()
+	std::string ImForm::getName()
 	{
 		return _name;
 	}
 
-	void ImGuiForm::show(bool visible)
+	void ImForm::show(bool visible)
 	{
 		_visible = visible;
 
@@ -43,17 +43,17 @@ namespace imgui
 		}
 	}
 
-	void ImGuiForm::close()
+	void ImForm::close()
 	{
 		_visible = false;
 		_pending_destroy = true;
 	}
 
-	void ImGuiForm::onShow() 
+	void ImForm::onShow() 
 	{
 	}
 
-	void ImGuiForm::drawForm()
+	void ImForm::drawForm()
 	{
 		if (_visible)
 		{

@@ -1,18 +1,15 @@
 #pragma once
 
-#include "sample_plugin_draw.h"
-#include "sample_plugin_audio.h"
-#include "sample_plugin_scene.h"
-#include "sample_plugin_imgui.h"
-
+#include "engine/application.h"
+#include "imform/imform_manager.h"
 #include "utility/i_singleton.h"
-#include <memory>
+
 
 namespace samples
 {
 
     // 主窗口
-	class ImFormMainFrame : public imgui::ImGuiForm
+	class ImFormMainFrame : public imgui::ImForm
 	{
 	protected:
 		void draw() override;
@@ -31,6 +28,7 @@ namespace samples
         
         const char* name() override { return "sample_main_plugin"; }
         void onInit() override;
+        void onClose() override;
         void onUpdate() override;
         void onDraw() override;
         void onDrawUI() override;

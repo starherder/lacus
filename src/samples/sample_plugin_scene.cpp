@@ -137,7 +137,7 @@ void SamplePluginScene::onUpdate()
 {
     if(_camera)
     {
-        _camera->update(application()->fpsChecker().deltaTime());
+        _camera->update(application()->fpsChecker().deltaSeconds());
     }
 }
 
@@ -185,7 +185,7 @@ void SamplePluginScene::initEntities()
 void SamplePluginScene::onEntityDrawSystem()
 {
     auto& renderer = application()->renderer();
-    auto& view = _registry.view<ComTransform, ComDisplay>();
+    auto view = _registry.view<ComTransform, ComDisplay>();
     //spdlog::info("draw entity : {}", view.size_hint());
 
     for(auto& ent : view)

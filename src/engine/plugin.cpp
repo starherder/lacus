@@ -5,6 +5,7 @@ namespace engine {
     void Plugin::setEnable(bool enable)
     {
         _enabled = enable;
+        spdlog::info("plugin({}) {}. ", name(), _enabled?"enabled":"disabled");
 
         if(enable) 
         {
@@ -14,11 +15,6 @@ namespace engine {
         {
             onDisable();
         }
-    }
-
-    bool Plugin::isEnabled()
-    {
-        return _enabled;
     }
 
     void Plugin::init()

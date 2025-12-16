@@ -32,12 +32,13 @@ namespace imgui
 
 		void draw();
 
+		template<typename T>
+		T* getImGuiForm(const std::string& name);
+
 		template<class T, typename... Args>
-		ImGuiFormSharePtr showForm(const std::string& name, Args... args);
+		T* showForm(const std::string& name, Args... args);
 
 		void closeForm(const std::string& name);
-
-		ImGuiFormSharePtr getImGuiForm(const std::string& name);
 
 		void setFont(const std::filesystem::path& file, float size);
 
@@ -66,23 +67,36 @@ namespace imgui
 		ImGuiFormMap _forms;
 	};
 
-	template<class T, typename... Args>
-	ImGuiFormSharePtr ImFormManager::showForm(const std::string& name, Args... args)
+	template<typename T>
+	T* ImFormManager::getImGuiForm(const std::string& name)
 	{
-		auto pForm = getImGuiForm(name);
-		if (pForm)
+		auto it = _forms.find(name);
+		if (it == _forms.end())
 		{
-			pForm->show(true);
-			return pForm;
+			return nullptr;
 		}
 
-		pForm = std::make_shared<T>(args...);
+		auto pForm = it->second;
+		return (T*)pForm.get();
+	}
+
+	template<class T, typename... Args>
+	T* ImFormManager::showForm(const std::string& name, Args... args)
+	{
+		auto form = getImGuiForm<T>(name);
+		if (form)
+		{
+			form->show(true);
+			return form;
+		}
+
+		auto pForm = std::make_shared<T>(args...);
 		assert(pForm);
 
 		pForm->setName(name);
 
 		_forms[name] = pForm;
 		pForm->show(true);
-		return pForm;
+		return (T*)pForm.get();
 	}
 }

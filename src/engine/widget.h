@@ -122,7 +122,7 @@ namespace engine
 
         void draw()
         {
-            auto& ents = _registry.view<WidgetBase>();
+            auto ents = _registry.view<WidgetBase>();
             for(auto widget : ents)
             {
                 auto& base = _registry.get<WidgetBase>(widget);

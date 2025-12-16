@@ -10,7 +10,7 @@ namespace engine{
 namespace imgui
 {
 	// ImGui 提供的Demo
-	class ImGuiFormDemo : public ImGuiForm
+	class ImGuiFormDemo : public ImForm
 	{
 	public:
 		ImGuiFormDemo() = default;
@@ -20,7 +20,7 @@ namespace imgui
 		void draw() override;
 	};
 
-	class ImGuiFormAudio : public ImGuiForm
+	class ImGuiFormAudio : public ImForm
 	{
 	public:
 		ImGuiFormAudio() = delete;
@@ -35,7 +35,7 @@ namespace imgui
 		engine::Application* _application = nullptr;
 	};
 
-	class ImGuiFormHUD : public ImGuiForm
+	class ImGuiFormHUD : public ImForm
 	{
 	public:
 		ImGuiFormHUD() = default;

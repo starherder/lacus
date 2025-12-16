@@ -13,6 +13,7 @@ void FpsChecker::init(int fixed_fps)
     _frameTicks = (uint64_t)(1000.0f / _fixedFps);
     _lastTicks = SDL_GetTicks();
     _lastSecond = _lastTicks / 1000;
+    _deltaTicks = 0;
 }
 
 bool FpsChecker::check()
@@ -23,10 +24,10 @@ bool FpsChecker::check()
         return false;
     }
 
-    _deltaTime = (current_ticks - _lastTicks) / 1000.0f;
+    _deltaTicks = current_ticks - _lastTicks;
     _lastTicks = current_ticks;
 
-    _curFps = int(1.0f /_deltaTime);
+    _curFps = int(1000.0f /_deltaTicks);
 
     int cur_second = current_ticks / 1000;
 

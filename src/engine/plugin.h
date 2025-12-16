@@ -23,13 +23,7 @@ public:
     virtual ~Plugin() = default;
     
 public:
-    Application* application() {  return _application; }
-    bool initialized() const { return _initialized; }
-
     virtual const char* name() = 0;
-
-    void setEnable(bool enable);
-    bool isEnabled(); 
 
     virtual void onInit() {}
     virtual void onUpdate() {}
@@ -59,6 +53,14 @@ public:
     void uninstall();
 
     void handleEvent(const Event& event);
+
+    void setEnable(bool enable);
+
+    bool isEnabled() const { return _enabled; }
+
+    bool initialized() const { return _initialized; }
+
+    Application* application() {  return _application; }\
 
 private:
     Application* _application = nullptr;

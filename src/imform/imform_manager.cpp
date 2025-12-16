@@ -36,23 +36,11 @@ namespace imgui
 
 	void ImFormManager::closeForm(const std::string& name)
 	{
-		auto pForm = getImGuiForm(name);
+		auto pForm = getImGuiForm<ImForm>(name);
 		if (pForm)
 		{
 			pForm->close();
 		}
-	}
-
-	ImGuiFormSharePtr ImFormManager::getImGuiForm(const std::string& name)
-	{
-		auto it = _forms.find(name);
-		if (it == _forms.end())
-		{
-			return nullptr;
-		}
-
-		auto pForm = it->second;
-		return pForm;
 	}
 
 	void ImFormManager::draw()

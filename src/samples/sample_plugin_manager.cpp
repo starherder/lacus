@@ -1,6 +1,14 @@
 #include "sample_plugin_manager.h"
 #include "imform/imform_demo.h"
+
 #include "sample_plugin_draw.h"
+#include "sample_plugin_audio.h"
+#include "sample_plugin_scene.h"
+#include "sample_plugin_imgui.h"
+#include "sample_plugin_tweeny.h"
+
+
+
 #include <memory>
 
 namespace samples {
@@ -8,12 +16,6 @@ namespace samples {
     void ImFormMainFrame::draw()
     {
         drawMainMenu();
-
-        ImGui::Begin("Plugin Main");
-
-
-
-        ImGui::End();
     }
 
     void ImFormMainFrame::drawMainMenu()
@@ -52,7 +54,6 @@ namespace samples {
         static bool audio_trigger = false;
         if (ImGui::MenuItem("audio", nullptr, &audio_trigger)) 
         {
-            
             SamplePluginManager::inst().setPluginEnable("sample_audio_plugin", audio_trigger);
         }
         
@@ -60,6 +61,11 @@ namespace samples {
         if (ImGui::MenuItem("scene", nullptr, &scene_trigger)) 
         {
             SamplePluginManager::inst().setPluginEnable("sample_scene_plugin", scene_trigger);
+        }
+        static bool tweeny_trigger = false;
+        if (ImGui::MenuItem("tweeny", nullptr, &tweeny_trigger)) 
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_tweeny_plugin", tweeny_trigger);
         }
     }
 
@@ -82,6 +88,14 @@ namespace samples {
         imgui::ImFormManager::inst().setFont(font_path, 20);
 
         imgui::ImFormManager::inst().showForm<ImFormMainFrame>("ImFormMainFrame");
+
+        imgui::ImFormManager::inst().showForm<imgui::ImGuiFormHUD>("ImGuiFormHUD", application());
+    }
+
+    void SamplePluginMain::onClose()
+    {
+        imgui::ImFormManager::inst().closeForm("ImGuiFormHUD");
+        spdlog::info("SamplePluginMain::onClose");
     }
 
     void SamplePluginMain::onUpdate()
@@ -123,6 +137,9 @@ namespace samples {
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginScene>();
+        plugin->setEnable(false);
+        
+        plugin = addNormalPlugin<SamplePluginTweeny>();
         plugin->setEnable(false);
     }
 

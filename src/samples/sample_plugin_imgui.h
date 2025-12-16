@@ -22,12 +22,10 @@ namespace samples {
         void onEnable() override
         {
             imgui::ImFormManager::inst().showForm<imgui::ImGuiFormDemo>("ImGuiFormDemo");
-            imgui::ImFormManager::inst().showForm<imgui::ImGuiFormHUD>("ImGuiFormHUD", application());
         }
 
         void onDisable() override
         {
-            imgui::ImFormManager::inst().closeForm("ImGuiFormHUD");
             imgui::ImFormManager::inst().closeForm("ImGuiFormDemo");
         }
 

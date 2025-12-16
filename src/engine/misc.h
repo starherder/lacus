@@ -16,7 +16,9 @@ public:
 
     bool check();
 
-    float deltaTime() const { return _deltaTime; }
+    float deltaSeconds() const { return _deltaTicks/1000.0f; }
+
+    int deltaTicks() const { return _deltaTicks; }
 
     int fps() const { return _curFps; }
 
@@ -27,8 +29,9 @@ public:
 private:
     uint64_t _lastTicks = 0;
     uint64_t _frameTicks = 0;
-    float _deltaTime = 0.0f;
 
+    uint32_t _deltaTicks = 0;
+    
     int _curFps = 0;
     int _avgFps = 0;
     int _fixedFps = 60;

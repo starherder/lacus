@@ -15,8 +15,6 @@ namespace samples {
 
         void onInit() override 
         {
-            spdlog::info("Init sample plugin draw");
-
             //auto& renderer = application()->renderer();
             //engine::WidgetManager::inst().init(renderer);
             //engine::WidgetManager::inst().create_label(entt::null, "label");

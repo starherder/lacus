@@ -39,10 +39,6 @@ namespace engine {
 
     bool AudioPlayer::close()
     {
-        Mix_HaltChannel(-1);
-
-        Mix_HaltMusic();  
-
         Mix_CloseAudio();
 
         _current_music = "";
