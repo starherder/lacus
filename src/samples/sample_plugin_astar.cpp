@@ -1,5 +1,5 @@
 #include "sample_plugin_astar.h"
-#include "a-star/a-star.hpp"
+#include "a_star/a_star.hpp"
 
 namespace samples {
 
@@ -10,9 +10,6 @@ namespace samples {
 
     void ImPathFindForm::draw()
     {
-        //static bool visible = true;
-        //ImGui::Begin("PathFind", &visible, ImGuiWindowFlags_NoMove);
-
         ImGui::Begin("PathFind");
         {
             drawUI();
@@ -26,7 +23,7 @@ namespace samples {
 
     void ImPathFindForm::drawUI()
     {
-        // ²Ù×÷Ä£Ê½Ñ¡Ôñ
+        // æ“ä½œæ¨¡å¼é€‰æ‹©
         ImGui::Text("operator:");
         ImGui::Separator();
         if (ImGui::RadioButton("source", _state == State::SetSource)) {
@@ -45,7 +42,7 @@ namespace samples {
             _state = State::DelBlock;
         }
 
-        // Æô·¢Ëã·¨Ñ¡Ôñ
+        // å¯å‘ç®—æ³•é€‰æ‹©
         ImGui::Dummy({10, 20});
         ImGui::Text("heuristic:");
         ImGui::Separator();
@@ -62,14 +59,14 @@ namespace samples {
         }
 
 
-        // ÊôĞÔÅäÖÃ
+        // å±æ€§é…ç½®
         ImGui::Dummy({ 10, 20 });
         ImGui::Text("option:");
         ImGui::Separator();
         ImGui::Checkbox("diagnal", &_diagonal);
 
 
-        // ¿ªÊ¼Ñ°Â·
+        // å¼€å§‹å¯»è·¯
         ImGui::Dummy({ 10, 20 });
         ImGui::Text("find:");
         ImGui::Separator();
@@ -225,7 +222,7 @@ namespace samples {
 
         AStar::Generator generator;
         generator.setWorldSize({ _sceneGrids.x, _sceneGrids.y });
-        generator.setDiagonalMovement(_diagonal); // ¶Ô½ÇÏßÒÆ¶¯£¿
+        generator.setDiagonalMovement(_diagonal); // å¯¹è§’çº¿ç§»åŠ¨ï¼Ÿ
         
         for (auto& block : _blocks) {
             generator.addCollision({block.x, block.y});

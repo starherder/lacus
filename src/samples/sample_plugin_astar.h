@@ -8,7 +8,7 @@
 namespace samples {
     using namespace engine;
 
-    // Ëæ±ãµÄÅÅĞòº¯Êı£¬Ë³Ğò²»ÖØÒª
+    // éšä¾¿çš„æ’åºå‡½æ•°ï¼Œé¡ºåºä¸é‡è¦
     struct Vec2iComparator {
         bool operator()(const Vec2i& lval, const Vec2i& rval) const {
             if (lval.x == rval.x) {
@@ -20,7 +20,7 @@ namespace samples {
     };
 
 
-    // ´°¿Ú
+    // çª—å£
     class ImPathFindForm : public imgui::ImForm
     {
         enum class State {
@@ -88,7 +88,7 @@ namespace samples {
 
 
 
-    // ²âÊÔA-starÑ°Â·¿â
+    // æµ‹è¯•A-starå¯»è·¯åº“
     class SamplePluginAstar final : public engine::Plugin
     {
     public:
