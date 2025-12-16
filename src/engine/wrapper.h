@@ -38,6 +38,7 @@ using Vec2i = glm::ivec2;
 using Vec3i = glm::ivec3;
 using Vec4i = glm::ivec4;
 
+
 using FlipMode = SDL_FlipMode;
 
 enum class WindowEventType 

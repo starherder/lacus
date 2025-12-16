@@ -6,6 +6,7 @@
 #include "sample_plugin_scene.h"
 #include "sample_plugin_imgui.h"
 #include "sample_plugin_tweeny.h"
+#include "sample_plugin_astar.h"
 
 
 
@@ -66,6 +67,11 @@ namespace samples {
         if (ImGui::MenuItem("tweeny", nullptr, &tweeny_trigger)) 
         {
             SamplePluginManager::inst().setPluginEnable("sample_tweeny_plugin", tweeny_trigger);
+        }
+        static bool astar_trigger = false;
+        if (ImGui::MenuItem("pathfind", nullptr, &astar_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_astar_plugin", astar_trigger);
         }
     }
 
@@ -138,8 +144,11 @@ namespace samples {
 
         plugin = addNormalPlugin<SamplePluginScene>();
         plugin->setEnable(false);
-        
+
         plugin = addNormalPlugin<SamplePluginTweeny>();
+        plugin->setEnable(false);
+
+        plugin = addNormalPlugin<SamplePluginAstar>();
         plugin->setEnable(false);
     }
 
