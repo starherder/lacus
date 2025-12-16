@@ -17,23 +17,23 @@ class MyCamera : public Camera
 {
 public:
 
-    MyCamera(const Vec2i& size) : engine::Camera(size)
+    MyCamera(const Vec2& size) : engine::Camera(size)
     {
     }
 
-    void Update(float delta) override
+    void update(float delta) override
     {
         if(_vec.length() < 1e-8)
         {
             return;
         }
 
-        Move(_vec * delta);
+        move(_vec * delta);
     }
 
-    void moveCamera(const Vec2i& dir)
+    void moveCamera(const Vec2& dir)
     {
-        auto pos = GetPos();
+        auto pos = getPos();
         spdlog::info("move camera ({}, {}), pos = ({}, {})", dir.x, dir.y, pos.x, pos.y);
 
         _vec = dir;
@@ -48,10 +48,10 @@ public:
 
     void moveHome()
     {
-        SetPos({0, 0});
+        setPos({0, 0});
     }
 
-    bool HandleEvent(const Event& event) override
+    bool handleEvent(const Event& event) override
     {
         if(event.type == SDL_EVENT_KEY_DOWN)
         {
@@ -105,37 +105,39 @@ struct ComDisplay
     Color color;
 };
 
-
-const char* SamplePluginScene::name()  
-{ 
-    return "scene_test"; 
-}
-
 void SamplePluginScene::onInit()  
 {
     spdlog::info("Init sample plugin scene");
 
     auto& window = application()->window();
-    _camera = std::make_unique<MyCamera>(window.getWindowSize());
+    _camera = std::make_unique<MyCamera>(Vec2{window.getSize()});
 
     initEntities();
 }
 
 void SamplePluginScene::onInstall()  
 {
-    spdlog::info("install sample plugin scene");   
 }
 
 void SamplePluginScene::onUninstall()  
 {
-    spdlog::info("uninstall sample plugin scene");   
+}
+
+void SamplePluginScene::onEnable()
+{
+
+}
+
+void SamplePluginScene::onDisable()
+{
+
 }
 
 void SamplePluginScene::onUpdate()  
 {
     if(_camera)
     {
-        _camera->Update(application()->fpsChecker().delta_time());
+        _camera->update(application()->fpsChecker().deltaTime());
     }
 }
 
@@ -153,7 +155,7 @@ void SamplePluginScene::onEvent(const Event& event)
 {
     if(_camera)
     {
-        _camera->HandleEvent(event);
+        _camera->handleEvent(event);
     }
 }
 
@@ -191,7 +193,7 @@ void SamplePluginScene::onEntityDrawSystem()
         const auto& dis = _registry.get<ComDisplay>(ent);
         const auto& trans = _registry.get<ComTransform>(ent);
         
-        const auto& pos = _camera->WorldToScreen(trans.pos);
+        const auto& pos = _camera->worldToScreen(Vec2{trans.pos});
         const auto& size = trans.size;
 
         FRect rect{(float)pos.x, (float)pos.y, (float)size.x, (float)size.y};

@@ -29,7 +29,7 @@ bool JsonConfig::load(const fs::path& filepath)
     try {
         ifile >> (*_json);
 
-        spdlog::info("load json from '{}' OK。", _filepath.string());
+        spdlog::info("load json from '{}' OK.", _filepath.string());
     } catch (const std::exception& e) {
         spdlog::error("load json form '{}' failed, err = '{}'", _filepath.string(), e.what());
         return false;
@@ -72,9 +72,6 @@ bool SystemConfig::load(const fs::path& filepath)
     try {
 
         auto& json = _json_config.getJson();
-        spdlog::info("load system config from '{}' OK. json = {}", 
-            filepath.string(), json.dump(4));
-
         if(json.contains("window"))
         {
             auto& window_json = json["window"];

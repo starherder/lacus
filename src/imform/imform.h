@@ -13,13 +13,13 @@
 
 namespace imgui
 {
-	class ImForm : public utility::sigslot::SlotHandler
+	class ImGuiForm : public utility::sigslot::SlotHandler
 	{
-		friend class ImGuiManager;
+		friend class ImFormManager;
 
 	public:
-		ImForm();
-		virtual ~ImForm();
+		ImGuiForm();
+		virtual ~ImGuiForm();
 
 		void show(bool visible);
 		void close();
@@ -44,5 +44,5 @@ namespace imgui
 		bool _pending_destroy = false;
 	};
 
-	using ImFormSharePtr = std::shared_ptr<ImForm>;
+	using ImGuiFormSharePtr = std::shared_ptr<ImGuiForm>;
 }

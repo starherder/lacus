@@ -6,18 +6,18 @@ Window::Window()
 {
 }
 
-Window::~Window() 
+Window::~Window()
 {
-    destroyWindow();
+    destroy();
 }
 
 // Window creation and destruction
-bool Window::createWindow(const char* title, int w, int h, WindowFlags flags) {
+bool Window::create(const char* title, int w, int h, WindowFlags flags) {
     _window = SDL_CreateWindow(title, w, h, (Uint64)(flags));
     return _window != nullptr;
 }
 
-void Window::destroyWindow() {
+void Window::destroy() {
     if (_window) {
         SDL_DestroyWindow(_window);
         _window = nullptr;
@@ -25,7 +25,7 @@ void Window::destroyWindow() {
 }
 
 // Window size
-Vec2i Window::getWindowSize() const {
+Vec2i Window::getSize() const {
     assert(_window);
 
     int w, h;
@@ -33,13 +33,13 @@ Vec2i Window::getWindowSize() const {
     return {w, h};
 }
 
-void Window::setWindowSize(const Vec2i& size) {
+void Window::setSize(const Vec2i& size) {
     assert(_window);
 
     SDL_SetWindowSize(_window, size.x, size.y);
 }
 
-Vec2i Window::getWindowSizeInPixels() const {
+Vec2i Window::getSizeInPixels() const {
     assert(_window);
 
     int w, h;
@@ -47,7 +47,7 @@ Vec2i Window::getWindowSizeInPixels() const {
     return {w, h};
 }
 
-Vec2i Window::getWindowPosition() const {
+Vec2i Window::getPosition() const {
     assert(_window);
 
     int x, y;
@@ -55,80 +55,80 @@ Vec2i Window::getWindowPosition() const {
     return {x, y};
 }
 
-void Window::setWindowPosition(const Vec2i& pos) {
+void Window::setPosition(const Vec2i& pos) {
     assert(_window);
 
     SDL_SetWindowPosition(_window, pos.x, pos.y);
 }
 
 // Window title
-bool Window::setWindowTitle(const char* title) {
+bool Window::setTitle(const char* title) {
     if (!_window) return false;
     SDL_SetWindowTitle(_window, title);
     return true;
 }
 
-const char* Window::getWindowTitle() const {
+const char* Window::getTitle() const {
     if (!_window) return nullptr;
     return SDL_GetWindowTitle(_window);
 }
 
 // Window visibility and state
-bool Window::showWindow() {
+bool Window::show() {
     if (!_window) return false;
     SDL_ShowWindow(_window);
     return true;
 }
 
-bool Window::hideWindow() {
+bool Window::hide() {
     if (!_window) return false;
     SDL_HideWindow(_window);
     return true;
 }
 
-bool Window::raiseWindow() {
+bool Window::raise() {
     if (!_window) return false;
     SDL_RaiseWindow(_window);
     return true;
 }
 
-bool Window::maximizeWindow() {
+bool Window::maximize() {
     if (!_window) return false;
     SDL_MaximizeWindow(_window);
     return true;
 }
 
-bool Window::minimizeWindow() {
+bool Window::minimize() {
     if (!_window) return false;
     SDL_MinimizeWindow(_window);
     return true;
 }
 
-bool Window::restoreWindow() {
+bool Window::restore() {
     if (!_window) return false;
     SDL_RestoreWindow(_window);
     return true;
 }
 
-bool Window::setWindowFullscreen(bool fullscreen) {
+bool Window::setFullscreen(bool fullscreen) {
     if (!_window) return false;
     SDL_SetWindowFullscreen(_window, fullscreen);
     return true;
 }
 
-const SDL_DisplayMode* Window::getWindowFullscreenMode() {
+const SDL_DisplayMode* Window::getFullscreenMode() {
     if (!_window) return nullptr;
     return SDL_GetWindowFullscreenMode(_window);
 }
 
-bool Window::setWindowFullscreenMode(const SDL_DisplayMode* mode) {
+bool Window::setFullscreenMode(const SDL_DisplayMode* mode) {
     if (!_window) return false;
     SDL_SetWindowFullscreenMode(_window, mode);
     return true;
 }
 
 // Window properties
-WindowFlags Window::getWindowFlags() {
+WindowFlags Window::getFlags() {
     if (!_window) return WindowFlags::Hidden; // Return a default flag when no _window exists
     return static_cast<WindowFlags>(SDL_GetWindowFlags(_window));
 }

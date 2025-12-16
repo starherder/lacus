@@ -1,6 +1,6 @@
 #pragma once
 
-#include "im_form.h"
+#include "imform.h"
 
 #include <filesystem>
 #include <memory>
@@ -17,27 +17,27 @@ namespace imgui
 		Light,
 	};
 
-	class ImGuiManager final : 
-                        public utility::ISingleton<ImGuiManager>,
+	class ImFormManager final : 
+                        public utility::ISingleton<ImFormManager>,
 						public utility::sigslot::SlotHandler
 	{
 	public:
-		typedef std::map<std::string, ImFormSharePtr> ImFormMap;
+		typedef std::map<std::string, ImGuiFormSharePtr> ImGuiFormMap;
 
 	public:
-		ImGuiManager();
-		~ImGuiManager();
+		ImFormManager();
+		~ImFormManager();
 
 		void init(struct SDL_Window* window, struct SDL_Renderer* renderer);
 
 		void draw();
 
 		template<class T, typename... Args>
-		ImFormSharePtr showForm(const std::string& name, Args... args);
+		ImGuiFormSharePtr showForm(const std::string& name, Args... args);
 
 		void closeForm(const std::string& name);
 
-		ImFormSharePtr getImForm(const std::string& name);
+		ImGuiFormSharePtr getImGuiForm(const std::string& name);
 
 		void setFont(const std::filesystem::path& file, float size);
 
@@ -63,13 +63,13 @@ namespace imgui
         struct SDL_Window* _window = nullptr;
 		struct SDL_Renderer* _renderer = nullptr;
 
-		ImFormMap _forms;
+		ImGuiFormMap _forms;
 	};
 
 	template<class T, typename... Args>
-	ImFormSharePtr ImGuiManager::showForm(const std::string& name, Args... args)
+	ImGuiFormSharePtr ImFormManager::showForm(const std::string& name, Args... args)
 	{
-		auto pForm = getImForm(name);
+		auto pForm = getImGuiForm(name);
 		if (pForm)
 		{
 			pForm->show(true);

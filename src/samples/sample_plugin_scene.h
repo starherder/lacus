@@ -13,13 +13,17 @@ namespace samples {
         SamplePluginScene() = default;
         ~SamplePluginScene() = default;
 
-        const char* name() override;
+        const char* name() override { return "sample_scene_plugin";}
 
         void onInit() override;
 
         void onInstall() override;
 
         void onUninstall() override;
+
+        void onEnable() override;
+
+        void onDisable() override;
 
         void onUpdate() override;
 

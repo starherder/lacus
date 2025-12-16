@@ -22,11 +22,11 @@ namespace utility
 		using InsRetVal = std::pair<typename DynamicStruct<K>::Iterator, bool>;
 		using Ptr = std::shared_ptr<DynamicStruct<K>>;
 
-		DynamicStruct() : m_Data()
+		DynamicStruct() : _data()
 		{
 		}
 
-		DynamicStruct(const Data& val) : m_Data(val)
+		DynamicStruct(const Data& val) : _data(val)
 		{
 		}
 
@@ -36,13 +36,21 @@ namespace utility
 			assignMap(val);
 		}
 
+		DynamicStruct(const DynamicStruct& other) : _data(other._data)
+		{
+		}
+
+		DynamicStruct(DynamicStruct&& other) noexcept : _data(std::move(other._data))
+		{
+		}
+
 		virtual ~DynamicStruct()
 		{
 		}
 
 		inline Var& operator [] (const K& name)
 		{
-			return m_Data[name];
+			return _data[name];
 		}
 
 		const Var& operator [] (const K& name) const
@@ -61,32 +69,32 @@ namespace utility
 
 		inline Iterator find(const K& name)
 		{
-			return m_Data.find(name);
+			return _data.find(name);
 		}
 
 		inline ConstIterator find(const K& name) const
 		{
-			return m_Data.find(name);
+			return _data.find(name);
 		}
 
 		inline Iterator end()
 		{
-			return m_Data.end();
+			return _data.end();
 		}
 
 		inline ConstIterator end() const
 		{
-			return m_Data.end();
+			return _data.end();
 		}
 
 		inline Iterator begin()
 		{
-			return m_Data.begin();
+			return _data.begin();
 		}
 
 		inline ConstIterator begin() const
 		{
-			return m_Data.begin();
+			return _data.begin();
 		}
 
 		template <typename T>
@@ -98,37 +106,37 @@ namespace utility
 
 		inline InsRetVal insert(const ValueType& aPair)
 		{
-			return m_Data.insert(aPair);
+			return _data.insert(aPair);
 		}
 
 		inline SizeType erase(const K& key)
 		{
-			return m_Data.erase(key);
+			return _data.erase(key);
 		}
 
 		inline void erase(Iterator& it)
 		{
-			m_Data.erase(it);
+			_data.erase(it);
 		}
 
 		inline void clear()
 		{
-			m_Data.clear();
+			_data.clear();
 		}
 
 		inline void swap(DynamicStruct& other) noexcept
 		{
-			m_Data.swap(other.m_Data);
+			_data.swap(other._data);
 		}
 
 		inline bool empty() const
 		{
-			return m_Data.empty();
+			return _data.empty();
 		}
 
 		SizeType size() const
 		{
-			return m_Data.size();
+			return _data.size();
 		}
 
 		inline NameSet members() const
@@ -168,11 +176,11 @@ namespace utility
 		{
 			for (auto& [k, v] : map)
 			{
-				m_Data.emplace(k, v);
+				_data.emplace(k, v);
 			}
 		}
 
-		Data m_Data;
+		Data _data;
 	};
 
 }

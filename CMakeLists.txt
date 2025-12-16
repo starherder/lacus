@@ -12,6 +12,9 @@ if(WIN32)
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
+# 添加IMGUI_DISABLE_WIN32_FUNCTIONS定义以解决MinGW下的_wfopen问题
+add_compile_definitions(IMGUI_DISABLE_WIN32_FUNCTIONS)
+
 # 设置输出目录为bin目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

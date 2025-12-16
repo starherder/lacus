@@ -11,40 +11,35 @@ namespace engine {
         Camera(Camera&&) = delete;
         Camera(const Camera&) = delete;
 
-        Camera(const Vec2i& size);
+        Camera(const Vec2& size) { _size = size; }
 
-		void Move(const Vec2i& dis);
+		void move(const Vec2& dis) { _pos += dis; }
 
-		Vec2i SceneLTCorner();
-		Vec2i SceneRBCorner();
+		Vec2 getPos() const { return _pos; }
+		void setPos(const Vec2& pos) { _pos = pos; }
 
-		Vec2i GetPos() const;
-		void SetPos(const Vec2i& pos);
+		Vec2 getSize() const { return _size; }
+		void setSize(const Vec2& size) { _size = size; }
 
-		Vec2i GetSize() const;
-		void SetSize(const Vec2i& size);
+		Vec2 worldToScreen(const Vec2& pos) const { return pos - _pos; }
+		Vec2 screenToWorld(const Vec2& pos) const { return pos + _pos; }
 
-		const Rect& GetRect() const;
-		void SetRect(const Rect& rect);
+        virtual void update(float delta) {}
+        virtual bool handleEvent(const Event& event) { return true; }
 
-		Vec2i WorldToScreen(const Vec2i& pos) const;
-		Vec2i ScreenToWorld(const Vec2i& pos) const;
+		//const Vec2& getScale() const { return _scale; }
+		//void setScale(const Vec2& scale) { _scale = scale; }
 
-		const Vec2f& GetScale() const;
-		void SetScale(const Vec2f& scale);
-
-        float GetRotate() const;
-		void SetRotate(float rotate);
-
-        virtual void Update(float delta) {}
-        virtual bool HandleEvent(const Event& event) { return true; }
+        //float getRotate() const { return _rotate; }
+		//void setRotate(float rotate) { _rotate = rotate; }
 
 	private:
-		Rect _rect = {0,0,0,0};
+		Vec2 _pos = {0, 0};
+		Vec2 _size = {1280, 1024};
 
 		// 先不管缩放旋转了
-		Vec2f _scale;
-		float _rotate;
+		//Vec2 _scale;
+		//float _rotate;
 	};
 
 

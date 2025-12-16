@@ -1,8 +1,8 @@
 #pragma once
 
 #include "engine/application.h"
-#include "imform/im_manager.h"
-#include "imform/im_form_demo.h"
+#include "imform/imform_manager.h"
+#include "imform/imform_demo.h"
 
 namespace samples {
 
@@ -12,36 +12,34 @@ namespace samples {
         SamplePluginAudio() = default;
         ~SamplePluginAudio() = default;
 
-        const char* name() override 
-        { 
-            return "audio_test"; 
-        }
+        const char* name() override { return "sample_audio_plugin"; }
 
         void onInit() override 
         {
             spdlog::info("Init sample plugin audio");
+        
         }
 
         void onInstall() override 
         {
-            spdlog::info("install sample plugin audio");   
         }
 
         void onUninstall() override 
         {
-            spdlog::info("uninstall sample plugin audio");   
+        }
+
+        void onEnable() override
+        {
+            imgui::ImFormManager::inst().showForm<imgui::ImGuiFormAudio>("ImGuiFormAudio", application());
+        }
+
+        void onDisable() override
+        {
+            imgui::ImFormManager::inst().closeForm("ImGuiFormAudio");
         }
 
         void onUpdate() override 
         {
-            if(_frame++ == 10)
-            {
-                auto pForm = std::dynamic_pointer_cast<imgui::ImFormAudio>(imgui::ImGuiManager::inst().showForm<imgui::ImFormAudio>("ImFormAudio"));
-                if(pForm)
-                {
-                    pForm->init(application());
-                }
-            }
         }
 
         void onDraw() override 
@@ -53,7 +51,5 @@ namespace samples {
             spdlog::info("Release sample plugin draw");
         }
 
-    private:
-        uint64_t _frame = 0;
     };
 }

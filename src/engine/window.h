@@ -14,34 +14,34 @@ public:
     Window& operator=(const Window& wnd) = delete;
 
     // Window creation and destruction
-    bool createWindow(const char* title, int w, int h, WindowFlags flags);
-    
+    bool create(const char* title, int w, int h, WindowFlags flags);
+
     // Window size
-    Vec2i getWindowSize() const;
-    void setWindowSize(const Vec2i& size);
-    Vec2i getWindowSizeInPixels() const;
-    
+    Vec2i getSize() const;
+    void setSize(const Vec2i& size);
+    Vec2i getSizeInPixels() const;
+
     // Window position
-    Vec2i getWindowPosition() const;
-    void setWindowPosition(const Vec2i& pos);
-    
+    Vec2i getPosition() const;
+    void setPosition(const Vec2i& pos);
+
     // Window title
-    bool setWindowTitle(const char* title);
-    const char* getWindowTitle() const;
-    
+    bool setTitle(const char* title);
+    const char* getTitle() const;
+
     // Window visibility and state
-    bool showWindow();
-    bool hideWindow();
-    bool raiseWindow();
-    bool maximizeWindow();
-    bool minimizeWindow();
-    bool restoreWindow();
-    bool setWindowFullscreen(bool fullscreen);
-    const SDL_DisplayMode* getWindowFullscreenMode();
-    bool setWindowFullscreenMode(const SDL_DisplayMode* mode);
-    
+    bool show();
+    bool hide();
+    bool raise();
+    bool maximize();
+    bool minimize();
+    bool restore();
+    bool setFullscreen(bool fullscreen);
+    const SDL_DisplayMode* getFullscreenMode();
+    bool setFullscreenMode(const SDL_DisplayMode* mode);
+
     // Window properties
-    WindowFlags getWindowFlags();
+    WindowFlags getFlags();
     SDL_Window* getSdlWindow() { return _window; }
     
     // Display functions
@@ -55,7 +55,7 @@ public:
     static bool disableScreenSaver();
 
 private:
-    void destroyWindow();
+    void destroy();
 
 private:
     SDL_Window* _window = nullptr;

@@ -1,4 +1,4 @@
-#include "im_manager.h"
+#include "imform_manager.h"
 
 #include "SDL3/sdl.h"
 #include "SDL3/SDL_events.h"
@@ -7,16 +7,16 @@
 namespace imgui
 {
 
-	ImGuiManager::ImGuiManager()
+	ImFormManager::ImFormManager()
 	{
 	}
 
-	ImGuiManager::~ImGuiManager()
+	ImFormManager::~ImFormManager()
 	{
 		quit();
 	}
 
-	void ImGuiManager::pendingDestroyForm()
+	void ImFormManager::pendingDestroyForm()
 	{
 		for (auto it = _forms.begin(); it != _forms.end(); it++ )
 		{
@@ -34,16 +34,16 @@ namespace imgui
 		}
 	}
 
-	void ImGuiManager::closeForm(const std::string& name)
+	void ImFormManager::closeForm(const std::string& name)
 	{
-		auto pForm = getImForm(name);
+		auto pForm = getImGuiForm(name);
 		if (pForm)
 		{
 			pForm->close();
 		}
 	}
 
-	ImFormSharePtr ImGuiManager::getImForm(const std::string& name)
+	ImGuiFormSharePtr ImFormManager::getImGuiForm(const std::string& name)
 	{
 		auto it = _forms.find(name);
 		if (it == _forms.end())
@@ -55,7 +55,7 @@ namespace imgui
 		return pForm;
 	}
 
-	void ImGuiManager::draw()
+	void ImFormManager::draw()
 	{
 		beforeDraw();
 
@@ -74,21 +74,23 @@ namespace imgui
 		afterDraw();
 	}
 
-	void ImGuiManager::beforeDraw()
+	void ImFormManager::beforeDraw()
 	{
         ImGui_ImplSDLRenderer3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 	}
 
-	void ImGuiManager::afterDraw()
+	void ImFormManager::afterDraw()
 	{
         ImGui::Render();
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), _renderer);
 	}
 
-	void ImGuiManager::init(struct SDL_Window* window, struct SDL_Renderer* renderer)
+	void ImFormManager::init(struct SDL_Window* window, struct SDL_Renderer* renderer)
 	{
+		spdlog::info("ImFormManager::init");;
+
         _window = window;  
         _renderer = renderer;
 		assert(_renderer);
@@ -104,19 +106,19 @@ namespace imgui
 		ImGui::StyleColorsDark();
 	}
 
-    void ImGuiManager::setAlpha(float alpha)
+    void ImFormManager::setAlpha(float alpha)
     {
         ImGui::GetStyle().Alpha = alpha;
     }
 
-    void ImGuiManager::setScale(float scale)
+    void ImFormManager::setScale(float scale)
     {
         ImGuiStyle& style = ImGui::GetStyle();
         style.ScaleAllSizes(scale);        // 固定样式缩放比例。
         style.FontScaleDpi = scale;  
     }
     
-	void ImGuiManager::setFont(const std::filesystem::path& file, float size)
+	void ImFormManager::setFont(const std::filesystem::path& file, float size)
 	{
 		if(!std::filesystem::exists(file))
 		{
@@ -134,7 +136,7 @@ namespace imgui
         }
 	}
 
-	void ImGuiManager::setStyle(ImGuiTheme style)
+	void ImFormManager::setStyle(ImGuiTheme style)
 	{
 		switch (style)
 		{
@@ -144,7 +146,7 @@ namespace imgui
 		}
 	}
 
-	void ImGuiManager::quit()
+	void ImFormManager::quit()
 	{
         ImGui_ImplSDLRenderer3_Shutdown();
         ImGui_ImplSDL3_Shutdown();
@@ -152,7 +154,7 @@ namespace imgui
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiManager::processEvent(const SDL_Event& event)
+	void ImFormManager::processEvent(const SDL_Event& event)
 	{
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}

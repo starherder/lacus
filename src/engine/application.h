@@ -11,13 +11,14 @@
 #include "audio_player.h"
 
 #include "utility/unsort_map.h"
+#include <map>
 
 namespace engine {
 
 class Application final 
 {
     using PluginUniquePtr = std::unique_ptr<Plugin>;
-    using PluginMap = utility::unsort_map<std::string, PluginUniquePtr>;
+    using PluginMap = std::multimap<PluginPriority, PluginUniquePtr>;
 
 public:
     Application();
@@ -29,9 +30,9 @@ public:
     void run();
 
     template<typename T, typename... Args>
-    T* addPlugin(Args&&... args);
+    T* addPlugin(PluginPriority priority, Args&&... args);
 
-    bool hasPlugin(const std::string& name);
+    Plugin* getPlugin(const std::string& name);
 
     bool removePlugin(const std::string& name);
 
@@ -50,7 +51,6 @@ public:
     fs::path runPath();
     fs::path resPath();
 
-
 private:
     bool init();
     bool close();
@@ -58,6 +58,7 @@ private:
     void input();
     void update();
     void draw();
+    void drawUI();
 
     bool preFrame();
     bool postFrame();
@@ -69,8 +70,6 @@ private:
     bool initWindow();
     bool initRenderer();
     bool initAudioPlayer();
-
-    bool initPlugins();
 
 private:
     std::unique_ptr<Renderer> _renderer = nullptr;
@@ -93,16 +92,25 @@ private:
 };
 
 
-
 template<typename T, typename... Args>
-T* Application::addPlugin(Args&&... args) {
-    auto plugin = std::make_unique<T>(std::forward<Args>(args)...);
-    auto name = plugin->name();
-    
-    _plugins[name] = std::move(plugin);
-    _plugins[name]->Install(this);
+T* Application::addPlugin(PluginPriority priority, Args&&... args) 
+{
+    auto new_plugin = std::make_unique<T>(std::forward<Args>(args)...);
 
-    return static_cast<T*>(_plugins[name].get());
+    auto name = new_plugin->name();
+    auto plugin = getPlugin(name);
+    if(plugin)
+    {
+        spdlog::error("plugin ({}) already exist.", name);
+        return dynamic_cast<T*>(plugin);
+    }
+
+    auto plugin_ptr = new_plugin.get();
+    _plugins.emplace(priority, std::move(new_plugin));
+
+    plugin_ptr->install(this);
+    return plugin_ptr;
 }
+
 
 } // namespace engine

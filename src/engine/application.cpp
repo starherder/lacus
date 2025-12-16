@@ -26,20 +26,32 @@ fs::path Application::resPath()
     return _res_path; 
 }
 
-bool Application::hasPlugin(const std::string& name) 
+Plugin* Application::getPlugin(const std::string& name)
 {
-    return _plugins.find(name) != _plugins.end();
+    for(auto& [prio, plugin] : _plugins)
+    {
+        if(plugin && plugin->name() == name)
+        {
+            return plugin.get();
+        }
+    }
+
+    return nullptr;
 }
 
 bool Application::removePlugin(const std::string& name) 
 {
-    if (!hasPlugin(name)) {
-        return false;
+    for(auto it=_plugins.begin(); it!= _plugins.end(); it++)
+    {
+        auto& plugin = it->second;
+        if(plugin && plugin->name() == name)
+        {
+            plugin->uninstall();
+            _plugins.erase(it);
+            return true;
+        }
     }
-
-    _plugins[name]->Uninstall();
-    _plugins.erase(name);
-    return true;
+    return false;
 }
 
 void Application::run() 
@@ -59,6 +71,8 @@ void Application::run()
             update();
 
             draw();
+
+            drawUI();
 
             postFrame();
         }
@@ -98,24 +112,9 @@ bool Application::init()
         return false;
     }
 
-    if(!initPlugins())
-    {
-        return false;
-    }
-
     _fps_checker.init(_config.window.fps);
 
     spdlog::info("---------------- engine init OK ----------------");
-    return true;
-}
-
-bool Application::initPlugins()
-{
-    for(auto& plugin : _plugins)
-    {
-        plugin.second->onInit();
-    }
-
     return true;
 }
 
@@ -159,13 +158,13 @@ bool Application::initWindow()
         return false;
     }
 
-    bool res = _window->createWindow(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::Resizable);
+    bool res = _window->create(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::Resizable);
     if (!res) {
         spdlog::error("Failed to create window");
         return false;
     }
 
-    _window->setWindowPosition({SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED});
+    _window->setPosition({SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED});
 
     spdlog::info("window created.");
     return true;
@@ -201,7 +200,7 @@ void Application::update()
 {
     for(auto& plugin : _plugins)
     {
-        plugin.second->onUpdate();
+        plugin.second->update();
     }   
 }
 
@@ -209,7 +208,15 @@ void Application::draw()
 {
     for(auto& plugin : _plugins)
     {
-        plugin.second->onDraw();
+        plugin.second->draw();
+    }   
+}
+
+void Application::drawUI() 
+{
+    for(auto& plugin : _plugins)
+    {
+        plugin.second->drawUI();
     }   
 }
 
@@ -217,7 +224,7 @@ void Application::processEvent(const Event& event)
 {
     for(auto& plugin : _plugins)
     {
-        plugin.second->onEvent(event);
+        plugin.second->handleEvent(event);
     }
 
     switch (event.type) 
@@ -243,7 +250,7 @@ bool Application::close()
 {
     for(auto& plugin : _plugins)
     {
-        plugin.second->onClose();
+        plugin.second->close();
     }   
     
     spdlog::info("---------------- engine closed ----------------");

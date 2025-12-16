@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Lacus",
+            "name": "Debug Lacus (cppvsdbg)",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/Lacus.exe",
@@ -14,8 +14,29 @@
             "preLaunchTask": "build"
         },
         {
+            "name": "Debug Lacus (cppdbg)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/Debug/Lacus.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal",
+            "preLaunchTask": "build",
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "Run Lacus",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/Lacus.exe",
             "args": [],

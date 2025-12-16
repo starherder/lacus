@@ -16,26 +16,26 @@ public:
 
     bool check();
 
-    float delta_time() const { return _delta_time; }
-    
-    int fps() const { return _cur_fps; }
+    float deltaTime() const { return _deltaTime; }
 
-    int fixed_fps() const { return _fixed_fps; }
+    int fps() const { return _curFps; }
 
-    int avg_fps() const { return _avg_fps; };
+    int fixedFps() const { return _fixedFps; }
+
+    int avgFps() const { return _avgFps; };
 
 private:
-    uint64_t _last_ticks = 0;
-    uint64_t _frame_ticks = 0;
-    float _delta_time = 0.0f;
+    uint64_t _lastTicks = 0;
+    uint64_t _frameTicks = 0;
+    float _deltaTime = 0.0f;
 
-    int _cur_fps = 0;
-    int _avg_fps = 0;
-    int _fixed_fps = 60;
+    int _curFps = 0;
+    int _avgFps = 0;
+    int _fixedFps = 60;
 
-    int _last_second = 0;
+    int _lastSecond = 0;
 
-    std::vector<int> _cur_second_fps;
+    std::vector<int> _curSecondFps;
 };
 
 class PathUtils 

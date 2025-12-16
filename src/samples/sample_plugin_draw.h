@@ -11,33 +11,35 @@ namespace samples {
         SamplePluginDraw() = default;
         ~SamplePluginDraw() = default;
 
-        const char* name() override 
-        { 
-            return "render_test"; 
-        }
+        const char* name() override { return "sample_draw_plugin"; }
 
         void onInit() override 
         {
             spdlog::info("Init sample plugin draw");
-            auto& renderer = application()->renderer();
-            
-            engine::WidgetManager::inst().init(renderer);
-            engine::WidgetManager::inst().create_label(entt::null, "label");
+
+            //auto& renderer = application()->renderer();
+            //engine::WidgetManager::inst().init(renderer);
+            //engine::WidgetManager::inst().create_label(entt::null, "label");
         }
 
         void onInstall() override 
-        {
-            spdlog::info("install sample plugin draw");   
+        {  
         }
 
         void onUninstall() override 
         {
-            spdlog::info("uninstall sample plugin draw");   
+        }
+
+        void onEnable() override
+        {
+        }
+
+        void onDisable() override
+        {
         }
 
         void onUpdate() override 
         {
-            //spdlog::info("Update sample render");
         }
 
         void onDraw() override 

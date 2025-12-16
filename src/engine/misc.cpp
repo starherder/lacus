@@ -1,50 +1,49 @@
 #include "misc.h"
-#include <winscard.h>
 
 
 namespace engine {
 
 
-void FpsChecker::init(int fixed_fps) 
+void FpsChecker::init(int fixed_fps)
 {
     if(fixed_fps > 0) {
-        _fixed_fps = fixed_fps;
+        _fixedFps = fixed_fps;
     }
 
-    _frame_ticks = (uint64_t)(1000.0f / _fixed_fps);
-    _last_ticks = SDL_GetTicks();
-    _last_second = _last_ticks / 1000;
+    _frameTicks = (uint64_t)(1000.0f / _fixedFps);
+    _lastTicks = SDL_GetTicks();
+    _lastSecond = _lastTicks / 1000;
 }
 
-bool FpsChecker::check() 
+bool FpsChecker::check()
 {
     uint64_t current_ticks = SDL_GetTicks();
-    if (current_ticks - _last_ticks < _frame_ticks)
+    if (current_ticks - _lastTicks < _frameTicks)
     {
         return false;
     }
 
-    _delta_time = (current_ticks - _last_ticks) / 1000.0f;
-    _last_ticks = current_ticks;
-    
-    _cur_fps = int(1.0f /_delta_time);
+    _deltaTime = (current_ticks - _lastTicks) / 1000.0f;
+    _lastTicks = current_ticks;
+
+    _curFps = int(1.0f /_deltaTime);
 
     int cur_second = current_ticks / 1000;
 
-    if(cur_second != _last_second)
+    if(cur_second != _lastSecond)
     {
         int total = 0;
-        int count = (int)_cur_second_fps.size();
-        for(auto& fps : _cur_second_fps) { total += fps;}
+        int count = (int)_curSecondFps.size();
+        for(auto& fps : _curSecondFps) { total += fps;}
 
-        _avg_fps = (count==0) ? 0 : (total / count);
+        _avgFps = (count==0) ? 0 : (total / count);
 
-        _cur_second_fps.clear();
-        _last_second = cur_second;
+        _curSecondFps.clear();
+        _lastSecond = cur_second;
     }
     else
     {
-        _cur_second_fps.push_back(_cur_fps);
+        _curSecondFps.push_back(_curFps);
     }
 
     return true;

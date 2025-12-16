@@ -1,28 +1,26 @@
-#include "im_form_demo.h"
+#include "imform_demo.h"
 
 #include "engine/application.h"
 #include "engine/audio.h"
 
 namespace imgui
 {
-	void ImFormDemo::draw()
+	void ImGuiFormDemo::draw()
 	{
 		ImGui::ShowDemoWindow(&_visible);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 
-	void ImFormAudio::init(engine::Application* app)
+	void ImGuiFormAudio::init()
 	{
- 		_application = app;
-
 		auto& audioMgr = _application->resourceManager().audioManager();
 		audioMgr.loadMusic("hero", "res/audio/hero_music.mp3");
 		audioMgr.loadMusic("win", "res/audio/level_win.mp3");
 		audioMgr.loadSound("bow", "res/audio/bow_attack.wav");
 	}
 
-	void ImFormAudio::draw()
+	void ImGuiFormAudio::draw()
 	{
 		ImGui::Begin("长风几万里");
 		{
@@ -43,7 +41,7 @@ namespace imgui
 	
 	////////////////////////////////////////////////////////////////////////////////////////////
 
-	void ImFormHUD::draw()
+	void ImGuiFormHUD::draw()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiWindowFlags window_flags = 
@@ -78,8 +76,8 @@ namespace imgui
 			ImGui::Separator();
 			
 			ImGui::Text("fps: %d", 	 fpsChecker.fps());
-			ImGui::Text("avg_fps: %d", fpsChecker.avg_fps());
-			ImGui::Text("fix_fps: %d", fpsChecker.fixed_fps());
+			ImGui::Text("avg_fps: %d", fpsChecker.avgFps());
+			ImGui::Text("fix_fps: %d", fpsChecker.fixedFps());
 
 			if (ImGui::BeginPopupContextWindow())
 			{
@@ -92,5 +90,7 @@ namespace imgui
 		ImGui::End();
 	}
 }
+
+
 
 

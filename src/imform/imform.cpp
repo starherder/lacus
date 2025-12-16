@@ -1,39 +1,39 @@
-#include "im_form.h"
+#include "imform.h"
 
 namespace imgui
 {
-	ImForm::ImForm()
+	ImGuiForm::ImGuiForm()
 	{
 		_visible = false;
 		_pending_destroy = false;
 	}
 
-	ImForm::~ImForm()
+	ImGuiForm::~ImGuiForm()
 	{
 
 	}
 	
-	bool ImForm::getPendingDestroy()
+	bool ImGuiForm::getPendingDestroy()
 	{
 		return _pending_destroy;
 	}
 
-	bool ImForm::getVisible()
+	bool ImGuiForm::getVisible()
 	{
 		return _visible;
 	}
 
-	void ImForm::setName(const std::string& name)
+	void ImGuiForm::setName(const std::string& name)
 	{
 		_name = name;
 	}
 
-	std::string ImForm::getName()
+	std::string ImGuiForm::getName()
 	{
 		return _name;
 	}
 
-	void ImForm::show(bool visible)
+	void ImGuiForm::show(bool visible)
 	{
 		_visible = visible;
 
@@ -43,17 +43,17 @@ namespace imgui
 		}
 	}
 
-	void ImForm::close()
+	void ImGuiForm::close()
 	{
 		_visible = false;
 		_pending_destroy = true;
 	}
 
-	void ImForm::onShow() 
+	void ImGuiForm::onShow() 
 	{
 	}
 
-	void ImForm::drawForm()
+	void ImGuiForm::drawForm()
 	{
 		if (_visible)
 		{
