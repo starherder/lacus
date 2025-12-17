@@ -76,7 +76,7 @@ namespace samples {
             auto& renderer = application()->renderer();
             auto& resourceMgr = application()->resourceManager();
             {
-                auto tex = resourceMgr.textureManager().get("test_1", "res/textures/Buildings/house3.png");
+                auto tex = resourceMgr.textureManager().get("test_1", "textures/Buildings/house3.png");
                 if(tex)
                 {
                     auto tex_sz = tex->size();
@@ -90,14 +90,14 @@ namespace samples {
             auto& renderer = application()->renderer();
             auto& resourceMgr = application()->resourceManager();
             {
-                auto font = resourceMgr.fontManager().get("vonwaon", 30, "res/fonts/VonwaonBitmap-16px.ttf");
+                auto font = resourceMgr.fontManager().get("vonwaon", 30, "fonts/VonwaonBitmap-16px.ttf");
                 if(font)
                 {
                     renderer.drawText("WTF! 妙~", font, {300, 300}, {255, 100, 0, 255});
                 }
             }
             {
-                auto font = resourceMgr.fontManager().get("msyh", 20, "res/fonts/msyh.ttf");
+                auto font = resourceMgr.fontManager().get("msyh", 20, "fonts/msyh.ttf");
                 if(font)
                 {
                     renderer.drawText("就是这个feel，倍er爽~", font, {300, 350}, {255, 200, 0, 255});

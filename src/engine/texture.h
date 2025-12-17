@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wrapper.h"
-
+#include "misc.h"
 
 struct SDL_Texture;
 
@@ -29,7 +29,7 @@ private:
 
 
 // 材质管理器
-class TextureManager 
+class TextureManager : public IResManager
 {
     using TexturePtr = std::unique_ptr<Texture>;
     using TextureMap = std::unordered_map<std::string, TexturePtr>;

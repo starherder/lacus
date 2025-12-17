@@ -9,6 +9,17 @@
 namespace engine
 {
 
+class IResManager 
+{
+public:
+    const fs::path& resPath() const { return _resPath; }
+    virtual void setResPath(const fs::path& path) { _resPath = path; }
+
+private:
+    fs::path _resPath;
+};
+
+
 struct FpsChecker
 {
 public:

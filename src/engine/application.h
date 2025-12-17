@@ -49,7 +49,7 @@ public:
     const FpsChecker& fpsChecker() { return _fps_checker; }
 
     fs::path runPath();
-    fs::path resPath();
+    const fs::path& resPath();
 
 private:
     bool init();
@@ -86,7 +86,7 @@ private:
 
     FpsChecker _fps_checker;
     
-    fs::path _res_path;
+    fs::path _resPath;
 
     bool _running = true;
 };

@@ -29,6 +29,9 @@ using FColor = SDL_FColor;
 using Rect = SDL_Rect;
 using FRect = SDL_FRect;
 
+using Vertex = SDL_Vertex;
+
+
 using Vec2 = glm::fvec2;
 using Vec2f = glm::fvec2;
 using Vec3f = glm::fvec3;

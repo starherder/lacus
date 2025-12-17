@@ -59,7 +59,7 @@ namespace engine {
             return it->second.get();
         }
 
-        auto path = fs::current_path() / filepath;
+        auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
             spdlog::error("texture {}, path({}) NOT exist.", name, filepath);

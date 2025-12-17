@@ -1,5 +1,6 @@
 #pragma once
 
+#include "misc.h"
 #include "wrapper.h"
 
 
@@ -42,7 +43,7 @@ private:
 
 
 // 字体管理器
-class FontManager 
+class FontManager final : public IResManager
 {
     using FontPtr = std::unique_ptr<Font>;
     using FontMap = std::unordered_map<FontKey, FontPtr, FontKeyHash>;

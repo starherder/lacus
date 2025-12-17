@@ -7,6 +7,7 @@
 #include "sample_plugin_imgui.h"
 #include "sample_plugin_tweeny.h"
 #include "sample_plugin_astar.h"
+#include "sample_plugin_tilemap.h"
 
 
 
@@ -72,6 +73,11 @@ namespace samples {
         if (ImGui::MenuItem("pathfind", nullptr, &astar_trigger))
         {
             SamplePluginManager::inst().setPluginEnable("sample_astar_plugin", astar_trigger);
+        }
+        static bool tilemap_trigger = false;
+        if (ImGui::MenuItem("tilemap", nullptr, &tilemap_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_tilemap_plugin", tilemap_trigger);
         }
     }
 
@@ -149,6 +155,9 @@ namespace samples {
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginAstar>();
+        plugin->setEnable(false);
+
+        plugin = addNormalPlugin<SamplePluginTileMap>();
         plugin->setEnable(false);
     }
 

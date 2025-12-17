@@ -21,9 +21,9 @@ fs::path Application::runPath()
     return PathUtils::get_executable_path(); 
 }
 
-fs::path Application::resPath() 
+const fs::path& Application::resPath() 
 { 
-    return _res_path; 
+    return _resPath; 
 }
 
 Plugin* Application::getPlugin(const std::string& name)
@@ -126,7 +126,9 @@ bool Application::initConfig()
         return false;
     }
 
-    _res_path = _config.res.path;
+    _resPath = _config.res.path;
+
+    _resourceMgr->setResPath(_resPath);
     return true;
 }
 

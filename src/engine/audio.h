@@ -1,5 +1,6 @@
 #pragma once
 
+#include "misc.h"
 #include "wrapper.h"
 
 struct Mix_Chunk;
@@ -40,7 +41,7 @@ private:
 
 
 // 音频管理器
-class AudioManager 
+class AudioManager final : public IResManager
 {
     using SoundPtr = std::unique_ptr<Sound>;
     using SoundMap = std::unordered_map<std::string, SoundPtr>;

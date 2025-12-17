@@ -24,6 +24,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(SDL3_PATH "${CMAKE_SOURCE_DIR}/ext/SDL3/")
 set(SPDLOG_PATH "${CMAKE_SOURCE_DIR}/ext/spdlog/")
 set(IMGUI_PATH "${CMAKE_SOURCE_DIR}/ext/imgui")
+set(TMXLITE_PATH "${CMAKE_SOURCE_DIR}/ext/tmxlite")
 set(EXT_PATH "${CMAKE_SOURCE_DIR}/ext/")
 
 
@@ -32,6 +33,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/src"
     "${SDL3_PATH}/include"
     "${SPDLOG_PATH}/include"
+    "${TMXLITE_PATH}/include"
     "${IMGUI_PATH}"
     "${EXT_PATH}"
 )
@@ -45,6 +47,7 @@ if(WIN32)
     endif()
     link_directories("${SDL3_PATH}/libs")
     link_directories("${SPDLOG_PATH}/libs")
+    link_directories("${TMXLITE_PATH}/libs")
 endif()
 
 # 引用的imgui文件
@@ -77,6 +80,7 @@ if(WIN32 AND MINGW)
         SDL3_mixer-static
         SDL3_ttf-static
         SDL_uclibc
+        libtmxlite-static
         winmm
         setupapi
         imm32
@@ -94,6 +98,7 @@ else()
         SDL3_mixer-static
         SDL3_ttf-static
         SDL_uclibc
+        libtmxlite-static
         winmm
         setupapi
         imm32
@@ -102,6 +107,3 @@ else()
         Usp10
     )
 endif()
-
-
-# 对于GCC，我们不需要复制DLL，因为我们使用的是静态库

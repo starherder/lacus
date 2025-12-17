@@ -1,6 +1,7 @@
 #pragma once
 
 #include "font.h"
+#include "misc.h"
 #include "wrapper.h"
 
 namespace engine {
@@ -10,13 +11,15 @@ namespace engine {
     class FontManager;
     class AudioManager;
 
-    class ResourceManager final
+    class ResourceManager final : public IResManager
     {
     public:
         ResourceManager() = delete;
         ResourceManager(Application& app);
         ~ResourceManager();
     
+        void setResPath(const fs::path& path) override;
+
         TextureManager& textureManager() { return *_textureManager; }
 
         FontManager& fontManager() { return *_fontManager;}
@@ -24,6 +27,7 @@ namespace engine {
         AudioManager& audioManager() { return *_audioManager; }
 
     private:
+
         std::unique_ptr<TextureManager> _textureManager = nullptr;
         std::unique_ptr<FontManager> _fontManager = nullptr;
         std::unique_ptr<AudioManager> _audioManager = nullptr;

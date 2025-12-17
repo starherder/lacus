@@ -29,6 +29,11 @@ Lacus是一个基于C++20和SDL3的游戏引擎框架。
 3. 编译项目：
    ```bash
    cmake --build build
+	```
+
+4. 生成vsisual studio项目文件
+	```
+	cmake .. -G "Visual Studio 17 2022" -A x64
    ```
    
 ### VSCode一键构建运行

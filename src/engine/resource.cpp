@@ -1,5 +1,6 @@
 #include "resource.h"
 #include "application.h"
+#include "misc.h"
 #include "texture.h"   
 #include "font.h"
 #include "audio.h"
@@ -18,5 +19,13 @@ namespace engine {
     {
     }
 
+    void ResourceManager::setResPath(const fs::path& path)
+    {
+        IResManager::setResPath(path);
+
+        _textureManager->setResPath(path);
+        _fontManager->setResPath(path);
+        _audioManager->setResPath(path);
+    }
 
 }

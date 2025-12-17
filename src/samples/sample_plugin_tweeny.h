@@ -10,7 +10,6 @@ namespace samples {
 
     enum EaseMode {Once, Loop, Yoyo};
 
-    // ´°¿Ú
     class ImFormTweenForm : public imgui::ImForm
 	{
     public:
@@ -39,7 +38,6 @@ namespace samples {
 
 
 
-    // ²âÊÔtween¿â
     class SamplePluginTweeny final : public engine::Plugin, 
                                      public utility::sigslot::SlotHandler
     {

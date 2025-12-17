@@ -117,7 +117,6 @@ namespace AStar
         }
 
         void setHeuristic(HeuristicFunction heuristic_) {
-            //heuristic = std::bind(heuristic_, _1, _2);
             heuristic = heuristic_;
         }
 
