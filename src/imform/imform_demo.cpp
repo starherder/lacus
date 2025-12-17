@@ -15,9 +15,9 @@ namespace imgui
 	void ImGuiFormAudio::init()
 	{
 		auto& audioMgr = _application->resourceManager().audioManager();
-		audioMgr.loadMusic("hero", "res/audio/hero_music.mp3");
-		audioMgr.loadMusic("win", "res/audio/level_win.mp3");
-		audioMgr.loadSound("bow", "res/audio/bow_attack.wav");
+		audioMgr.loadMusic("hero", "audio/hero_music.mp3");
+		audioMgr.loadMusic("win", "audio/level_win.mp3");
+		audioMgr.loadSound("bow", "audio/bow_attack.wav");
 	}
 
 	void ImGuiFormAudio::draw()

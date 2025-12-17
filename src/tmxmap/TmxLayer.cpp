@@ -24,7 +24,7 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
     
     const auto& layer = layers[layerIndex]->getLayerAs<tmx::TileLayer>();
     const auto mapSize = map.getTileCount();
-    const auto mapTileSize = map.getTileSize();
+    const auto tileSize = map.getTileSize();
     const auto& tileSets = map.getTilesets();
 
     if (tileSets.size() != textures.size())
@@ -41,8 +41,10 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
         tintColour.b,
         tintColour.a
     };
-
     auto vertColour = engine::ColorUtils::to_fcolor(iColour);
+
+    spdlog::info("map_size = ({},{}), title_size = ({}, {}), color = ({},{},{},{})", 
+        mapSize.x, mapSize.y, tileSize.x, tileSize.y, vertColour.r, vertColour.g, vertColour.b, vertColour.a);
 
     for (auto i = 0u; i < tileSets.size(); ++i)
     {
@@ -50,12 +52,18 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
         const auto& ts = tileSets[i];
         const auto& tileIDs = layer.getTiles();
 
-        const auto texSize = textures[i]->size();
-        const auto tileCountX = (int)(texSize.x / mapTileSize.x);
-        const auto tileCountY = (int)(texSize.y / mapTileSize.y);
+        float margin = ts.getMargin();
+        float space = ts.getSpacing();
 
-        const float uNorm = static_cast<float>(mapTileSize.x) / texSize.x;
-        const float vNorm = static_cast<float>(mapTileSize.y) / texSize.y;
+        const auto& textTileSize = ts.getTileSize();
+        const auto textSize = ts.getImageSize();
+        auto textTileColumn = ts.getColumnCount();
+
+        const float uNorm = (float)(textTileSize.x) / textSize.x;
+        const float vNorm = (float)(textTileSize.y) / textSize.y;
+
+        spdlog::info("texture_size = ({}, {}), text_column_count = ({}), uv=({}, {}), space={}, margin={}", 
+            textSize.x, textSize.y, textTileColumn, uNorm, vNorm, space, margin);
 
         std::vector<engine::Vertex> verts;
         for (auto y = 0u; y < mapSize.y; ++y)
@@ -69,32 +77,34 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
                     //tex coords
                     auto idIndex = (tileIDs[idx].ID - ts.getFirstGID());
 
-                    float u = static_cast<float>(idIndex % tileCountX);
-                    float v = static_cast<float>(idIndex / tileCountX);
-                    u *= mapTileSize.x; //TODO we should be using the tile set size, as this may be different from the map's grid size
-                    v *= mapTileSize.y;
+                    float u = (float)(idIndex % textTileColumn);
+                    float v = (float)(idIndex / textTileColumn);
 
-                    //normalise the UV
-                    u /= textures[i]->size().x;
-                    v /= textures[i]->size().y;
+                    //u = (u * (textTileSize.x + space) + margin ) / (float)textSize.x;
+                    //v = (v * (textTileSize.y + space) + margin ) / (float)textSize.y;
+                    
+                    u = (u * (textTileSize.x + space) + margin ) / textSize.x;
+                    v = (v * (textTileSize.y + space) + margin ) / textSize.y;
 
                     //vert pos
-                    const float tilePosX = static_cast<float>(x) * mapTileSize.x;
-                    const float tilePosY = (static_cast<float>(y) * mapTileSize.y);
+                    const float tilePosX = (float)(x) * tileSize.x;
+                    const float tilePosY = (float)(y) * tileSize.y;
+
+                    spdlog::info("tile: id ({}), pos({},{}), size({},{})", idIndex, tilePosX, tilePosY, tileSize.x, tileSize.y);
 
                     //push back to vert array
                     engine::Vertex vert = { { tilePosX, tilePosY }, vertColour, {u, v} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX + mapTileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
+                    vert = { { tilePosX + tileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX, tilePosY + mapTileSize.y}, vertColour, {u, v + vNorm} };
+                    vert = { { tilePosX, tilePosY + tileSize.y}, vertColour, {u, v + vNorm} };
                     verts.emplace_back(vert);
                     
-                    vert = { { tilePosX, tilePosY +mapTileSize.y}, vertColour, {u, v + vNorm} };
+                    vert = { { tilePosX, tilePosY + tileSize.y}, vertColour, {u, v + vNorm} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX + mapTileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
+                    vert = { { tilePosX + tileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX + mapTileSize.x, tilePosY + mapTileSize.y }, vertColour, {u + uNorm, v + vNorm} };
+                    vert = { { tilePosX + tileSize.x, tilePosY + tileSize.y }, vertColour, {u + uNorm, v + vNorm} };
                     verts.emplace_back(vert);
                 }
             }
@@ -112,12 +122,24 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
     return true;
 }
 
+void MapLayer::setPos(const engine::Vec2f& pos)
+{
+    for (auto& grid : m_subsets)
+    {
+        for (auto& vertex : grid.vertexData)
+        {
+            auto& point = vertex.position;
+            point.x += pos.x;
+            point.y += pos.y;
+        }
+    }
+}
+
 void MapLayer::draw(engine::Renderer* renderer)
 {
     assert(renderer);
     for (const auto& s : m_subsets)
     {
-       // SDL_RenderGeometry(renderer, s.texture, s.vertexData.data(), static_cast<std::int32_t>(s.vertexData.size()), nullptr, 0);
         renderer->drawGeometry(s.texture, s.vertexData.data(), static_cast<std::int32_t>(s.vertexData.size()), nullptr, 0);
     }
 }

@@ -3,8 +3,7 @@
 #include "TmxTexture.h"
 #include "TmxLayer.h"
 
-#include <memory.h>
-#include <vector>
+#include "engine/wrapper.h"
 
 namespace engine {
     class Application;
@@ -24,6 +23,8 @@ namespace tmx {
         ~TmxMapDemo();
 
         bool load(const std::string& mapfile);
+
+        void setPos(const engine::Vec2f& pos);
 
         void draw();
 

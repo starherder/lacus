@@ -71,8 +71,9 @@ public:
                            float scale, const SDL_FRect* dstrect) const;
     
     // 几何渲染
-     bool drawGeometry(Texture* texture, const SDL_Vertex* vertices, int num_vertices, 
+     bool drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
                         const int* indices, int num_indices) const;
+
     bool drawGeometryRaw(Texture* texture,  const float* xy, int xy_stride,
                         const FColor* color, int color_stride, const float* uv, int uv_stride,
                         int num_vertices, const void* indices, int num_indices, int size_indices) const;

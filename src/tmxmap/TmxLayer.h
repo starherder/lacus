@@ -19,6 +19,8 @@ public:
     explicit MapLayer();
 
     bool create(const tmx::Map&, std::uint32_t index, const std::vector<engine::Texture*>& textures);
+    
+    void setPos(const engine::Vec2f& pos);
 
     void draw(engine::Renderer*);
 

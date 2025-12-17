@@ -30,7 +30,7 @@ namespace tmx {
 
         auto currentPath = fs::current_path();
 
-        // 设置当前路径
+        // Tmxlite模块里使用当前路径来读取文件的，所以要设置当前路径
         fs::current_path(mapPath);
 
         spdlog::info("resPath = {}, mapFilePath = {}, mapPath = {}, maprelatePath = {}", 
@@ -75,6 +75,14 @@ namespace tmx {
 
         spdlog::info("load map OK. textures.size = {}, layer.size = {}", _textures.size(), _layers.size());
         return true;
+    }
+
+    void TmxMapDemo::setPos(const engine::Vec2f& pos)
+    {
+        for (auto& layer : _layers)
+        {
+            layer->setPos(pos);
+        }
     }
 
     void TmxMapDemo::draw()

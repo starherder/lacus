@@ -194,7 +194,7 @@ bool Renderer::drawTexture9Grid(Texture* texture, const FRect* srcrect,
     return SDL_RenderTexture9Grid(_renderer, texture->_texture, srcrect, left_width, right_width, top_height, bottom_height, scale, dstrect);
 }
 
-bool Renderer::drawGeometry(Texture* texture, const SDL_Vertex* vertices, int num_vertices, 
+bool Renderer::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
                              const int* indices, int num_indices) const {
     if(!texture) {
         return false;
