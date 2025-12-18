@@ -1,7 +1,7 @@
 #include "sample_plugin_tilemap.h"
 #include "magic_enum/magic_enum.h"
+#include "tmxmap/tmx_map_loader.h"
 
-#include "tmxmap/TmxMapDemo.h"
 #include "engine/texture.h"
 #include "engine/render.h"
 
@@ -10,8 +10,8 @@ namespace samples {
 
     void SamplePluginTileMap::onInit()
     {
-        _tmxMapDemo = std::make_unique<tmx::TmxMapDemo>(*application());
-        _tmxMapDemo->load("scenes/Medieval/test.tmx");
+        _tmxMapDemo = std::make_unique<tmx::TmxMapLoader>(*application());
+        _tmxMapDemo->load("scenes/Medieval/sea.tmx");
         _tmxMapDemo->setPos({ 50, 50 });
     }
 

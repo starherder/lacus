@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(Lacus VERSION 1.0.0 LANGUAGES CXX)
 
+# 生成编译数据库，用于clangd等工具
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # 使用C++17标准
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

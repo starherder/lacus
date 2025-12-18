@@ -3,7 +3,7 @@
 #include "engine/application.h"
 #include "imform/imform_manager.h"
 
-#include "tmxmap/TmxMapDemo.h"
+#include "tmxmap/tmx_map_loader.h"
 
 
 namespace samples {
@@ -37,6 +37,6 @@ namespace samples {
         void onClose() override;
 
     private:
-        std::unique_ptr<tmx::TmxMapDemo> _tmxMapDemo;
+        std::unique_ptr<tmx::TmxMapLoader> _tmxMapDemo;
     };
 }

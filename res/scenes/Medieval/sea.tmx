@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="100" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="wild.tsx"/>
+ <layer id="1" name="图块层 1" width="100" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1UEKg0AMQFFtoRfrKXvbLoobcaYoOInmLd5CFDrkk848TdMMAAAAAAAAcMCrI/ps1fRa6JKzhSbxPbbejzjT+/ETPZtsPUbux9JgLXo+lXq0GlRuo0curXm37pCoFnrk2o0qPVqzP7PHkRZ65NqNSj16Xc74HT1yWc9Yi3i9JlvPjO9iL/LQgiv6PP+LPmMVWzPXJb7Hvw6ajO2xV/S572rvfizfRZ/7ro78X+mhRyXuj1xad4QeeZroEU+LnDQAuLYv/xKLLA==
+  </data>
+ </layer>
+</map>
