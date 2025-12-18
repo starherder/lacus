@@ -6,7 +6,6 @@ vscode + vs compiler+MinGW
 
 VSCode Plugins:  clangd, clangd-format, Cmake, Cmake Tools, CodeBuddy,
 
-
 #### 代码跳转
 
 注意vscode使用clangd插件来实现定义跳转时，只能在本目录文件之间跳转。
@@ -24,7 +23,6 @@ mkdir build & cd build & cmake ..
 ```
 
 接着可以通过选择工具包换回visualstudio的编译器
-
 
 ## 外部库
 
@@ -74,3 +72,9 @@ mkdir build & cd build & cmake ..
 ### 12.16
 
 - 测试tweeny、a-star库使用
+
+### 12.17 测试TileEditor地图载入
+
+- TileEditor的使用
+- tmxlite 库的引入
+- 测试并修改tmxlite的载入例子

@@ -51,7 +51,7 @@ namespace tmx {
         for (const auto& ts : tileSets)
         {
             auto imagePath = mapRelatePath / ts.getImagePath();
-            auto texture = textureMgr.load(ts.getName(), imagePath.string());
+            auto texture = textureMgr.load(HashString(imagePath.string().c_str()));
             if(!texture)
             {
                 spdlog::error("load tileset(name = {}, path = {}) failed. image_path = {}", ts.getName(), ts.getImagePath(), imagePath.string());

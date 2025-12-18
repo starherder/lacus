@@ -20,34 +20,5 @@ namespace imgui
 		void draw() override;
 	};
 
-	class ImGuiFormAudio : public ImForm
-	{
-	public:
-		ImGuiFormAudio() = delete;
-		ImGuiFormAudio(engine::Application* app) : _application(app){}
-		~ImGuiFormAudio() = default;
-
-	protected:
-		void init();
-		void draw() override;
-
-	private:
-		engine::Application* _application = nullptr;
-	};
-
-	class ImGuiFormHUD : public ImForm
-	{
-	public:
-		ImGuiFormHUD() = default;
-		ImGuiFormHUD(engine::Application* app) : _application(app) {}
-		~ImGuiFormHUD() = default;
-
-	protected:
-		void draw() override;
-
-	private:
-		engine::Application* _application = nullptr;
-	};
-
 	
 }

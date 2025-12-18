@@ -121,7 +121,7 @@ namespace samples {
             if (!_texture)
             {
                 auto& textureMgr = application()->resourceManager().textureManager();
-                _texture = textureMgr.get("test");
+                _texture = textureMgr.get("textures/UI/frame.png"_hs);
                 initGeometry();
                 return;
             }
@@ -135,7 +135,7 @@ namespace samples {
             auto& renderer = application()->renderer();
             auto& textureMgr = application()->resourceManager().textureManager();
             {
-                auto tex = textureMgr.get("test_1", "textures/Buildings/house3.png");
+                auto tex = textureMgr.get("textures/Buildings/house3.png"_hs);
                 if(tex)
                 {
                     auto tex_sz = tex->size();
@@ -149,9 +149,6 @@ namespace samples {
                     renderer.drawTexture(tex2, { 0, 0, tex_sz.x, tex_sz.y }, { 50, 300, tex_sz.x,tex_sz.y });
                 }*/
             }
-
-
-            auto tex2 = textureMgr.get("test");
         }
 
         void drawText()
@@ -159,14 +156,14 @@ namespace samples {
             auto& renderer = application()->renderer();
             auto& resourceMgr = application()->resourceManager();
             {
-                auto font = resourceMgr.fontManager().get("vonwaon", 30, "fonts/VonwaonBitmap-16px.ttf");
+                auto font = resourceMgr.fontManager().get("fonts/VonwaonBitmap-16px.ttf"_hs, 30);
                 if(font)
                 {
                     renderer.drawText("WTF! 妙~", font, {800, 100}, {255, 100, 0, 255});
                 }
             }
             {
-                auto font = resourceMgr.fontManager().get("msyh", 20, "fonts/msyh.ttf");
+                auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 20);
                 if(font)
                 {
                     renderer.drawText("就是这个feel，倍er爽~", font, {800, 200}, {255, 200, 0, 255});

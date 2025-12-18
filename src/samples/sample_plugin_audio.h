@@ -2,9 +2,25 @@
 
 #include "engine/application.h"
 #include "imform/imform_manager.h"
-#include "imform/imform_demo.h"
+#include "imform/imform.h"
 
 namespace samples {
+
+	class ImGuiFormAudio : public imgui::ImForm
+	{
+	public:
+		ImGuiFormAudio() = delete;
+		ImGuiFormAudio(engine::Application* app) : _application(app){}
+		~ImGuiFormAudio() = default;
+
+	protected:
+		void init();
+		void draw() override;
+
+	private:
+		engine::Application* _application = nullptr;
+	};
+
 
     class SamplePluginAudio final : public engine::Plugin 
     {
@@ -14,42 +30,21 @@ namespace samples {
 
         const char* name() override { return "sample_audio_plugin"; }
 
-        void onInit() override 
-        {
-            spdlog::info("Init sample plugin audio");
-        
-        }
+        void onInit() override ;
 
-        void onInstall() override 
-        {
-        }
+        void onInstall() override ;
 
-        void onUninstall() override 
-        {
-        }
+        void onUninstall() override ;
 
-        void onEnable() override
-        {
-            imgui::ImFormManager::inst().showForm<imgui::ImGuiFormAudio>("ImGuiFormAudio", application());
-        }
+        void onEnable() override;
 
-        void onDisable() override
-        {
-            imgui::ImFormManager::inst().closeForm("ImGuiFormAudio");
-        }
+        void onDisable() override;
 
-        void onUpdate() override 
-        {
-        }
+        void onUpdate() override ;
 
-        void onDraw() override 
-        {
-        }
+        void onDraw() override ;
 
-        void onClose() override 
-        {
-            spdlog::info("Release sample plugin draw");
-        }
+        void onClose() override ;
 
     };
 }

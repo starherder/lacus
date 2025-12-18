@@ -5,9 +5,8 @@
 namespace engine {
 
     
-    Sound::Sound(const std::string& name, Mix_Chunk* chunk)
+    Sound::Sound(Mix_Chunk* chunk)
     {
-        _name = name;
         _chunk = chunk;
     }
 
@@ -19,9 +18,8 @@ namespace engine {
         }
     }
 
-    Music::Music(const std::string& name, Mix_Music* music)
+    Music::Music(Mix_Music* music)
     {
-        _name = name;
         _music = music;
     }
 
@@ -45,18 +43,18 @@ namespace engine {
         Mix_Quit();
     }
 
-    Sound* AudioManager::loadSound(const std::string& name, const std::string& filepath)
+    Sound* AudioManager::loadSound(IdType id, const std::string_view& filepath)
     {
-        auto it = _sounds.find(name);
+        auto it = _sounds.find(id);
         if (it != _sounds.end()) {
-            spdlog::warn("sound {} already loaded", name);
+            spdlog::warn("sound {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            spdlog::error("sound {}, path({}) NOT exist.", name, filepath);
+            spdlog::error("sound {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
@@ -66,13 +64,13 @@ namespace engine {
             return nullptr;
         }
 
-        auto [iter, res] = _sounds.insert({name, std::make_unique<Sound>(name, chunk)});
+        auto [iter, res] = _sounds.insert({id, std::make_unique<Sound>(chunk)});
         return res ? iter->second.get() : nullptr;
     }
 
-    Sound* AudioManager::getSound(const std::string& name, const std::string& filepath)
+    Sound* AudioManager::getSound(IdType id, const std::string_view& filepath)
     {
-        auto it = _sounds.find(name);
+        auto it = _sounds.find(id);
         if (it != _sounds.end()) 
         {
             return it->second.get();
@@ -80,15 +78,30 @@ namespace engine {
 
         if(!filepath.empty())
         {
-            return loadSound(name, filepath);
+            return loadSound(id, filepath);
         }
 
         return nullptr;
     }
 
-    void AudioManager::unloadSound(const std::string& name, int size)
+    void AudioManager::unloadSound(IdType id)
     {
-        _sounds.erase(name);
+        _sounds.erase(id);
+    }
+
+    Sound* AudioManager::loadSound(const HashString& file)
+    {
+        return loadSound(file.value(), file.data());
+    }
+
+    Sound* AudioManager::getSound(const HashString& file)
+    {
+        return getSound(file.value(), file.data());
+    }
+
+    void AudioManager::unloadSound(const HashString& file)
+    {
+        unloadSound(file.value());
     }
 
     void AudioManager::clearSounds()
@@ -96,18 +109,18 @@ namespace engine {
         _sounds.clear();
     }
 
-    Music* AudioManager::loadMusic(const std::string& name, const std::string& filepath)
+    Music* AudioManager::loadMusic(IdType id, const std::string_view& filepath)
     {
-        auto it = _musics.find(name);
+        auto it = _musics.find(id);
         if (it != _musics.end()) {
-            spdlog::warn("music {} already loaded", name);
+            spdlog::warn("music {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            spdlog::error("music {}, path({}) NOT exist.", name, filepath);
+            spdlog::error("music {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
@@ -117,13 +130,13 @@ namespace engine {
             return nullptr;
         }
 
-        auto [iter, res] = _musics.insert({name, std::make_unique<Music>(name, music)});
+        auto [iter, res] = _musics.insert({id, std::make_unique<Music>(music)});
         return res ? iter->second.get() : nullptr;
     }
 
-    Music* AudioManager::getMusic(const std::string& name, const std::string& filepath)
+    Music* AudioManager::getMusic(IdType id, const std::string_view& filepath)
     {
-        auto it = _musics.find(name);
+        auto it = _musics.find(id);
         if (it != _musics.end()) 
         {
             return it->second.get();
@@ -131,15 +144,30 @@ namespace engine {
 
         if(!filepath.empty())
         {
-            return loadMusic(name, filepath);
+            return loadMusic(id, filepath);
         }
 
         return nullptr;
     }
 
-    void AudioManager::unloadMusic(const std::string& name, int size)
+    void AudioManager::unloadMusic(IdType id)
     {
-        _musics.erase(name);
+        _musics.erase(id);
+    }
+
+    Music* AudioManager::loadMusic(const HashString& file)
+    {
+        return loadMusic(file.value(), file.data());
+    }
+    
+    Music* AudioManager::getMusic(const HashString& file)
+    {
+        return getMusic(file.value(), file.data());
+    }
+
+    void AudioManager::unloadMusic(const HashString& file)
+    {
+        unloadMusic(file.value());
     }
 
     void AudioManager::clearMusics()

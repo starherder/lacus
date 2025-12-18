@@ -1,12 +1,26 @@
 #pragma once
 
 #include "engine/application.h"
+#include "imform/imform.h"
 #include "imform/imform_manager.h"
 #include "utility/i_singleton.h"
 
-
 namespace samples
 {
+    // HUB
+	class ImGuiFormHUD : public imgui::ImForm
+	{
+	public:
+		ImGuiFormHUD() = default;
+		ImGuiFormHUD(engine::Application* app) : _application(app) {}
+		~ImGuiFormHUD() = default;
+
+	protected:
+		void draw() override;
+
+	private:
+		engine::Application* _application = nullptr;
+	};
 
     // 主窗口
 	class ImFormMainFrame : public imgui::ImForm

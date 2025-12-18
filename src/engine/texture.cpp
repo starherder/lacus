@@ -10,14 +10,18 @@
 namespace engine {
 
 
-     Texture::Texture(const std::string& name, SDL_Texture* texture)
+     Texture::Texture(SDL_Texture* texture)
      {
-        _name = name;
         _texture = texture;
 
         // 载入纹理时，设置纹理缩放模式为最邻近插值
         if (!SDL_SetTextureScaleMode(_texture, SDL_SCALEMODE_NEAREST)) {
             spdlog::warn("set texture scale mode to nearest failed");
+        }
+        
+        if (!SDL_GetTextureSize(_texture, &_size.x, &_size.y)) 
+        {
+            spdlog::error("SDL_GetTextureSize failed.");
         }
      }
 
@@ -28,41 +32,24 @@ namespace engine {
         }
      }
 
-     Vec2f Texture::size() const
-     {
-        if (!_texture) 
-        {
-            return Vec2f{0,0};
-        }
-
-        Vec2f size;
-        if (!SDL_GetTextureSize(_texture, &size.x, &size.y)) 
-        {
-            spdlog::error("{}: SDL_GetTextureSize failed.", _name);
-            return Vec2f{0,0};
-        }
-
-        return size;
-     }
-
      // ===============================================================
 
      TextureManager::TextureManager(Renderer& renderer) : _renderer(renderer)
      {
      }
 
-    Texture* TextureManager::load(const std::string& name, const std::string& filepath)
+    Texture* TextureManager::load(IdType id, const std::string_view& filepath)
     {
-        auto it = _textures.find(name);
+        auto it = _textures.find(id);
         if (it != _textures.end()) {
-            spdlog::warn("Texture {} already loaded", name);
+            spdlog::warn("Texture {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            spdlog::error("texture {}, path({}) NOT exist.", name, filepath);
+            spdlog::error("texture {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
@@ -72,13 +59,13 @@ namespace engine {
             return nullptr;
         }
 
-        auto [iter, res] = _textures.insert({name, std::make_unique<Texture>(name, texture)});
+        auto [iter, res] = _textures.insert({id, std::make_unique<Texture>(texture)});
         return res ? iter->second.get() : nullptr;
     }
 
-    Texture* TextureManager::get(const std::string& name, const std::string& filepath)
+    Texture* TextureManager::get(IdType id, const std::string_view& filepath)
     {
-        auto it = _textures.find(name);
+        auto it = _textures.find(id);
         if (it != _textures.end()) 
         {
             return it->second.get();
@@ -86,22 +73,37 @@ namespace engine {
 
         if(!filepath.empty())
         {
-            return load(name, filepath);
+            return load(id, filepath);
         }
 
         return nullptr;
     }
 
-    void TextureManager::unload(const std::string& name)
+    void TextureManager::unload(IdType id)
     {
-        auto it = _textures.find(name);
+        auto it = _textures.find(id);
         if (it != _textures.end()) {
-            spdlog::info("Unloaded texture {}", name);
+            spdlog::info("Unload texture {}", id);
             _textures.erase(it);
         }
         else {
-            spdlog::warn("Texture {} not found", name);
+            spdlog::warn("Texture {} not found", id);
         }
+    }
+
+    Texture* TextureManager::load(const HashString& file)
+    {
+        return load(file.value(), file.data());
+    }
+
+    Texture* TextureManager::get(const HashString& file)
+    {
+        return get(file.value(), file.data());
+    }
+
+    void TextureManager::unload(const HashString& file)
+    {
+        unload(file.value());
     }
 
     void TextureManager::clear()

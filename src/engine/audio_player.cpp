@@ -46,12 +46,12 @@ namespace engine {
         return true;
     }
 
-    int AudioPlayer::playSound(const std::string& name, int channel)
+    int AudioPlayer::playSound(const HashString& name, int channel)
     {
         auto sound = _audioManager->getSound(name);
         if(!sound || !sound->_chunk)
         {
-            spdlog::error("sound {} NOT found", name);
+            spdlog::error("sound {} NOT found", name.data());
             return -1;
         }
 
@@ -59,7 +59,7 @@ namespace engine {
         int played_channel = Mix_PlayChannel(channel, chunk, 0);  
         if(played_channel == -1)
         {
-            spdlog::error("can NOT play sound {}", name);
+            spdlog::error("can NOT play sound {}", name.data());
         }
 
         return played_channel;
@@ -78,7 +78,7 @@ namespace engine {
         return static_cast<float>(Mix_Volume(channel, -1)) / static_cast<float>(MIX_MAX_VOLUME);
     }
 
-    bool AudioPlayer::playMusic(const std::string& name, int loops, int fade_in_ms)
+    bool AudioPlayer::playMusic(const HashString& name, int loops, int fade_in_ms)
     {
         if(name == _current_music)
         {
@@ -88,7 +88,7 @@ namespace engine {
         auto fmusic = _audioManager->getMusic(name);
         if(!fmusic || !fmusic->_music)
         {
-            spdlog::error("music {} NOT found.", name);
+            spdlog::error("music {} NOT found.", name.data());
             return false;
         }
 
@@ -104,7 +104,7 @@ namespace engine {
 
         if(!result)
         {
-            spdlog::error("playe music {} failed, err = {}", name, SDL_GetError());
+            spdlog::error("playe music {} failed, err = {}", name.data(), SDL_GetError());
         }
         else 
         {

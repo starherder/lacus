@@ -7,9 +7,9 @@
 namespace engine {
 
 
-     Font::Font(const std::string& name, int size, TTF_Font* font)
+     Font::Font(IdType id, int size, TTF_Font* font)
      {
-        _name = name;
+        _id = id;
         _size = size;
         _font = font;
      }
@@ -41,18 +41,18 @@ namespace engine {
         TTF_Quit();
      }
 
-    Font* FontManager::load(const std::string& name, int size, const std::string& filepath)
+    Font* FontManager::load(IdType id, int size, const std::string_view& filepath)
     {
-        auto it = _Fonts.find({name, size});
+        auto it = _Fonts.find({id, size});
         if (it != _Fonts.end()) {
-            spdlog::warn("Font {} already loaded", name);
+            spdlog::warn("Font {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            spdlog::error("Font {}, path({}) NOT exist.", name, filepath);
+            spdlog::error("Font {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
@@ -62,13 +62,18 @@ namespace engine {
             return nullptr;
         }
 
-        auto [iter, res] = _Fonts.insert({std::pair{name, size}, std::make_unique<Font>(name, size, font)});
+        auto [iter, res] = _Fonts.insert({std::pair{id, size}, std::make_unique<Font>(id, size, font)});
         return res ? iter->second.get() : nullptr;
     }
-
-    Font* FontManager::get(const std::string& name, int size, const std::string& filepath)
+    
+    Font* FontManager::load(const HashString& str, int size)
     {
-        auto it = _Fonts.find({name, size});
+        return load(str.value(), size, str.data());
+    }
+
+    Font* FontManager::get(IdType id, int size, const std::string_view& filepath)
+    {
+        auto it = _Fonts.find({id, size});
         if (it != _Fonts.end()) 
         {
             return it->second.get();
@@ -76,21 +81,26 @@ namespace engine {
 
         if(!filepath.empty())
         {
-            return load(name, size, filepath);
+            return load(id, size, filepath);
         }
 
         return nullptr;
     }
 
-    void FontManager::unload(const std::string& name, int size)
+    Font* FontManager::get(const HashString& str, int size)
     {
-        auto it = _Fonts.find({name, size});
+        return get(str.value(), size, str.data());
+    }
+
+    void FontManager::unload(const HashString& str, int size)
+    {
+        auto it = _Fonts.find({str.value(), size});
         if (it != _Fonts.end()) {
-            spdlog::info("Unloaded Font {}", name);
+            spdlog::info("Unloaded Font {}", str.data());
             _Fonts.erase(it);
         }
         else {
-            spdlog::warn("Font {} not found", name);
+            spdlog::warn("Font {} not found", str.data());
         }
     }
 

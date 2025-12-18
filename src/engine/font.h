@@ -9,12 +9,12 @@ struct TTF_Font;
 namespace engine {
 
 // 字体的key值是 name + size
-using FontKey = std::pair<std::string, int>;
+using FontKey = std::pair<IdType, int>;
 struct FontKeyHash {
     std::size_t operator()(const FontKey& key) const noexcept {
 
         // 采用C++20标准库的hash_combine实现思路
-        std::size_t h1 = std::hash<std::string>{}(key.first);
+        std::size_t h1 = std::hash<IdType>{}(key.first);
         std::size_t h2 = std::hash<int>{}(key.second);
 
         // 推荐的哈希合并方式，参考boost::hash_combine
@@ -30,14 +30,14 @@ class Font {
 public:
     Font() = delete;
     Font(const Font& other) = default;
-    Font(const std::string& name, int size, TTF_Font* font);
+    Font(IdType id, int size, TTF_Font* font);
     ~Font();
 
     int size() { return _size; }
 
 private:
     TTF_Font* _font = nullptr;
-    std::string _name;
+    IdType _id;
     int _size;
 };
 
@@ -54,10 +54,13 @@ public:
     FontManager(const FontManager&) = delete;
     ~FontManager();
 
-    Font* load(const std::string& name, int size, const std::string& filepath);
-    Font* get(const std::string& name, int size, const std::string& filepath="");
+    Font* load(IdType id, int pointSize, const std::string_view& filepath);
+    Font* load(const HashString& str, int pointSize);
 
-    void unload(const std::string& name, int size);
+    Font* get(IdType id, int pointSize, const std::string_view& filepath="");
+    Font* get(const HashString& str, int pointSize);
+
+    void unload(const HashString& name, int size);
     void clear();
 
 private:

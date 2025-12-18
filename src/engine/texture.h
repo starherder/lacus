@@ -17,14 +17,14 @@ class Texture {
 public:
     Texture() = delete;
     Texture(const Texture& other) = default;
-    Texture(const std::string& name, SDL_Texture* texture);
+    Texture(SDL_Texture* texture);
     ~Texture();
 
-    Vec2f size() const;
+    Vec2f size() const { return _size; }
 
 private:
     SDL_Texture* _texture = nullptr;
-    std::string _name;
+    Vec2f _size;
 };
 
 
@@ -32,7 +32,7 @@ private:
 class TextureManager : public IResManager
 {
     using TexturePtr = std::unique_ptr<Texture>;
-    using TextureMap = std::unordered_map<std::string, TexturePtr>;
+    using TextureMap = std::unordered_map<IdType, TexturePtr>;
 
 public:
     TextureManager() = delete;
@@ -41,10 +41,15 @@ public:
     TextureManager(const TextureManager&) = delete;
     ~TextureManager() = default;
 
-    Texture* load(const std::string& name, const std::string& filepath);
-    Texture* get(const std::string& name, const std::string& filepath="");
+    Texture* load(IdType id, const std::string_view& filepath);
+    Texture* load(const HashString& file);
 
-    void unload(const std::string& name);
+    Texture* get(IdType id, const std::string_view& filepath="");
+    Texture* get(const HashString& file);
+
+    void unload(IdType id);
+    void unload(const HashString& file);
+
     void clear();
 
 private:

@@ -16,12 +16,11 @@ class Sound
 public:
     Sound() = delete;
     Sound(const Sound& other) = default;
-    Sound(const std::string& name, Mix_Chunk* chunk);
+    Sound(Mix_Chunk* chunk);
     ~Sound();
 
 private:
     Mix_Chunk* _chunk = nullptr;
-    std::string _name;
 };
    
 // 音乐
@@ -31,12 +30,11 @@ class Music
 public:
     Music() = delete;
     Music(const Music& other) = default;
-    Music(const std::string& name, Mix_Music* music);
+    Music(Mix_Music* music);
     ~Music();
 
 private:
     Mix_Music* _music = nullptr;
-    std::string _name;
 };
 
 
@@ -44,10 +42,10 @@ private:
 class AudioManager final : public IResManager
 {
     using SoundPtr = std::unique_ptr<Sound>;
-    using SoundMap = std::unordered_map<std::string, SoundPtr>;
+    using SoundMap = std::unordered_map<IdType, SoundPtr>;
 
     using MusicPtr = std::unique_ptr<Music>;
-    using MusicMap = std::unordered_map<std::string, MusicPtr>;
+    using MusicMap = std::unordered_map<IdType, MusicPtr>;
 
 public:
     AudioManager();
@@ -55,22 +53,29 @@ public:
     AudioManager(const AudioManager&) = delete;
     ~AudioManager();
 
-    Sound* loadSound(const std::string& name, const std::string& filepath);
-    Sound* getSound(const std::string& name, const std::string& filepath="");
+    Sound* loadSound(IdType id, const std::string_view& filepath);
+    Sound* getSound(IdType id, const std::string_view& filepath="");
+    void unloadSound(IdType id);
 
-    void unloadSound(const std::string& name, int size);
+    Sound* loadSound(const HashString& file);
+    Sound* getSound(const HashString& file);
+    void unloadSound(const HashString& file);
+
     void clearSounds();
 
-    Music* loadMusic(const std::string& name, const std::string& filepath);
-    Music* getMusic(const std::string& name, const std::string& filepath="");
+    Music* loadMusic(IdType id, const std::string_view& filepath);
+    Music* getMusic(IdType id, const std::string_view& filepath="");
+    void unloadMusic(IdType id);
 
-    void unloadMusic(const std::string& name, int size);
+    Music* loadMusic(const HashString& file);
+    Music* getMusic(const HashString& file);
+    void unloadMusic(const HashString& file);
+
     void clearMusics();
 
 private:
     SoundMap _sounds;
     MusicMap _musics;
-
 };
 
 

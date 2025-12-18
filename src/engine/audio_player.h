@@ -19,11 +19,11 @@ namespace engine {
         bool init(AudioManager* audiomgr);
         bool close();
 
-        int playSound(const std::string& name, int channel = -1);
+        int playSound(const HashString& name, int channel = -1);
         void setSoundVolume(float volume, int channel = -1);
         float getSoundVolume(int channel = -1);
 
-        bool playMusic(const std::string& name, int loops = -1, int fade_in_ms = 0);
+        bool playMusic(const HashString& name, int loops = -1, int fade_in_ms = 0);
         void stopMusic(int fade_out_ms = 0);
 
         void pauseMusic();
@@ -34,7 +34,7 @@ namespace engine {
 
     private:
         AudioManager* _audioManager = nullptr;  
-        std::string _current_music;
+        HashString _current_music;
     };
 
 

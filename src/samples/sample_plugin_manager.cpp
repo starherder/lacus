@@ -3,7 +3,7 @@
 
 #include "sample_plugin_draw.h"
 #include "sample_plugin_audio.h"
-#include "sample_plugin_scene.h"
+#include "sample_plugin_entt.h"
 #include "sample_plugin_imgui.h"
 #include "sample_plugin_tweeny.h"
 #include "sample_plugin_astar.h"
@@ -14,6 +14,55 @@
 #include <memory>
 
 namespace samples {
+
+	void ImGuiFormHUD::draw()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuiWindowFlags window_flags = 
+			ImGuiWindowFlags_NoDecoration | 
+			ImGuiWindowFlags_AlwaysAutoResize | 
+			ImGuiWindowFlags_NoSavedSettings | 
+			ImGuiWindowFlags_NoFocusOnAppearing | 
+			ImGuiWindowFlags_NoNav;
+			
+		const float PAD = 10.0f;
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImVec2 work_pos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
+		ImVec2 work_size = viewport->WorkSize;
+
+		ImVec2 window_pos, window_pos_pivot;
+		window_pos.x = work_pos.x + PAD;
+		window_pos.y = (work_pos.y + work_size.y - PAD) ;
+		window_pos_pivot.x = 0.0f;
+		window_pos_pivot.y = 1.0f ;
+		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+		ImGui::SetNextWindowSize({200, 0});
+
+		window_flags |= ImGuiWindowFlags_NoMove;
+    	ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+
+		auto& fpsChecker = _application->fpsChecker();
+
+		static bool open = true;
+		if (ImGui::Begin("Example: Simple overlay", &open, window_flags))
+		{
+			ImGui::Text("render: ");
+			ImGui::Separator();
+			
+			ImGui::Text("fps: %d", 	 fpsChecker.fps());
+			ImGui::Text("avg_fps: %d", fpsChecker.avgFps());
+			ImGui::Text("fix_fps: %d", fpsChecker.fixedFps());
+
+			if (ImGui::BeginPopupContextWindow())
+			{
+				if (open && ImGui::MenuItem("Close")) {
+					open = false;
+				}
+				ImGui::EndPopup();
+			}
+		}
+		ImGui::End();
+	}
 
     void ImFormMainFrame::draw()
     {
@@ -59,10 +108,10 @@ namespace samples {
             SamplePluginManager::inst().setPluginEnable("sample_audio_plugin", audio_trigger);
         }
         
-        static bool scene_trigger = false;
-        if (ImGui::MenuItem("scene", nullptr, &scene_trigger)) 
+        static bool entt_trigger = false;
+        if (ImGui::MenuItem("entt", nullptr, &entt_trigger)) 
         {
-            SamplePluginManager::inst().setPluginEnable("sample_scene_plugin", scene_trigger);
+            SamplePluginManager::inst().setPluginEnable("sample_entt_plugin", entt_trigger);
         }
         static bool tweeny_trigger = false;
         if (ImGui::MenuItem("tweeny", nullptr, &tweeny_trigger)) 
@@ -101,7 +150,7 @@ namespace samples {
 
         imgui::ImFormManager::inst().showForm<ImFormMainFrame>("ImFormMainFrame");
 
-        imgui::ImFormManager::inst().showForm<imgui::ImGuiFormHUD>("ImGuiFormHUD", application());
+        imgui::ImFormManager::inst().showForm<ImGuiFormHUD>("ImGuiFormHUD", application());
     }
 
     void SamplePluginMain::onClose()
@@ -148,7 +197,7 @@ namespace samples {
         plugin = addNormalPlugin<SamplePluginAudio>();
         plugin->setEnable(false);
 
-        plugin = addNormalPlugin<SamplePluginScene>();
+        plugin = addNormalPlugin<SamplePluginEntt>();
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginTweeny>();
