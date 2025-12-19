@@ -46,15 +46,15 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
     for (auto i = 0u; i < tileSets.size(); ++i)
     {
         //check tile ID to see if it falls within the current tile set
-        const auto& ts = tileSets[i];
+        const auto& tileset = tileSets[i];
         const auto& tileIDs = layer.getTiles();
 
-        float margin = ts.getMargin();
-        float space = ts.getSpacing();
+        float margin = tileset.getMargin();
+        float space = tileset.getSpacing();
 
-        const auto& textTileSize = ts.getTileSize();
-        const auto textSize = ts.getImageSize();
-        auto textTileColumn = ts.getColumnCount();
+        const auto& textTileSize = tileset.getTileSize();
+        const auto textSize = tileset.getImageSize();
+        auto textTileColumn = tileset.getColumnCount();
 
         const float uNorm = (float)(textTileSize.x) / textSize.x;
         const float vNorm = (float)(textTileSize.y) / textSize.y;
@@ -65,11 +65,11 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
             for (auto x = 0u; x < mapSize.x; ++x)
             {
                 const auto idx = y * mapSize.x + x;
-                if (idx < tileIDs.size() && tileIDs[idx].ID >= ts.getFirstGID()
-                    && tileIDs[idx].ID < (ts.getFirstGID() + ts.getTileCount()))
+                if (idx < tileIDs.size() && tileIDs[idx].ID >= tileset.getFirstGID()
+                    && tileIDs[idx].ID < (tileset.getFirstGID() + tileset.getTileCount()))
                 {
                     //tex coords
-                    auto idIndex = (tileIDs[idx].ID - ts.getFirstGID());
+                    auto idIndex = (tileIDs[idx].ID - tileset.getFirstGID());
 
                     float u = (float)(idIndex % textTileColumn);
                     float v = (float)(idIndex / textTileColumn);

@@ -15,10 +15,6 @@ namespace samples {
 
         const char* name() override { return "sample_imgui_plugin"; }
 
-        void onInit() override 
-        {
-        }
-
         void onEnable() override
         {
             imgui::ImFormManager::inst().showForm<imgui::ImGuiFormDemo>("ImGuiFormDemo");
@@ -29,30 +25,6 @@ namespace samples {
             imgui::ImFormManager::inst().closeForm("ImGuiFormDemo");
         }
 
-        void onEvent(const engine::Event& event) 
-        {
-        }
-
-        void onUpdate() override 
-        {
-        }
-
-        void onDraw() override 
-        {
-        }
-
-        void onInstall() override 
-        {
-        }
-
-        void onUninstall() override 
-        {
-        }
-
-        void onClose() override 
-        {
-            spdlog::info("close imgui plugin ");
-        }
     };
 
 }
