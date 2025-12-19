@@ -114,6 +114,19 @@ uintmax_t PathUtils::calculate_directory_size(const fs::path& dir)
 }
 
 
+//////////////////////////////////////////////////////////////////
+
+
+const Color White = {255, 255, 255, 255};
+const Color Black = {0, 0, 0, 255};
+const Color Red = {255, 0, 0, 255};
+const Color Green = {0, 255, 0, 255};
+const Color Blue = {0, 0, 255, 255};
+const Color Yellow = {255, 255, 0, 255};
+const Color Cyan = {0, 255, 255, 255};
+const Color Magenta = {255, 0, 255, 255};
+const Color Invalid = {0, 0, 0, 0};
+
 FColor ColorUtils::to_fcolor(const Color& c)
 {
     return {c.r/255.0f, c.g/255.0f, c.b/255.0f, c.a/255.0f};
@@ -252,6 +265,30 @@ Color ColorUtils::HSV_to_RGB(const HSVColor& hsv)
     rgb.b = static_cast<Uint8>(std::clamp(b * 255.0f, 0.0f, 255.0f));
     
     return rgb; 
+}
+
+
+Color ColorUtils::from_shap_string(const std::string& hexStr)
+{
+    // 检查字符串长度（去除'#'后应为8个十六进制字符）
+    if (hexStr.empty() || (hexStr[0] == '#' && hexStr.length() != 9) || (hexStr[0] != '#' && hexStr.length() != 8)) {
+        return Color::Invalid;
+    }
+
+    // 确定起始位置：如果以'#'开头则从第1个字符开始，否则从第0个开始
+    size_t startIndex = (hexStr[0] == '#') ? 1 : 0;
+    
+    // 使用 stoul 进行转换，并指定基数为16
+    try {
+        return static_cast<uint32_t>(std::stoul(hexStr.substr(startIndex), nullptr, 16));
+    } catch (const std::exception& e) {
+        return Color::Invalid;
+    }
+}
+
+std::string ColorUtils::to_shap_string(const Color& color)
+{
+    return std::format("#{:08X}", to_uint32(color));
 }
 
 }

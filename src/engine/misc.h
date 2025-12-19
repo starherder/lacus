@@ -76,6 +76,16 @@ struct HSVColor
 class ColorUtils
 {
 public:
+    static const Color White;
+    static const Color Black;
+    static const Color Red;
+    static const Color Green;
+    static const Color Blue;
+    static const Color Yellow;
+    static const Color Cyan;
+    static const Color Magenta;
+    static const Color Invalid;
+
     static FColor to_fcolor(const Color& color);
     static Color to_color(const FColor& fcolor);
 
@@ -87,6 +97,10 @@ public:
 
     static Color HSV_to_RGB(const HSVColor& hsv);
     static FColor HSV_to_FRGB(const HSVColor& hsv);
+
+    // hex number start with '#' like "#ff1c4dd4"
+    static Color from_shap_string(const std::string& str);
+    static std::string to_shap_string(const Color& color);
 };
 
 }

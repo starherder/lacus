@@ -11,6 +11,10 @@ namespace engine {
 
 namespace tmx {
 
+    /**
+        使用tmxlite进行tmx地图的加载测试
+    */
+
     class TmxMapLoader 
     {
     public:

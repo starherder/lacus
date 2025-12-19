@@ -9,6 +9,7 @@
 #include "sample_plugin_astar.h"
 #include "sample_plugin_tilemap.h"
 
+#include "game/game.h"
 
 
 #include <memory>
@@ -128,6 +129,11 @@ namespace samples {
         {
             SamplePluginManager::inst().setPluginEnable("sample_tilemap_plugin", tilemap_trigger);
         }
+        static bool game_trigger = false;
+        if (ImGui::MenuItem("game", nullptr, &game_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("game_logic_plugin", game_trigger);
+        }
     }
 
     // ----------------------------------------------------------------------------------------
@@ -207,6 +213,9 @@ namespace samples {
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginTileMap>();
+        plugin->setEnable(false);
+
+        plugin = addNormalPlugin<game::GameLogicPlugin>();
         plugin->setEnable(false);
     }
 

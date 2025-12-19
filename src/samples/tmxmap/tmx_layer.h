@@ -13,6 +13,9 @@ namespace tmx {
 
 class Map;
 
+/**
+ * tmxlite 库中的 TileLayer 对应的渲染层
+ */
 class MapLayer final
 {
 public:

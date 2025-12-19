@@ -68,11 +68,32 @@ set(IMGUI_SOURCES
 # 递归收集所有子目录的 cpp 文件
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
+# 递归收集所有头文件，用于Visual Studio工程组织
+file(GLOB_RECURSE HEADERS "src/*.h")
+file(GLOB_RECURSE EXT_HEADERS "ext/*.h" "ext/*.hpp")
 
 # 添加可执行文件
 add_executable(${PROJECT_NAME} 
                 ${SOURCES} 
                 ${IMGUI_SOURCES}
+                ${HEADERS}
+                ${EXT_HEADERS}
+)
+
+# 为Visual Studio工程创建筛选器结构
+source_group(TREE ${CMAKE_SOURCE_DIR} 
+    PREFIX "Source Files" 
+    FILES ${SOURCES} ${HEADERS}
+)
+
+source_group(TREE ${CMAKE_SOURCE_DIR}/ext 
+    PREFIX "External Libraries" 
+    FILES ${EXT_HEADERS}
+)
+
+source_group(TREE ${IMGUI_PATH} 
+    PREFIX "ImGui" 
+    FILES ${IMGUI_SOURCES}
 )
 
 # 链接SDL3库和系统库

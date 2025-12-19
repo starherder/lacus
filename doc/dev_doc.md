@@ -37,17 +37,17 @@ mkdir build & cd build & cmake ..
 - braintree
 - a-star
 
-
 ## 计划
 
-    场景载入
+    场景TileMap层级
 
-- tileLayer上，每个tile通过自定义属性记录是否可行走
-- 其他的对象放在object层上
-- tmxlite读取场景后，entt根据它读的数据生成entity
-- 将所有不可走区域写入Astar::Generator，用于寻路
-- tmxlloadder中应该分为model-view结构，有个view专门存放顶点材质数据等
+    1. 背景层(ImageLayer)，（棋盘...）：图片，装饰
 
+    2. 地形层(TileLayer)，（土地、草地、沙漠、水面、道路...）：用于行走
+
+    3. 前景层(ObjectLayer)，（树林、草丛、云雾、建筑...）：装饰遮挡
+
+    4. 逻辑层(ObjectLayer)，（刷怪点、触发区、标记...）：玩法逻辑
 
 ## 日志
 
