@@ -55,7 +55,7 @@ namespace engine {
         
         auto texture = IMG_LoadTexture(_renderer.getSdlRenderer(), path.string().c_str());
         if (!texture) {
-            spdlog::error("Failed to load texture {}: {}", path.string(), SDL_GetError());
+            spdlog::error("Failed to load texture {}", path.string());
             return nullptr;
         }
 

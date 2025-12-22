@@ -177,6 +177,10 @@ void TileMap::bakeGeometry(engine::ResourceManager& resourceMgr)
             auto mapRelatePath = _mapPath.lexically_relative(resourceMgr.resPath());
             auto imagePath = mapRelatePath / tileset->imageFile;
             tileset->texture = resourceMgr.textureManager().get(HashString(imagePath.string().c_str()));
+            if(tileset->texture)
+            {
+                spdlog::error("load texture {} failed.", imagePath.string());
+            }
         }
     }
 
