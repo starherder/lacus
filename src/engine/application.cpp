@@ -244,7 +244,7 @@ bool Application::preFrame()
         return false;
     }
 
-    _renderer->setDrawColor({100, 100, 200, 0});
+    _renderer->setDrawColor(Color::LightBlue);
 
     _renderer->clear();
     

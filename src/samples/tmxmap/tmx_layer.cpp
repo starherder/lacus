@@ -41,7 +41,8 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
         tintColour.b,
         tintColour.a
     };
-    auto vertColour = engine::ColorUtils::to_fcolor(iColour);
+
+    SDL_FColor vertColour = iColour;
 
     for (auto i = 0u; i < tileSets.size(); ++i)
     {

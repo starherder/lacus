@@ -139,9 +139,7 @@ void SamplePluginEntt::initEntities()
             float rotate = 0.0f;
             _registry.emplace<ComTransform>(ent, pos, size, scale, rotate);
 
-            //HSVColor hsv {(float)(x%360), 1.0f, (float )y/(_ycount-y), 1.0f };
-            HSVColor hsv {(float)(x%360), 1.0f, 1.0f, 1.0f };
-            auto color = ColorUtils::HSV_to_FRGB(hsv);
+            auto color = Color{HSVColor{(float)(x%360), 1.0f, 1.0f, 1.0f }};
             _registry.emplace<ComDisplay>(ent, color);
 
             Vertex v1{{pos.x, pos.y},                   color, {0, 0}};

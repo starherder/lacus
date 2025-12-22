@@ -71,7 +71,7 @@ namespace samples {
         auto uNorm = (float)textureSize.x / 18.0f;
         auto vNorm = (float)textureSize.x / 7.0f;
 
-        const engine::FColor vertColour{ 1,1,1,1 };
+        const engine::Color vertColour{1.0f, 1.0f, 1.0f, 1.0f };
 
         for (int x = 0; x < tileCount.x; x++)
         {

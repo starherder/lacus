@@ -35,10 +35,8 @@ public:
     Vec2f getRenderScale() const; 
     
     bool setDrawColor(const Color& color) const;
-    bool setDrawFColor(const FColor& color) const;
 
     Color getDrawColor() const;
-    FColor getDrawFColor() const;
     
     // 颜色缩放
     bool setColorScale(float scale) const;
@@ -75,11 +73,11 @@ public:
                         const int* indices, int num_indices) const;
 
     bool drawGeometryRaw(Texture* texture,  const float* xy, int xy_stride,
-                        const FColor* color, int color_stride, const float* uv, int uv_stride,
+                        const Color& color, int color_stride, const float* uv, int uv_stride,
                         int num_vertices, const void* indices, int num_indices, int size_indices) const;
     
     // 字体渲染
-    bool drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color={255,255,255,255});
+    bool drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color=Color{255,255,255,255});
     bool drawDebugText(const Vec2f& pos,const char* str) const;
     bool drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3);
 

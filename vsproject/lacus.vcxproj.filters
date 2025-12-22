@@ -175,6 +175,9 @@
     <ClCompile Include="..\src\ui\ui_utils.cpp">
       <Filter>gui</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\engine\color.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -353,6 +356,9 @@
     </ClInclude>
     <ClInclude Include="..\src\ui\ui_utils.h">
       <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\color.h">
+      <Filter>engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

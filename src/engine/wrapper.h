@@ -18,6 +18,8 @@
 #include <optional>
 #include <format>
 
+#include "color.h"
+
 using namespace entt::literals;
 
 
@@ -29,9 +31,6 @@ using IdType = entt::id_type;
 using HashString = entt::hashed_string;
 
 using Event = SDL_Event;
-
-using Color = SDL_Color;
-using FColor = SDL_FColor;
 
 using Rect = SDL_Rect;
 using FRect = SDL_FRect;

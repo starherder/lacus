@@ -78,19 +78,10 @@ bool Renderer::setDrawColor(const Color& color) const {
     return SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
 }
 
-bool Renderer::setDrawFColor(const FColor& color) const {
-    return SDL_SetRenderDrawColorFloat(_renderer, color.r, color.g, color.b, color.a);
-}
 
 Color Renderer::getDrawColor() const {
     Color color;
     SDL_GetRenderDrawColor(_renderer, &color.r, &color.g, &color.b, &color.a);
-    return color;
-}
-
-FColor Renderer::getDrawFColor() const {
-    FColor color;
-    SDL_GetRenderDrawColorFloat(_renderer, &color.r, &color.g, &color.b, &color.a);
     return color;
 }
 
@@ -204,13 +195,15 @@ bool Renderer::drawGeometry(Texture* texture, const Vertex* vertices, int num_ve
 
 bool Renderer::drawGeometryRaw(Texture* texture, 
                                 const float* xy, int xy_stride,
-                                const FColor* color, int color_stride,
+                                const Color& color, int color_stride,
                                 const float* uv, int uv_stride,
                                 int num_vertices, const void* indices, int num_indices, int size_indices) const {
     if(!texture) {
         return false;
     }
-    return SDL_RenderGeometryRaw(_renderer, texture->_texture, xy, xy_stride, color, color_stride, uv, uv_stride, 
+
+    auto sdlfcolor = (SDL_FColor)color;
+    return SDL_RenderGeometryRaw(_renderer, texture->_texture, xy, xy_stride, &sdlfcolor, color_stride, uv, uv_stride, 
                                 num_vertices, indices, num_indices, size_indices);
 }
 

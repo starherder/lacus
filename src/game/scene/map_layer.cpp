@@ -26,8 +26,8 @@ void LoaderUtils::loadProperties(const json& json, Properties& properties)
             }
             else if(type=="color") {
                 auto strcolor = prop.value("value", "");
-                auto color = engine::ColorUtils::from_shap_string(strcolor);
-                properties[name] = engine::ColorUtils::to_uint32(color);
+                engine::Color color; color.fromHexString(strcolor);
+                properties[name] = (uint32_t)color;
             }
             else if(type=="file") {
                 const auto& strfile = prop.value("value", "");

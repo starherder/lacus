@@ -148,6 +148,7 @@
     <ClCompile Include="..\src\engine\audio.cpp" />
     <ClCompile Include="..\src\engine\audio_player.cpp" />
     <ClCompile Include="..\src\engine\camera.cpp" />
+    <ClCompile Include="..\src\engine\color.cpp" />
     <ClCompile Include="..\src\engine\config.cpp" />
     <ClCompile Include="..\src\engine\event.cpp" />
     <ClCompile Include="..\src\engine\font.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="..\src\engine\audio.h" />
     <ClInclude Include="..\src\engine\audio_player.h" />
     <ClInclude Include="..\src\engine\camera.h" />
+    <ClInclude Include="..\src\engine\color.h" />
     <ClInclude Include="..\src\engine\config.h" />
     <ClInclude Include="..\src\engine\event.h" />
     <ClInclude Include="..\src\engine\font.h" />

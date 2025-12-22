@@ -55,7 +55,7 @@ void Widget::draw()
 
     if(state.texture)
     {
-        if (ColorUtils::is_valid(state.groud_color)) 
+        if (state.groud_color.isValid()) 
         {
             renderer.setDrawColor(state.groud_color);
         }
@@ -64,14 +64,14 @@ void Widget::draw()
     }
     else
     {
-        if(ColorUtils::is_valid(state.groud_color))
+        if(state.groud_color.isValid())
         {
             renderer.setDrawColor(state.groud_color);
             renderer.drawFillRect({relPos.x, relPos.y, _size.x, _size.y});
         }
     }
             
-    if(ColorUtils::is_valid(state.border_color))
+    if(state.border_color.isValid())
     {
         renderer.setDrawColor(state.border_color);
         renderer.drawRect({relPos.x, relPos.y, _size.x, _size.y});
