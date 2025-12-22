@@ -6,9 +6,10 @@
 namespace game {
 
     enum class MapLayerType {
-        Image,
-        Tile,
-        Object
+        ImageLayer,
+        TileLayer,
+        ObjectLayer,
+        GroupLayer
     };
 
 
@@ -35,6 +36,8 @@ namespace game {
 
         MapLayerType type;
         int opacity;
+
+        Color tint_color;
 
         Vec2i pos;
 

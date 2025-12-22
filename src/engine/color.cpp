@@ -6,28 +6,42 @@ namespace engine
 {
 
 const Color Color::White(255, 255, 255);
-const Color Color::Black(0, 0, 0);
-const Color Color::Dark(64, 64, 64);
+const Color Color::Pale(220, 220, 220);
+const Color Color::Light(190, 190, 190);
 const Color Color::Gray(128, 128, 128);
-const Color Color::Light(192, 192, 192);
+const Color Color::Dark(64, 64, 64);
+const Color Color::Black(0, 0, 0);
+
 const Color Color::Red(255, 0, 0);
+const Color Color::PaleRed(255, 200, 200);
 const Color Color::LightRed(255, 128, 128);
 const Color Color::DarkRed(128, 0, 0);
+
 const Color Color::Green(0, 255, 0);
+const Color Color::PaleGreen(200, 255, 200);
 const Color Color::LightGreen(128, 255, 128);
 const Color Color::DarkGreen(0, 128, 0);
+
 const Color Color::Blue(0, 0, 255);
+const Color Color::PaleBlue(200, 200, 255);
 const Color Color::LightBlue(128, 128, 255);
 const Color Color::DarkBlue(0, 0, 128);
+
 const Color Color::Yellow(255, 255, 0);
+const Color Color::PaleYellow(255, 255, 200);
 const Color Color::LightYellow(255, 255, 128);
 const Color Color::DarkYellow(128, 128, 0);
+
 const Color Color::Cyan(0, 255, 255);
+const Color Color::PaleCyan(200, 255, 255);
 const Color Color::LightCyan(128, 255, 255);
 const Color Color::DarkCyan(0, 128, 128);
+
 const Color Color::Magenta(255, 0, 255);
+const Color Color::PaleMagenta(255, 200, 255);
 const Color Color::LightMagenta(255, 128, 255);
 const Color Color::DarkMagenta(128, 0, 128);
+
 const Color Color::Invalid(0, 0, 0, 0);
 
 Color::Color(int red, int green, int blue, int alpha)
@@ -69,6 +83,17 @@ Color::Color(const SDL_FColor& sdlFColor) {
     g = static_cast<uint8_t>(std::clamp(sdlFColor.g * 255.0f, 0.0f, 255.0f));
     b = static_cast<uint8_t>(std::clamp(sdlFColor.b * 255.0f, 0.0f, 255.0f));
     a = static_cast<uint8_t>(std::clamp(sdlFColor.a * 255.0f, 0.0f, 255.0f));
+}
+
+
+Color& Color::operator=(const Color& other)
+{
+    r = other.r;
+    g = other.g;
+    b = other.b;
+    a = other.a;
+
+    return *this;
 }
 
 bool Color::operator==(const Color& other) const {

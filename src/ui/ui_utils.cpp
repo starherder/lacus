@@ -1,5 +1,3 @@
-#pragma once
-
 #include "ui_utils.h"
 
 namespace ui {

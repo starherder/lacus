@@ -152,6 +152,7 @@
     <ClCompile Include="..\src\engine\config.cpp" />
     <ClCompile Include="..\src\engine\event.cpp" />
     <ClCompile Include="..\src\engine\font.cpp" />
+    <ClCompile Include="..\src\engine\geometry.cpp" />
     <ClCompile Include="..\src\engine\misc.cpp" />
     <ClCompile Include="..\src\engine\plugin.cpp" />
     <ClCompile Include="..\src\engine\render.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="..\src\engine\config.h" />
     <ClInclude Include="..\src\engine\event.h" />
     <ClInclude Include="..\src\engine\font.h" />
+    <ClInclude Include="..\src\engine\geometry.h" />
     <ClInclude Include="..\src\engine\misc.h" />
     <ClInclude Include="..\src\engine\plugin.h" />
     <ClInclude Include="..\src\engine\render.h" />

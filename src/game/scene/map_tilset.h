@@ -5,8 +5,10 @@
 
 namespace game {
 
-	struct TileAnimation {
-		struct Frame {
+	struct TileAnimation 
+	{
+		struct Frame 
+		{
 			int tileId;
 			int dration;
 		};
@@ -16,7 +18,8 @@ namespace game {
 		void load(const json& json_data);
 	};
 
-	struct MapTile {
+	struct MapTile 
+	{
 		int id;
 		Properties properties;
 		TileAnimation animation;
@@ -24,9 +27,8 @@ namespace game {
 		void load(const json& json_data);
 	};
 
-
-
-	struct TileSet {
+	struct TileSet 
+	{
 		std::string name;
 		std::string type;
 		std::string version;
@@ -47,6 +49,8 @@ namespace game {
 		Properties properties;		
 
 		std::vector<MapTile> tiles;
+
+		engine::Texture* texture = nullptr;
 
 		void load(const json& json_data);
 	};

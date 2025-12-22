@@ -3,6 +3,7 @@
 
 #include "engine/wrapper.h"
 #include "engine/texture.h"
+#include "engine/resource.h"
 #include "utility/dynamic_struct.h"
 #include "nlohmann/json.hpp"
 
@@ -14,7 +15,7 @@ namespace game {
     using Properties = utility::DynamicStruct<std::string>;
 
     struct MapDrawCall {
-        std::vector<engine::Vertex> vertices;
+        std::vector<engine::Vertex> vertexies;
         engine::Texture* texture;
     };
 

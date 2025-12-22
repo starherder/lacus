@@ -96,6 +96,7 @@
                  "type":"string",
                  "value":"land"
                 }],
+         "tintcolor":"#c0ffdc",
          "type":"tilelayer",
          "visible":true,
          "width":100,
@@ -361,14 +362,6 @@
         {
          "firstgid":1,
          "source":"wild.tsj"
-        }, 
-        {
-         "firstgid":1768,
-         "source":"test.tsx"
-        }, 
-        {
-         "firstgid":1894,
-         "source":"dungeon.tsx"
         }],
  "tilewidth":16,
  "type":"map",

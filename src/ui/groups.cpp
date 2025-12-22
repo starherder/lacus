@@ -6,12 +6,10 @@ namespace ui {
 
 	Group::Group(const std::string& name, Widget* parent) : Widget(name, parent)
     {
-
     }
 
     Group::~Group()
     {
-
     }
 
     void Group::update(float delta)

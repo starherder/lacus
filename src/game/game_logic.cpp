@@ -17,7 +17,8 @@ void GameLogicPlugin::onInit()
     _scene->load(_app.resPath()/"scenes/Medieval/sea.tmj");
 
     ui::GuiManager::inst().init(&_app);
-    ui::GuiManager::inst().showForm<ui::FormDemo>("main_frame");
+    auto form = ui::GuiManager::inst().showForm<ui::FormDemo>("main_frame");
+    //form->hide();
 }
 
 void GameLogicPlugin::onUpdate()
@@ -30,13 +31,11 @@ void GameLogicPlugin::onUpdate()
 
 void GameLogicPlugin::onDraw() 
 {
-    _scene->onRender();
+    _scene->onDraw();
 }
 
 void GameLogicPlugin::onDrawUI()
 {
-    _scene->onRenderUI();
-
     ui::GuiManager::inst().draw();
 }
 

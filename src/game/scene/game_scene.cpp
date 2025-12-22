@@ -10,16 +10,17 @@ GameScene::GameScene(engine::Application& app)
 
 GameScene::~GameScene()
 {
-
 }
 
-bool GameScene::load(const engine::fs::path& scenePath)
+bool GameScene::load(const engine::fs::path& mapPath)
 {
-    auto res = _tileMap.load(scenePath);
+    auto res = _tileMap.load(mapPath);
     if(!res)
     {
         return false;
     }
+
+    _tileMap.bakeGeometry(application().resourceManager());
 
     return true;
 }
@@ -37,17 +38,11 @@ bool GameScene::unload()
 
 void GameScene::onUpdate(float deltaTime)
 {
-
 }
 
-void GameScene::onRender() 
+void GameScene::onDraw() 
 {
-
-}
-
-void GameScene::onRenderUI()
-{
-
+    _tileMap.draw(application().renderer());
 }
 
 

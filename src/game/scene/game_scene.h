@@ -15,15 +15,13 @@ namespace game {
         GameScene(engine::Application& app);
         ~GameScene();
 
-        bool load(const engine::fs::path& filepath) override;
+        bool load(const engine::fs::path& mapPath) override;
 
         bool unload() override;
 
         void onUpdate(float deltaTime) override;
 
-        void onRender() override;
-
-        void onRenderUI() override;
+        void onDraw() override;
 
     private:
         TileMap _tileMap;

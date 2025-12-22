@@ -8,15 +8,9 @@ void Scene::update()
     onUpdate(_app.fpsChecker().deltaSeconds());
 }
 
-void Scene::render()
+void Scene::draw()
 {
-    onRender();
+    onDraw();
 }
-
-void Scene::renderUI()
-{
-    onRenderUI();
-}
-
 
 } // namespace engine

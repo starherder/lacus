@@ -178,6 +178,9 @@
     <ClCompile Include="..\src\engine\color.cpp">
       <Filter>engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\engine\geometry.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -358,6 +361,9 @@
       <Filter>gui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\engine\color.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\geometry.h">
       <Filter>engine</Filter>
     </ClInclude>
   </ItemGroup>

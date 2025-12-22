@@ -11,9 +11,6 @@
 
 #include "game/game_logic.h"
 
-
-#include <memory>
-
 namespace samples {
 
 	void ImGuiFormHUD::draw()
@@ -184,6 +181,7 @@ namespace samples {
     }
 
     // ----------------------------------------------------------------------------------------
+
 
     void SamplePluginManager::init(engine::Application& app)
     {

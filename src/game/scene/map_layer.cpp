@@ -68,10 +68,32 @@ bool MapLayer::load(const json& json)
 {
     id = json.value("id", 0);
     name = json.value("name", "");
+
     visible = json.value("visible", true);
     opacity = json.value("opacity", 255);
+
     pos.x = json.value("x", 0);
     pos.y = json.value("y", 0);
+
+    tint_color.fromHexString(json.value("tintcolor", "#ffffffff"));
+
+    auto stype = json.value("type", "");
+    if(stype=="tilelayer") {
+        type = MapLayerType::TileLayer;
+    }
+    else if(stype=="objectgroup") {
+        type = MapLayerType::ObjectLayer;
+    }
+    else if(stype=="imagelayer") {
+        type = MapLayerType::ImageLayer;
+    }
+    else if(stype=="group") {
+        type = MapLayerType::GroupLayer;
+    }
+    else  {
+        spdlog::error("unknown layer type: {}", stype);
+        return false;
+    }   
 
     LoaderUtils::loadProperties(json, properties);
     return true;

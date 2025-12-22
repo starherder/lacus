@@ -4,13 +4,15 @@
   <property name="level" type="int" value="7"/>
   <property name="name" value="south sea"/>
  </properties>
- <tileset firstgid="1" source="wild.tsx"/>
- <tileset firstgid="1768" source="test.tsx"/>
- <tileset firstgid="1894" source="dungeon.tsx"/>
+ <tileset firstgid="1" source="wild.tsj"/>
  <imagelayer id="2" name="bkimage" visible="0" tintcolor="#ffffff" offsetx="0" offsety="1" repeatx="1" repeaty="1">
   <image source="6666.jpg" width="352" height="288"/>
+  <properties>
+   <property name="img_col" type="color" value="#ffec30d9"/>
+   <property name="img_pro" value="tttt"/>
+  </properties>
  </imagelayer>
- <layer id="1" name="land" width="100" height="50">
+ <layer id="1" name="land" width="100" height="50" tintcolor="#c0ffdc">
   <properties>
    <property name="index" type="int" value="2"/>
    <property name="name" value="land"/>
@@ -147,12 +149,15 @@
    <ellipse/>
   </object>
   <object id="8" name="text" x="220.727" y="4.5" width="81.0909" height="20.0909">
-   <text fontfamily="Microsoft YaHei UI" pixelsize="15" wrap="1" color="#b3005c">你好，世界</text>
+   <text fontfamily="Microsoft YaHei UI" pixelsize="15" wrap="1" color="#b3005c">hello,world</text>
   </object>
  </objectgroup>
  <group id="4" name="obj_group">
   <properties>
+   <property name="file" type="file" value="6666.jpg"/>
+   <property name="group_c" type="color" value="#ff1c4dd4"/>
    <property name="group_prop" value="111111"/>
+   <property name="grup_obj" type="object" value="5"/>
   </properties>
   <objectgroup id="6" name="house"/>
   <objectgroup id="5" name="tree"/>

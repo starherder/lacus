@@ -4,6 +4,10 @@
 #include "map_layer.h"
 #include "map_tilset.h"
 
+namespace engine {
+    class Renderer;
+}
+
 namespace game {
 
     class TileMap {
@@ -11,8 +15,11 @@ namespace game {
         TileMap() = default;
         ~TileMap() = default;
         
-        bool load(const fs::path& filepath);
+        bool load(const engine::fs::path& mapFile);
         bool unload();
+
+        void bakeGeometry(engine::ResourceManager& resourceMgr);
+        void draw(engine::Renderer& renderer);
 
     private:
         bool load_mapdata(const json& json);
@@ -20,10 +27,21 @@ namespace game {
         bool load_layers(const json& json);
         
         bool load_tilesets(const json& json);
+        bool load_one_tileset(const fs::path& filepath, int firstgid);
+
+        void bakeTileLayer(TileLayer& layer);
 
     private:
+        fs::path _resPath;
+        fs::path _mapPath;
+
         Properties _properties;
+        
         std::vector<std::unique_ptr<MapLayer>> _layers;
+
+        std::vector<std::unique_ptr<TileSet>> _tilesets;
+
+        std::vector<std::unique_ptr<MapDrawCall>> _drawCalls;
 
         std::string version;
         std::string tiledVersion;

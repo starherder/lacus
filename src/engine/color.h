@@ -28,26 +28,39 @@ class Color
 {
 public:    
     static const Color White;
-    static const Color Black;
-    static const Color Dark;
-    static const Color Gray;
+    static const Color Pale;
     static const Color Light;
+    static const Color Gray;
+    static const Color Dark;
+    static const Color Black;
+
     static const Color Red;
+    static const Color PaleRed;
     static const Color LightRed;
     static const Color DarkRed;
+
     static const Color Green;
+    static const Color PaleGreen;
     static const Color LightGreen;
     static const Color DarkGreen;
+
     static const Color Blue;
+    static const Color PaleBlue;
     static const Color LightBlue;
     static const Color DarkBlue;
+
     static const Color Yellow;
+    static const Color PaleYellow;
     static const Color LightYellow;
     static const Color DarkYellow;
+
     static const Color Cyan;
+    static const Color PaleCyan;
     static const Color LightCyan;
     static const Color DarkCyan;
+
     static const Color Magenta;
+    static const Color PaleMagenta;
     static const Color LightMagenta;
     static const Color DarkMagenta;
     static const Color Invalid;
@@ -67,6 +80,8 @@ public:
     Color(const HSVColor& hsv);
     Color(const SDL_Color& sdlColor);
     Color(const SDL_FColor& sdlFColor);
+
+    Color& operator = (const Color& other);
 
     bool operator==(const Color& other) const;
     bool operator!=(const Color& other) const;

@@ -42,7 +42,7 @@
   </properties>
  </tile>
  <wangsets>
-  <wangset name="未命名集" type="corner" tile="-1">
+  <wangset name="unamed" type="corner" tile="-1">
    <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>
    <wangcolor name="water" color="#00ff00" tile="-1" probability="1"/>
    <wangcolor name="solid" color="#0000ff" tile="-1" probability="1"/>

@@ -46,6 +46,8 @@ namespace game {
 		imageSize.x = json_data.value("imagewidth", 0);
 		imageSize.y = json_data.value("imageheight", 0);
 
+
+
 		LoaderUtils::loadProperties(json_data, properties);
 
 		if(json_data.contains("tiles"))

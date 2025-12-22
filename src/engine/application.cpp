@@ -244,7 +244,9 @@ bool Application::preFrame()
         return false;
     }
 
-    _renderer->setDrawColor(Color::LightBlue);
+    _renderer->setClipRect({Vec2{0,0}, _window->getSize()});
+
+    _renderer->setDrawColor(Color::DarkCyan);
 
     _renderer->clear();
     
