@@ -1,5 +1,6 @@
 #pragma once
 #include "game/scene/tile_map.h"
+#include "engine/scene.h"
 
 namespace game {
 
@@ -11,10 +12,10 @@ namespace game {
         GameScene(GameScene&&) = delete;
         GameScene& operator=(const GameScene&) = delete;
         
-        GameScene(const engine::Application& app);
+        GameScene(engine::Application& app);
         ~GameScene();
 
-        bool load(const std::string& scenePath) override;
+        bool load(const engine::fs::path& filepath) override;
 
         bool unload() override;
 

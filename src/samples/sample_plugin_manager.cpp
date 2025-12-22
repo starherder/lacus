@@ -9,7 +9,7 @@
 #include "sample_plugin_astar.h"
 #include "sample_plugin_tilemap.h"
 
-#include "game/game.h"
+#include "game/game_logic.h"
 
 
 #include <memory>
@@ -149,6 +149,11 @@ namespace samples {
         auto window = _app.window().getSdlWindow();
         auto renderer = _app.renderer().getSdlRenderer();
 
+        auto& eventDispatcher = _app.eventDispatcher();
+        eventDispatcher.onSdlEvent.connect([this] (const Event& e) {
+            imgui::ImFormManager::inst().processEvent(e);
+        });
+        
         imgui::ImFormManager::inst().init(window, renderer);
 
         auto font_path = application()->resPath()/"fonts/msyh.ttf";
@@ -167,11 +172,6 @@ namespace samples {
 
     void SamplePluginMain::onUpdate()
     {
-    }
-
-    void SamplePluginMain::onEvent(const engine::Event& event) 
-    {
-        imgui::ImFormManager::inst().processEvent(event);
     }
 
     void SamplePluginMain::onDraw() 
@@ -215,7 +215,7 @@ namespace samples {
         plugin = addNormalPlugin<SamplePluginTileMap>();
         plugin->setEnable(false);
 
-        plugin = addNormalPlugin<game::GameLogicPlugin>();
+        plugin = addNormalPlugin<game::GameLogicPlugin>(app);
         plugin->setEnable(false);
     }
 
@@ -228,14 +228,14 @@ namespace samples {
     
     void SamplePluginManager::setPluginEnable(const std::string& name, bool enabled)
     {
-           auto plugin = _app->getPlugin(name);
-           if(!plugin)
-           {
-                spdlog::error("plugin ({}) NOT found.", name);
-                return;
-           }
+        auto plugin = _app->getPlugin(name);
+        if(!plugin)
+        {
+            spdlog::error("plugin ({}) NOT found.", name);
+            return;
+        }
 
-           plugin->setEnable(enabled);
+        plugin->setEnable(enabled);
     }
 
 }

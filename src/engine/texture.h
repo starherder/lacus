@@ -7,7 +7,7 @@ struct SDL_Texture;
 
 namespace engine {
 
-struct Renderer;
+class Renderer;
 
 
 // 材质
@@ -20,7 +20,7 @@ public:
     Texture(SDL_Texture* texture);
     ~Texture();
 
-    Vec2f size() const { return _size; }
+    const Vec2f& size() const { return _size; }
 
 private:
     SDL_Texture* _texture = nullptr;
@@ -41,16 +41,16 @@ public:
     TextureManager(const TextureManager&) = delete;
     ~TextureManager() = default;
 
-    Texture* load(IdType id, const std::string_view& filepath);
     Texture* load(const HashString& file);
-
-    Texture* get(IdType id, const std::string_view& filepath="");
     Texture* get(const HashString& file);
-
-    void unload(IdType id);
     void unload(const HashString& file);
 
     void clear();
+
+private:
+    void unload(IdType id);
+    Texture* load(IdType id, const std::string_view& filepath);
+    Texture* get(IdType id, const std::string_view& filepath="");
 
 private:
     Renderer& _renderer;

@@ -33,6 +33,9 @@ void SamplePluginEntt::onInit()
     auto& window = application()->window();
     _camera = std::make_unique<SampleCamera>(Vec2{window.getSize()});
 
+    auto& eventDispatcher = application()->eventDispatcher();
+    eventDispatcher.onSdlEvent.connect([this](const Event& e){ _camera->handleEvent(e); });
+
     initEntities();
 }
 
@@ -121,14 +124,6 @@ void SamplePluginEntt::onClose()
     spdlog::info("Release sample plugin scene");
 }
 
-void SamplePluginEntt::onEvent(const Event& event)
-{
-    if(_camera)
-    {
-        _camera->handleEvent(event);
-    }
-}
-
 void SamplePluginEntt::initEntities()
 {
     VertexData vdata;
@@ -138,8 +133,8 @@ void SamplePluginEntt::initEntities()
         for(int y=0; y<_ycount; y++)
         {
             auto ent = _registry.create();
-            auto pos = Vec2i{x*_gridw, y*_gridh};
-            auto size = Vec2i{_gridw, _gridh};
+            auto pos = Vec2f{x*_gridw, y*_gridh};
+            auto size = Vec2f{_gridw, _gridh};
             auto scale = Vec2f(1.0f, 1.0f);
             float rotate = 0.0f;
             _registry.emplace<ComTransform>(ent, pos, size, scale, rotate);
@@ -149,10 +144,10 @@ void SamplePluginEntt::initEntities()
             auto color = ColorUtils::HSV_to_FRGB(hsv);
             _registry.emplace<ComDisplay>(ent, color);
 
-            Vertex v1{{pos.x, pos.y},                   color, {0,0}};
-            Vertex v2{{pos.x + size.x, pos.y},          color, {0.333333,0}};
-            Vertex v3{{pos.x + size.x, pos.y + size.y}, color, {0.333333,0.333333}};
-            Vertex v4{{pos.x, pos.y + size.y},          color, {0,0.333333}};
+            Vertex v1{{pos.x, pos.y},                   color, {0, 0}};
+            Vertex v2{{pos.x + size.x, pos.y},          color, {0.333333f,0}};
+            Vertex v3{{pos.x + size.x, pos.y + size.y}, color, {0.333333f, 1.0f}};
+            Vertex v4{{pos.x, pos.y + size.y},          color, {0, 1.0f}};
 
             vdata.world_vertices.push_back(v1);
             vdata.world_vertices.push_back(v2);
@@ -183,7 +178,7 @@ void SamplePluginEntt::onEntityDrawSystem()
         vdata.screen_vertices.emplace_back(Vertex{{pos.x, pos.y}, vertex.color, vertex.tex_coord});
     }
 
-    renderer.drawGeometry(_texture, vdata.screen_vertices.data(), vdata.screen_vertices.size(), nullptr, 0); 
+    renderer.drawGeometry(_texture, vdata.screen_vertices.data(), (int)vdata.screen_vertices.size(), nullptr, 0); 
 }
 
 }

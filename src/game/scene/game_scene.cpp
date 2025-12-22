@@ -3,7 +3,7 @@
 namespace game {
 
 
-GameScene::GameScene(const engine::Application& app)
+GameScene::GameScene(engine::Application& app)
     : engine::Scene(app)
 {
 }
@@ -13,7 +13,7 @@ GameScene::~GameScene()
 
 }
 
-bool GameScene::load(const std::string& scenePath)
+bool GameScene::load(const engine::fs::path& scenePath)
 {
     auto res = _tileMap.load(scenePath);
     if(!res)

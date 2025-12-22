@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="engine">
+      <UniqueIdentifier>{3d200a5b-9f55-4c67-8889-cf68686b5fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="imform">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="samples">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{17c51514-856f-44f6-b55f-c13e3747afbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game\scene">
+      <UniqueIdentifier>{e5ef2c7e-c8e7-422f-b8b6-43a5c0c3b484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="samples\tmxmap">
+      <UniqueIdentifier>{709ad799-3223-4f31-b759-b47366378464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imform\imgui">
+      <UniqueIdentifier>{b3a1c160-d7fe-4507-adab-807adf1d1edf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imform\imgui\backends">
+      <UniqueIdentifier>{58ef801a-3996-4fd5-9645-c9ef6c7e319f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{b3a293d9-5944-4f62-9e4c-964650f911b4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\engine\application.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\audio.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\audio_player.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\camera.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\config.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\font.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\misc.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\plugin.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\render.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\resource.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\scene.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\text_render.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\texture.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\window.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\game_logic.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\scene\game_scene.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\scene\map_layer.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\scene\tile_map.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\imform\imform.cpp">
+      <Filter>imform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\imform\imform_demo.cpp">
+      <Filter>imform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\imform\imform_manager.cpp">
+      <Filter>imform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_astar.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_audio.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_draw.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_entt.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_manager.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_tilemap.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_tweeny.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\tmxmap\tmx_layer.cpp">
+      <Filter>samples\tmxmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\tmxmap\tmx_map_loader.cpp">
+      <Filter>samples\tmxmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\ext\imgui\imgui.cpp">
+      <Filter>imform\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\imgui\imgui_demo.cpp">
+      <Filter>imform\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\imgui\imgui_draw.cpp">
+      <Filter>imform\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\imgui\imgui_tables.cpp">
+      <Filter>imform\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\imgui\imgui_widgets.cpp">
+      <Filter>imform\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdl3.cpp">
+      <Filter>imform\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.cpp">
+      <Filter>imform\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\scene\map_tilset.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\event.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\buttons.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\form.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\form_demo.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\groups.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\gui_manager.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\widget.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\ui_utils.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\engine\application.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\audio.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\audio_player.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\camera.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\config.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\font.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\misc.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\plugin.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\render.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\resource.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\scene.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\text_render.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\texture.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\window.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\wrapper.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\game_logic.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\game_scene.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\map_layer.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\tile_map.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\imform\imform.h">
+      <Filter>imform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\imform\imform_demo.h">
+      <Filter>imform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\imform\imform_manager.h">
+      <Filter>imform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\dynamic_struct.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\dynamic_var.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\expire_cache.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\i_singleton.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\signalslot.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\skip_list.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\string_util.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utility\unsort_map.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_camera.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_astar.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_audio.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_draw.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_entt.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_imgui.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_manager.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_tilemap.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_tweeny.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\tmxmap\tmx_layer.h">
+      <Filter>samples\tmxmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\tmxmap\tmx_map_loader.h">
+      <Filter>samples\tmxmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\imconfig.h">
+      <Filter>imform\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\imgui.h">
+      <Filter>imform\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\imgui_internal.h">
+      <Filter>imform\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\imstb_rectpack.h">
+      <Filter>imform\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\imstb_textedit.h">
+      <Filter>imform\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\imstb_truetype.h">
+      <Filter>imform\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdl3.h">
+      <Filter>imform\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.h">
+      <Filter>imform\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\map_tilset.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\map_utils.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\event.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\buttons.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\form.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\form_demo.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\groups.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\gui_manager.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\widget.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui_utils.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

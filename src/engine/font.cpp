@@ -56,7 +56,7 @@ namespace engine {
             return nullptr;
         }
         
-        auto font = TTF_OpenFont(path.string().c_str(), size);
+        auto font = TTF_OpenFont(path.string().c_str(), (float)size);
         if (!font) {
             spdlog::error("Failed to load Font {}: {}", path.string(), SDL_GetError());
             return nullptr;

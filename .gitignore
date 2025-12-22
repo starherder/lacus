@@ -11,3 +11,7 @@
 bin/
 build/
 imgui.ini
+
+.vs/
+x64
+x86

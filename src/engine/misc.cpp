@@ -12,7 +12,7 @@ void FpsChecker::init(int fixed_fps)
 
     _frameTicks = (uint64_t)(1000.0f / _fixedFps);
     _lastTicks = SDL_GetTicks();
-    _lastSecond = _lastTicks / 1000;
+    _lastSecond = (int)_lastTicks / 1000;
     _deltaTicks = 0;
 }
 
@@ -24,12 +24,12 @@ bool FpsChecker::check()
         return false;
     }
 
-    _deltaTicks = current_ticks - _lastTicks;
+    _deltaTicks = (int)(current_ticks - _lastTicks);
     _lastTicks = current_ticks;
 
     _curFps = int(1000.0f /_deltaTicks);
 
-    int cur_second = current_ticks / 1000;
+    int cur_second = (int)current_ticks / 1000;
 
     if(cur_second != _lastSecond)
     {
@@ -117,15 +117,35 @@ uintmax_t PathUtils::calculate_directory_size(const fs::path& dir)
 //////////////////////////////////////////////////////////////////
 
 
-const Color White = {255, 255, 255, 255};
-const Color Black = {0, 0, 0, 255};
-const Color Red = {255, 0, 0, 255};
-const Color Green = {0, 255, 0, 255};
-const Color Blue = {0, 0, 255, 255};
-const Color Yellow = {255, 255, 0, 255};
-const Color Cyan = {0, 255, 255, 255};
-const Color Magenta = {255, 0, 255, 255};
-const Color Invalid = {0, 0, 0, 0};
+const Color ColorUtils::White = {255, 255, 255, 255};
+const Color ColorUtils::Black = {0, 0, 0, 255};
+const Color ColorUtils::Dark = { 65, 65, 65, 65 };
+const Color ColorUtils::Gray = {125, 125, 125, 255};
+const Color ColorUtils::Light = {200, 200, 200, 255};
+const Color ColorUtils::Red = { 255, 0, 0, 255 };
+const Color ColorUtils::LightRed = { 255, 125, 125, 255 };
+const Color ColorUtils::DarkRed = { 125, 0, 0, 255 };
+const Color ColorUtils::Green = { 0, 255, 0, 255 };
+const Color ColorUtils::DarkGreen = { 0, 125, 0, 255 };
+const Color ColorUtils::LightGreen = { 125, 255, 125, 255 };
+const Color ColorUtils::Blue = { 0, 0, 255, 255 };
+const Color ColorUtils::LightBlue = { 125, 125, 255, 255 };
+const Color ColorUtils::DarkBlue = { 0, 0, 125, 255 };
+const Color ColorUtils::Yellow = { 255, 255, 0, 255 };
+const Color ColorUtils::LightYellow = { 255, 255, 125, 255 };
+const Color ColorUtils::DarkYellow = { 125, 125, 0, 255 };
+const Color ColorUtils::Cyan = { 0, 255, 255, 255 };
+const Color ColorUtils::LightCyan = { 125, 255, 255, 255 };
+const Color ColorUtils::DarkCyan = { 0, 125, 125, 255 };
+const Color ColorUtils::Magenta = { 255, 0, 255, 255 };
+const Color ColorUtils::LightMagenta = { 255, 125, 255, 255 };
+const Color ColorUtils::DarkMagenta = { 125, 0, 125, 255 };
+const Color ColorUtils::Invalid = {0, 0, 0, 0};
+
+bool ColorUtils::is_valid(const Color& c)
+{
+    return !(c.r==0&&c.g==0&&c.b==0&&c.a==0);
+}
 
 FColor ColorUtils::to_fcolor(const Color& c)
 {
@@ -135,6 +155,21 @@ FColor ColorUtils::to_fcolor(const Color& c)
 Color ColorUtils::to_color(const FColor& c)
 {
     return {uint8_t(c.r*255), uint8_t(c.g*255), uint8_t(c.b*255), uint8_t(c.a*255)};
+}
+
+FColor ColorUtils::to_fcolor(uint32_t ul)
+{
+    return to_fcolor(to_color(ul));
+}
+
+Color ColorUtils::to_color(uint32_t ul)
+{
+    auto a = (uint8_t)(0x000000FF & ul);
+    auto b = (uint8_t)((0x0000FF00 & ul) >> 8);
+    auto g = (uint8_t)((0x00FF0000 & ul) >> 16);
+    auto r = (uint8_t)((0xFF000000 & ul) >> 24);
+
+    return { r, g, b, a };
 }
 
 uint32_t ColorUtils::to_uint32(const Color& c)
@@ -272,7 +307,7 @@ Color ColorUtils::from_shap_string(const std::string& hexStr)
 {
     // 检查字符串长度（去除'#'后应为8个十六进制字符）
     if (hexStr.empty() || (hexStr[0] == '#' && hexStr.length() != 9) || (hexStr[0] != '#' && hexStr.length() != 8)) {
-        return Color::Invalid;
+        return ColorUtils::Invalid;
     }
 
     // 确定起始位置：如果以'#'开头则从第1个字符开始，否则从第0个开始
@@ -280,9 +315,11 @@ Color ColorUtils::from_shap_string(const std::string& hexStr)
     
     // 使用 stoul 进行转换，并指定基数为16
     try {
-        return static_cast<uint32_t>(std::stoul(hexStr.substr(startIndex), nullptr, 16));
+        auto ul = std::stoul(hexStr.substr(startIndex), nullptr, 16);
+        return ColorUtils::to_color((uint32_t)ul);
     } catch (const std::exception& e) {
-        return Color::Invalid;
+        spdlog::warn("from_shap_string: cast failed. e = {}", e.what());
+        return ColorUtils::Invalid;
     }
 }
 

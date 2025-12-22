@@ -3,6 +3,7 @@
 #include "misc.h"
 #include "render.h"
 #include "texture.h"
+#include "event.h"
 #include "window.h"
 #include "plugin.h"
 #include "config.h"
@@ -27,6 +28,8 @@ public:
     Application(const Application& app) = delete;
     Application& operator=(const Application& app) = delete;
 
+    bool init(std::string_view configFile, std::string_view logFile);
+
     void run();
 
     template<typename T, typename... Args>
@@ -46,13 +49,14 @@ public:
 
     AudioPlayer& audioPlayer() { return *_audioPlayer; }
 
+    EventDispatcher& eventDispatcher() { return *_eventDispatcher; }
+
     const FpsChecker& fpsChecker() { return _fps_checker; }
 
     fs::path runPath();
     const fs::path& resPath();
 
 private:
-    bool init();
     bool close();
 
     void input();
@@ -63,10 +67,8 @@ private:
     bool preFrame();
     bool postFrame();
     
-    void processEvent(const Event& event);
-
-    bool initConfig();
-    bool initLog();
+    bool initConfig(std::string_view configFile);
+    bool initLog(std::string_view logFile);
     bool initWindow();
     bool initRenderer();
     bool initAudioPlayer();
@@ -79,6 +81,8 @@ private:
     std::unique_ptr<ResourceManager> _resourceMgr = nullptr;
 
     std::unique_ptr<AudioPlayer> _audioPlayer = nullptr;
+
+    std::unique_ptr<EventDispatcher> _eventDispatcher = nullptr;
 
     PluginMap _plugins;
 

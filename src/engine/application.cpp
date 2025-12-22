@@ -56,12 +56,6 @@ bool Application::removePlugin(const std::string& name)
 
 void Application::run() 
 {
-    bool res = init();
-    if (!res)
-    {
-        return;
-    }
-
     while (_running)
     {
         input();
@@ -81,17 +75,17 @@ void Application::run()
     close();
 }
 
-bool Application::init() 
+bool Application::init(std::string_view configFile, std::string_view logFile)
 {
     SDL_Log("---------------- engine init ----------------");
 
-    if(!initConfig()) 
+    if(!initConfig(configFile)) 
     {
         SDL_Log("init config failed.");
         return false;
     }
 
-    if(!initLog()) 
+    if(!initLog(logFile)) 
     {
         SDL_Log("init spdlog failed.");
         return false;
@@ -118,9 +112,9 @@ bool Application::init()
     return true;
 }
 
-bool Application::initConfig() 
+bool Application::initConfig(std::string_view config_file) 
 {
-    auto path = fs::current_path() / "res/system.json";
+    auto path = fs::current_path() / config_file; 
     if(!_config.load(path)) 
     {
         return false;
@@ -132,7 +126,7 @@ bool Application::initConfig()
     return true;
 }
 
-bool Application::initLog() 
+bool Application::initLog(std::string_view logFile) 
 {
     spdlog::set_level((spdlog::level::level_enum)_config.log.level);
     spdlog::set_pattern(_config.log.pattern);
@@ -167,6 +161,9 @@ bool Application::initWindow()
     }
 
     _window->setPosition({SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED});
+
+    _eventDispatcher = std::make_unique<EventDispatcher>();
+    _eventDispatcher->onQuit.connect([&]{_running = false;});
 
     spdlog::info("window created.");
     return true;
@@ -222,32 +219,6 @@ void Application::drawUI()
     }   
 }
 
-void Application::processEvent(const Event& event) 
-{
-    for(auto& plugin : _plugins)
-    {
-        plugin.second->handleEvent(event);
-    }
-
-    switch (event.type) 
-    {
-        case SDL_EVENT_KEY_DOWN:
-        case SDL_EVENT_KEY_UP: 
-        case SDL_EVENT_MOUSE_BUTTON_DOWN:
-        case SDL_EVENT_MOUSE_BUTTON_UP: 
-        case SDL_EVENT_MOUSE_MOTION: 
-        {
-        }break;
-        case SDL_EVENT_QUIT: 
-        {
-            _running = false;
-        }break;
-        default:{
-            break;
-        }
-    }
-}
-
 bool Application::close() 
 {
     for(auto& plugin : _plugins)
@@ -263,10 +234,7 @@ bool Application::close()
 
 void Application::input() 
 {
-    Event event;
-    while (SDL_PollEvent(&event)) {
-        processEvent(event);
-    }
+    _eventDispatcher->run();
 }
 
 bool Application::preFrame() 
@@ -276,7 +244,7 @@ bool Application::preFrame()
         return false;
     }
 
-    _renderer->setDrawColor({0, 0, 0, 0});
+    _renderer->setDrawColor({100, 100, 200, 0});
 
     _renderer->clear();
     

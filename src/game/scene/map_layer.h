@@ -1,31 +1,14 @@
 #pragma once
 
+#include "map_utils.h"
 
-#include "engine/wrapper.h"
-#include "engine/texture.h"
-#include "utility/dynamic_struct.h"
-#include "nlohmann/json.hpp"
 
 namespace game {
-
-    using namespace engine;
-
-    using json = nlohmann::json;
-    using Properties = utility::DynamicStruct<std::string>;
-
-    struct MapDrawCall {
-        std::vector<engine::Vertex> vertices;
-        engine::Texture* texture;
-    };
 
     enum class MapLayerType {
         Image,
         Tile,
         Object
-    };
-
-    struct LoaderUtils {
-        static void loadProperties(const json& json, Properties& properties);
     };
 
 
@@ -42,7 +25,7 @@ namespace game {
         Properties properties;
         
         bool load(const json& json);
-    }
+    };
 
     struct MapLayer 
     {

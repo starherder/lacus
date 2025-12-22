@@ -46,7 +46,6 @@ namespace samples
         void onUpdate() override;
         void onDraw() override;
         void onDrawUI() override;
-        void onEvent(const engine::Event& event) override;
 
     private:
         engine::Application& _app;

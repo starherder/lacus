@@ -34,8 +34,6 @@ namespace samples {
         void onDraw() override;
 
         void onClose() override;
-
-        void onEvent(const engine::Event& event) override;
     
     private:
         void initEntities();

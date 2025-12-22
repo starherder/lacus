@@ -92,17 +92,5 @@ namespace engine {
         _application = nullptr;
     }
 
-    void Plugin::handleEvent(const Event& event)
-    {
-        if(!initialized() || !isEnabled()) 
-        {
-            return;
-        }
-
-        //spdlog::info("plugin({}) handle event. ", name());
-        onEvent(event);
-    }
-
-
 
 }

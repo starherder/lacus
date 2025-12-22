@@ -142,7 +142,7 @@ namespace samples {
                             return false;
                         });
 
-        int start_ticks = SDL_GetTicks();
+        int start_ticks = (int)SDL_GetTicks();
 
         if (mode == EaseMode::Once)
         {

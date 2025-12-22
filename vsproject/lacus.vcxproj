@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{5af46be2-b367-4ef8-b0ba-bb9dcc64e9bf}</ProjectGuid>
+    <RootNamespace>lacus</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\ext;..\src;..\ext\SDL3\include;..\ext\spdlog\include;..\ext\tmxlite\include;..\ext\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\ext\spdlog\libs\Debug;..\ext\SDL3\libs\Debug;..\ext\tmxlite\libs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL_uclibc.lib;SDL3_image-static.lib;SDL3_mixer-static.lib;SDL3_ttf-static.lib;SDL3-static.lib;spdlogd.lib;libtmxlite-static.lib;winmm.lib;setupapi.lib;imm32.lib;version.lib;Rpcrt4.lib;Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\ext;..\src;..\ext\SDL3\include;..\ext\spdlog\include;..\ext\tmxlite\include;..\ext\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\ext\spdlog\libs\Debug;..\ext\SDL3\libs\Debug;..\ext\tmxlite\libs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL_uclibc.lib;SDL3_image-static.lib;SDL3_mixer-static.lib;SDL3_ttf-static.lib;SDL3-static.lib;spdlogd.lib;libtmxlite-static.lib;winmm.lib;setupapi.lib;imm32.lib;version.lib;Rpcrt4.lib;Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.cpp" />
+    <ClCompile Include="..\ext\imgui\imgui.cpp" />
+    <ClCompile Include="..\ext\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\ext\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\ext\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\ext\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\src\engine\application.cpp" />
+    <ClCompile Include="..\src\engine\audio.cpp" />
+    <ClCompile Include="..\src\engine\audio_player.cpp" />
+    <ClCompile Include="..\src\engine\camera.cpp" />
+    <ClCompile Include="..\src\engine\config.cpp" />
+    <ClCompile Include="..\src\engine\event.cpp" />
+    <ClCompile Include="..\src\engine\font.cpp" />
+    <ClCompile Include="..\src\engine\misc.cpp" />
+    <ClCompile Include="..\src\engine\plugin.cpp" />
+    <ClCompile Include="..\src\engine\render.cpp" />
+    <ClCompile Include="..\src\engine\resource.cpp" />
+    <ClCompile Include="..\src\engine\scene.cpp" />
+    <ClCompile Include="..\src\engine\texture.cpp" />
+    <ClCompile Include="..\src\engine\text_render.cpp" />
+    <ClCompile Include="..\src\engine\window.cpp" />
+    <ClCompile Include="..\src\game\game_logic.cpp" />
+    <ClCompile Include="..\src\game\scene\game_scene.cpp" />
+    <ClCompile Include="..\src\game\scene\map_layer.cpp" />
+    <ClCompile Include="..\src\game\scene\map_tilset.cpp" />
+    <ClCompile Include="..\src\game\scene\tile_map.cpp" />
+    <ClCompile Include="..\src\imform\imform.cpp" />
+    <ClCompile Include="..\src\imform\imform_demo.cpp" />
+    <ClCompile Include="..\src\imform\imform_manager.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_astar.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_audio.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_draw.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_entt.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_manager.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_tilemap.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_tweeny.cpp" />
+    <ClCompile Include="..\src\samples\tmxmap\tmx_layer.cpp" />
+    <ClCompile Include="..\src\samples\tmxmap\tmx_map_loader.cpp" />
+    <ClCompile Include="..\src\ui\buttons.cpp" />
+    <ClCompile Include="..\src\ui\form.cpp" />
+    <ClCompile Include="..\src\ui\form_demo.cpp" />
+    <ClCompile Include="..\src\ui\groups.cpp" />
+    <ClCompile Include="..\src\ui\gui_manager.cpp" />
+    <ClCompile Include="..\src\ui\ui_utils.cpp" />
+    <ClCompile Include="..\src\ui\widget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdl3.h" />
+    <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.h" />
+    <ClInclude Include="..\ext\imgui\imconfig.h" />
+    <ClInclude Include="..\ext\imgui\imgui.h" />
+    <ClInclude Include="..\ext\imgui\imgui_internal.h" />
+    <ClInclude Include="..\ext\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\ext\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\ext\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\src\engine\application.h" />
+    <ClInclude Include="..\src\engine\audio.h" />
+    <ClInclude Include="..\src\engine\audio_player.h" />
+    <ClInclude Include="..\src\engine\camera.h" />
+    <ClInclude Include="..\src\engine\config.h" />
+    <ClInclude Include="..\src\engine\event.h" />
+    <ClInclude Include="..\src\engine\font.h" />
+    <ClInclude Include="..\src\engine\misc.h" />
+    <ClInclude Include="..\src\engine\plugin.h" />
+    <ClInclude Include="..\src\engine\render.h" />
+    <ClInclude Include="..\src\engine\resource.h" />
+    <ClInclude Include="..\src\engine\scene.h" />
+    <ClInclude Include="..\src\engine\texture.h" />
+    <ClInclude Include="..\src\engine\text_render.h" />
+    <ClInclude Include="..\src\engine\window.h" />
+    <ClInclude Include="..\src\engine\wrapper.h" />
+    <ClInclude Include="..\src\game\game_logic.h" />
+    <ClInclude Include="..\src\game\scene\game_scene.h" />
+    <ClInclude Include="..\src\game\scene\map_layer.h" />
+    <ClInclude Include="..\src\game\scene\map_tilset.h" />
+    <ClInclude Include="..\src\game\scene\map_utils.h" />
+    <ClInclude Include="..\src\game\scene\tile_map.h" />
+    <ClInclude Include="..\src\imform\imform.h" />
+    <ClInclude Include="..\src\imform\imform_demo.h" />
+    <ClInclude Include="..\src\imform\imform_manager.h" />
+    <ClInclude Include="..\src\samples\sample_camera.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_astar.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_audio.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_draw.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_entt.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_imgui.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_manager.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_tilemap.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_tweeny.h" />
+    <ClInclude Include="..\src\samples\tmxmap\tmx_layer.h" />
+    <ClInclude Include="..\src\samples\tmxmap\tmx_map_loader.h" />
+    <ClInclude Include="..\src\ui\buttons.h" />
+    <ClInclude Include="..\src\ui\form.h" />
+    <ClInclude Include="..\src\ui\form_demo.h" />
+    <ClInclude Include="..\src\ui\groups.h" />
+    <ClInclude Include="..\src\ui\gui_manager.h" />
+    <ClInclude Include="..\src\ui\ui_utils.h" />
+    <ClInclude Include="..\src\ui\widget.h" />
+    <ClInclude Include="..\src\utility\dynamic_struct.h" />
+    <ClInclude Include="..\src\utility\dynamic_var.h" />
+    <ClInclude Include="..\src\utility\expire_cache.h" />
+    <ClInclude Include="..\src\utility\i_singleton.h" />
+    <ClInclude Include="..\src\utility\signalslot.h" />
+    <ClInclude Include="..\src\utility\skip_list.h" />
+    <ClInclude Include="..\src\utility\string_util.h" />
+    <ClInclude Include="..\src\utility\unsort_map.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

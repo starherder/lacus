@@ -153,7 +153,7 @@ namespace utility
 			ConstIterator it = find(key);
 			if (it == end())
 			{
-				throw NotFoundException("Key not found in DynamicStruct");
+				throw std::exception("Key not found in DynamicStruct");
 			}
 			return it->second;
 		}

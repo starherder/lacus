@@ -12,7 +12,11 @@ namespace engine
         Scene(Application& app) : _app(app) {}
         virtual ~Scene() = default;
 
-        virtual bool load(const std::string& scenePath) = 0;
+        void update();
+        void render();
+        void renderUI();
+
+        virtual bool load(const fs::path& scenePath) = 0;
         virtual bool unload() = 0;
 
         virtual void onUpdate(float deltaTime) = 0;

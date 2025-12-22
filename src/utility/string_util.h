@@ -80,7 +80,7 @@ namespace utility
 			if (len != static_cast<size_t>(-1))
 			{
 				std::unique_ptr<wchar_t[]> buff(new wchar_t[len + 1]);
-				len = std::mbsrtowcs(buff.get(), &src, len, &state);
+				len = std::mbsrtowcs(buff.get() &src, len, &state);
 				if (len != static_cast<size_t>(-1))
 				{
 					ret.assign(buff.get(), len);

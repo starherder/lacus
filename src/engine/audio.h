@@ -53,25 +53,26 @@ public:
     AudioManager(const AudioManager&) = delete;
     ~AudioManager();
 
-    Sound* loadSound(IdType id, const std::string_view& filepath);
-    Sound* getSound(IdType id, const std::string_view& filepath="");
-    void unloadSound(IdType id);
-
     Sound* loadSound(const HashString& file);
     Sound* getSound(const HashString& file);
     void unloadSound(const HashString& file);
 
     void clearSounds();
 
-    Music* loadMusic(IdType id, const std::string_view& filepath);
-    Music* getMusic(IdType id, const std::string_view& filepath="");
-    void unloadMusic(IdType id);
-
     Music* loadMusic(const HashString& file);
     Music* getMusic(const HashString& file);
     void unloadMusic(const HashString& file);
 
     void clearMusics();
+
+private:
+    Sound* loadSound(IdType id, const std::string_view& filepath);
+    Sound* getSound(IdType id, const std::string_view& filepath="");
+    void unloadSound(IdType id);
+
+    Music* loadMusic(IdType id, const std::string_view& filepath);
+    Music* getMusic(IdType id, const std::string_view& filepath="");
+    void unloadMusic(IdType id);
 
 private:
     SoundMap _sounds;

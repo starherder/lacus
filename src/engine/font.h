@@ -54,14 +54,15 @@ public:
     FontManager(const FontManager&) = delete;
     ~FontManager();
 
-    Font* load(IdType id, int pointSize, const std::string_view& filepath);
     Font* load(const HashString& str, int pointSize);
-
-    Font* get(IdType id, int pointSize, const std::string_view& filepath="");
     Font* get(const HashString& str, int pointSize);
-
     void unload(const HashString& name, int size);
+
     void clear();
+
+private:
+    Font* load(IdType id, int pointSize, const std::string_view& filepath);
+    Font* get(IdType id, int pointSize, const std::string_view& filepath="");
 
 private:
     FontMap _Fonts;

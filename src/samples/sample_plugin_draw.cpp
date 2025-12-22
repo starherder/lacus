@@ -1,16 +1,11 @@
 #include "sample_plugin_draw.h"
 
 #include "engine/application.h"
-#include "engine/widget.h"
 
 namespace samples {
 
     void SamplePluginDraw::onInit() 
     {
-        //auto& renderer = application()->renderer();
-        //engine::WidgetManager::inst().init(renderer);
-        //engine::WidgetManager::inst().create_label(entt::null, "label");
-
     }
 
     void SamplePluginDraw::onInstall() 
@@ -42,8 +37,6 @@ namespace samples {
         drawText();
 
         drawGeometry();
-            
-        engine::WidgetManager::inst().draw();
     }
 
     void SamplePluginDraw::onClose() 

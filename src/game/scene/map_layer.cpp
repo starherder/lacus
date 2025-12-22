@@ -2,40 +2,40 @@
 
 namespace game {
     
-void LoaderUtils::loadProperties(const json& json, Properties& properties);
+void LoaderUtils::loadProperties(const json& json, Properties& properties)
 {
     if(json.contains("properties")) 
     {
-        auto& properties = json["properties"];
-        for (auto& prop : properties) 
+        auto& props = json["properties"];
+        for (auto& prop : props) 
         {
-            auto& name = prop["name"].get<std::string>();
-            auto& type = prop["type"].get<std::string>();
+            const auto& name = prop.value("name", "");
+            const auto& type = prop.value("type", "");
 
             if(type=="bool") {
-                properties[name] = prop["value"].get<bool>();
+                properties[name] = prop.value("value", false);
             }
             else if(type=="int") {
-                properties[name] = prop["value"].get<int>();
+                properties[name] = prop.value("value", 0);
             }
             else if(type=="float") {
-                properties[name] = prop["value"].get<float>();
+                properties[name] = prop.value("value", 0.0f);
             }
             else if(type=="string") {
-                properties[name] = prop["value"].get<std::string>();
+                properties[name] = prop.value("value", "");
             }
             else if(type=="color") {
-                auto& strcolor = prop["value"].get<std::string>();
-                auto color = engine::ColorUtils::from_string(strcolor);
+                auto strcolor = prop.value("value", "");
+                auto color = engine::ColorUtils::from_shap_string(strcolor);
                 properties[name] = engine::ColorUtils::to_uint32(color);
             }
             else if(type=="file") {
-                auto& strfile = prop["value"].get<std::string>();
+                const auto& strfile = prop.value("value", "");
                 properties[name] = strfile;
             }
             else if(type=="object")
             {
-                properties[name] = prop["value"].get<int>;
+                properties[name] = prop.value("value", 0);
             }
             else {
                 spdlog::warn("unknown property type: {}", type);
@@ -46,68 +46,68 @@ void LoaderUtils::loadProperties(const json& json, Properties& properties);
 
 bool MapObject::load(const json& json)
 {
-    id = json["id"].get<int>();
-    gid = json["gid"].get<int>();
-    name = json["name"].get<std::string>();
-    type = json["type"].get<std::string>();
-    visible = json["visible"].get<bool>();
-    rotation = json["rotation"].get<int>();
+    id = json.value("id", 0);
+    gid = json.value("gid", 0);
+    name = json.value("name", "");
+    type = json.value("type", "");
+    visible = json.value("visible", true);
+    rotation = json.value("rotation", 0);
 
-    pos.x = json["x"].get<int>();
-    pos.y = json["y"].get<int>();
+    pos.x = json.value("x", 0);
+    pos.y = json.value("y", 0);
 
-    size.x = json["width"].get<int>();
-    size.y = json["height"].get<int>();
+    size.x = json.value("width", 0);
+    size.y = json.value("height", 0);
 
-    LoaderUtils::loadProperties(json, _properties);
+    LoaderUtils::loadProperties(json, properties);
 
     return true;
 }
 
 bool MapLayer::load(const json& json) 
 {
-    id = json["id"].get<int>();
-    name = json["name"].get<std::string>();
-    visible = json["visible"].get<bool>();
-    opacity = json["opacity"].get<int>();
-    pos.x = json["x"].get<int>();
-    pos.y = json["y"].get<int>();
+    id = json.value("id", 0);
+    name = json.value("name", "");
+    visible = json.value("visible", true);
+    opacity = json.value("opacity", 255);
+    pos.x = json.value("x", 0);
+    pos.y = json.value("y", 0);
 
-    LoaderUtils::loadProperties(json, _properties);
+    LoaderUtils::loadProperties(json, properties);
     return true;
 }
 
 bool ImageLayer::load(const json& json) 
 {
-    if(!MapLayer::load(json) return false;
+    if(!MapLayer::load(json)) return false;
 
-    image_file = json["image"].get<std::string>();
+    image_file = json.value("image", "");
 
-    offset.x = json["offsetx"].get<int>();
-    offset.y = json["offsety"].get<int>();
+    offset.x = json.value("offsetx", 0);
+    offset.y = json.value("offsety", 0);
 
-    image_size.x = json["imagewidth"].get<int>();
-    image_size.y = json["imageheight"].get<int>();
+    image_size.x = json.value("imagewidth", 0);
+    image_size.y = json.value("imageheight", 0);
 
-    repeat_x = json["repeatx"].get<int>();
-    repeat_y = json["repeaty"].get<int>();
+    repeat_x = json.value("repeatx", 0);
+    repeat_y = json.value("repeaty", 0);
     
     return true;
 }
 
 bool TileLayer::load(const json& json) 
 {
-    if(!MapLayer::load(json) return false;
+    if(!MapLayer::load(json)) return false;
 
-    width = json["width"].get<int>();
-    height = json["height"].get<int>();
+    width = json.value("width", 0);
+    height = json.value("height", 0);
 
-    encodeing = json["encoding"].get<std::string>();
-    compression = json["compression"].get<std::string>();
+    encodeing = json.value("encoding", "");
+    compression = json.value("compression", "");
 
     if(encodeing=="csv" || encodeing.empty())
     {
-        data = json["data"].get<std::vector<int>>();
+        data = json.value("data", std::vector<int>{});
     }
     else 
     {
@@ -119,14 +119,14 @@ bool TileLayer::load(const json& json)
 
 bool ObjectLayer::load(const json& json) 
 {
-    if(!MapLayer::load(json) return false;
+    if(!MapLayer::load(json)) return false;
 
-    draw_order = json["draworder"].get<std::string>();
+    draw_order = json.value("draworder", "");
 
     if(json.contains("objects"))
     {
-        auto& objects = json["objects"];
-        for (auto& obj : objects) 
+        auto& objs = json["objects"];
+        for (auto& obj : objs) 
         {
             MapObject map_obj;
             if(map_obj.load(obj))
@@ -141,7 +141,8 @@ bool ObjectLayer::load(const json& json)
 
 bool GroupLayer::load(const json& json) 
 {
-    if(!MapLayer::load(json) return false;
+    if(!MapLayer::load(json))
+        return false;
     return true;
 }
 

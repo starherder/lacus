@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/application.h"
-#include "engine/widget.h"
+
 
 namespace samples {
 

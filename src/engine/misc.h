@@ -78,16 +78,34 @@ class ColorUtils
 public:
     static const Color White;
     static const Color Black;
+    static const Color Dark;
+    static const Color Gray;
+    static const Color Light;
     static const Color Red;
+    static const Color LightRed;
+    static const Color DarkRed;
     static const Color Green;
+    static const Color LightGreen;
+    static const Color DarkGreen;
     static const Color Blue;
+    static const Color LightBlue;
+    static const Color DarkBlue;
     static const Color Yellow;
+    static const Color LightYellow;
+    static const Color DarkYellow;
     static const Color Cyan;
+    static const Color LightCyan;
+    static const Color DarkCyan;
     static const Color Magenta;
+    static const Color LightMagenta;
+    static const Color DarkMagenta;
     static const Color Invalid;
 
     static FColor to_fcolor(const Color& color);
     static Color to_color(const FColor& fcolor);
+
+    static FColor to_fcolor(uint32_t ul);
+    static Color to_color(uint32_t ul);
 
     static uint32_t to_uint32(const Color& color);
     static uint32_t to_uint32(const FColor& fcolor);
@@ -101,6 +119,8 @@ public:
     // hex number start with '#' like "#ff1c4dd4"
     static Color from_shap_string(const std::string& str);
     static std::string to_shap_string(const Color& color);
+
+    static bool is_valid(const Color& color);
 };
 
 }
