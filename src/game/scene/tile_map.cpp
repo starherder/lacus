@@ -1,6 +1,7 @@
 #include "tile_map.h"
+
 #include "engine/render.h"
-#include <memory>
+#include "magic_enum/magic_enum.h"
 
 namespace game {
 
@@ -170,6 +171,36 @@ bool TileMap::load_tilesets(const json& jstilesets)
 
 void TileMap::bakeGeometry(engine::ResourceManager& resourceMgr)
 {
+    for(auto& layer : _layers) 
+    {
+        if(layer && layer->type==MapLayerType::TileLayer) 
+        {
+            auto& tileLayer = dynamic_cast<TileLayer&>(*layer);
+            bakeTileLayer(resourceMgr, tileLayer);
+        }
+        else if (layer && layer->type == MapLayerType::ImageLayer)
+        {
+            auto& imageLayer = dynamic_cast<ImageLayer&>(*layer);
+            bakeImageLayer(resourceMgr, imageLayer);
+        }
+        else if (layer && layer->type == MapLayerType::ObjectLayer)
+        {
+            auto& objectLayer = dynamic_cast<ObjectLayer&>(*layer);
+            bakeObjectLayer(resourceMgr, objectLayer);
+        }
+        else if (layer && layer->type == MapLayerType::GroupLayer)
+        {
+            spdlog::info("layer: {} type <GroupLayer> do nothing...", layer->name);
+        }
+        else
+        {
+            spdlog::warn("layer: {} type {} NOT support.", layer->name, magic_enum::enum_name(layer->type));
+        }
+    }
+}
+
+void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& layer)
+{
     for (auto& tileset : _tilesets)
     {
         if (tileset)
@@ -177,31 +208,16 @@ void TileMap::bakeGeometry(engine::ResourceManager& resourceMgr)
             auto mapRelatePath = _mapPath.lexically_relative(resourceMgr.resPath());
             auto imagePath = mapRelatePath / tileset->imageFile;
             tileset->texture = resourceMgr.textureManager().get(HashString(imagePath.string().c_str()));
-            if(tileset->texture)
+            if (!tileset->texture)
             {
                 spdlog::error("load texture {} failed.", imagePath.string());
             }
         }
     }
 
-    for(auto& layer : _layers) 
-    {
-        if(layer && layer->type==MapLayerType::TileLayer) 
-        {
-            auto& tileLayer = dynamic_cast<TileLayer&>(*layer);
-            bakeTileLayer(tileLayer);
-        }
-    }
-}
-
-void TileMap::bakeTileLayer(TileLayer& layer)
-{
     auto vertColour = (SDL_FColor)layer.tint_color;
-
-    //for (auto i = 0u; i < _tilesets.size(); ++i)
     for(auto& ptileset : _tilesets)
     {
-        //check tile ID to see if it falls within the current tile set
         const auto& tileset = *ptileset;
         const auto& tileData = layer.data;
 
@@ -258,8 +274,6 @@ void TileMap::bakeTileLayer(TileLayer& layer)
                     verts.emplace_back(vert);
                 }
             }
-
-
         }
 
         if (!verts.empty())
@@ -271,6 +285,61 @@ void TileMap::bakeTileLayer(TileLayer& layer)
             _drawCalls.push_back(std::move(drawcall));
         }
     }
+}
+
+void TileMap::bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& layer)
+{
+    if (!layer.visible)
+    {
+        return;
+    }
+
+    auto mapRelatePath = _mapPath.lexically_relative(resourceMgr.resPath());
+    auto imagePath = mapRelatePath / layer.image_file;
+    auto texture = resourceMgr.textureManager().get(HashString(imagePath.string().c_str()));
+    if (!texture)
+    {
+        spdlog::error("bake image layer: load image failed, image = {}", imagePath.string());
+        return;
+    }
+
+    Vec2 pos = layer.pos + layer.offset;
+    Vec2 size = layer.image_size;
+
+    Vec2 lt = pos;
+    Vec2 lb = pos + Vec2{ 0, size.y };
+    Vec2 rt = pos + Vec2{ size.x, 0 };
+    Vec2 rb = pos + size;
+
+    auto vertColour = (SDL_FColor)layer.tint_color;
+
+    engine::Vertex vert;
+    std::vector<engine::Vertex> verts;
+
+    vert = { { lt.x, lt.y }, vertColour, {0, 0} };
+    verts.emplace_back(vert);
+    vert = { { rt.x, rt.y }, vertColour, {1, 0} };
+    verts.emplace_back(vert);
+    vert = { { rb.x, rb.y }, vertColour, {1, 1} };
+    verts.emplace_back(vert);
+
+    vert = { { lt.x, lt.y }, vertColour, {0, 0} };
+    verts.emplace_back(vert);
+    vert = { { rb.x, rb.y }, vertColour, {1, 1} };
+    verts.emplace_back(vert);
+    vert = { { lb.x, lb.y }, vertColour, {0, 1} };
+    verts.emplace_back(vert);
+
+    auto drawcall = std::make_unique<MapDrawCall>();
+    drawcall->texture = texture;
+    drawcall->vertexies.swap(verts);
+
+    _drawCalls.push_back(std::move(drawcall));
+}
+
+void TileMap::bakeObjectLayer(engine::ResourceManager& resourceMgr, ObjectLayer& layer)
+{
+
 }
 
 

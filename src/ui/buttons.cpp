@@ -78,8 +78,8 @@ namespace ui {
 
     void Button::setState(WidgetState state)
     {
-        spdlog::info("btn({}) change state from {} to {}", name(), 
-            magic_enum::enum_name(_state), magic_enum::enum_name(state));
+        //spdlog::info("btn({}) change state from {} to {}", name(), 
+        //    magic_enum::enum_name(_state), magic_enum::enum_name(state));
 
         _state = state;
     }

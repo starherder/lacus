@@ -29,7 +29,9 @@ namespace game {
         bool load_tilesets(const json& json);
         bool load_one_tileset(const fs::path& filepath, int firstgid);
 
-        void bakeTileLayer(TileLayer& layer);
+        void bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& layer);
+        void bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& layer);
+        void bakeObjectLayer(engine::ResourceManager& resourceMgr, ObjectLayer& layer);
 
     private:
         fs::path _resPath;
