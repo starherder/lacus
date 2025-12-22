@@ -47,7 +47,7 @@ public:
     // Display functions
     static SDL_DisplayID* getDisplays(int* count);
     static const char* getDisplayName(SDL_DisplayID displayID);
-    static bool getDisplayBounds(SDL_DisplayID displayID, SDL_Rect* rect);
+    static Rect getDisplayBounds(SDL_DisplayID displayID);
     
     // Screen saver
     static bool screenSaverEnabled();

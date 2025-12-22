@@ -31,8 +31,8 @@ public:
     Rect getClipRect() const;
     bool clipEnabled() const;
     
-    bool setRenderScale(const Vec2f& scale) const;
-    Vec2f getRenderScale() const; 
+    bool setRenderScale(const Vec2& scale) const;
+    Vec2 getRenderScale() const; 
     
     bool setDrawColor(const Color& color) const;
 
@@ -46,27 +46,31 @@ public:
     bool setDrawBlendMode(BlendMode blendMode) const;
     BlendMode getDrawBlendMode() const;
     
-    bool drawPoint(const Vec2f& point) const;
-    bool drawPoints(const Vec2f* points, int count) const;
+    bool drawPoint(const Vec2& point) const;
+    bool drawPoints(const Vec2* points, int count) const;
     
-    bool drawLine(const Vec2f& start, const Vec2f& end) const;
-    bool drawlines(const Vec2f* points, int count) const;
+    bool drawLine(const Vec2& start, const Vec2& end) const;
+    bool drawlines(const Vec2* points, int count) const;
     
-    bool drawRect(const FRect& rect) const;
-    bool drawRects(const FRect* rects, int count) const;
-    bool drawFillRect(const FRect& rect) const;
-    bool drawFillRects(const FRect* rects, int count) const;
+    bool drawRect(const Rect& rect) const;
+    bool drawRects(const Rect* rects, int count) const;
+    bool drawFillRect(const Rect& rect) const;
+    bool drawFillRects(const Rect* rects, int count) const;
     
     // 纹理渲染
-    bool drawTexture(Texture* texture, const FRect& srcrect, const FRect& dstrect) const;
-    bool drawTextureRotated(Texture* texture, const FRect* srcrect, const FRect* dstrect, 
-                            double angle, const Vec2f* center, FlipMode flip) const;
-    bool drawTextureAffine(Texture *texture, const FRect *srcrect, const Vec2f *origin,
-                            const Vec2f *right, const Vec2f *down) const;
-    bool drawTextureTiled(Texture* texture, const FRect* srcrect, float scale, const FRect* dstrect) const;
-    bool drawTexture9Grid(Texture* texture, const FRect* srcrect, 
+    bool drawTexture(Texture* texture, const Rect& srcrect, const Rect& dstrect) const;
+
+    bool drawTextureRotated(Texture* texture, const Rect& srcrect, const Rect& dstrect, 
+                            double angle, const Vec2& center, FlipMode flip) const;
+
+    bool drawTextureAffine(Texture *texture, const Rect *srcrect, const Vec2 *origin,
+                            const Vec2 *right, const Vec2 *down) const;
+
+    bool drawTextureTiled(Texture* texture, const Rect* srcrect, float scale, const Rect* dstrect) const;
+
+    bool drawTexture9Grid(Texture* texture, const Rect* srcrect, 
                            float left_width, float right_width, float top_height, float bottom_height, 
-                           float scale, const SDL_FRect* dstrect) const;
+                           float scale, const Rect* dstrect) const;
     
     // 几何渲染
      bool drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
@@ -77,9 +81,9 @@ public:
                         int num_vertices, const void* indices, int num_indices, int size_indices) const;
     
     // 字体渲染
-    bool drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color=Color{255,255,255,255});
-    bool drawDebugText(const Vec2f& pos,const char* str) const;
-    bool drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3);
+    bool drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color=Color{255,255,255,255});
+    bool drawDebugText(const Vec2& pos,const char* str) const;
+    bool drawDebugTextFormat(const Vec2& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3);
 
     bool present() const;
     

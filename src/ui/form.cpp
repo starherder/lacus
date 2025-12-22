@@ -55,7 +55,7 @@ void Form::draw()
     auto& renderer = GuiManager::inst().renderer();
     auto oldClipRect = renderer.getClipRect();
 
-    renderer.setClipRect({(int)_pos.x, (int)_pos.y, (int)_size.x, (int)_size.y});
+    renderer.setClipRect({_pos, _size});
 
     _rootGroup->draw();
 

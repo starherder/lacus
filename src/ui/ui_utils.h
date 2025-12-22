@@ -18,7 +18,7 @@ struct WidgetStatus {
     Color border_color;
 
     Texture* texture;
-    FRect tex_rect;
+    Rect tex_rect;
 };
 
 enum class WidgetState {

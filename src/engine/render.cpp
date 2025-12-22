@@ -51,7 +51,8 @@ bool Renderer::init(SDL_Window* window) {
 
 // 裁剪区域
 bool Renderer::setClipRect(const Rect& rect) const {
-    return SDL_SetRenderClipRect(_renderer, &rect);
+    SDL_Rect r = rect;
+    return SDL_SetRenderClipRect(_renderer, &r);
 }
 
 Rect Renderer::getClipRect() const {
@@ -64,12 +65,12 @@ bool Renderer::clipEnabled() const {
     return SDL_RenderClipEnabled(_renderer);
 }
 
-bool Renderer::setRenderScale(const Vec2f& scale) const {
+bool Renderer::setRenderScale(const Vec2& scale) const {
     return SDL_SetRenderScale(_renderer, scale.x, scale.y);
 }
 
-Vec2f Renderer::getRenderScale() const {
-    Vec2f scale;
+Vec2 Renderer::getRenderScale() const {
+    Vec2 scale;
     SDL_GetRenderScale(_renderer, &scale.x, &scale.y);
     return scale;
 }
@@ -109,80 +110,88 @@ bool Renderer::clear() const {
     return SDL_RenderClear(_renderer);
 }
 
-bool Renderer::drawPoint(const Vec2f& point) const {
+bool Renderer::drawPoint(const Vec2& point) const {
     return SDL_RenderPoint(_renderer, point.x, point.y);
 }
 
-bool Renderer::drawPoints(const Vec2f* points, int count) const {
+bool Renderer::drawPoints(const Vec2* points, int count) const {
     SDL_FPoint* fpoints = (SDL_FPoint*)(points);
     return SDL_RenderPoints(_renderer, fpoints, count);
 }
 
-bool Renderer::drawLine(const Vec2f& start, const Vec2f& end) const {
+bool Renderer::drawLine(const Vec2& start, const Vec2& end) const {
     return SDL_RenderLine(_renderer, start.x, start.y, end.x, end.y);
 }
 
-bool Renderer::drawlines(const Vec2f* points, int count) const {
+bool Renderer::drawlines(const Vec2* points, int count) const {
     SDL_FPoint* fpoints = (SDL_FPoint*)(points);
     return SDL_RenderLines(_renderer, fpoints, count);
 }
 
-bool Renderer::drawRect(const FRect& rect) const {
-    return SDL_RenderRect(_renderer, &rect);
+bool Renderer::drawRect(const Rect& rect) const {
+    SDL_FRect r = rect;
+    return SDL_RenderRect(_renderer, &r);
 }
 
-bool Renderer::drawRects(const FRect* rects, int count) const {
-    return SDL_RenderRects(_renderer, rects, count);
+bool Renderer::drawRects(const Rect* rects, int count) const {
+    return SDL_RenderRects(_renderer, (SDL_FRect*)rects, count);
 }
 
-bool Renderer::drawFillRect(const FRect& rect) const {
-    return SDL_RenderFillRect(_renderer, &rect);
+bool Renderer::drawFillRect(const Rect& rect) const {
+    SDL_FRect r = rect;
+    return SDL_RenderFillRect(_renderer, &r);
 }
 
-bool Renderer::drawFillRects(const FRect* rects, int count) const {
-    return SDL_RenderFillRects(_renderer, rects, count);
+bool Renderer::drawFillRects(const Rect* rects, int count) const {
+    return SDL_RenderFillRects(_renderer, (SDL_FRect*)rects, count);
 }
 
-bool Renderer::drawTexture(Texture* texture, const FRect& srcrect, const FRect& dstrect) const {
+bool Renderer::drawTexture(Texture* texture, const Rect& src, const Rect& dst) const {
     if(!texture) {
         return false;
     }
 
+    SDL_FRect srcrect = src;
+    SDL_FRect dstrect = dst;
     return SDL_RenderTexture(_renderer, texture->_texture, &srcrect, &dstrect);
 }
 
-bool Renderer::drawTextureRotated(Texture* texture, const FRect* srcrect, const FRect* dstrect, 
-                                   double angle, const Vec2f* center, FlipMode flip) const {
+bool Renderer::drawTextureRotated(Texture* texture, const Rect& src, const Rect& dst, 
+                                   double angle, const Vec2& center, FlipMode flip) const {
     if(!texture) {
         return false;
     }
     
-    return SDL_RenderTextureRotated(_renderer, texture->_texture, srcrect, dstrect, angle, (SDL_FPoint*)center, flip);
+    SDL_FRect srcrect = src;
+    SDL_FRect dstrect = dst;
+    SDL_FPoint fcenter = {center.x, center.y};
+    return SDL_RenderTextureRotated(_renderer, texture->_texture, &srcrect, &dstrect, angle, &fcenter, flip);
 }
 
-bool Renderer::drawTextureAffine(Texture *texture, const FRect *srcrect, const Vec2f *origin,
-                                                     const Vec2f *right, const Vec2f *down) const
+bool Renderer::drawTextureAffine(Texture *texture, const Rect* srcrect, const Vec2* origin,
+                                                     const Vec2* right, const Vec2* down) const
 {
     if(!texture) {
         return false;
     }
-    return SDL_RenderTextureAffine(_renderer, texture->_texture, srcrect, (SDL_FPoint*)origin, (SDL_FPoint*)right, (SDL_FPoint*)down);
+    return SDL_RenderTextureAffine(_renderer, texture->_texture, (SDL_FRect*)srcrect, (SDL_FPoint*)origin, (SDL_FPoint*)right, (SDL_FPoint*)down);
 }
 
-bool Renderer::drawTextureTiled(Texture* texture, const FRect* srcrect, float scale, const FRect* dstrect) const {
+bool Renderer::drawTextureTiled(Texture* texture, const Rect* srcrect, float scale, const Rect* dstrect) const {
     if(!texture) {
         return false;
     }
-    return SDL_RenderTextureTiled(_renderer, texture->_texture, srcrect, scale, dstrect);
+    return SDL_RenderTextureTiled(_renderer, texture->_texture, (SDL_FRect*)srcrect, scale, (SDL_FRect*)dstrect);
 }
 
-bool Renderer::drawTexture9Grid(Texture* texture, const FRect* srcrect, 
+bool Renderer::drawTexture9Grid(Texture* texture, const Rect* srcrect, 
                                  float left_width, float right_width, float top_height, float bottom_height, 
-                                 float scale, const SDL_FRect* dstrect) const {
+                                 float scale, const Rect* dstrect) const {
     if(!texture) {
         return false;
     }
-    return SDL_RenderTexture9Grid(_renderer, texture->_texture, srcrect, left_width, right_width, top_height, bottom_height, scale, dstrect);
+    return SDL_RenderTexture9Grid(_renderer, texture->_texture, (SDL_FRect*)srcrect, 
+    left_width, right_width, top_height, bottom_height, scale, (SDL_FRect*)dstrect);
 }
 
 bool Renderer::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
@@ -207,11 +216,11 @@ bool Renderer::drawGeometryRaw(Texture* texture,
                                 num_vertices, indices, num_indices, size_indices);
 }
 
-bool Renderer::drawDebugText(const Vec2f& pos,const char* str) const {
+bool Renderer::drawDebugText(const Vec2& pos,const char* str) const {
     return SDL_RenderDebugText(_renderer, pos.x, pos.y, str);
 }
 
-bool Renderer::drawDebugTextFormat(const Vec2f& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3) {
+bool Renderer::drawDebugTextFormat(const Vec2& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3) {
     va_list args;
     va_start(args, fmt);
     bool result = SDL_RenderDebugTextFormat(_renderer, pos.x, pos.y, fmt, args);
@@ -248,7 +257,7 @@ bool Renderer::initTextRenderer()
     return _textRenderer->init(this);
 }
 
-bool Renderer::drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color) {
+bool Renderer::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color) {
     if(!_textRenderer) {
         return false;
     }

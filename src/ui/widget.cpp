@@ -21,7 +21,7 @@ bool Widget::isPosInMe(const Vec2& pos)
                     && pos.y >= realPos.y && pos.y <= realPos.y+_size.y;
 }
 
-void Widget::setTexture(Texture* tex, FRect uv)
+void Widget::setTexture(Texture* tex, const Rect& uv)
 {
     if(!tex)
     {
@@ -31,7 +31,7 @@ void Widget::setTexture(Texture* tex, FRect uv)
     auto sz = tex->size();
 
     status().texture = tex; 
-    status().tex_rect = FRect{uv.x*sz.x, uv.y*sz.y, uv.w*sz.x, uv.h*sz.y};
+    status().tex_rect = Rect{uv.x*sz.x, uv.y*sz.y, uv.w*sz.x, uv.h*sz.y};
 }
 
 Vec2 Widget::getRealPos() const

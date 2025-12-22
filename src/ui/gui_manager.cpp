@@ -59,8 +59,8 @@ namespace ui {
                 auto ptr = *it;
                 if(ptr && ptr->visible())
                 {
-                    FRect rect = {ptr->pos().x, ptr->pos().y, ptr->size().x, ptr->size().y};
-                    if(pos.x >= rect.x && pos.x <= rect.x+rect.w && pos.y >= rect.y && pos.y <= rect.y+rect.h)
+                    Rect rect = {ptr->pos(), ptr->size()};
+                    if(rect.contains(pos))
                     {
                         return ptr.get();
                     }

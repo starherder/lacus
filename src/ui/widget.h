@@ -35,7 +35,7 @@ public:
     void setFocused(bool focus) { _focused = focus; }
 
     Texture* texture() { return status().texture; }
-    void setTexture(Texture* tex, FRect uv_rect={0,0,1,1});
+    void setTexture(Texture* tex, const Rect& uv_rect={0,0,1,1});
 
     const Color& bgColor() { return status().groud_color; }
     void setBgColor(const Color& c) { status().groud_color = c; }

@@ -142,8 +142,10 @@ const char* Window::getDisplayName(SDL_DisplayID displayID) {
     return SDL_GetDisplayName(displayID);
 }
 
-bool Window::getDisplayBounds(SDL_DisplayID displayID, SDL_Rect* rect) {
-    return SDL_GetDisplayBounds(displayID, rect);
+Rect Window::getDisplayBounds(SDL_DisplayID displayID) {
+    SDL_Rect sdlRect;
+    SDL_GetDisplayBounds(displayID, &sdlRect);
+    return sdlRect;
 }
 
 // Screen saver

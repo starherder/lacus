@@ -33,7 +33,7 @@ namespace ui {
 
         if(_clipChildren)
         {
-            renderer.setClipRect({(int)realPos.x, (int)realPos.y, (int)_size.x, (int)_size.y});
+            renderer.setClipRect({realPos, _size});
         }
 
         Widget::draw();
