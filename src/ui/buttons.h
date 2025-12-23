@@ -63,6 +63,7 @@ public:
 	Button(const std::string& name, Widget* parent = nullptr);
     ~Button();
 
+protected:    
     void onMouseEnter(const Vec2& pos) override;
     void onMouseLeave(const Vec2& pos) override;
 
@@ -75,13 +76,41 @@ public:
 
     virtual WidgetStatus& status() override;
 
-private:
     void setState(WidgetState state);
 
-private:
+protected:
     WidgetState _state = WidgetState::Normal;
 
     std::map<WidgetState, WidgetStatus> _status;
+};
+
+
+///////////////////////////////////////////////////////////////////////
+
+class CheckBox : public Button
+{
+public:
+    signal<CheckBox*> on_check_changed;
+
+public:
+    CheckBox() = delete;
+    ~CheckBox() = default;
+    CheckBox(const std::string& name, Widget* parent = nullptr);
+
+    bool checked() const { return _checked; }
+    void setChecked(bool checked);
+
+private:
+    void onMouseEnter(const Vec2& pos) override;
+    void onMouseLeave(const Vec2& pos) override;
+
+    void onMouseLeftClick(const Vec2& pos) override;
+
+    void onMouseLeftDown(const Vec2& pos) override;
+    void onMouseLeftUp(const Vec2& pos) override;
+
+private:
+    bool _checked = false;
 };
 
 
@@ -97,10 +126,10 @@ public:
     ProgressBar(const std::string& name, Widget* parent = nullptr);
     ~ProgressBar() = default;
 
-    Coordinate direction() { return _direction; } 
+    Coordinate direction() const { return _direction; } 
     void setDirection(Coordinate dir);
 
-    float progress() { return _progress; }
+    float progress() const { return _progress; }
     void setProgress(float progress);
 
     Widget* getForeground() { return _foreground; }
@@ -138,13 +167,13 @@ public:
     SliderBar(const std::string& name, Widget* parent = nullptr);
     ~SliderBar() = default;
 
-    float value() { return _value; }
+    float value() const { return _value; }
     void setValue(float value);
 
-    float maxValue() { return _maxValue; }
+    float maxValue() const { return _maxValue; }
     void setMaxValue(float maxValue);
 
-    Coordinate direction() { return _direction; } 
+    Coordinate direction() const { return _direction; } 
     void setDirection(Coordinate dir);
 
     Widget* getSlider() { return _slider; }

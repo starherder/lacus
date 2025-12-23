@@ -31,6 +31,7 @@ enum class WidgetState {
     Pressed,
     Disabled,
     Selected,
+    SelectedHover,
     Dragging,
 
     Max,
@@ -55,6 +56,7 @@ public:
     static const WidgetStatus pressedStatus;
     static const WidgetStatus disabledStatus;
     static const WidgetStatus selectedStatus;
+    static const WidgetStatus selectHoverStatus;
 };
 
 

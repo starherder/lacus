@@ -65,7 +65,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 	{// ---------------------- buttons ----------------------
 		auto grp_btns = group->createChild<Group>("grp_btns");
 		grp_btns->setPos({ 500, 200 });
-		grp_btns->setSize({ 300, 300 });
+		grp_btns->setSize({ 300, 350 });
 		grp_btns->setBgColor({ 125, 200, 125, 255 });
 
 		auto btn1 = grp_btns->createChild<Button>("btn_1");
@@ -102,7 +102,15 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		pbar2->setProgress(0.3f);
 		pbar2->setDirection(Coordinate::Vertical);
 		pbar2->on_process_changed.connect(this, &FormDemo::onProgressChanged);
+		
+		auto chk1 = grp_btns->createChild<CheckBox>("chk_1");
+		chk1->setPos({10, 220});
+		chk1->setSize({200, 30});
+		chk1->setText("check me");
+		chk1->setChecked(true);
+		chk1->on_check_changed.connect(this, &FormDemo::onCheckChanged);
 	}
+	
 
 	{	// ---------------------- horizonal layout ----------------------
 		auto hlay = root()->createChild<HorizonalLayout>("hlay");
@@ -172,6 +180,29 @@ void FormDemo::onProgressChanged(ProgressBar* pbar)
 void FormDemo::onSlideValueChanged(SliderBar* bar)
 {
 	spdlog::info("on slide ({}) changed to {}/{}", bar->name(), bar->value(), bar->maxValue());
+
+	float ratio = bar->value() / bar->maxValue();
+
+	auto group = (Group*)bar->parent();
+
+	auto pbar1 = group->getChild<ProgressBar>("pbar_1");
+	if (pbar1) pbar1->setProgress(ratio);
+
+	auto pbar2 = group->getChild<ProgressBar>("pbar_2");
+	if (pbar2) pbar2->setProgress(ratio);
+}
+
+void FormDemo::onCheckChanged(CheckBox* cbox)
+{
+	bool checked = cbox->checked();
+	if(checked) {
+		cbox->setText("checked!");
+	}
+	else {
+		cbox->setText("check me");
+	}
+
+	spdlog::info("on check ({}) changed to {}", cbox->name(), cbox->checked());
 }
 
 }

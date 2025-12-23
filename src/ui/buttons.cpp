@@ -71,7 +71,7 @@ namespace ui {
     Button::Button(const std::string& name, Widget* parent) : Label(name, parent)
     {
         _handleEvent = true;
-        _state = WidgetState::Normal;
+        setState(WidgetState::Normal);
 
         _status[WidgetState::Normal] = WigetUtils::normalStatus;
         _status[WidgetState::Hover] = WigetUtils::hoveredStatus;
@@ -82,8 +82,6 @@ namespace ui {
     Button::~Button()
     {
     }
-
-    /////////////////////////////////////////////////////////////////
 
     void Button::setState(WidgetState state)
     {
@@ -123,6 +121,79 @@ namespace ui {
         return _status[_state]; 
     }
 
+    /////////////////////////////////////////////////////////////////
+
+
+    CheckBox::CheckBox(const std::string& name, Widget* parent) 
+        : Button(name, parent)
+    {
+        _status[WidgetState::Selected] = WigetUtils::selectedStatus;
+        _status[WidgetState::SelectedHover] = WigetUtils::selectHoverStatus;
+    }
+
+    void CheckBox::setChecked(bool checked)
+    {
+        _checked = checked;
+        on_check_changed.emit(this);
+
+        if(_checked)
+        {
+            setState(WidgetState::Selected);
+        }
+        else 
+        {
+            setState(WidgetState::Normal);
+        }
+    }
+
+    void CheckBox::onMouseEnter(const Vec2& pos) 
+    {
+        if(_checked)
+        {
+            setState(WidgetState::SelectedHover);
+        }
+        else 
+        {
+            setState(WidgetState::Hover);
+        }
+    }
+
+    void CheckBox::onMouseLeave(const Vec2& pos) 
+    {
+        if(_checked)
+        {
+            setState(WidgetState::Selected);
+        }
+        else 
+        {
+            setState(WidgetState::Normal);
+        }
+    }
+
+    void CheckBox::onMouseLeftClick(const Vec2& pos)
+    {
+        _checked = !_checked;
+        on_check_changed.emit(this);
+
+        if (_checked)
+        {
+            setState(WidgetState::SelectedHover);
+        }
+        else
+        {
+            setState(WidgetState::Hover);
+        }
+    }
+
+    void CheckBox::onMouseLeftDown(const Vec2& pos) 
+    {
+        //setState(WidgetState::Selected);
+    }
+
+    void CheckBox::onMouseLeftUp(const Vec2& pos) 
+    {
+        //onMouseEnter(pos);
+    }
 
     /////////////////////////////////////////////////////////////////
     ProgressBar::ProgressBar(const std::string& name, Widget* parent)

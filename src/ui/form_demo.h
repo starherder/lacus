@@ -6,6 +6,7 @@
 namespace ui {
 
 class Button;
+class CheckBox;
 class SliderBar;
 class ProgressBar;
 
@@ -21,8 +22,9 @@ public:
 
 private:
     void onButtonOneClick(Button* btn);
-    void onSlideValueChanged(SliderBar* bar);
-    void onProgressChanged(ProgressBar* bar);
+    void onSlideValueChanged(SliderBar* slider);
+    void onProgressChanged(ProgressBar* pbar);
+    void onCheckChanged(CheckBox* cbox);
 };
 
 }
