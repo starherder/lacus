@@ -18,7 +18,9 @@ namespace engine {
         
         bool init(Renderer* renderer);
 
-        bool drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color=Color(255,255,255,255));
+        Vec2 getTextSize(const std::string& text, Font* font);
+
+        bool drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color={255,255,255,255});
 
     private:
         SDL_Renderer* _renderer = nullptr;

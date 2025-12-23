@@ -257,6 +257,13 @@ bool Renderer::initTextRenderer()
     return _textRenderer->init(this);
 }
 
+Vec2 Renderer::getTextSize(const std::string& text, Font* font) {
+    if(!_textRenderer) {
+        return {0,0};
+    }
+    return _textRenderer->getTextSize(text, font);
+}
+
 bool Renderer::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color) {
     if(!_textRenderer) {
         return false;

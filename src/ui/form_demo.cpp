@@ -19,7 +19,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		bar->setPos({100, 0});
 		bar->setSize({1000, 50});
 		bar->setBgColor({125, 200, 125, 255});
-		bar->setTextPadding({300, 8});
+		//bar->setTextPadding({300, 8});
 		bar->setTextColor({0, 125, 0, 255});
 		bar->setFont("fonts/msyh.ttf", 30);
 		bar->setText("Wigets Demo");
@@ -29,7 +29,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		auto area = group->getChild<Widget>("rect_area");
 		area->setPos({100, 80});
 		area->setSize({50, 50});
-		area->status().groud_color = { 255, 255, 125, 255 };
+		area->setBgColor({ 255, 255, 125, 255 });
 	}
 
 
@@ -59,7 +59,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		lbl_txt->setFont("fonts/VonwaonBitmap-16px.ttf", 30);
 		lbl_txt->setTextColor({0,255,0,255});
 		lbl_txt->setText("hello,world");
-		lbl_txt->setTextPadding({50, 10});
+		//lbl_txt->setTextPadding({50, 10});
 	}
 
 	{// ---------------------- button ----------------------
@@ -72,7 +72,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		btn1->setPos({50, 100});
 		btn1->setSize({200, 50});
 		btn1->setText("click me");
-		btn1->setTextPadding({50, 5});
+		//btn1->setTextPadding({50, 5});
 		btn1->on_click.connect(this, &FormDemo::onButtonOneClick);
 	}
 
@@ -83,18 +83,19 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		hlay->setBgColor(Color::LightRed);
 
 			auto wgt = hlay->createChild<Widget>("wgt_1");
-			wgt->setSize({ 50, 0 });
+			wgt->setSize({ 50, 50 });
 			wgt->setBgColor(Color::LightBlue);
 
 			auto btn = hlay->createChild<Button>("btn_2");
-			btn->setSize({ 200, 0 });
+			btn->setSize({ 200, 50 });
 			btn->setText("click me");
-			btn->setTextPadding({ 50, 5 });
+			//btn->setTextPadding({ 50, 5 });
 			btn->on_click.connect(this, &FormDemo::onButtonOneClick);
 
 			auto lbl = hlay->createChild<Label>("lbl_3");
 			lbl->setText("hello,world");
-			lbl->setTextPadding({ 50, 5 });
+			lbl->setTextAlign(Align::Left);
+			lbl->setTextPadding({ 10, 5 });
 	}
 
 	{	// ---------------------- vertical layout ----------------------
@@ -103,18 +104,18 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		vlay->setSize({ 100, 600 });
 		vlay->setBgColor(Color::LightGreen);
 			auto wgt = vlay->createChild<Widget>("wgt_1");
-			wgt->setSize({ 0, 50 });
+			wgt->setSize({ 50, 50 });
 			wgt->setBgColor(Color::LightRed);
 
 			auto btn = vlay->createChild<Button>("btn_2");
-			btn->setSize({ 0, 200 });
+			btn->setSize({ 50, 200 });
 			btn->setText("click me");
-			btn->setTextPadding({ 5, 50 });
+			//btn->setTextPadding({ 5, 50 });
 			btn->on_click.connect(this, &FormDemo::onButtonOneClick);
 
 			auto lbl = vlay->createChild<Label>("lbl_3");
 			lbl->setText("hello,world");
-			lbl->setTextPadding({ 50, 5 });
+			//lbl->setTextPadding({ 50, 5 });
 	}
 }
 

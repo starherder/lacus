@@ -40,8 +40,32 @@ namespace engine {
         return true;
     }
 
+    Vec2 TextRenderer::getTextSize(const std::string& text, Font* font)
+    {
+        if(!font) {
+            return {0,0};
+        }
+
+        auto ttf = font->_font;
+        if(!ttf) {
+            return {0,0};
+        }
+        
+        // 创建临时 TTF_Text 对象   (目前效率不高，未来可以考虑使用缓存优化)
+        TTF_Text* temp_text_object = TTF_CreateText(_text_engine, ttf, text.c_str(), 0);
+        if (!temp_text_object) {
+            spdlog::error("create text failed. {}", SDL_GetError());
+            return {0,0};
+        }
+
+        int w, h;
+        TTF_GetTextSize(temp_text_object, &w, &h);
+        TTF_DestroyText(temp_text_object);
+        return {w, h};
+    }
+
     // 使用指定字体绘制文字
-    bool TextRenderer::drawText(const std::string& text, Font* font, const Vec2f& pos, const Color& color)
+    bool TextRenderer::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color)
     {
         if(!font) {
             return false;

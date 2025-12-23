@@ -34,6 +34,9 @@ protected:
     virtual void onChildAdded(Widget* child);
     virtual void onChildRemoved(Widget* child);
 
+    void onChildSizeChanged(Widget* child) override;
+    void onChildVisibleChanged(Widget* child) override;
+
 private:
     std::list<SharedPtr> _children;
 
@@ -62,6 +65,9 @@ protected:
 
     void onChildAdded(Widget* child) override;
     void onChildRemoved(Widget* child) override;
+
+    void onChildSizeChanged(Widget* child) override;
+    void onChildVisibleChanged(Widget* child) override;
 
 protected:
     Vec2 _padding = Vec2{10, 10};

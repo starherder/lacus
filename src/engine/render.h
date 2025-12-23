@@ -81,6 +81,7 @@ public:
                         int num_vertices, const void* indices, int num_indices, int size_indices) const;
     
     // 字体渲染
+    Vec2 getTextSize(const std::string& text, Font* font);
     bool drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color=Color{255,255,255,255});
     bool drawDebugText(const Vec2& pos,const char* str) const;
     bool drawDebugTextFormat(const Vec2& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3);

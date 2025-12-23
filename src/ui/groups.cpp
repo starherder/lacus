@@ -67,6 +67,13 @@ namespace ui {
     {
     }
 
+    void Group::onChildSizeChanged(Widget* child) 
+    {
+    }
+
+    void Group::onChildVisibleChanged(Widget* child) 
+    {
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,7 +101,7 @@ namespace ui {
                 continue;
             }
 
-            if(ptr->getProperty<bool>("_scalable"))
+            if(ptr->scaleInGroup())
             {
                 scalable_widgets.push_back(ptr.get());
             }
@@ -126,9 +133,9 @@ namespace ui {
 
             ptr->setPos({width_used, _padding.y});
 
-            if(ptr->getProperty<bool>("_scalable"))
+            if(ptr->scaleInGroup())
             {
-                ptr->setSize({scalable_width, scalable_height});
+                ptr->rawSetSize({scalable_width, scalable_height});
                 width_used += scalable_width;
             }
             else 
@@ -142,8 +149,7 @@ namespace ui {
 
     void HorizonalLayout::onChildAdded(Widget* child) 
     {
-        child->setProperty("_scalable", true);
-
+        child->setScaleInGroup(true);
         ajustLayout();
     }
 
@@ -152,8 +158,16 @@ namespace ui {
         ajustLayout();
     }
 
+    void HorizonalLayout::onChildSizeChanged(Widget* child) 
+    {
+        child->setScaleInGroup(false);
+        ajustLayout();
+    }
 
-
+    void HorizonalLayout::onChildVisibleChanged(Widget* child) 
+    {
+        ajustLayout();
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -181,7 +195,7 @@ namespace ui {
                 continue;
             }
 
-            if(ptr->getProperty<bool>("_scalable"))
+            if(ptr->scaleInGroup())
             {
                 scalable_widgets.push_back(ptr.get());
             }
@@ -214,9 +228,9 @@ namespace ui {
 
             ptr->setPos({_padding.x, height_used});
 
-            if(ptr->getProperty<bool>("_scalable"))
+            if(ptr->scaleInGroup())
             {
-                ptr->setSize({scalable_width, scalable_height});
+                ptr->rawSetSize({scalable_width, scalable_height});
                 height_used += scalable_height;
             }
             else 
@@ -228,8 +242,6 @@ namespace ui {
         }
 
     }
-
-
 
 
 }

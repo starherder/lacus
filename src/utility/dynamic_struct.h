@@ -55,9 +55,14 @@ namespace utility
 
 		const Var& operator [] (const K& name) const
 		{
-			ConstIterator it = find(name);
+			static Var emptyVar;
 
-			if (it == end()) return Var{};
+			ConstIterator it = find(name);
+			if (it == end()) 
+			{
+				return emptyVar;
+			}
+
 			return it->second;
 		}
 

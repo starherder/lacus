@@ -37,12 +37,31 @@ namespace ui {
     {
         Widget::draw();
 
+        auto& renderer = GuiManager::inst().renderer();
+        auto textSize = renderer.getTextSize(_text, _font);
         auto realPos = getRealPos();
-        realPos.x += _textPadding.x;
-        realPos.y += _textPadding.y;
+
+        if(_textAlign == Align::Left)
+        {
+            realPos += _textPadding;
+        }
+        else if (_textAlign == Align::Center)
+        {
+            realPos += (size()-textSize) / 2.0f;
+            realPos += _textPadding;
+        }
+        else if(_textAlign == Align::Right)
+        {
+            realPos += size() - textSize;
+            realPos -= _textPadding;
+        }
+        else 
+        {
+            spdlog::error("invalid text align: {}", magic_enum::enum_name(_textAlign));
+        }
+
 
         auto& state = status();
-        auto& renderer = GuiManager::inst().renderer();
         renderer.drawText(_text, _font, realPos, state.text_color);
     }
 

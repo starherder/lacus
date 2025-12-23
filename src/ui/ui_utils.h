@@ -17,7 +17,7 @@ using Properties = utility::DynamicStruct<std::string>;
 namespace sigslot = utility::sigslot;
 
 struct WidgetStatus {
-    Color groud_color;
+    Color ground_color;
     Color text_color;
     Color border_color;
 
@@ -36,6 +36,11 @@ enum class WidgetState {
     Max,
 };
 
+enum class Align {
+    Left,
+    Center,
+    Right,
+};
 
 class WigetUtils
 {

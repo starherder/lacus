@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ui_utils.h"
 #include "widget.h"
 
 namespace ui {
@@ -24,6 +25,9 @@ public:
     float fontSize() { return _fontSize; }
     const auto& fontName() { return _fontName; }
 
+    Align textAlign() { return _textAlign; }
+    void setTextAlign(Align align) { _textAlign = align; }
+
     void setFont(const std::string& name, int size);
 
     void draw() override;
@@ -36,7 +40,9 @@ private:
     static const std::string DefaultFontName;
 
     std::string _text;
-    Vec2 _textPadding;
+    
+    Vec2 _textPadding = {0, 0};
+    Align _textAlign = Align::Center;
 
     std::string _fontName;
     float _fontSize = 20;

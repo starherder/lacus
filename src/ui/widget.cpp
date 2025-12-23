@@ -13,7 +13,27 @@ Widget::~Widget()
 {
 }
 
-void Widget::setProperty(const std::string& key, const utility::Var& value)
+void Widget::setSize(const Vec2& sz) 
+{ 
+    rawSetSize(sz);
+
+    if(_parent)
+    {
+        _parent->onChildSizeChanged(this);
+    }
+}
+
+void Widget::setVisible(bool visible) 
+{
+     _visible = visible; 
+    
+     if(_parent)
+     {
+        _parent->onChildVisibleChanged(this);
+     }
+}
+
+void Widget::setData(const std::string& key, const utility::Var& value)
 {
     _properties[key] = value;
 }
@@ -59,18 +79,18 @@ void Widget::draw()
 
     if(state.texture)
     {
-        if (state.groud_color.isValid()) 
+        if (state.ground_color.isValid()) 
         {
-            renderer.setDrawColor(state.groud_color);
+            renderer.setDrawColor(state.ground_color);
         }
 
         renderer.drawTexture(state.texture, state.tex_rect, {relPos.x, relPos.y, _size.x, _size.y});
     }
     else
     {
-        if(state.groud_color.isValid())
+        if(state.ground_color.isValid())
         {
-            renderer.setDrawColor(state.groud_color);
+            renderer.setDrawColor(state.ground_color);
             renderer.drawFillRect({relPos.x, relPos.y, _size.x, _size.y});
         }
     }
