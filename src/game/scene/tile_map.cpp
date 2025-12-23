@@ -2,6 +2,7 @@
 
 #include "engine/render.h"
 #include "magic_enum/magic_enum.h"
+#include "map_tilset.h"
 
 namespace game {
 
@@ -56,10 +57,77 @@ bool TileMap::unload()
 
 void TileMap::draw(engine::Renderer& renderer)
 {
-    for (const auto& dc : _drawCalls)
+    for (const auto& [id, dc] : _drawCalls)
     {
         renderer.drawGeometry(dc->texture, dc->vertexies.data(), (int)(dc->vertexies.size()), nullptr, 0);
     }
+}
+
+
+TileSet* TileMap::getTilesetOfTile(int tileGid)
+{
+    for(auto& [firstgid, tileset] : _tilesets)
+    {
+        if(tileGid >= firstgid && tileGid < firstgid + tileset->tileCount)
+        {
+            return tileset.get();
+        }
+    }
+    return nullptr;
+}
+
+MapTile* TileMap::getInfoOfTile(int tileGid)
+{
+    auto tileset = getTilesetOfTile(tileGid);
+    if(!tileset)
+    {
+        return nullptr;
+    }
+
+    auto tileId = tileGid - tileset->firstgid;
+
+    auto it = tileset->tiles.find(tileId);
+    if(it != tileset->tiles.end())
+    {
+        return &it->second;
+    }
+
+    return nullptr;
+}
+
+int TileMap::getGidOfTile(int layerId, int x, int y)
+{
+    const auto idx = y * mapSize.x + x;
+
+    auto layer = getLayer(layerId);
+    if(!layer || layer->type!=MapLayerType::TileLayer)
+    {
+        return -1;
+    }
+
+    auto tileLayer = dynamic_cast<TileLayer*>(layer);
+    if(!tileLayer)
+    {
+        return -1;
+    }
+
+    const auto& tileData = tileLayer->data;
+    if (idx >= tileData.size())
+    {
+        return -1;
+    }
+
+    auto tileGid = tileData[idx];
+    return tileGid;
+}
+
+MapLayer* TileMap::getLayer(int id)
+{
+    if(_layers.find(id) != _layers.end())
+    {
+        return _layers[id].get();
+    }
+    return nullptr;
 }
 
 bool TileMap::load_mapdata(const json& json_data)
@@ -95,23 +163,23 @@ bool TileMap::load_layers(const json& json)
 
         spdlog::info("load layer: {}, type: {}", id, type);
 
-        std::unique_ptr<MapLayer> layer = nullptr;
+        std::shared_ptr<MapLayer> layer = nullptr;
 
         if(type=="tilelayer")
         {
-            layer = std::make_unique<TileLayer>();
+            layer = std::make_shared<TileLayer>();
         }
         else if(type=="objectgroup")
         {
-            layer = std::make_unique<ObjectLayer>();
+            layer = std::make_shared<ObjectLayer>();
         }
         else if(type=="imagelayer")
         {
-            layer = std::make_unique<ImageLayer>();
+            layer = std::make_shared<ImageLayer>();
         }
         else if(type=="group")
         {
-            layer = std::make_unique<GroupLayer>();
+            layer = std::make_shared<GroupLayer>();
             if(layer_json.contains("layers")) {
                 auto& layers = layer_json["layers"];
                 load_layers(layers);
@@ -124,7 +192,7 @@ bool TileMap::load_layers(const json& json)
 
         if(layer && layer->load(layer_json))
         {
-            _layers.push_back(std::move(layer));
+            _layers[id] = layer;
         }
     }
     return true;
@@ -148,11 +216,11 @@ bool TileMap::load_one_tileset(const fs::path& filepath, int firstgid)
         return false;
     }
 
-    auto ts = std::make_unique<TileSet>();
+    auto ts = std::make_shared<TileSet>();
     ts->firstgid = firstgid;
     ts->load(json_data);
 
-    _tilesets.push_back(std::move(ts));
+    _tilesets[firstgid] = ts;
     return true;
 }
 
@@ -171,7 +239,7 @@ bool TileMap::load_tilesets(const json& jstilesets)
 
 void TileMap::bakeGeometry(engine::ResourceManager& resourceMgr)
 {
-    for(auto& layer : _layers) 
+    for(auto& [id, layer] : _layers) 
     {
         if(layer && layer->type==MapLayerType::TileLayer) 
         {
@@ -201,10 +269,16 @@ void TileMap::bakeGeometry(engine::ResourceManager& resourceMgr)
 
 void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& layer)
 {
-    for (auto& tileset : _tilesets)
+    for (auto& [fistgid, tileset] : _tilesets)
     {
         if (tileset)
         {
+            if(tileset->imageFile.empty())
+            {
+                spdlog::warn("tilset {} imageFile is empty, skip bake it.", tileset->name);
+                continue;
+            }
+
             auto mapRelatePath = _mapPath.lexically_relative(resourceMgr.resPath());
             auto imagePath = mapRelatePath / tileset->imageFile;
             tileset->texture = resourceMgr.textureManager().get(HashString(imagePath.string().c_str()));
@@ -216,7 +290,9 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
     }
 
     auto vertColour = (SDL_FColor)layer.tint_color;
-    for(auto& ptileset : _tilesets)
+
+    // one draw call for one tileset
+    for(auto& [fistgid, ptileset] : _tilesets)
     {
         const auto& tileset = *ptileset;
         const auto& tileData = layer.data;
@@ -278,11 +354,11 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
 
         if (!verts.empty())
         {
-            auto drawcall = std::make_unique<MapDrawCall>();
+            auto drawcall = std::make_shared<MapDrawCall>();
             drawcall->texture = tileset.texture;
             drawcall->vertexies.swap(verts);
 
-            _drawCalls.push_back(std::move(drawcall));
+            _drawCalls.insert({layer.id, drawcall});
         }
     }
 }
@@ -330,11 +406,11 @@ void TileMap::bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& l
     vert = { { lb.x, lb.y }, vertColour, {0, 1} };
     verts.emplace_back(vert);
 
-    auto drawcall = std::make_unique<MapDrawCall>();
+    auto drawcall = std::make_shared<MapDrawCall>();
     drawcall->texture = texture;
     drawcall->vertexies.swap(verts);
 
-    _drawCalls.push_back(std::move(drawcall));
+    _drawCalls.insert({layer.id, drawcall});
 }
 
 void TileMap::bakeObjectLayer(engine::ResourceManager& resourceMgr, ObjectLayer& layer)

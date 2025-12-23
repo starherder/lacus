@@ -21,8 +21,17 @@ namespace game {
 	struct MapTile 
 	{
 		int id;
+
 		Properties properties;
 		TileAnimation animation;
+
+		// generatally, each tileset has only one image
+		// all tiles in the tileset share the same image
+		// but, Tild tool support multiple images in a tileset
+		// we dont use this feature now, just ignore it.
+		//std::string tile_image;
+		//Vec2i tile_imageSize;
+		//engine::Texture* tile_texture = nullptr;
 
 		void load(const json& json_data);
 	};
@@ -48,7 +57,7 @@ namespace game {
 
 		Properties properties;		
 
-		std::vector<MapTile> tiles;
+		std::map<int, MapTile> tiles;
 
 		engine::Texture* texture = nullptr;
 

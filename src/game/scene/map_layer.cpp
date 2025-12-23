@@ -153,7 +153,7 @@ bool ObjectLayer::load(const json& json)
             MapObject map_obj;
             if(map_obj.load(obj))
             {
-                objects.push_back(map_obj);
+                objects.insert({map_obj.id, map_obj});
             }
         }
     }

@@ -173,7 +173,7 @@
                  "gid":1252,
                  "height":16,
                  "id":3,
-                 "name":"",
+                 "name":"rock",
                  "properties":[
                         {
                          "name":"obj_prop_flt",
@@ -189,8 +189,8 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":55.6363636363636,
-                 "y":23.0909090909091
+                 "x":55.6364,
+                 "y":23.0909
                 }, 
                 {
                  "height":0,
@@ -207,11 +207,11 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":101.818181818182,
+                 "x":101.818,
                  "y":22
                 }, 
                 {
-                 "height":14.320036380934,
+                 "height":14.32,
                  "id":5,
                  "name":"rect",
                  "properties":[
@@ -223,9 +223,9 @@
                  "rotation":30,
                  "type":"",
                  "visible":true,
-                 "width":23.3379855733651,
-                 "x":140.431818181818,
-                 "y":8.65909090909091
+                 "width":23.338,
+                 "x":140.432,
+                 "y":8.65909
                 }, 
                 {
                  "height":0,
@@ -237,19 +237,19 @@
                          "y":0
                         }, 
                         {
-                         "x":-0.909090909090907,
+                         "x":-0.909091,
                          "y":24
                         }, 
                         {
-                         "x":32.3636363636364,
-                         "y":15.6780185758514
+                         "x":32.3636,
+                         "y":15.678
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":168.181818181818,
-                 "y":6.54545454545455
+                 "x":168.182,
+                 "y":6.54545
                 }, 
                 {
                  "ellipse":true,
@@ -259,12 +259,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":15.4545454545455,
-                 "x":111.818181818182,
-                 "y":16.1818181818182
+                 "width":15.4545,
+                 "x":111.818,
+                 "y":16.1818
                 }, 
                 {
-                 "height":20.0909090909091,
+                 "height":20.0909,
                  "id":8,
                  "name":"text",
                  "rotation":0,
@@ -273,14 +273,37 @@
                      "color":"#b3005c",
                      "fontfamily":"Microsoft YaHei UI",
                      "pixelsize":15,
-                     "text":"\u4f60\u597d\uff0c\u4e16\u754c",
+                     "text":"hello,world",
                      "wrap":true
                     },
                  "type":"",
                  "visible":true,
-                 "width":81.0909090909091,
-                 "x":220.727272727273,
-                 "y":4.49999999999999
+                 "width":81.0909,
+                 "x":220.727,
+                 "y":4.5
+                }, 
+                {
+                 "gid":1780,
+                 "height":16,
+                 "id":9,
+                 "name":"fire",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":152.5,
+                 "y":66.5
+                }, 
+                {
+                 "height":18.5,
+                 "id":10,
+                 "name":"rect",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":35.75,
+                 "x":73.5,
+                 "y":34.75
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -342,7 +365,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":9,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -361,6 +384,10 @@
  "tilesets":[
         {
          "firstgid":1,
+         "source":"wild.tsx"
+        }, 
+        {
+         "firstgid":1768,
          "source":"wild.tsj"
         }],
  "tilewidth":16,

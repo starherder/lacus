@@ -17,12 +17,14 @@ namespace game {
 	void MapTile::load(const json& json_data)
 	{
 		id = json_data.value("id", 0);
-
 		if (json_data.contains("animation"))
 		{
-			auto& ani_json = json_data["animation"];
-			animation.load(ani_json);
+			animation.load(json_data["animation"]);
 		}
+
+		//tile_image = json_data.value("image", "");
+		//tile_imageSize.x = json_data.value("imagewidth", 0);
+		//tile_imageSize.y = json_data.value("imageheight", 0);
 
 		LoaderUtils::loadProperties(json_data, properties);
 	}
@@ -46,8 +48,6 @@ namespace game {
 		imageSize.x = json_data.value("imagewidth", 0);
 		imageSize.y = json_data.value("imageheight", 0);
 
-
-
 		LoaderUtils::loadProperties(json_data, properties);
 
 		if(json_data.contains("tiles"))
@@ -57,7 +57,7 @@ namespace game {
 			{
 				MapTile map_tile;
 				map_tile.load(tile);
-				tiles.push_back(map_tile);
+				tiles.insert({map_tile.id, map_tile});	
 			}
 		}
 	}

@@ -65,7 +65,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 	{// ---------------------- buttons ----------------------
 		auto grp_btns = group->createChild<Group>("grp_btns");
 		grp_btns->setPos({ 500, 200 });
-		grp_btns->setSize({ 300, 450 });
+		grp_btns->setSize({ 300, 300 });
 		grp_btns->setBgColor({ 125, 200, 125, 255 });
 
 		auto btn1 = grp_btns->createChild<Button>("btn_1");

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="9">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="10">
  <properties>
   <property name="level" type="int" value="7"/>
   <property name="name" value="south sea"/>
  </properties>
  <tileset firstgid="1" source="wild.tsx"/>
+ <tileset firstgid="1768" source="wild.tsj"/>
  <imagelayer id="2" name="bkimage" visible="0" tintcolor="#ffffff" offsetx="0" offsety="1" repeatx="1" repeaty="1">
   <image source="6666.jpg" width="352" height="288"/>
   <properties>
@@ -151,6 +152,7 @@
   <object id="8" name="text" x="220.727" y="4.5" width="81.0909" height="20.0909">
    <text fontfamily="Microsoft YaHei UI" pixelsize="15" wrap="1" color="#b3005c">hello,world</text>
   </object>
+  <object id="9" name="fire" gid="1780" x="152.5" y="66.5" width="16" height="16"/>
  </objectgroup>
  <group id="4" name="obj_group">
   <properties>
