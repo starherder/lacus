@@ -62,23 +62,51 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		//lbl_txt->setTextPadding({50, 10});
 	}
 
-	{// ---------------------- button ----------------------
+	{// ---------------------- buttons ----------------------
 		auto grp_btns = group->createChild<Group>("grp_btns");
 		grp_btns->setPos({ 500, 200 });
-		grp_btns->setSize({ 300, 350 });
+		grp_btns->setSize({ 300, 450 });
 		grp_btns->setBgColor({ 125, 200, 125, 255 });
 
 		auto btn1 = grp_btns->createChild<Button>("btn_1");
-		btn1->setPos({50, 100});
+		btn1->setPos({10, 10});
 		btn1->setSize({200, 50});
 		btn1->setText("click me");
 		//btn1->setTextPadding({50, 5});
 		btn1->on_click.connect(this, &FormDemo::onButtonOneClick);
+
+		auto sld1 = grp_btns->createChild<SliderBar>("sld_1");
+		sld1->setPos({10, 80});
+		sld1->setSize({200, 30});
+		sld1->setValue(55);
+		sld1->setMaxValue(150);
+		sld1->on_value_changed.connect(this, &FormDemo::onSlideValueChanged);
+		
+		auto sld2 = grp_btns->createChild<SliderBar>("sld_2");
+		sld2->setPos({220, 10});
+		sld2->setSize({30, 150});
+		sld2->setValue(15);
+		sld2->setMaxValue(100);
+		sld2->setDirection(Coordinate::Vertical);
+		sld2->on_value_changed.connect(this, &FormDemo::onSlideValueChanged);
+
+		auto pbar1 = grp_btns->createChild<ProgressBar>("pbar_1");
+		pbar1->setPos({10, 150});
+		pbar1->setSize({200, 30});
+		pbar1->setProgress(0.5f);
+		pbar1->on_process_changed.connect(this, &FormDemo::onProgressChanged);
+		
+		auto pbar2 = grp_btns->createChild<ProgressBar>("pbar_2");
+		pbar2->setPos({220, 180});
+		pbar2->setSize({30, 150});
+		pbar2->setProgress(0.3f);
+		pbar2->setDirection(Coordinate::Vertical);
+		pbar2->on_process_changed.connect(this, &FormDemo::onProgressChanged);
 	}
 
 	{	// ---------------------- horizonal layout ----------------------
 		auto hlay = root()->createChild<HorizonalLayout>("hlay");
-		hlay->setPos({ 100, 600 });
+		hlay->setPos({ 100, 650 });
 		hlay->setSize({ 800, 100 });
 		hlay->setBgColor(Color::LightRed);
 
@@ -103,11 +131,11 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		vlay->setPos({ 900, 100 });
 		vlay->setSize({ 100, 600 });
 		vlay->setBgColor(Color::LightGreen);
-			auto wgt = vlay->createChild<Widget>("wgt_1");
+			auto wgt = vlay->createChild<Widget>("wgt_3");
 			wgt->setSize({ 50, 50 });
 			wgt->setBgColor(Color::LightRed);
 
-			auto btn = vlay->createChild<Button>("btn_2");
+			auto btn = vlay->createChild<Button>("btn_3");
 			btn->setSize({ 50, 200 });
 			btn->setText("click me");
 			//btn->setTextPadding({ 5, 50 });
@@ -125,18 +153,25 @@ FormDemo::~FormDemo()
 
 void FormDemo::onUpdate(float delta) 
 {
-
 }
 
 void FormDemo::onDraw() 
 {
-
 }
-
 
 void FormDemo::onButtonOneClick(Button* btn)
 {
 	spdlog::info("on button ({}) click !!", btn->name());
+}
+
+void FormDemo::onProgressChanged(ProgressBar* pbar)
+{
+	spdlog::info("on progress ({}) changed to {}", pbar->name(), pbar->progress());
+}
+
+void FormDemo::onSlideValueChanged(SliderBar* bar)
+{
+	spdlog::info("on slide ({}) changed to {}/{}", bar->name(), bar->value(), bar->maxValue());
 }
 
 }

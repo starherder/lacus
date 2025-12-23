@@ -1,10 +1,13 @@
 #pragma once
 
+#include "buttons.h"
 #include "form.h"
 
 namespace ui {
 
 class Button;
+class SliderBar;
+class ProgressBar;
 
 class FormDemo : public Form 
 {
@@ -18,6 +21,8 @@ public:
 
 private:
     void onButtonOneClick(Button* btn);
+    void onSlideValueChanged(SliderBar* bar);
+    void onProgressChanged(ProgressBar* bar);
 };
 
 }

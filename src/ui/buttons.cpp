@@ -1,6 +1,7 @@
 #include "buttons.h"
 #include "gui_manager.h"
 #include "magic_enum/magic_enum.h"
+#include "ui_utils.h"
 
 namespace ui {
 
@@ -60,7 +61,6 @@ namespace ui {
             spdlog::error("invalid text align: {}", magic_enum::enum_name(_textAlign));
         }
 
-
         auto& state = status();
         renderer.drawText(_text, _font, realPos, state.text_color);
     }
@@ -83,49 +83,35 @@ namespace ui {
     {
     }
 
-    void Button::update(float delta)
-    {
-
-    }
-
-    void Button::draw()
-    {
-        Label::draw();
-    }
-
     /////////////////////////////////////////////////////////////////
 
     void Button::setState(WidgetState state)
     {
-        //spdlog::info("btn({}) change state from {} to {}", name(), 
-        //    magic_enum::enum_name(_state), magic_enum::enum_name(state));
-
         _state = state;
     }
 
-    void Button::onMouseEnter() 
+    void Button::onMouseEnter(const Vec2& pos) 
     {
         setState(WidgetState::Hover);
     }
 
-    void Button::onMouseLeave() 
+    void Button::onMouseLeave(const Vec2& pos) 
     {
         setState(WidgetState::Normal);
     }
 
-    void Button::onMouseLeftClick()
+    void Button::onMouseLeftClick(const Vec2& pos)
     {
         on_click.emit(this);
-
         setState(WidgetState::Hover);
     }
 
-    void Button::onMouseLeftDown() 
+    void Button::onMouseLeftDown(const Vec2& pos) 
     {
         setState(WidgetState::Pressed);
     }
 
-    void Button::onMouseLeftUp() 
+    void Button::onMouseLeftUp(const Vec2& pos) 
     {
         setState(WidgetState::Normal);
     }
@@ -135,5 +121,137 @@ namespace ui {
         if(_state<WidgetState::Normal || _state>=WidgetState::Max)
             return Widget::status();
         return _status[_state]; 
+    }
+
+
+    /////////////////////////////////////////////////////////////////
+    ProgressBar::ProgressBar(const std::string& name, Widget* parent)
+        : Group(name, parent)
+    {
+        _foreground = createChild<Widget>("_foreground_");
+        _foreground->setBgColor(Color::LightBlue);
+
+        setBgColor(Color::PaleBlue);
+        setSize(DefaultSize);
+        setProgress(0);
+    }
+
+    void ProgressBar::setDirection(Coordinate dir) 
+    { 
+        _direction = dir; 
+        setProgress(_progress);
+    }
+
+    void ProgressBar::setProgress(float progress)
+    {
+        _progress = progress;
+
+        Vec2 foreSize = {0, 0};
+
+        if(_direction == Coordinate::Horizonal)
+        {
+            foreSize.x = progress * size().x;
+            foreSize.y = size().y;
+        }
+        else 
+        {
+            foreSize.x = size().x;
+            foreSize.y = progress * size().y;
+
+            Vec2 fore_pos = _foreground->pos();
+            fore_pos.y = size().y - foreSize.y;
+            _foreground->setPos(fore_pos);
+        }
+
+        _foreground->setSize(foreSize);
+    }
+
+    /////////////////////////////////////////////////////////////////
+
+    SliderBlock::SliderBlock(const std::string& name, Widget* parent) : Button(name, parent)
+    {
+    }
+
+    void SliderBlock::onMouseLeftDrag(const Vec2& pos, const Vec2& offset) 
+    {
+        if(!parent()) return;
+
+        auto parent_wgt = dynamic_cast<SliderBar*>(parent());
+        if(parent_wgt)
+        {
+            parent_wgt->onSliderBlockDrag(pos, offset);
+        }
+    }
+
+    SliderBar::SliderBar(const std::string& name, Widget* parent) 
+        : Group(name, parent)
+    {
+        setHandleEvent(true);
+        setBgColor(Color::PaleBlue);
+        setSize(DefaultSize);
+
+        Vec2 sliderSize;
+        if(_direction == Coordinate::Horizonal)
+        {
+            sliderSize.x = DefaultSize.y;
+            sliderSize.y = DefaultSize.y;
+        }
+        else 
+        {
+            sliderSize.x = DefaultSize.x;
+            sliderSize.y = DefaultSize.x;
+        }
+
+        _slider = createChild<SliderBlock>("_slider_");
+        _slider->setSize(sliderSize);
+
+        setValue(0);
+    }
+
+    void SliderBar::setMaxValue(float maxValue)
+    {
+        _maxValue = maxValue;
+        setValue(_value);
+    }
+
+    void SliderBar::setDirection(Coordinate dir) 
+    { 
+        _direction = dir; 
+        setValue(_value);
+    }
+
+    void SliderBar::setValue(float value) 
+    { 
+        _value = value;
+        _maxValue = _maxValue==0 ? 100 : _maxValue;
+        _maxValue = std::max(_maxValue, _value);
+
+        float progress = std::clamp(_value/_maxValue, 0.0f, 1.0f);
+
+        auto pos = _slider->pos();
+        if(_direction == Coordinate::Horizonal)
+        {
+            pos.x = progress * (size().x - _slider->size().x);
+            pos.y = (size().y - _slider->size().y) / 2.0f;
+        }
+        else 
+        {
+            pos.x = (size().x - _slider->size().x) / 2.0f;
+            pos.y = progress * (size().y - _slider->size().y);
+        }
+
+        _slider->setPos(pos);
+        on_value_changed.emit(this);
+    }
+
+    void SliderBar::onSliderBlockDrag(const Vec2& pos, const Vec2& offset)
+    {
+        _maxValue = _maxValue==0 ? 100 : _maxValue;
+        _maxValue = std::max(_maxValue, _value);
+
+        float delta = (_direction==Coordinate::Horizonal) ? offset.x/size().x : offset.y/size().y;
+        float progress = std::clamp(delta + _value/_maxValue, 0.0f, 1.0f);
+
+        setValue(progress * _maxValue);
     }
 }

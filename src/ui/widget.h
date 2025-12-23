@@ -57,20 +57,20 @@ public:
     void setData(const std::string& key, const utility::Var& value);
     
 public:
-    virtual void onMouseEnter() {}
-    virtual void onMouseLeave() {}
+    virtual void onMouseEnter(const Vec2& pos) {}
+    virtual void onMouseLeave(const Vec2& pos) {}
 
-    virtual void onMouseLeftClick() {}
-    virtual void onMouseRightClick() {}
+    virtual void onMouseLeftClick(const Vec2& pos) {}
+    virtual void onMouseRightClick(const Vec2& pos) {}
 
-    virtual void onMouseLeftDown() {}
-    virtual void onMouseLeftUp() {}
+    virtual void onMouseLeftDown(const Vec2& pos) {}
+    virtual void onMouseLeftUp(const Vec2& pos) {}
 
-    virtual void onMouseRightDown() {}
-    virtual void onMouseRightUp() {}
+    virtual void onMouseRightDown(const Vec2& pos) {}
+    virtual void onMouseRightUp(const Vec2& pos) {}
 
-    virtual void onMouseLeftDrag(const Vec2& offset) {}
-    virtual void onMouseWheel(float dir) {}
+    virtual void onMouseLeftDrag(const Vec2& pos, const Vec2& offset) {}
+    virtual void onMouseWheel(const Vec2& pos, float dir) {}
 
     virtual void onChildSizeChanged(Widget* child) {}
     virtual void onChildVisibleChanged(Widget* child) {}

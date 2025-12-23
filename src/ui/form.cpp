@@ -82,7 +82,7 @@ void Form::onMouseLeftClick(const Vec2& pos)
     auto widget = getWidgetAtPos(pos);
     if (widget && widget->focused())
     {
-        widget->onMouseLeftClick();
+        widget->onMouseLeftClick(pos);
     }
 }
 
@@ -91,7 +91,7 @@ void Form::onMouseRightClick(const Vec2& pos)
     auto widget = getWidgetAtPos(pos);
     if (widget)
     {
-        widget->onMouseRightClick();
+        widget->onMouseRightClick(pos);
     }
 }
 
@@ -101,7 +101,7 @@ void Form::onMouseLeftDown(const Vec2& pos)
     if (widget)
     {
         widget->setFocused(true);
-        widget->onMouseLeftDown();
+        widget->onMouseLeftDown(pos);
     }
 }
 
@@ -110,7 +110,7 @@ void Form::onMouseLeftUp(const Vec2& pos)
     auto widget = getWidgetAtPos(pos);
     if (widget)
     {
-        widget->onMouseLeftUp();
+        widget->onMouseLeftUp(pos);
     }
 }
 
@@ -120,7 +120,7 @@ void Form::onMouseRightDown(const Vec2& pos)
     if (widget && widget->focused())
     {
         widget->setFocused(true);
-        widget->onMouseRightDown();
+        widget->onMouseRightDown(pos);
     }
 }
 void Form::onMouseRightUp(const Vec2& pos)
@@ -128,7 +128,7 @@ void Form::onMouseRightUp(const Vec2& pos)
     auto widget = getWidgetAtPos(pos);
     if (widget && widget->focused())
     {
-        widget->onMouseRightUp();
+        widget->onMouseRightUp(pos);
     }
 }
 
@@ -138,7 +138,7 @@ void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
     if(widget && widget->handleEvent())
     {
         widget->setFocused(true);
-        widget->onMouseLeftDrag(offset);
+        widget->onMouseLeftDrag(pos, offset);
     }
     else 
     {
@@ -155,7 +155,7 @@ void Form::onMouseWheel(const Vec2& pos, float dir)
     if (widget)
     {
         widget->setFocused(true);
-        widget->onMouseWheel(dir);
+        widget->onMouseWheel(pos, dir);
     }
 }
 
@@ -169,12 +169,12 @@ void Form::onMouseMotion(const Vec2& pos, const Vec2& offset)
 
     if(_hoverWidget)
     {
-        _hoverWidget->onMouseLeave();
+        _hoverWidget->onMouseLeave(pos);
     }
 
     if(widget)
     {
-        widget->onMouseEnter();
+        widget->onMouseEnter(pos);
     }
 
     _hoverWidget = widget;

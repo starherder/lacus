@@ -42,6 +42,11 @@ enum class Align {
     Right,
 };
 
+enum class Coordinate {
+    Horizonal,
+    Vertical,
+};
+
 class WigetUtils
 {
 public:
