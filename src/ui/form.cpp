@@ -14,16 +14,17 @@ Form::~Form()
 {
 }
 
-Widget* Form::getGroupWidget(Group* group, const Vec2& pos)
+Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
 {
-    for(auto& [name, ptr] : group->children() )
+    for(auto& ptr : group->children() )
     {
         if(ptr && ptr->isPosInMe(pos))
         {
             if(ptr->isGroup())
             {
-                return getGroupWidget((Group*)ptr.get(), pos);
+                return getWidgetInGroup((Group*)ptr.get(), pos);
             }
+
             return ptr.get();
         }
     }
@@ -32,7 +33,7 @@ Widget* Form::getGroupWidget(Group* group, const Vec2& pos)
 
 Widget* Form::getWidgetAtPos(const Vec2& pos)
 {
-    return getGroupWidget(_rootGroup.get(), pos);
+    return getWidgetInGroup(_rootGroup.get(), pos);
 }
 
 void Form::update(float delta)

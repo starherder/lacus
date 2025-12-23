@@ -57,8 +57,7 @@ namespace utility
 		{
 			ConstIterator it = find(name);
 
-			std::string info = name + " NOT found.";
-			if (it == end()) throw std::exception(info);
+			if (it == end()) return Var{};
 			return it->second;
 		}
 

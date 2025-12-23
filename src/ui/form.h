@@ -52,7 +52,7 @@ public:
     void onMouseMotion(const Vec2& pos, const Vec2& offset);
 
 private:
-    Widget* getGroupWidget(Group* group, const Vec2& pos);
+    Widget* getWidgetInGroup(Group* group, const Vec2& pos);
 
 private:
     std::string _name;

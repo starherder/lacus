@@ -7,7 +7,7 @@ namespace ui {
 class Widget 
 {
 public:
-    using UniquePtr = std::unique_ptr<Widget>;
+    using SharedPtr = std::shared_ptr<Widget>;
 
 public:
     Widget() = delete;
@@ -49,7 +49,11 @@ public:
 
     virtual bool isGroup() const { return false; }
     virtual WidgetStatus& status() { return _normalStatus; }
-    
+
+    template<typename T>
+    T getProperty(const std::string& key) const;
+    void setProperty(const std::string& key, const utility::Var& value);
+
 public:
     virtual void onMouseEnter() {}
     virtual void onMouseLeave() {}
@@ -75,15 +79,21 @@ protected:
     bool _visible = true;
     bool _focused = false;
     bool _handleEvent = false;
-    
 
     Vec2 _pos = {0, 0};
     Vec2 _size = {100, 30};
+
+    Properties _properties;
 
     WidgetStatus _normalStatus = WigetUtils::normalStatus;
 };
 
 
+template<typename T>
+T Widget::getProperty(const std::string& key) const
+{
+    return (T)_properties[key];
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 

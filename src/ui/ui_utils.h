@@ -2,6 +2,8 @@
 
 #include <memory>
 #include "engine/application.h"
+#include "utility/dynamic_struct.h"
+
 
 namespace ui {
 
@@ -9,6 +11,8 @@ using namespace engine;
 
 template <typename... _ArgTypes>
 using signal = utility::sigslot::Signal<_ArgTypes...>;
+
+using Properties = utility::DynamicStruct<std::string>;
 
 namespace sigslot = utility::sigslot;
 

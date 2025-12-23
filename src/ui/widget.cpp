@@ -13,6 +13,10 @@ Widget::~Widget()
 {
 }
 
+void Widget::setProperty(const std::string& key, const utility::Var& value)
+{
+    _properties[key] = value;
+}
 
 bool Widget::isPosInMe(const Vec2& pos)
 {
