@@ -29,6 +29,7 @@ public:
 
     Rect(const Vec2& pos, const Vec2& size);
     Rect(float x_, float y_, float w_, float h_);
+    Rect(int x_, int y_, int w_, int h_);
 
     Rect(const SDL_FRect& frect);
     Rect(const SDL_Rect& rect);

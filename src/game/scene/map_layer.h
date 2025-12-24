@@ -5,13 +5,6 @@
 
 namespace game {
 
-    enum class MapLayerType {
-        ImageLayer,
-        TileLayer,
-        ObjectLayer,
-        GroupLayer
-    };
-
 
     struct MapObject {
         int id = -1;

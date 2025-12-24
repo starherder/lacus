@@ -18,7 +18,11 @@ namespace game {
         bool load(const engine::fs::path& mapFile);
         bool unload();
 
-        void bakeGeometry(engine::ResourceManager& resourceMgr);
+        const Vec2i& mapSize() { return _mapSize; }
+        const Vec2i& tileSize() { return _tileSize; }
+
+        void bake(engine::ResourceManager& resourceMgr);
+
         void draw(engine::Renderer& renderer);
 
         template<typename T>
@@ -32,6 +36,8 @@ namespace game {
 
         template<typename T>
         std::pair<bool, T> getLayerProperty(int id, const std::string& name);
+
+        const auto& collisionPoints() const { return _collisionPoints; }
 
     private:
         bool load_mapdata(const json& json);
@@ -63,20 +69,22 @@ namespace game {
         std::map<int, std::shared_ptr<TileSet>> _tilesets;
         std::multimap<int, std::shared_ptr<MapDrawCall>> _drawCalls;
 
-        std::string version;
-        std::string tiledVersion;
-        std::string orientation;
-        std::string renderOrder;
-        std::string type;
+        std::vector<Vec2i> _collisionPoints;
 
-        bool infinite;
-        int compressionLevel;
+        std::string _version;
+        std::string _tiledVersion;
+        std::string _orientation;
+        std::string _renderOrder;
+        std::string _type;
 
-        int nextLayerId;
-        int nextObjectId;
+        bool _infinite;
+        int _compressionLevel;
 
-        Vec2i tileSize;
-        Vec2i mapSize;
+        int _nextLayerId;
+        int _nextObjectId;
+
+        Vec2i _tileSize;
+        Vec2i _mapSize;
     };
 
 
@@ -90,10 +98,7 @@ namespace game {
             return {false, T{}};
         }
 
-        auto it = maptile->properties.find(name);
-        if(it == maptile->properties.end()) {
-            return {false, T{}};
-        }
+        return maptile->properties.get<T>(name);
     }
 
     template<typename T>
@@ -116,12 +121,7 @@ namespace game {
             return {false, T{}};
         }
 
-        auto it = layer->properties.find(name);
-        if(it == layer->properties.end()) {
-            return {false, T{}};
-        }
-
-        return {true, (T)it->second};
+        return layer->properties.get<T>(name);
     }
 
     template<typename T>

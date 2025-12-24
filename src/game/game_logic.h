@@ -22,6 +22,9 @@ public:
     void onDrawUI() override;
     void onClose() override;
 
+    void onEnable() override;
+    void onDisable() override;
+
 private:
     std::unique_ptr<GameScene> _scene = nullptr;
 

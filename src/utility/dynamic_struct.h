@@ -48,7 +48,7 @@ namespace utility
 		{
 		}
 
-		inline Var& operator [] (const K& name)
+		Var& operator [] (const K& name)
 		{
 			return _data[name];
 		}
@@ -66,74 +66,74 @@ namespace utility
 			return it->second;
 		}
 
-		inline bool contains(const K& name) const
+		bool contains(const K& name) const
 		{
 			return find(name) != end();
 		}
 
-		inline Iterator find(const K& name)
+		Iterator find(const K& name)
 		{
 			return _data.find(name);
 		}
 
-		inline ConstIterator find(const K& name) const
+		ConstIterator find(const K& name) const
 		{
 			return _data.find(name);
 		}
 
-		inline Iterator end()
+		Iterator end()
 		{
 			return _data.end();
 		}
 
-		inline ConstIterator end() const
+		ConstIterator end() const
 		{
 			return _data.end();
 		}
 
-		inline Iterator begin()
+		Iterator begin()
 		{
 			return _data.begin();
 		}
 
-		inline ConstIterator begin() const
+		ConstIterator begin() const
 		{
 			return _data.begin();
 		}
 
 		template <typename T>
-		inline InsRetVal insert(const K& key, const T& value)
+		InsRetVal insert(const K& key, const T& value)
 		{
 			ValueType valueType(key, value);
 			return insert(valueType);
 		}
 
-		inline InsRetVal insert(const ValueType& aPair)
+		InsRetVal insert(const ValueType& aPair)
 		{
 			return _data.insert(aPair);
 		}
 
-		inline SizeType erase(const K& key)
+		SizeType erase(const K& key)
 		{
 			return _data.erase(key);
 		}
 
-		inline void erase(Iterator& it)
+		void erase(Iterator& it)
 		{
 			_data.erase(it);
 		}
 
-		inline void clear()
+		void clear()
 		{
 			_data.clear();
 		}
 
-		inline void swap(DynamicStruct& other) noexcept
+		void swap(DynamicStruct& other) noexcept
 		{
 			_data.swap(other._data);
 		}
 
-		inline bool empty() const
+		bool empty() const
 		{
 			return _data.empty();
 		}
@@ -143,7 +143,7 @@ namespace utility
 			return _data.size();
 		}
 
-		inline NameSet members() const
+		NameSet members() const
 		{
 			NameSet keys;
 			ConstIterator it = begin();
@@ -152,7 +152,18 @@ namespace utility
 			return keys;
 		}
 
-		inline Var getVar(const K& key) const
+		template<typename T>
+		std::pair<bool, T> get(const K& key) const
+		{
+			ConstIterator it = find(key);
+			if (it == end())
+			{
+				return {false, T()};
+			}
+			return {true, (T)it->second};
+		}
+
+		Var getVar(const K& key) const
 		{
 			ConstIterator it = find(key);
 			if (it == end())
@@ -163,7 +174,7 @@ namespace utility
 		}
 
 		template<typename DefT = Var>
-		inline Var getVar(const K& key, const DefT& defaultValue) const
+		Var getVar(const K& key, const DefT& defaultValue) const
 		{
 			ConstIterator it = find(key);
 			if (it == end())

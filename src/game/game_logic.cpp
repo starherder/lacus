@@ -14,11 +14,11 @@ GameLogicPlugin::GameLogicPlugin(engine::Application& app)
 
 void GameLogicPlugin::onInit() 
 {
+    ui::GuiManager::inst().init(&_app);
+
     _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
 
-    ui::GuiManager::inst().init(&_app);
-    auto form = ui::GuiManager::inst().showForm<ui::FormDemo>("main_frame");
-    //form->hide();
+    //ui::GuiManager::inst().showForm<ui::FormDemo>("form_demo");
 }
 
 void GameLogicPlugin::onUpdate()
@@ -42,6 +42,16 @@ void GameLogicPlugin::onDrawUI()
 void GameLogicPlugin::onClose()
 {
     _scene->unload();
+}
+
+void GameLogicPlugin::onEnable()
+{
+    _scene->onEnable();
+}
+
+void GameLogicPlugin::onDisable()
+{
+    _scene->onDisable();
 }
 
 }

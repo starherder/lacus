@@ -43,7 +43,7 @@ namespace game {
 		tileSize.y = json_data.value("tileheight", 0);
 		tileCount = json_data.value("tilecount", 0);
 		tileVersion = json_data.value("tiledversion", "");
-		
+	
 		imageFile = json_data.value("image", "");
 		imageSize.x = json_data.value("imagewidth", 0);
 		imageSize.y = json_data.value("imageheight", 0);

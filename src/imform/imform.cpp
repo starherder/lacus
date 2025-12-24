@@ -10,7 +10,6 @@ namespace imgui
 
 	ImForm::~ImForm()
 	{
-
 	}
 	
 	bool ImForm::getPendingDestroy()

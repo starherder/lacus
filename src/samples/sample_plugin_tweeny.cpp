@@ -106,13 +106,13 @@ namespace samples {
 
     void SamplePluginTweeny::onUpdate()
     {
-        if (!_tween.isFinished())   // ÊÇ·ñ½áÊø
+        if (!_tween.isFinished())   // ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
         {
             auto delta = application()->fpsChecker().deltaTicks();
             //spdlog::info("delta = {}, time_point = {}, point = {}", 
             //    delta, _tween.currentTimePoint(), _tween.point());
 
-            _tween.step(delta);     // ×ßÒ»²½£¨¾­¹ýÒ»µãÊ±¼ä£©
+            _tween.step(delta);     // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ê±ï¿½ä£©
         }
     }
 
@@ -121,7 +121,7 @@ namespace samples {
         auto& renderer = application()->renderer();
 
         renderer.setDrawColor({ 255, 255, 0, 255 });
-        renderer.drawFillRect({ _rolePos.x, _rolePos.y, 100, 100 });
+        renderer.drawFillRect({ _rolePos.x, _rolePos.y, 100.0f, 100.0f });
     }
 
     void SamplePluginTweeny::onClose()
@@ -132,11 +132,11 @@ namespace samples {
     {
         spdlog::info("ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
 
-        _tween = tweeny::from(_roleBeginPos.x, _roleBeginPos.y)  // ³õÊ¼Öµ£¬¿ÉÒÔÓÐ¶à¸ö
-                        .to(_roleEndPos.x, _roleEndPos.y)        // ½áÊøÖµ£¬¿ÉÓÐÓÐ¶à¸ö
-                        .during(duration)                        // ×ÜÊ±³¤£¬ºÁÃë
-                        .via(ease)                               // Ëã·¨
-                        .onStep([this](auto& t, int x, int y) {  // Ã¿Ò»²½¶¼½øÈë´Ë»Øµ÷
+        _tween = tweeny::from(_roleBeginPos.x, _roleBeginPos.y)  // ï¿½ï¿½Ê¼Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½
+                        .to(_roleEndPos.x, _roleEndPos.y)        // ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½
+                        .during(duration)                        // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        .via(ease)                               // ï¿½ã·¨
+                        .onStep([this](auto& t, int x, int y) {  // Ã¿Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë»Øµï¿½
                             _rolePos.x = x;
                             _rolePos.y = y;
                             return false;
@@ -146,7 +146,7 @@ namespace samples {
 
         if (mode == EaseMode::Once)
         {
-            // ¼ÌÐø¼Ó»Øµ÷
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ó»Øµï¿½
             _tween.onStep([ease, start_ticks](auto& t, int x, int y) {
                 if (t.progress() >= 1.0f) {
                     spdlog::info("{} finish!,  ticks = {}", ease, SDL_GetTicks()-start_ticks);
@@ -158,7 +158,7 @@ namespace samples {
 
         if (mode == EaseMode::Loop)
         {
-            // ¼ÌÐø¼Ó»Øµ÷
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ó»Øµï¿½
             _tween.onStep([ease](auto& t, int x, int y) {  
                 if (t.progress() >= 1.0f) {
                     spdlog::info("{} reward!", ease);
@@ -170,7 +170,7 @@ namespace samples {
 
         if (mode == EaseMode::Yoyo)
         {
-            // ¼ÌÐø¼Ó»Øµ÷
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ó»Øµï¿½
             _tween.onStep([ease](auto& t, int x, int y) {
                 if (t.progress() <= 0.001f) { 
                     spdlog::info("{} forward!", ease);

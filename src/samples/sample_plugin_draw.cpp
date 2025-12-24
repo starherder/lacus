@@ -75,7 +75,7 @@ namespace samples {
             if(tex)
             {
                 auto tex_sz = tex->size();
-                renderer.drawTexture(tex, {0, 0, tex_sz.x, tex_sz.y}, {50, 400, tex_sz.x/2,tex_sz.y/2} );
+                renderer.drawTexture(tex, {0.0f, 0.0f, tex_sz.x, tex_sz.y}, {50.0f, 400.0f, tex_sz.x/2,tex_sz.y/2} );
             }
         }
     }

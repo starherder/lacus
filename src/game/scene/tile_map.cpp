@@ -3,6 +3,7 @@
 #include "engine/render.h"
 #include "magic_enum/magic_enum.h"
 #include "map_tilset.h"
+#include "map_utils.h"
 
 namespace game {
 
@@ -97,7 +98,7 @@ MapTile* TileMap::getInfoOfTile(int tileGid)
 
 int TileMap::getGidOfTile(int layerId, int x, int y)
 {
-    const auto idx = y * mapSize.x + x;
+    const auto idx = y * _mapSize.x + x;
 
     auto layer = getLayer(layerId);
     if(!layer || layer->type!=MapLayerType::TileLayer)
@@ -134,23 +135,23 @@ bool TileMap::load_mapdata(const json& json_data)
 {
     LoaderUtils::loadProperties(json_data, _properties);
 
-    version = json_data.value("version", "");
-    tiledVersion = json_data.value("tiledversion", "");
-    orientation = json_data.value("orientation", "");
-    renderOrder = json_data.value("renderorder", "");
-    type = json_data.value("type", "");
+    _version = json_data.value("version", "");
+    _tiledVersion = json_data.value("tiledversion", "");
+    _orientation = json_data.value("orientation", "");
+    _renderOrder = json_data.value("renderorder", "");
+    _type = json_data.value("type", "");
 
-    infinite = json_data.value("infinite", false);
-    compressionLevel = json_data.value("compressionlevel", 0);
+    _infinite = json_data.value("infinite", false);
+    _compressionLevel = json_data.value("compressionlevel", 0);
 
-    nextLayerId = json_data.value("nextlayerid", 0);
-    nextObjectId = json_data.value("nextobjectid", 0);
+    _nextLayerId = json_data.value("nextlayerid", 0);
+    _nextObjectId = json_data.value("nextobjectid", 0);
 
-    tileSize.x = json_data.value("tilewidth", 0);
-    tileSize.y = json_data.value("tileheight", 0);
+    _tileSize.x = json_data.value("tilewidth", 0);
+    _tileSize.y = json_data.value("tileheight", 0);
 
-    mapSize.x = json_data.value("width", 0);
-    mapSize.y = json_data.value("height", 0);
+    _mapSize.x = json_data.value("width", 0);
+    _mapSize.y = json_data.value("height", 0);
  
     return true;
 }
@@ -237,7 +238,7 @@ bool TileMap::load_tilesets(const json& jstilesets)
     return true;
 }
 
-void TileMap::bakeGeometry(engine::ResourceManager& resourceMgr)
+void TileMap::bake(engine::ResourceManager& resourceMgr)
 {
     for(auto& [id, layer] : _layers) 
     {
@@ -308,21 +309,21 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
         float vNorm = (float)(textTileSize.y) / textSize.y;
 
         std::vector<engine::Vertex> verts;
-        for (int y = 0; y < mapSize.y; ++y)
+        for (int y = 0; y < _mapSize.y; ++y)
         {
-            for (int x = 0u; x < mapSize.x; ++x)
+            for (int x = 0u; x < _mapSize.x; ++x)
             {
-                const auto idx = y * mapSize.x + x;
+                const auto idx = y * _mapSize.x + x;
                 if (idx >= tileData.size())
                 {
                     continue;
                 }
 
-                const auto tileId = tileData[idx];
-                if (tileId >= tileset.firstgid && tileId < (tileset.firstgid + tileset.tileCount))
+                const auto tileGid = tileData[idx];
+                if (tileGid >= tileset.firstgid && tileGid < (tileset.firstgid + tileset.tileCount))
                 {
                     //tex coords
-                    auto idIndex = (tileId - tileset.firstgid);
+                    auto idIndex = (tileGid - tileset.firstgid);
 
                     float u = (float)(idIndex % textTileColumn);
                     float v = (float)(idIndex / textTileColumn);
@@ -331,23 +332,32 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
                     v = (v * (textTileSize.y + space) + margin ) / textSize.y;
 
                     //vert pos
-                    const float tilePosX = (float)(x) * tileSize.x;
-                    const float tilePosY = (float)(y) * tileSize.y;
+                    const float tilePosX = (float)(x) * _tileSize.x;
+                    const float tilePosY = (float)(y) * _tileSize.y;
 
                     //push back to vert array
                     engine::Vertex vert = { { tilePosX, tilePosY }, vertColour, {u, v} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX + tileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
+                    vert = { { tilePosX + _tileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX, tilePosY + tileSize.y}, vertColour, {u, v + vNorm} };
+                    vert = { { tilePosX, tilePosY + _tileSize.y}, vertColour, {u, v + vNorm} };
                     verts.emplace_back(vert);
 
-                    vert = { { tilePosX, tilePosY + tileSize.y}, vertColour, {u, v + vNorm} };
+                    vert = { { tilePosX, tilePosY + _tileSize.y}, vertColour, {u, v + vNorm} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX + tileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
+                    vert = { { tilePosX + _tileSize.x, tilePosY }, vertColour, {u + uNorm, v} };
                     verts.emplace_back(vert);
-                    vert = { { tilePosX + tileSize.x, tilePosY + tileSize.y }, vertColour, {u + uNorm, v + vNorm} };
+                    vert = { { tilePosX + _tileSize.x, tilePosY + _tileSize.y }, vertColour, {u + uNorm, v + vNorm} };
                     verts.emplace_back(vert);
+
+                    auto it = tileset.tiles.find(idIndex);
+                    if(it != tileset.tiles.end() ) {
+                        auto& tile = it->second;
+                        auto [found, walktype] = tile.properties.get<int>("walktype");
+                        if(found && walktype == (int)WalkType::Collision) {
+                            _collisionPoints.push_back({x, y});
+                        }
+                    }
                 }
             }
         }

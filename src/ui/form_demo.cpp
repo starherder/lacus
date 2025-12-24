@@ -13,6 +13,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 
 	// create child
 	auto group = root();
+	group->setBgColor({ 125, 255, 125, 200 });
 
 	{// ---------------------- base ----------------------
 		auto bar = group->createChild<Label>("head_bar");
@@ -50,7 +51,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		ctl_txt->setSize({ 300, 50 });
 		ctl_txt->setBgColor({ 255, 255, 255, 255 });
 		ctl_txt->setBorderColor({ 255, 0, 0, 255 });
-		ctl_txt->setTexture(texture, {0, 0, 1.0f, 0.333f});
+		ctl_txt->setTexture(texture, {0.0f, 0.0f, 1.0f, 0.333f});
 
 		auto lbl_txt = grp_right->createChild<Label>("lbl_txt");
 		lbl_txt->setPos({ 50, 250 });

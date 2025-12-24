@@ -2,6 +2,8 @@
 
 namespace engine {
 
+Rect::Rect(int x_, int y_, int w_, int h_) : x(float(x_)), y(float(y_)), w(float(w_)), h(float(h_)) {}
+
 Rect::Rect(float x_, float y_, float w_, float h_) : x(x_), y(y_), w(w_), h(h_) {}
 
 Rect::Rect(const SDL_FRect& frect) : x(frect.x), y(frect.y), w(frect.w), h(frect.h) {}
