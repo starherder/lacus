@@ -3,35 +3,32 @@
 #include "wrapper.h"
 #include "utility/signalslot.h"
 
-namespace engine {
-
+namespace engine 
+{
 
 class EventDispatcher
 {
-	template <typename... _ArgTypes>
-	using signal = utility::sigslot::Signal<_ArgTypes...>;
-
 public:
-	signal<const Vec2&> onMouseLeftDown;
-	signal<const Vec2&> onMouseLeftUp;
+	signals::Signal<const Vec2&> onMouseLeftDown;
+	signals::Signal<const Vec2&> onMouseLeftUp;
 
-	signal<const Vec2&> onMouseRightDown;
-	signal<const Vec2&> onMouseRightUp;
+	signals::Signal<const Vec2&> onMouseRightDown;
+	signals::Signal<const Vec2&> onMouseRightUp;
 
-	signal<const Vec2&> onMouseLeftClicked;
-	signal<const Vec2&> onMouseRightClicked;
+	signals::Signal<const Vec2&> onMouseLeftClicked;
+	signals::Signal<const Vec2&> onMouseRightClicked;
 
-	signal<const Vec2&, const Vec2&> onMouseLeftDrag;
-	signal<const Vec2&, const Vec2&> onMouseRightDrag;
+	signals::Signal<const Vec2&, const Vec2&> onMouseLeftDrag;
+	signals::Signal<const Vec2&, const Vec2&> onMouseRightDrag;
 
-	signal<const Vec2&, const Vec2&> onMouseMotion;
-	signal<const Vec2&, float> onMouseWheel;
+	signals::Signal<const Vec2&, const Vec2&> onMouseMotion;
+	signals::Signal<const Vec2&, float> onMouseWheel;
 
-	signal<int> onKeyDown;
-	signal<int> onKeyUp;
+	signals::Signal<int> onKeyDown;
+	signals::Signal<int> onKeyUp;
 
-	signal<> onQuit;
-	signal<const Event&> onSdlEvent;
+	signals::Signal<> onQuit;
+	signals::Signal<const Event&> onSdlEvent;
 
 public:
 	EventDispatcher() = default;

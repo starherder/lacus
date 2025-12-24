@@ -1,8 +1,11 @@
 #pragma once
 
-#include "groups.h"
+#include "ui_utils.h"
 
 namespace ui {
+
+class Widget;
+class Group;
 
 class Form : public sigslot::SlotHandler
 {

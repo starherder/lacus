@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <entt/entt.hpp>
+#include <utility/signalslot.h>
 
 #include <string>
 #include <vector>
@@ -23,6 +24,8 @@ using namespace entt::literals;
 
 
 namespace engine {
+
+namespace signals = utility::sigslot;
 
 namespace fs = std::filesystem;
 

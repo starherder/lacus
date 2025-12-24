@@ -7,7 +7,7 @@ namespace game {
 
     using namespace engine;
 
-    class GameScene : public engine::Scene
+    class GameScene : public engine::Scene, public signals::SlotHandler
     {
     public:
         GameScene() = default;
@@ -33,9 +33,12 @@ namespace game {
         void initPathFind();
         void drawPathFind();
 
+        void onShowCollisionDebug(bool show);
+
     private:
         TileMap _tileMap;
 
+        bool _showCollisionDebug = false;
         std::vector<Rect> _collisionRects;
         std::vector<Rect> _test_path;
         

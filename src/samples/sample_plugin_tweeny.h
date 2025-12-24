@@ -16,7 +16,7 @@ namespace samples {
         ImFormTweenForm();
         ~ImFormTweenForm() = default;
 
-        utility::sigslot::Signal<const char*, EaseMode, int> on_select_ease;
+        signals::Signal<const char*, EaseMode, int> on_select_ease;
 
         EaseMode getEaseMode() { return _ease_mode; }
 

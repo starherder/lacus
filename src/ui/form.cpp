@@ -1,6 +1,7 @@
 #include "form.h"
 #include "gui_manager.h"
 
+#include "groups.h"
 
 namespace ui {
 
