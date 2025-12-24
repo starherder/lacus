@@ -1,7 +1,10 @@
 #pragma once
 #include "engine/scene.h"
-#include "game/scene/tile_map.h"
 #include "a_star/a_star.hpp"
+
+#include "game/scene/tile_map.h"
+#include "game/play/game_play.h"
+
 
 namespace game {
 
@@ -19,30 +22,35 @@ namespace game {
         ~GameScene();
 
         bool load(const engine::fs::path& mapPath) override;
-
         bool unload() override;
 
         void onUpdate(float deltaTime) override;
-
         void onDraw() override;
 
-        void onEnable();
-        void onDisable();
+        void onStart() override;
+        void onStop() override;
 
     private:
+        void showAllGui();
+        void closeAllGui();
+
         void initPathFind();
         void drawPathFind();
 
         void onShowCollisionDebug(bool show);
-
+        void onMotionStart(bool run);
+        void onMotionSpeedChanged(float speed);
+        
     private:
         TileMap _tileMap;
 
         bool _showCollisionDebug = false;
         std::vector<Rect> _collisionRects;
-        std::vector<Rect> _test_path;
         
         AStar::Generator _generator;
+        GamePlay _gamePlay;
+
+        entt::entity _actor;
     };
 
 

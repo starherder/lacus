@@ -106,13 +106,13 @@ namespace samples {
 
     void SamplePluginTweeny::onUpdate()
     {
-        if (!_tween.isFinished())   // �Ƿ����
+        if (!_tween.isFinished()) 
         {
             auto delta = application()->fpsChecker().deltaTicks();
             //spdlog::info("delta = {}, time_point = {}, point = {}", 
             //    delta, _tween.currentTimePoint(), _tween.point());
 
-            _tween.step(delta);     // ��һ��������һ��ʱ�䣩
+            _tween.step(delta);    
         }
     }
 
@@ -132,11 +132,11 @@ namespace samples {
     {
         spdlog::info("ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
 
-        _tween = tweeny::from(_roleBeginPos.x, _roleBeginPos.y)  // ��ʼֵ�������ж��
-                        .to(_roleEndPos.x, _roleEndPos.y)        // ����ֵ�������ж��
-                        .during(duration)                        // ��ʱ��������
-                        .via(ease)                               // �㷨
-                        .onStep([this](auto& t, int x, int y) {  // ÿһ��������˻ص�
+        _tween = tweeny::from(_roleBeginPos.x, _roleBeginPos.y)  
+                        .to(_roleEndPos.x, _roleEndPos.y)        
+                        .during(duration)                        
+                        .via(ease)                               
+                        .onStep([this](auto& t, int x, int y) {  
                             _rolePos.x = x;
                             _rolePos.y = y;
                             return false;
@@ -146,7 +146,6 @@ namespace samples {
 
         if (mode == EaseMode::Once)
         {
-            // �����ӻص�
             _tween.onStep([ease, start_ticks](auto& t, int x, int y) {
                 if (t.progress() >= 1.0f) {
                     spdlog::info("{} finish!,  ticks = {}", ease, SDL_GetTicks()-start_ticks);
@@ -158,7 +157,6 @@ namespace samples {
 
         if (mode == EaseMode::Loop)
         {
-            // �����ӻص�
             _tween.onStep([ease](auto& t, int x, int y) {  
                 if (t.progress() >= 1.0f) {
                     spdlog::info("{} reward!", ease);
@@ -170,7 +168,6 @@ namespace samples {
 
         if (mode == EaseMode::Yoyo)
         {
-            // �����ӻص�
             _tween.onStep([ease](auto& t, int x, int y) {
                 if (t.progress() <= 0.001f) { 
                     spdlog::info("{} forward!", ease);

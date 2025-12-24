@@ -19,6 +19,9 @@ namespace engine
         virtual bool load(const engine::fs::path& filePath) = 0;
         virtual bool unload() = 0;
 
+        virtual void onStart() = 0;
+        virtual void onStop() = 0;
+
         virtual void onUpdate(float deltaTime) = 0;
         virtual void onDraw() = 0;
 

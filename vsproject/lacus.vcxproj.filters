@@ -34,6 +34,12 @@
     <Filter Include="gui">
       <UniqueIdentifier>{b3a293d9-5944-4f62-9e4c-964650f911b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game\play">
+      <UniqueIdentifier>{da3ec872-21bd-44cb-9665-5a53dcd959f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game\ui">
+      <UniqueIdentifier>{39b09be4-d9d3-47e6-9f9e-4fc2ac3b54f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -180,6 +186,15 @@
     </ClCompile>
     <ClCompile Include="..\src\engine\geometry.cpp">
       <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_main.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\imform_debug.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\play\game_play.cpp">
+      <Filter>game\play</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +380,21 @@
     </ClInclude>
     <ClInclude Include="..\src\engine\geometry.h">
       <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_main.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\imform_debug.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\components.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\game_play.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\ui.h">
+      <Filter>gui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

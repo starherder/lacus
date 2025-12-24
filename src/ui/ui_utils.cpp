@@ -12,14 +12,14 @@ const WidgetStatus WigetUtils::normalStatus = WidgetStatus{
 
 const WidgetStatus WigetUtils::hoveredStatus = WidgetStatus{
                                         .ground_color = Color::Pale,
-                                        .text_color = Color::Green,
-                                        .border_color = Color::Green,
+                                        .text_color = Color::Gray,
+                                        .border_color = Color::DarkGreen,
                                         .texture = nullptr
 };
 
 const WidgetStatus WigetUtils::pressedStatus = WidgetStatus{
                                         .ground_color = Color::Gray,
-                                        .text_color = Color::DarkGreen,
+                                        .text_color = Color::Black,
                                         .border_color = Color::DarkGreen,
                                         .texture = nullptr
 };

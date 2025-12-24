@@ -73,31 +73,6 @@ namespace AStar
 
     class Generator
     {
-        bool detectCollision(const Vec2i& coordinates_) {
-            if (coordinates_.x < 0 || coordinates_.x >= worldSize.x ||
-                coordinates_.y < 0 || coordinates_.y >= worldSize.y ||
-                std::find(walls.begin(), walls.end(), coordinates_) != walls.end()) {
-                return true;
-            }
-            return false;
-        }
-
-        Node* findNodeOnList(NodeSet& nodes_, const Vec2i& coordinates_) {
-            for (auto node : nodes_) {
-                if (node->coordinates == coordinates_) {
-                    return node;
-                }
-            }
-            return nullptr;
-        }
-
-        void releaseNodes(NodeSet& nodes_) {
-            for (auto it = nodes_.begin(); it != nodes_.end();) {
-                delete* it;
-                it = nodes_.erase(it);
-            }
-        }
-
     public:
         Generator() {
             setDiagonalMovement(false);
@@ -196,6 +171,31 @@ namespace AStar
             walls.clear();
         }
 
+    private:
+        bool detectCollision(const Vec2i& coordinates_) {
+            if (coordinates_.x < 0 || coordinates_.x >= worldSize.x ||
+                coordinates_.y < 0 || coordinates_.y >= worldSize.y ||
+                std::find(walls.begin(), walls.end(), coordinates_) != walls.end()) {
+                return true;
+            }
+            return false;
+        }
+
+        Node* findNodeOnList(NodeSet& nodes_, const Vec2i& coordinates_) {
+            for (auto node : nodes_) {
+                if (node->coordinates == coordinates_) {
+                    return node;
+                }
+            }
+            return nullptr;
+        }
+
+        void releaseNodes(NodeSet& nodes_) {
+            for (auto it = nodes_.begin(); it != nodes_.end();) {
+                delete* it;
+                it = nodes_.erase(it);
+            }
+        }
     private:
         HeuristicFunction heuristic;
         CoordinateList direction, walls;

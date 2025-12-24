@@ -12,6 +12,8 @@ namespace game
     {
     public:
         signals::Signal<bool> on_show_collision_debug;
+        signals::Signal<bool> on_motion_start;
+        signals::Signal<float> on_motion_speed_changed;
 
     public:
         ImFormDebug();

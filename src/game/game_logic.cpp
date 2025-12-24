@@ -46,12 +46,12 @@ void GameLogicPlugin::onClose()
 
 void GameLogicPlugin::onEnable()
 {
-    _scene->onEnable();
+    _scene->onStart();
 }
 
 void GameLogicPlugin::onDisable()
 {
-    _scene->onDisable();
+    _scene->onStop();
 }
 
 }

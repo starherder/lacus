@@ -162,10 +162,13 @@
     <ClCompile Include="..\src\engine\text_render.cpp" />
     <ClCompile Include="..\src\engine\window.cpp" />
     <ClCompile Include="..\src\game\game_logic.cpp" />
+    <ClCompile Include="..\src\game\play\game_play.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
     <ClCompile Include="..\src\game\scene\map_layer.cpp" />
     <ClCompile Include="..\src\game\scene\map_tilset.cpp" />
     <ClCompile Include="..\src\game\scene\tile_map.cpp" />
+    <ClCompile Include="..\src\game\ui\form_main.cpp" />
+    <ClCompile Include="..\src\game\ui\imform_debug.cpp" />
     <ClCompile Include="..\src\imform\imform.cpp" />
     <ClCompile Include="..\src\imform\imform_demo.cpp" />
     <ClCompile Include="..\src\imform\imform_manager.cpp" />
@@ -215,11 +218,15 @@
     <ClInclude Include="..\src\engine\window.h" />
     <ClInclude Include="..\src\engine\wrapper.h" />
     <ClInclude Include="..\src\game\game_logic.h" />
+    <ClInclude Include="..\src\game\play\components.h" />
+    <ClInclude Include="..\src\game\play\game_play.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />
     <ClInclude Include="..\src\game\scene\map_layer.h" />
     <ClInclude Include="..\src\game\scene\map_tilset.h" />
     <ClInclude Include="..\src\game\scene\map_utils.h" />
     <ClInclude Include="..\src\game\scene\tile_map.h" />
+    <ClInclude Include="..\src\game\ui\form_main.h" />
+    <ClInclude Include="..\src\game\ui\imform_debug.h" />
     <ClInclude Include="..\src\imform\imform.h" />
     <ClInclude Include="..\src\imform\imform_demo.h" />
     <ClInclude Include="..\src\imform\imform_manager.h" />
@@ -239,6 +246,7 @@
     <ClInclude Include="..\src\ui\form_demo.h" />
     <ClInclude Include="..\src\ui\groups.h" />
     <ClInclude Include="..\src\ui\gui_manager.h" />
+    <ClInclude Include="..\src\ui\ui.h" />
     <ClInclude Include="..\src\ui\ui_utils.h" />
     <ClInclude Include="..\src\ui\widget.h" />
     <ClInclude Include="..\src\utility\dynamic_struct.h" />
