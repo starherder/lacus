@@ -1,5 +1,5 @@
 { "columns":20,
- "image":"..\/..\/textures\/Terrain\/Tilemap.png",
+ "image":"textures\/Terrain\/Tilemap.png",
  "imageheight":2048,
  "imagewidth":1280,
  "margin":0,

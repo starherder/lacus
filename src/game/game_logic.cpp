@@ -14,7 +14,7 @@ GameLogicPlugin::GameLogicPlugin(engine::Application& app)
 
 void GameLogicPlugin::onInit() 
 {
-    _scene->load(_app.resPath()/"scenes/monster_war/level1.tmj");
+    _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
 
     ui::GuiManager::inst().init(&_app);
     auto form = ui::GuiManager::inst().showForm<ui::FormDemo>("main_frame");

@@ -158,8 +158,13 @@ void SamplePluginEntt::initEntities()
 
     _registry.ctx().emplace<VertexData>(vdata);
 
-    _texture = application()->resourceManager().textureManager().load("textures/UI/frame.png"_hs);
-    assert(_texture);
+    std::string imagename = "textures/UI/frame.png";
+    _texture = application()->resourceManager().textureManager().load(HashString{imagename.c_str()});
+    if(!_texture)
+    {
+        spdlog::error("load texture {} failed", imagename);
+        return;
+    }
 
     spdlog::info("create entity : count {}, vertex.size = {}", _xcount * _ycount, vdata.world_vertices.size());
 }

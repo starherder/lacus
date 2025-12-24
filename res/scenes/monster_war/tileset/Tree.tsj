@@ -5,7 +5,7 @@
      "orientation":"orthogonal",
      "width":256
     },
- "image":"..\/..\/textures\/Decorations\/Tree.png",
+ "image":"textures\/Decorations\/Tree.png",
  "imageheight":512,
  "imagewidth":1536,
  "margin":0,

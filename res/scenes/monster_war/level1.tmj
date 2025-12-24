@@ -1737,7 +1737,7 @@
         }, 
         {
          "id":2,
-         "image":"..\/..\/textures\/UI\/ref.png",
+         "image":"textures\/UI\/ref.png",
          "imageheight":1216,
          "imagewidth":1600,
          "name":"ref",
