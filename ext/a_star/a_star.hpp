@@ -10,20 +10,11 @@
 #include <vector>
 #include <functional>
 
+#include "glm/glm.hpp"
+
 namespace AStar
 {
-    struct Vec2i
-    {
-        int x, y;
-
-        bool operator == (const Vec2i& coordinates_) const {
-            return (x == coordinates_.x && y == coordinates_.y);
-        }
-
-        Vec2i operator + (const AStar::Vec2i& right_) const {
-            return{ x + right_.x, y + right_.y };
-        }
-    };
+    using Vec2i = glm::ivec2;
 
     using uint = unsigned int;
     using HeuristicFunction = std::function<uint(const Vec2i&, const Vec2i&)>;

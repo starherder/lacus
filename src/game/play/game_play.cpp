@@ -143,7 +143,7 @@ bool GamePlay::motionStart(entt::entity id, const Vec2& dst)
     spdlog::info("{} motion start: ({}, {}) -> ({}, {})", (int32_t)id, srcGrid.x, srcGrid.y, dstGrid.x, dstGrid.y);
 
     // path find
-    auto path = _pathGenerator->findPath({srcGrid.x, srcGrid.y}, {dstGrid.x, dstGrid.y});
+    auto path = _pathGenerator->findPath(srcGrid, dstGrid);
     if(path.empty())
     {
         spdlog::info("path find failed.");
@@ -151,11 +151,12 @@ bool GamePlay::motionStart(entt::entity id, const Vec2& dst)
     }
 
     // add path
+    motion.path.clear();
     for(auto& grid : path)
     {
-        motion.path.push_back(Vec2i{ grid.x, grid.y });
+        motion.path.push_back(grid);
     }
-    
+
     // set state
     auto& state = _registry.get<CompState>(id);
     state.state = ActorState::Move;

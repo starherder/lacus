@@ -221,11 +221,11 @@ namespace samples {
             _source.x, _source.y, _target.x, _target.y);
 
         AStar::Generator generator;
-        generator.setWorldSize({ _sceneGrids.x, _sceneGrids.y });
+        generator.setWorldSize(_sceneGrids);
         generator.setDiagonalMovement(_diagonal); // 对角线移动？
         
         for (auto& block : _blocks) {
-            generator.addCollision({block.x, block.y});
+            generator.addCollision(block);
         }
 
         if (_heuristic == Heuristic::Manhattan){
@@ -238,10 +238,11 @@ namespace samples {
             generator.setHeuristic(AStar::Heuristic::euclidean);
         }
 
-        auto result_path = generator.findPath({ _source.x, _source.y }, { _target.x, _target.y });
-        for (auto& grid : result_path) {
-            _path.push_back({grid.x, grid.y});
-        }
+        auto result_path = generator.findPath(_source, _target);
+
+        _path.clear();
+        _path.reserve(result_path.size());
+        _path.insert(_path.end(), result_path.begin(), result_path.end());
     }
 
     ////////////////////////////////////////////////////////////////

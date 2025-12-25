@@ -104,13 +104,13 @@ void GameScene::initPathFind()
 {
     auto& mapSize = _tileMap.mapSize();
 
-    _generator.setWorldSize({mapSize.x, mapSize.y});
+    _generator.setWorldSize(mapSize);
     _generator.setHeuristic(AStar::Heuristic::euclidean);
-    _generator.setDiagonalMovement(true); 
+    _generator.setDiagonalMovement(false); 
 
     for(auto& grid : _tileMap.collisionPoints()) 
     {
-        _generator.addCollision({grid.x, grid.y});
+        _generator.addCollision(grid);
     }
 
     _gamePlay.initPathFind(&_generator, _tileMap.mapSize(), _tileMap.tileSize() );
@@ -141,16 +141,15 @@ void GameScene::drawPathFind()
     renderer.setDrawColor(Color{255, 0, 0, 100});
     renderer.drawFillRects(rects.data(), (int)rects.size());
 
+    // -------------- show grids ------------------
     auto& mapSize = _tileMap.mapSize();
     auto& tileSize = _tileMap.tileSize();
-
     for(int x=0; x<=mapSize.x; ++x)
     {
         auto srcPos = _camera.projectPoint({x*tileSize.x, 0});
         auto dstPos = _camera.projectPoint({x*tileSize.x, mapSize.y*tileSize.y});
         renderer.drawLine(srcPos, dstPos);
     }
-
     for(int y=0; y<=_tileMap.mapSize().y; ++y)
     {
         auto srcPos = _camera.projectPoint({0, y*tileSize.y});
