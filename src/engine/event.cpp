@@ -3,6 +3,18 @@
 
 namespace engine {
 
+bool EventDispatcher::isShiftKeyDown()
+{
+	const bool* state = SDL_GetKeyboardState(nullptr);
+	return state[(int)SDL_SCANCODE_LSHIFT] || state[(int)SDL_SCANCODE_RSHIFT];
+}
+
+bool EventDispatcher::isCtrlKeyDown()
+{
+	const bool* state = SDL_GetKeyboardState(nullptr);
+	return state[(int)SDL_SCANCODE_LCTRL] || state[(int)SDL_SCANCODE_RCTRL];
+}
+
 void EventDispatcher::run()
 {
 	SDL_Event e;

@@ -4,6 +4,7 @@
 
 #include "game/scene/tile_map.h"
 #include "game/play/game_play.h"
+#include "game_camera.h"
 
 
 namespace game {
@@ -46,13 +47,19 @@ namespace game {
     private:
         TileMap _tileMap;
 
-        bool _showCollisionDebug = false;
-        std::vector<Rect> _collisionRects;
         
         AStar::Generator _generator;
+
         GamePlay _gamePlay;
 
+        GameCamera _camera;
+
+        // test
         entt::entity _actor = entt::null;
+
+        // debug
+        bool _showCollisionDebug = false;
+        std::vector<Rect> _collisionDebugRects;
     };
 
 

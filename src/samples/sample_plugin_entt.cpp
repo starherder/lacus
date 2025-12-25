@@ -31,7 +31,7 @@ void SamplePluginEntt::onInit()
     spdlog::info("Init sample plugin scene");
 
     auto& window = application()->window();
-    _camera = std::make_unique<SampleCamera>(Vec2{window.getSize()});
+    _camera = std::make_unique<SampleCamera>(Vec2{0, 0}, Vec2{window.getSize()});
 
     auto& eventDispatcher = application()->eventDispatcher();
     eventDispatcher.onSdlEvent.connect([this](const Event& e){ _camera->handleEvent(e); });

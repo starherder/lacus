@@ -24,8 +24,8 @@ public:
 	signals::Signal<const Vec2&, const Vec2&> onMouseMotion;
 	signals::Signal<const Vec2&, float> onMouseWheel;
 
-	signals::Signal<int> onKeyDown;
-	signals::Signal<int> onKeyUp;
+	signals::Signal<KeyCode> onKeyDown;
+	signals::Signal<KeyCode> onKeyUp;
 
 	signals::Signal<> onQuit;
 	signals::Signal<const Event&> onSdlEvent;
@@ -37,7 +37,10 @@ public:
 	EventDispatcher(const EventDispatcher&) = delete;
 
 	void run();
+	
+	bool isShiftKeyDown();
 
+	bool isCtrlKeyDown();
 };
 
 }

@@ -34,8 +34,8 @@ public:
     Rect(const SDL_FRect& frect);
     Rect(const SDL_Rect& rect);
 
-    Vec2 pos();
-    Vec2 size();
+    Vec2 pos() const;
+    Vec2 size() const;
     bool contains(const Vec2& point) const;
 
     operator SDL_FRect() const;

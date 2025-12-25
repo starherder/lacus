@@ -19,6 +19,7 @@
 
 #include "color.h"
 #include "geometry.h"
+#include <SDL3/SDL_keycode.h>
 
 using namespace entt::literals;
 
@@ -33,6 +34,7 @@ using IdType = entt::id_type;
 using HashString = entt::hashed_string;
 
 using Event = SDL_Event;
+using KeyCode = SDL_Keycode;
 
 using FlipMode = SDL_FlipMode;
 

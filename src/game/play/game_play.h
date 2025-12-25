@@ -1,8 +1,11 @@
 #pragma once
 
 #include "engine/wrapper.h"
+#include "engine/camera.h"
+
 #include "components.h"
-#include <unordered_map>
+
+
 
 namespace engine {
     class Renderer;
@@ -26,7 +29,7 @@ public:
     void setDebugMode(bool enable) { _debugMode = enable; }
 
     void update(float deltaTime);
-    void draw(Renderer& renderer);
+    void draw(Renderer& renderer, const Camera& camera);
 
     entt::entity createActor(const std::string& name, const Vec2& pos, const Vec2& size={64, 64});
     entt::entity getActor(const std::string& name);
@@ -49,7 +52,7 @@ public:
 
 private:
     void motionSystem(float deltaTime);
-    void renderSystem(Renderer& renderer);
+    void renderSystem(Renderer& renderer, const Camera& camera);
 
     Vec2i getGridFromPos(const Vec2& pos);
     Vec2 getGridLeftTopPos(const Vec2i& grid);
@@ -57,7 +60,7 @@ private:
 
     bool reachGridCenter(const Vec2& pos, const Vec2i& grid, float epsilon=10.0f);
 
-    void drawMotionDebug(Renderer& renderer);
+    void drawMotionDebug(Renderer& renderer, const Camera& camera);
 
 private:
     entt::registry _registry;

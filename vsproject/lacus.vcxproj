@@ -163,6 +163,7 @@
     <ClCompile Include="..\src\engine\window.cpp" />
     <ClCompile Include="..\src\game\game_logic.cpp" />
     <ClCompile Include="..\src\game\play\game_play.cpp" />
+    <ClCompile Include="..\src\game\scene\game_camera.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
     <ClCompile Include="..\src\game\scene\map_layer.cpp" />
     <ClCompile Include="..\src\game\scene\map_tilset.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="..\src\game\game_logic.h" />
     <ClInclude Include="..\src\game\play\components.h" />
     <ClInclude Include="..\src\game\play\game_play.h" />
+    <ClInclude Include="..\src\game\scene\game_camera.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />
     <ClInclude Include="..\src\game\scene\map_layer.h" />
     <ClInclude Include="..\src\game\scene\map_tilset.h" />

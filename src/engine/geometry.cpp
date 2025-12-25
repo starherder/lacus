@@ -18,11 +18,11 @@ Rect::Rect(const Vec2& pos, const Vec2& size)
     h = size.y;
 }
 
-Vec2 Rect::pos() { 
+Vec2 Rect::pos() const { 
     return Vec2{x, y}; 
 }
 
-Vec2 Rect::size() { 
+Vec2 Rect::size() const { 
     return Vec2{w, h}; 
 }
 

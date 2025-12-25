@@ -29,6 +29,9 @@ namespace game {
 
     struct MapDrawCall {
         std::vector<engine::Vertex> vertexies;
+
+        // vertexies on camera
+        std::vector<engine::Vertex> display_vertexies;
         engine::Texture* texture;
     };
 

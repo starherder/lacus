@@ -56,11 +56,15 @@ bool TileMap::unload()
     return true;
 }
 
-void TileMap::draw(engine::Renderer& renderer)
+void TileMap::draw(engine::Renderer& renderer, const engine::Camera& camera)
 {
-    for (const auto& [id, dc] : _drawCalls)
+    for (auto& [id, dc] : _drawCalls)
     {
-        renderer.drawGeometry(dc->texture, dc->vertexies.data(), (int)(dc->vertexies.size()), nullptr, 0);
+        dc->display_vertexies.clear();
+        dc->display_vertexies.insert(dc->display_vertexies.end(), dc->vertexies.begin(), dc->vertexies.end());
+        camera.projectVertexies(dc->display_vertexies);
+
+        renderer.drawGeometry(dc->texture, dc->display_vertexies.data(), (int)(dc->display_vertexies.size()), nullptr, 0);
     }
 }
 
@@ -367,6 +371,7 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
             auto drawcall = std::make_shared<MapDrawCall>();
             drawcall->texture = tileset.texture;
             drawcall->vertexies.swap(verts);
+            drawcall->display_vertexies.reserve(drawcall->vertexies.size());
 
             _drawCalls.insert({layer.id, drawcall});
         }
@@ -419,6 +424,7 @@ void TileMap::bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& l
     auto drawcall = std::make_shared<MapDrawCall>();
     drawcall->texture = texture;
     drawcall->vertexies.swap(verts);
+    drawcall->display_vertexies.reserve(drawcall->vertexies.size());
 
     _drawCalls.insert({layer.id, drawcall});
 }

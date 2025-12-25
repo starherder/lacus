@@ -3,6 +3,7 @@
 #include "map_utils.h"
 #include "map_layer.h"
 #include "map_tilset.h"
+#include "engine/camera.h"
 
 namespace engine {
     class Renderer;
@@ -23,7 +24,7 @@ namespace game {
 
         void bake(engine::ResourceManager& resourceMgr);
 
-        void draw(engine::Renderer& renderer);
+        void draw(engine::Renderer& renderer, const engine::Camera& camera);
 
         template<typename T>
         std::pair<bool, T> getObjectProperty(int layerId, int objectId, const std::string& name);

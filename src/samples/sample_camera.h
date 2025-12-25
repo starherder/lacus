@@ -10,11 +10,10 @@ using namespace engine;
 class SampleCamera : public Camera
 {
 public:
-    SampleCamera() = delete;
-    SampleCamera(SampleCamera&&) = delete;
-    SampleCamera(const SampleCamera&) = delete;
-    SampleCamera(const Vec2& size) : Camera(size)
-    { }
+    SampleCamera() = default;
+    ~SampleCamera() = default;
+    SampleCamera(const Vec2& pos, const Vec2& size) 
+        : Camera(pos, size) {}
 
     void update(float delta) override
     {

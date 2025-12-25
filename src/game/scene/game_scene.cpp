@@ -9,6 +9,8 @@ namespace game {
 GameScene::GameScene(engine::Application& app)
     : engine::Scene(app)
 {
+    _camera.setPos(Vec2{0, 0});
+    _camera.setSize(Vec2{app.window().getSize()});
 }
 
 GameScene::~GameScene()
@@ -27,6 +29,7 @@ bool GameScene::load(const engine::fs::path& mapPath)
     
     initPathFind();
 
+    _camera.init(&application());
     return true;
 }
 
@@ -44,17 +47,19 @@ bool GameScene::unload()
 void GameScene::onUpdate(float deltaTime)
 {
     _gamePlay.update(deltaTime);
+
+    _camera.update(deltaTime);
 }
 
 void GameScene::onDraw() 
 {
     auto& renderer = application().renderer();
 
-    _tileMap.draw(renderer);
+    _tileMap.draw(renderer, _camera);
 
     drawPathFind();
 
-    _gamePlay.draw(renderer);
+    _gamePlay.draw(renderer, _camera);
 }
 
 void GameScene::onStart()
@@ -114,7 +119,7 @@ void GameScene::initPathFind()
     auto& tileSize = _tileMap.tileSize();
     for(auto& grid : _tileMap.collisionPoints())
     {
-        _collisionRects.push_back({grid.x*tileSize.x, grid.y*tileSize.y, tileSize.x, tileSize.y});
+        _collisionDebugRects.push_back({grid.x*tileSize.x, grid.y*tileSize.y, tileSize.x, tileSize.y});
     }
 }
 
@@ -126,20 +131,31 @@ void GameScene::drawPathFind()
     }
 
     // -------------- show collision info ------------------
+    static std::vector<Rect> rects;
+    rects.clear();
+    rects.reserve(_collisionDebugRects.size());
+    rects.insert(rects.begin(), _collisionDebugRects.begin(), _collisionDebugRects.end());
+    _camera.projectRects(rects.data(), (int)rects.size());
+
     auto& renderer = application().renderer();
     renderer.setDrawColor(Color{255, 0, 0, 100});
-    renderer.drawFillRects(_collisionRects.data(), (int)_collisionRects.size());
+    renderer.drawFillRects(rects.data(), (int)rects.size());
 
     auto& mapSize = _tileMap.mapSize();
     auto& tileSize = _tileMap.tileSize();
 
     for(int x=0; x<=mapSize.x; ++x)
     {
-        renderer.drawLine({x*tileSize.x, 0}, {x*tileSize.x, mapSize.y*tileSize.y});
+        auto srcPos = _camera.projectPoint({x*tileSize.x, 0});
+        auto dstPos = _camera.projectPoint({x*tileSize.x, mapSize.y*tileSize.y});
+        renderer.drawLine(srcPos, dstPos);
     }
+
     for(int y=0; y<=_tileMap.mapSize().y; ++y)
     {
-        renderer.drawLine({0, y*tileSize.y}, {tileSize.x*mapSize.x, y*tileSize.y});
+        auto srcPos = _camera.projectPoint({0, y*tileSize.y});
+        auto dstPos = _camera.projectPoint({tileSize.x*mapSize.x, y*tileSize.y});
+        renderer.drawLine(srcPos, dstPos);
     }
 }
 

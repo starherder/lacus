@@ -33,8 +33,8 @@ public:
     void closeForm(const std::string& name);
 
 private:
-    void onKeyDown(int key);
-    void onKeyUp(int key);
+    void onKeyDown(KeyCode key);
+    void onKeyUp(KeyCode key);
 
     void onMouseLeftClick(const Vec2& pos);
     void onMouseRightClick(const Vec2& pos);

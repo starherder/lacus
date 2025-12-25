@@ -196,6 +196,9 @@
     <ClCompile Include="..\src\game\play\game_play.cpp">
       <Filter>game\play</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\scene\game_camera.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -395,6 +398,9 @@
     </ClInclude>
     <ClInclude Include="..\src\ui\ui.h">
       <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\game_camera.h">
+      <Filter>game\scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

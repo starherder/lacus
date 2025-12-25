@@ -97,11 +97,11 @@ namespace ui {
             _forms.push_back(form);
         }
 
-        void GuiManager::onKeyDown(int key)
+        void GuiManager::onKeyDown(KeyCode key)
         {
         }
 
-        void GuiManager::onKeyUp(int key)
+        void GuiManager::onKeyUp(KeyCode key)
         {
         }
 

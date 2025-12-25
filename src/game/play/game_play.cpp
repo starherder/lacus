@@ -69,9 +69,9 @@ void GamePlay::update(float deltaTime)
     motionSystem(deltaTime);
 }
 
-void GamePlay::draw(Renderer& renderer)
+void GamePlay::draw(Renderer& renderer, const Camera& camera)
 {
-    renderSystem(renderer);
+    renderSystem(renderer, camera);
 }
 
 entt::entity GamePlay::createActor(const std::string& name, const Vec2& pos, const Vec2& size)
@@ -279,7 +279,7 @@ void GamePlay::motionSystem(float deltaTime)
     }
 }
 
-void GamePlay::renderSystem(Renderer& renderer)
+void GamePlay::renderSystem(Renderer& renderer, const Camera& camera)
 {
     auto ent_view = _registry.view<CompNameId, CompTransform, CompDisplay>();
     for(auto& ent : ent_view)
@@ -287,7 +287,9 @@ void GamePlay::renderSystem(Renderer& renderer)
         auto& nameid = ent_view.get<CompNameId>(ent);
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& display = ent_view.get<CompDisplay>(ent);
-        auto dstrect = Rect{ transform.position-_tileSize/2.0f, transform.size };
+
+        auto dstrect = Rect{ transform.position-transform.size/2.0f, transform.size };
+        dstrect = camera.projectRect(dstrect);
 
         if(display.texture != nullptr)
         {
@@ -308,11 +310,11 @@ void GamePlay::renderSystem(Renderer& renderer)
 
     if(_debugMode)
     {
-       drawMotionDebug(renderer);
+       drawMotionDebug(renderer, camera);
     }
 }
 
-void GamePlay::drawMotionDebug(Renderer& renderer)
+void GamePlay::drawMotionDebug(Renderer& renderer, const Camera& camera)
 {
     auto ent_view = _registry.view<CompTransform, CompMotion, CompState>();
     for(auto& ent : ent_view)
@@ -324,16 +326,19 @@ void GamePlay::drawMotionDebug(Renderer& renderer)
         if(state.state == ActorState::Move && motion.path.size() > 0 )
         {
             renderer.setDrawColor(Color::Red);
-
-            auto lstPos = transform.position;
+            auto lstPos = camera.projectPoint(transform.position);
 
             for(auto it=motion.path.rbegin(); it!=motion.path.rend(); ++it)
             {
-                auto grid_pos = getGridCenterPos(*it);
+                auto grid_center = getGridCenterPos(*it);
+                auto grid_pos = camera.projectPoint(grid_center);
+
                 renderer.drawLine(lstPos, grid_pos);
 
-                renderer.drawRect(Rect{grid_pos-Vec2{10,10}, Vec2{20,20}});
+                auto rect = Rect{grid_center-Vec2{10,10}, Vec2{20,20}};
+                rect = camera.projectRect(rect);
 
+                renderer.drawRect(rect);
                 lstPos = grid_pos;
             }
         }
