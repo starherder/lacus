@@ -28,7 +28,7 @@ public:
     void update(float deltaTime);
     void draw(Renderer& renderer);
 
-    entt::entity createActor(const std::string& name);
+    entt::entity createActor(const std::string& name, const Vec2& pos, const Vec2& size={64, 64});
     entt::entity getActor(const std::string& name);
 
     void setActorPos(entt::entity id, const Vec2& pos);
@@ -56,6 +56,8 @@ private:
     Vec2 getGridCenterPos(const Vec2i& grid);
 
     bool reachGridCenter(const Vec2& pos, const Vec2i& grid, float epsilon=10.0f);
+
+    void drawMotionDebug(Renderer& renderer);
 
 private:
     entt::registry _registry;

@@ -22,21 +22,47 @@ void ImFormDebug::draw()
             on_show_collision_debug.emit(showCollision);
         }
 
-        static bool motionRun = false;
-        if(ImGui::Checkbox("motion run", &motionRun))
-        {
-            on_motion_start.emit(motionRun);
-        }
-
         static float motionSpeed = 10.0f;
-        if(ImGui::SliderFloat("motion speed", &motionSpeed, 10.0f, 1000.0f))
-        {
+        if(ImGui::SliderFloat("motion speed", &motionSpeed, 10.0f, 1000.0f)) {
             on_motion_speed_changed.emit(motionSpeed);
         }
 
-        if (ImGui::Button("what ?")) 
+        static bool motionStart = false;
+        if(!motionStart) 
         {
-            spdlog::info("what ?");
+            if(ImGui::Button("motion start")) 
+            {
+                motionStart = true;
+                on_motion_start.emit(motionStart, motionSpeed);
+            }
+        }
+        else 
+        {
+            if(ImGui::Button("motion stop")) 
+            {
+                motionStart = false;
+                on_motion_start.emit(motionStart, motionSpeed);
+            }
+        }
+
+        if(motionStart)
+        {
+            static bool motionPause = false;
+            if(motionPause) 
+            {
+                if(ImGui::Button("motion resume")) {
+                    motionPause = false;
+                    on_motion_pause.emit(motionPause);
+                }
+            }
+            else 
+            {
+                if(ImGui::Button("motion pause")) 
+                {
+                    motionPause = true;
+                    on_motion_pause.emit(motionPause);
+                }
+            }
         }
 
     }

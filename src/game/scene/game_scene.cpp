@@ -62,18 +62,6 @@ void GameScene::onStart()
     spdlog::info("========================= GameScene::onStart =========================");
 
     showAllGui();
-
-    _gamePlay.destroyActor("actor1");
-    _gamePlay.destroyActor("actor2");
-
-    Vec2 destPos = {22*_tileMap.tileSize().x, 6*_tileMap.tileSize().y};
-
-    _actor = _gamePlay.createActor("actor1");
-    _gamePlay.motionStart(_actor, destPos);
-    _gamePlay.motionPause(_actor, true);
-
-    //auto actor2 = _gamePlay.createActor("actor2");
-    //_gamePlay.setActorPos(actor2, destPos);
 }
 
 void GameScene::onStop()
@@ -92,8 +80,10 @@ void GameScene::showAllGui()
     imgui::ImFormManager::inst().setStyle(imgui::ImGuiTheme::Light);
 
     auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
-    if(form_debug) {
+    if(form_debug) 
+    {
         form_debug->on_show_collision_debug.connect(this, &GameScene::onShowCollisionDebug);
+        form_debug->on_motion_pause.connect(this, &GameScene::onMotionPause);
         form_debug->on_motion_start.connect(this, &GameScene::onMotionStart);
         form_debug->on_motion_speed_changed.connect(this, &GameScene::onMotionSpeedChanged);
     }
@@ -159,9 +149,31 @@ void GameScene::onShowCollisionDebug(bool show)
     _gamePlay.setDebugMode(show);
 }
 
-void GameScene::onMotionStart(bool run)
+void GameScene::onMotionStart(bool start, float speed)
 {
-    _gamePlay.motionPause(_actor, !run);
+    auto& tileSize = _tileMap.tileSize();
+    Vec2 srcPos = {5*tileSize.x, 5*tileSize.y};
+    Vec2 destPos = {22*_tileMap.tileSize().x, 6*_tileMap.tileSize().y};
+
+    if(start)
+    {
+        if(_actor == entt::null){
+            _actor = _gamePlay.createActor("actor1", srcPos, tileSize);
+        }
+
+        _gamePlay.setMotionSpeed(_actor, speed);
+        _gamePlay.motionStart(_actor, destPos);
+    }
+    else
+    {
+        _gamePlay.motionStop(_actor);
+        _gamePlay.setActorPos(_actor, srcPos);
+    }
+}
+
+void GameScene::onMotionPause(bool pause)
+{
+    _gamePlay.motionPause(_actor, pause);
 }
 
 void GameScene::onMotionSpeedChanged(float speed)

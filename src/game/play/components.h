@@ -4,7 +4,8 @@
 #include "engine/wrapper.h"
 #include "engine/texture.h"
 
-namespace game {
+namespace game 
+{
     using namespace engine;
 
     struct CompNameId
@@ -24,16 +25,17 @@ namespace game {
     struct CompMotion
     {
         bool running = false;
+        float speed = 50.0f;
         Vec2 velocity;
-        float speed = 1.0f;
 
+        Vec2 targetPos;
         std::list<Vec2i> path;
     };
 
     struct CompDisplay
     {
-        Color ground_color;
-        Color border_color;
+        Color ground_color = Color::Yellow;
+        Color border_color = Color::Dark;
         Texture* texture = nullptr;
         Rect texture_rect;
     };
@@ -56,7 +58,7 @@ namespace game {
 
     struct CompState
     {
-        ActorState state;
+        ActorState state = ActorState::Idle;
     };
 
 }

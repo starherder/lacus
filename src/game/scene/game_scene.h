@@ -37,10 +37,12 @@ namespace game {
         void initPathFind();
         void drawPathFind();
 
+        void onMotionStart(bool start, float speed);
+        void onMotionPause(bool pause);
+
         void onShowCollisionDebug(bool show);
-        void onMotionStart(bool run);
         void onMotionSpeedChanged(float speed);
-        
+
     private:
         TileMap _tileMap;
 
@@ -50,7 +52,7 @@ namespace game {
         AStar::Generator _generator;
         GamePlay _gamePlay;
 
-        entt::entity _actor;
+        entt::entity _actor = entt::null;
     };
 
 

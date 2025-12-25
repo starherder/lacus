@@ -74,14 +74,14 @@ void GamePlay::draw(Renderer& renderer)
     renderSystem(renderer);
 }
 
-entt::entity GamePlay::createActor(const std::string& name)
+entt::entity GamePlay::createActor(const std::string& name, const Vec2& pos, const Vec2& size)
 {
     auto entid = _registry.create();
     _registry.emplace<CompNameId>(entid, entid, name);
-    _registry.emplace<CompTransform>(entid, Vec2{5*_tileSize.x, 5*_tileSize.y}, _tileSize, Vec2{0,0}, Vec2{1,1});
-    _registry.emplace<CompDisplay>(entid, Color::Yellow, Color::Dark, nullptr, Rect{0,0,0,0});
-    _registry.emplace<CompState>(entid, ActorState::Idle);
-    _registry.emplace<CompMotion>(entid, false, Vec2{0, 0}, 50.0f, std::list<Vec2i>{});
+    _registry.emplace<CompTransform>(entid, pos, size, Vec2{0.0f,0.0f}, Vec2{1.0f,1.0f});
+    _registry.emplace<CompDisplay>(entid);
+    _registry.emplace<CompState>(entid);
+    _registry.emplace<CompMotion>(entid);
 
     _nameIdMap.insert({name, entid});
     return entid;
@@ -140,7 +140,7 @@ bool GamePlay::motionStart(entt::entity id, const Vec2& dst)
     Vec2i srcGrid = getGridFromPos(src);
     Vec2i dstGrid = getGridFromPos(dst);
 
-    spdlog::info("motion {} start: ({}, {}) -> ({}, {})", (int32_t)id, srcGrid.x, srcGrid.y, dstGrid.x, dstGrid.y);
+    spdlog::info("{} motion start: ({}, {}) -> ({}, {})", (int32_t)id, srcGrid.x, srcGrid.y, dstGrid.x, dstGrid.y);
 
     // path find
     auto path = _pathGenerator->findPath({srcGrid.x, srcGrid.y}, {dstGrid.x, dstGrid.y});
@@ -161,6 +161,7 @@ bool GamePlay::motionStart(entt::entity id, const Vec2& dst)
     state.state = ActorState::Move;
 
     motion.velocity = glm::normalize(getGridCenterPos(motion.path.back()) - src) * motion.speed;
+    motion.running = true;
     return true;
 }
 
@@ -177,10 +178,10 @@ bool GamePlay::motionStop(entt::entity id)
     auto& motion = _registry.get<CompMotion>(id);
     motion.path.clear();
     motion.velocity = {0, 0};
+    motion.running = false;
 
     auto& state = _registry.get<CompState>(id);
     state.state = ActorState::Idle;
-
     return true;
 }
 
@@ -194,6 +195,7 @@ bool GamePlay::motionPause(entt::entity id, bool pause)
     
     auto& motion = _registry.get<CompMotion>(id);
     motion.running = !pause;
+    return true;
 }
 
 ActorState GamePlay::getActorState(entt::entity id)
@@ -203,6 +205,11 @@ ActorState GamePlay::getActorState(entt::entity id)
 
 void GamePlay::destroyActor(entt::entity id)
 {
+    if(!_registry.valid(id))
+    {
+        spdlog::warn("entity {} not exist.", (int32_t)id);
+        return;
+    }
     _registry.destroy(id);
 }
 
@@ -239,18 +246,22 @@ void GamePlay::motionSystem(float deltaTime)
 
             if(motion.path.empty())
             {
-                motionStop(ent);
+                if(glm::distance(motion.targetPos, pos) <= motion.speed*deltaTime)
+                {
+                    spdlog::info("{} motion finish: at ({}, {})", (int32_t)ent, motion.targetPos.x, motion.targetPos.y);
+
+                    motionStop(ent);
+                    setActorPos(ent, motion.targetPos);
+                }
                 continue;
             }
-            
+
             const auto& cur_grid = getGridFromPos(pos);
             const auto& next_grid = motion.path.back();
 
             if(next_grid != cur_grid )
             {
                 motion.velocity = glm::normalize(getGridCenterPos(next_grid) - pos) * motion.speed;
-                //spdlog::info("{} motion: ({}, {}) -> ({}, {}), velocity: ({}, {})", 
-                // (int32_t)ent, cur_grid.x, cur_grid.y, next_grid.x, next_grid.y, motion.velocity.x, motion.velocity.y);
             }
             else 
             {
@@ -295,35 +306,38 @@ void GamePlay::renderSystem(Renderer& renderer)
         }
     }
 
-
-    // ----------------------- draw debug line -----------------------------
     if(_debugMode)
     {
-        auto ent_view = _registry.view<CompTransform, CompMotion, CompState>();
-        for(auto& ent : ent_view)
-        {
-            auto& transform = ent_view.get<CompTransform>(ent);
-            auto& motion = ent_view.get<CompMotion>(ent);
-            auto& state = ent_view.get<CompState>(ent);
-
-            if(state.state == ActorState::Move && motion.path.size() > 0 )
-            {
-                renderer.setDrawColor(Color::Red);
-
-                auto lstPos = transform.position;
-
-                for(auto it=motion.path.rbegin(); it!=motion.path.rend(); ++it)
-                {
-                    auto grid_pos = getGridCenterPos(*it);
-                    renderer.drawLine(lstPos, grid_pos);
-
-                    renderer.drawRect(Rect{grid_pos-Vec2{10,10}, Vec2{20,20}});
-
-                    lstPos = grid_pos;
-                }
-            }
-        }  
+       drawMotionDebug(renderer);
     }
+}
+
+void GamePlay::drawMotionDebug(Renderer& renderer)
+{
+    auto ent_view = _registry.view<CompTransform, CompMotion, CompState>();
+    for(auto& ent : ent_view)
+    {
+        auto& transform = ent_view.get<CompTransform>(ent);
+        auto& motion = ent_view.get<CompMotion>(ent);
+        auto& state = ent_view.get<CompState>(ent);
+
+        if(state.state == ActorState::Move && motion.path.size() > 0 )
+        {
+            renderer.setDrawColor(Color::Red);
+
+            auto lstPos = transform.position;
+
+            for(auto it=motion.path.rbegin(); it!=motion.path.rend(); ++it)
+            {
+                auto grid_pos = getGridCenterPos(*it);
+                renderer.drawLine(lstPos, grid_pos);
+
+                renderer.drawRect(Rect{grid_pos-Vec2{10,10}, Vec2{20,20}});
+
+                lstPos = grid_pos;
+            }
+        }
+    }  
 }
 
 
