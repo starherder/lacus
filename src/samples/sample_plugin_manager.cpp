@@ -8,6 +8,7 @@
 #include "sample_plugin_tweeny.h"
 #include "sample_plugin_astar.h"
 #include "sample_plugin_tilemap.h"
+#include "sample_plugin_bevtree.h"
 
 #include "game/game_logic.h"
 
@@ -111,21 +112,31 @@ namespace samples {
         {
             SamplePluginManager::inst().setPluginEnable("sample_entt_plugin", entt_trigger);
         }
+
         static bool tweeny_trigger = false;
         if (ImGui::MenuItem("tweeny", nullptr, &tweeny_trigger)) 
         {
             SamplePluginManager::inst().setPluginEnable("sample_tweeny_plugin", tweeny_trigger);
         }
+
         static bool astar_trigger = false;
         if (ImGui::MenuItem("pathfind", nullptr, &astar_trigger))
         {
             SamplePluginManager::inst().setPluginEnable("sample_astar_plugin", astar_trigger);
         }
+
         static bool tilemap_trigger = false;
         if (ImGui::MenuItem("tilemap", nullptr, &tilemap_trigger))
         {
             SamplePluginManager::inst().setPluginEnable("sample_tilemap_plugin", tilemap_trigger);
         }
+
+        static bool bevtree_trigger = false;
+        if (ImGui::MenuItem("bevtree", nullptr, &bevtree_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_bevtree_plugin", bevtree_trigger);
+        }
+        
         static bool game_trigger = false;
         if (ImGui::MenuItem("game", nullptr, &game_trigger))
         {
@@ -182,7 +193,6 @@ namespace samples {
 
     // ----------------------------------------------------------------------------------------
 
-
     void SamplePluginManager::init(engine::Application& app)
     {
         spdlog::info("SamplePluginManager::init");
@@ -211,6 +221,9 @@ namespace samples {
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginTileMap>();
+        plugin->setEnable(false);
+
+        plugin = addNormalPlugin<SamplePluginBevTree>();
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<game::GameLogicPlugin>(app);
