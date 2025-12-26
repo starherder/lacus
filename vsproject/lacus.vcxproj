@@ -144,6 +144,7 @@
     <ClCompile Include="..\ext\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\ext\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\ext\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\src\bevtree\bevtree.cpp" />
     <ClCompile Include="..\src\engine\application.cpp" />
     <ClCompile Include="..\src\engine\audio.cpp" />
     <ClCompile Include="..\src\engine\audio_player.cpp" />
@@ -165,9 +166,6 @@
     <ClCompile Include="..\src\game\play\game_play.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
-    <ClCompile Include="..\src\game\scene\map_layer.cpp" />
-    <ClCompile Include="..\src\game\scene\map_tilset.cpp" />
-    <ClCompile Include="..\src\game\scene\tile_map.cpp" />
     <ClCompile Include="..\src\game\ui\form_main.cpp" />
     <ClCompile Include="..\src\game\ui\imform_debug.cpp" />
     <ClCompile Include="..\src\imform\imform.cpp" />
@@ -184,6 +182,9 @@
     <ClCompile Include="..\src\samples\sample_plugin_tweeny.cpp" />
     <ClCompile Include="..\src\samples\tmxmap\tmx_layer.cpp" />
     <ClCompile Include="..\src\samples\tmxmap\tmx_map_loader.cpp" />
+    <ClCompile Include="..\src\tilemap\map_layer.cpp" />
+    <ClCompile Include="..\src\tilemap\map_tilset.cpp" />
+    <ClCompile Include="..\src\tilemap\tile_map.cpp" />
     <ClCompile Include="..\src\ui\buttons.cpp" />
     <ClCompile Include="..\src\ui\form.cpp" />
     <ClCompile Include="..\src\ui\form_demo.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="..\ext\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\ext\imgui\imstb_textedit.h" />
     <ClInclude Include="..\ext\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\src\bevtree\bevtree.h" />
     <ClInclude Include="..\src\engine\application.h" />
     <ClInclude Include="..\src\engine\audio.h" />
     <ClInclude Include="..\src\engine\audio_player.h" />
@@ -224,10 +226,6 @@
     <ClInclude Include="..\src\game\play\game_play.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />
-    <ClInclude Include="..\src\game\scene\map_layer.h" />
-    <ClInclude Include="..\src\game\scene\map_tilset.h" />
-    <ClInclude Include="..\src\game\scene\map_utils.h" />
-    <ClInclude Include="..\src\game\scene\tile_map.h" />
     <ClInclude Include="..\src\game\ui\form_main.h" />
     <ClInclude Include="..\src\game\ui\imform_debug.h" />
     <ClInclude Include="..\src\imform\imform.h" />
@@ -245,6 +243,10 @@
     <ClInclude Include="..\src\samples\sample_plugin_tweeny.h" />
     <ClInclude Include="..\src\samples\tmxmap\tmx_layer.h" />
     <ClInclude Include="..\src\samples\tmxmap\tmx_map_loader.h" />
+    <ClInclude Include="..\src\tilemap\map_layer.h" />
+    <ClInclude Include="..\src\tilemap\map_tilset.h" />
+    <ClInclude Include="..\src\tilemap\map_utils.h" />
+    <ClInclude Include="..\src\tilemap\tile_map.h" />
     <ClInclude Include="..\src\ui\buttons.h" />
     <ClInclude Include="..\src\ui\form.h" />
     <ClInclude Include="..\src\ui\form_demo.h" />

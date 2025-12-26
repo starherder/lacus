@@ -10,12 +10,15 @@
 #include <unordered_map>
 #include <cassert>
 
+#include "rapidxml/rapidxml.hpp"
+
 
 //#define USE_EXT_CREATOR
 
-
 namespace BrainTree
 {
+
+using XmlNode = rapidxml::xml_node<>;
 
 class Blackboard
 {
@@ -94,10 +97,11 @@ public:
     };
 
     virtual ~Node() {}
-    void setBlackboard(Blackboard::Ptr board) {
-        blackboard = board;
-    }
+
+    void setBlackboard(Blackboard::Ptr board) { blackboard = board; }
     Blackboard::Ptr getBlackboard() const { return blackboard; }
+
+    virtual bool load(const XmlNode* ele) {return true; }
 
     virtual Status update() = 0;
     virtual void initialize() {}

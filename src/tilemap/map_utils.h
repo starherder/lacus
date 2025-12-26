@@ -7,7 +7,7 @@
 #include "utility/dynamic_struct.h"
 #include "nlohmann/json.hpp"
 
-namespace game {
+namespace tilemap {
 
     using namespace engine;
 

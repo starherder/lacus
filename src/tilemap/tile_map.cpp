@@ -5,8 +5,7 @@
 #include "map_tilset.h"
 #include "map_utils.h"
 
-namespace game {
-
+namespace tilemap {
 
     
 bool TileMap::load(const engine::fs::path& filepath)

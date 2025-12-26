@@ -57,7 +57,7 @@ void GameScene::onDraw()
 
     _tileMap.draw(renderer, _camera);
 
-    drawPathFind();
+    drawDebugView();
 
     _gamePlay.draw(renderer, _camera);
 }
@@ -81,7 +81,8 @@ void GameScene::onStop()
 
 void GameScene::showAllGui()
 {
-    ui::GuiManager::inst().showForm<FormMain>("form_main");
+    //ui::GuiManager::inst().showForm<FormMain>("form_main");
+
     imgui::ImFormManager::inst().setStyle(imgui::ImGuiTheme::Light);
 
     auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
@@ -123,7 +124,7 @@ void GameScene::initPathFind()
     }
 }
 
-void GameScene::drawPathFind()
+void GameScene::drawDebugView()
 {
     if(!_showCollisionDebug)
     {

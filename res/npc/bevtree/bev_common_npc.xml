@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bev>
+    <bt name="bev_idle_npc">
+        <sequence>
+            <repeater count="3">
+                <action name="move" offset="100, 100"/>
+            </repeater>
+        </sequence>
+    </bt>
+       
+       
+    <bt name="bev_boring_npc">
+        <sequence>
+            <action name="move" offset="100, 100" speed="100"/>
+            <action name="resize" target="300, 300"/>
+            <action name="alpha" target="0"/>
+        </sequence>
+    </bt>
+
+    <bt name="bev_smart_npc">
+        <sequence>
+            <condition name="is_hungry">
+                <action name="eat" food="baozi"/>
+            </condition>
+            
+            <action name="move" offset="100, 100" speed="100"/>
+            <action name="resize" target="300, 300"/>
+            <action name="alpha" target="0"/>
+        </sequence>
+    </bt>
+
+
+</bev>

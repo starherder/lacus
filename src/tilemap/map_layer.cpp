@@ -1,6 +1,6 @@
 #include "map_layer.h"
 
-namespace game {
+namespace tilemap {
     
 void LoaderUtils::loadProperties(const json& json, Properties& properties)
 {

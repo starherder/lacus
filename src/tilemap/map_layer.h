@@ -3,7 +3,7 @@
 #include "map_utils.h"
 
 
-namespace game {
+namespace tilemap {
 
 
     struct MapObject {

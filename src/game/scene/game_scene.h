@@ -2,7 +2,7 @@
 #include "engine/scene.h"
 #include "a_star/a_star.hpp"
 
-#include "game/scene/tile_map.h"
+#include "tilemap/tile_map.h"
 #include "game/play/game_play.h"
 #include "game_camera.h"
 
@@ -36,7 +36,7 @@ namespace game {
         void closeAllGui();
 
         void initPathFind();
-        void drawPathFind();
+        void drawDebugView();
 
         void onMotionStart(bool start, float speed);
         void onMotionPause(bool pause);
@@ -45,9 +45,8 @@ namespace game {
         void onMotionSpeedChanged(float speed);
 
     private:
-        TileMap _tileMap;
+        tilemap::TileMap _tileMap;
 
-        
         AStar::Generator _generator;
 
         GamePlay _gamePlay;

@@ -1,9 +1,7 @@
 #include "map_tilset.h"
 
 
-namespace game {
-
-
+namespace tilemap {
 
 	void TileAnimation::load(const json& json_data)
 	{

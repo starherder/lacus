@@ -40,6 +40,12 @@
     <Filter Include="game\ui">
       <UniqueIdentifier>{39b09be4-d9d3-47e6-9f9e-4fc2ac3b54f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tilemap">
+      <UniqueIdentifier>{9b8668eb-9786-47b8-b453-af40b69fab3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bevtree">
+      <UniqueIdentifier>{1893aeb6-3c03-4a05-92d1-938116d37447}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -88,12 +94,6 @@
       <Filter>game</Filter>
     </ClCompile>
     <ClCompile Include="..\src\game\scene\game_scene.cpp">
-      <Filter>game\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\scene\map_layer.cpp">
-      <Filter>game\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\scene\tile_map.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
     <ClCompile Include="..\src\imform\imform.cpp">
@@ -154,9 +154,6 @@
     <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.cpp">
       <Filter>imform\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\scene\map_tilset.cpp">
-      <Filter>game\scene</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\engine\event.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -201,6 +198,18 @@
     </ClCompile>
     <ClCompile Include="..\src\samples\sample_plugin_bevtree.cpp">
       <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tilemap\map_layer.cpp">
+      <Filter>tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tilemap\map_tilset.cpp">
+      <Filter>tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tilemap\tile_map.cpp">
+      <Filter>tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bevtree\bevtree.cpp">
+      <Filter>bevtree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,12 +262,6 @@
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\scene\game_scene.h">
-      <Filter>game\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\scene\map_layer.h">
-      <Filter>game\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\scene\tile_map.h">
       <Filter>game\scene</Filter>
     </ClInclude>
     <ClInclude Include="..\src\imform\imform.h">
@@ -351,12 +354,6 @@
     <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.h">
       <Filter>imform\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\scene\map_tilset.h">
-      <Filter>game\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\scene\map_utils.h">
-      <Filter>game\scene</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\engine\event.h">
       <Filter>engine</Filter>
     </ClInclude>
@@ -407,6 +404,21 @@
     </ClInclude>
     <ClInclude Include="..\src\samples\sample_plugin_bevtree.h">
       <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tilemap\map_layer.h">
+      <Filter>tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tilemap\map_tilset.h">
+      <Filter>tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tilemap\map_utils.h">
+      <Filter>tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tilemap\tile_map.h">
+      <Filter>tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bevtree\bevtree.h">
+      <Filter>bevtree</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

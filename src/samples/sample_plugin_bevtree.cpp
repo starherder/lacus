@@ -2,7 +2,7 @@
 
 #include "engine/application.h"
 
-#include "bevtree/brain_tree.h"
+#include "braintree/brain_tree.h"
 #include <string>
 
 namespace samples {

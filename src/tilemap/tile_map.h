@@ -9,7 +9,7 @@ namespace engine {
     class Renderer;
 }
 
-namespace game {
+namespace tilemap {
 
     class TileMap {
     public:
