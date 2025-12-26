@@ -28,6 +28,7 @@ public:
 
     auto& name() { return _name; }
     bool visible() { return _visible; }
+    bool focused() { return _focused; }
 
     const Vec2& pos()  const { return _pos; }
     void setPos(const Vec2& pos) { _pos = pos; }
@@ -60,6 +61,7 @@ private:
 private:
     std::string _name;
     bool _visible = true;
+    bool _focused = false;
     bool _dragMovable = true;
 
     Vec2 _pos;

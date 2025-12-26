@@ -46,21 +46,6 @@ namespace sigslot
 {
 	using BindingPtr = std::shared_ptr<class Binding>;
 
-	struct SlotContext
-	{
-		// break the loop, stop signal pass through to other slots
-		void setBreak(bool v) { flow = (v ? Flow::Break : Flow::Continue); }
-		bool isBreak() { return flow == Flow::Break;}
-		
-	private:
-		enum class Flow 
-		{
-			Continue = 0,
-			Break = 1,
-		};
-		Flow flow = Flow::Continue;
-	};
-
 	/*
 	 * @brief decoupling the binding and the SigSlotBase
 	 */
@@ -149,16 +134,14 @@ namespace sigslot
 			_bindings.erase(pos);
 		}
 
-		static SlotContext& slot_context() 
-		{
-			static SlotContext context;
-			return context;
-		}
-
 	private:
 		std::list<BindingPtr> _bindings;
 	};
 
+	enum class Flow {
+		Continue = 0,
+		Break = 1,
+	};
 
 	/*
 	 * @brief signal can be connected and emit
@@ -166,22 +149,25 @@ namespace sigslot
 	template <typename... _ArgTypes>
 	class Signal : public SigSlotBase
 	{
+
 		typedef std::function<void(_ArgTypes...)> _Fun;
 		struct _Slot
 		{
 			int prio;
 			_Fun func;
+			Flow flow = Flow::Continue;
 		};
 		typedef std::pair<BindingPtr, _Slot> _BindingRef;
 
 	public:
 		// prio: priority, 0 is the middle priority (negative number is lower)
+		// flow: continue or break after this slot
 		template <typename _Class>
-		void connect(_Class* inst, void(_Class::* func)(_ArgTypes...), int prio = 0)
+		void connect(_Class* inst, void(_Class::* func)(_ArgTypes...), int prio = 0, Flow flow = Flow::Continue)
 		{
 			THREAD_BLOCK_LOCKER;
 
-			_Slot slot = { prio, [=](_ArgTypes... args) {return (inst->*func)(args...); } };
+			_Slot slot = { prio, [=](_ArgTypes... args) {return (inst->*func)(args...); }, flow };
 			BindingPtr binding = Binding::create(this, inst);
 
 			add_slot(binding, slot);
@@ -190,11 +176,11 @@ namespace sigslot
 			add_binding(binding);
 		}
 
-		void connect(_Fun fun, int prio = 0)
+		void connect(_Fun fun, int prio = 0, Flow flow = Flow::Continue)
 		{
 			THREAD_BLOCK_LOCKER;
 
-			_Slot slot = { prio, fun};
+			_Slot slot = { prio, fun,  flow};
 			BindingPtr binding = Binding::create(nullptr, nullptr);
 
 			add_slot(binding, slot);
@@ -204,14 +190,10 @@ namespace sigslot
 		{
 			THREAD_BLOCK_LOCKER;
 
-			for (auto& slotBind : _slotBinds) 
-			{
+			for (auto& slotBind : _slotBinds) {
 				auto& slot = std::get<1>(slotBind);
 				slot.func(args...);
-
-				if(slot_context().isBreak()) 
-				{
-					slot_context().setBreak(false);
+				if (slot.flow == Flow::Break) {
 					break;
 				}
 			}
