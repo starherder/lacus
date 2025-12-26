@@ -49,6 +49,14 @@ mkdir build & cd build & cmake ..
 
     4. 逻辑层(ObjectLayer)，（刷怪点、触发区、标记...）：玩法逻辑
 
+
+
+- 行为树增加xml/json配置
+- sigslot槽函数增加返回值，用于判断消息是否继续传递（防止拖动界面时还能拖动场景）
+- 场景增加context，gameplay中每个system独立成类，system中没有数据，通用的数据在context中保存
+- 简易技能系统，表现+伤害，表现层引入tweeny，伤害公式计算使用lua配置
+
+
 ## 日志
 
 ### 12.9 环境及框架
@@ -125,20 +133,6 @@ mkdir build & cd build & cmake ..
 - 添加摄像机及摄像机的运动事件
 - braintree的测试例子 sample_plugin_bevtree
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----  
+---
 
 ---

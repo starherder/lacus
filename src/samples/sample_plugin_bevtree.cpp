@@ -268,6 +268,21 @@ namespace samples {
     {
         g_wndSize = application()->window().getSize();
 
+        auto npc0 = std::make_shared<NPC>("wang");
+        auto bev_0 = BrainTree::Builder()
+            .composite<BrainTree::Sequence>() 
+                .decorator<BrainTree::Repeater>(0) 
+                    .leaf<Move>("Move1", npc0.get())
+                .end()
+            .end()
+            .build();
+
+        npc0->setBevTree(bev_0);
+        npc0->pos = { 700, 350 };
+        npc0->color = Color::Yellow;
+        npc0->speed = 200.0f;
+        _actors.push_back(npc0);
+
         auto npc1 = std::make_shared<NPC>("zhang");
         auto bev_1 = BrainTree::Builder()
             .composite<BrainTree::Sequence>() 
