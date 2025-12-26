@@ -81,9 +81,10 @@ mkdir build & cd build & cmake ..
 - 增加插件管理器和界面
 - 添加tweeny、a-start、braintree、luabridge库
 
-### 12.16
+### 12.16 测试tweeny、a-star库使用
 
-- 测试tweeny、a-star库使用
+- sample_plugin_tweeny
+- sample_plugin_astar
 
 ### 12.17 测试TileEditor地图载入
 
@@ -95,5 +96,49 @@ mkdir build & cd build & cmake ..
 
 - 使用hashstring来作为资源的key
 - vscode环境设置
+
+### 12.19 tilemap 通过txmlite库读取
+
+- sample_plugin_tilemap 通过tmxlite库读取tilemap
+
+### 12.22  tilemap显示、Color类、simpleGui
+
+- tmxlite的例子有问题，修改并显示tilemap
+- 增加新的Color类、Rect类
+- 增加简易的GUI
+
+### 12.23 完善 Gui
+
+- 增加简易layout、
+- progressbar
+- sliderbar
+- checkbox
+
+### 12.24 增加基于entt的寻路、运动
+
+- entt角色信息
+- entt+astar的寻路
+- 调试信息图形显示
+
+### 12.25 增加摄像机和行为树
+
+- 添加摄像机及摄像机的运动事件
+- braintree的测试例子 sample_plugin_bevtree
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---  
 
 ---

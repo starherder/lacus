@@ -199,6 +199,9 @@
     <ClCompile Include="..\src\game\scene\game_camera.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_bevtree.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -401,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="..\src\game\scene\game_camera.h">
       <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_bevtree.h">
+      <Filter>samples</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

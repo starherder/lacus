@@ -176,6 +176,7 @@
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_astar.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_audio.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_bevtree.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_draw.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_entt.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_manager.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="..\src\samples\sample_camera.h" />
     <ClInclude Include="..\src\samples\sample_plugin_astar.h" />
     <ClInclude Include="..\src\samples\sample_plugin_audio.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_bevtree.h" />
     <ClInclude Include="..\src\samples\sample_plugin_draw.h" />
     <ClInclude Include="..\src\samples\sample_plugin_entt.h" />
     <ClInclude Include="..\src\samples\sample_plugin_imgui.h" />

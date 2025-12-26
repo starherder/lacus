@@ -10,6 +10,10 @@
 #include <unordered_map>
 #include <cassert>
 
+
+//#define USE_EXT_CREATOR
+
+
 namespace BrainTree
 {
 
@@ -79,6 +83,8 @@ protected:
 class Node
 {
 public:
+    using Ptr = std::shared_ptr<Node>;
+
     enum class Status
     {
         Invalid,
@@ -119,7 +125,16 @@ public:
 
     void reset() { status = Status::Invalid; }
 
-    using Ptr = std::shared_ptr<Node>;
+#ifdef USE_EXT_CREATOR    
+    template<typename NodeType, typename... Args>
+    NodeType* createChild(const Args&... args)
+    {
+        auto child = std::make_shared<NodeType>(args...);
+        child->setBlackboard(blackboard);
+        addChild(child);
+        return child.get();
+    }
+#endif
 
 protected:
     Status status = Status::Invalid;
@@ -176,6 +191,15 @@ public:
     
     void setRoot(const Node::Ptr &node) { root = node; }
     
+#ifdef USE_EXT_CREATOR    
+    template<typename NodeType, typename... Args>
+    Node::Ptr createRoot(const Args&... args)
+    {
+        root = std::make_shared<NodeType>(args...);
+        return root;
+    }
+#endif
+
 private:
     Node::Ptr root = nullptr;
 };
@@ -329,7 +353,6 @@ public:
 
         while (it != children.end()) {
             auto status = (*it)->tick();
-
             if (status != Status::Failure) {
                 return status;
             }
@@ -359,7 +382,6 @@ public:
 
         while (it != children.end()) {
             auto status = (*it)->tick();
-
             if (status != Status::Success) {
                 return status;
             }
@@ -384,7 +406,6 @@ public:
 
         while (it != children.end()) {
             auto status = (*it)->tick();
-
             if (status != Status::Failure) {
                 return status;
             }
@@ -410,7 +431,6 @@ public:
 
         while (it != children.end()) {
             auto status = (*it)->tick();
-
             if (status != Status::Success) {
                 return status;
             }
@@ -513,7 +533,6 @@ public:
     Status update() override
     {
         auto s = child->tick();
-
         if (s == Status::Success) {
             return Status::Failure;
         }
@@ -536,16 +555,30 @@ public:
         counter = 0;
     }
 
+#if 0 // this is old braintree function, seems wrong, comment by amon-zhang
     Status update() override
     {
         child->tick();
-
         if (limit > 0 && ++counter == limit) {
             return Status::Success;
+        }
+        
+        return Status::Running;
+    }
+#else // this is new one, write by amon-zhang
+    Status update() override
+    {
+        auto status = child->tick();
+        if (status == Status::Success)
+        {
+            if (limit > 0 && ++counter == limit) {
+                return Status::Success;
+            }
         }
 
         return Status::Running;
     }
+#endif
 
 protected:
     int limit;
@@ -560,7 +593,6 @@ public:
     {
         while (1) {
             auto status = child->tick();
-
             if (status == Status::Success) {
                 return Status::Success;
             }
@@ -576,7 +608,6 @@ public:
     {
         while (1) {
             auto status = child->tick();
-
             if (status == Status::Failure) {
                 return Status::Success;
             }
