@@ -50,6 +50,8 @@ namespace imgui
 
 		void processEvent(const union SDL_Event& event);
 
+		bool isAnyWindowHovered();
+
 	private:
 
 		void quit();

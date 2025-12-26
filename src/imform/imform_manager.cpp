@@ -146,5 +146,10 @@ namespace imgui
 	{
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}
-
+	
+	bool ImFormManager::isAnyWindowHovered()
+	{
+		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+	}
+	
 }

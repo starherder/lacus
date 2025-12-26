@@ -160,7 +160,6 @@ namespace samples {
         auto& eventDispatcher = _app.eventDispatcher();
         eventDispatcher.onSdlEvent.connect([this] (const Event& e) {
             imgui::ImFormManager::inst().processEvent(e);
-            signals::SlotHandler::slot_context().setBreak(true);
         });
         
         imgui::ImFormManager::inst().init(window, renderer);

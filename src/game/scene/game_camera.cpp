@@ -1,5 +1,6 @@
 #include "game_camera.h"
 #include <namespaceapi.h>
+#include "imform/imform_manager.h"
 
 
 namespace game
@@ -16,6 +17,12 @@ namespace game
         app->eventDispatcher().onKeyUp.connect(this, &GameCamera::onKeyUp);
         app->eventDispatcher().onMouseLeftDrag.connect(this, &GameCamera::onMouseLeftDrag);
         app->eventDispatcher().onMouseWheel.connect(this, &GameCamera::onMouseWheel);
+    }
+
+    bool GameCamera::checkInputOK()
+    {
+        // 如果有调试用的ImGui窗口，要当心当前是不是在调试窗口上
+        return imgui::ImFormManager::inst().isAnyWindowHovered() == false;
     }
 
     void GameCamera::onKeyDown(KeyCode keyCode)
@@ -65,6 +72,8 @@ namespace game
 
     void GameCamera::onMouseLeftDrag(const Vec2& pos, const Vec2& delta)
     {
+        if(!checkInputOK()) return;
+
         spdlog::info("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 
             pos.x, pos.y, delta.x, delta.y);
 
@@ -73,6 +82,8 @@ namespace game
     
     void GameCamera::onMouseWheel(const Vec2& pos, float dir)
     {
+        if(!checkInputOK()) return;
+
         spdlog::info("GameCamera::onMouseWheel, pos = ({}, {}), dir = {}", 
             pos.x, pos.y, dir);
     }

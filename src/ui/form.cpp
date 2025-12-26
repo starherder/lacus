@@ -89,7 +89,7 @@ void Form::hide()
 
 void Form::onMouseLeftClick(const Vec2& pos)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget; 
     if (widget)
     {
         if(widget->focused())
@@ -102,7 +102,7 @@ void Form::onMouseLeftClick(const Vec2& pos)
 
 void Form::onMouseRightClick(const Vec2& pos)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if (widget)
     {
         widget->onMouseRightClick(pos);
@@ -112,7 +112,7 @@ void Form::onMouseRightClick(const Vec2& pos)
 
 void Form::onMouseLeftDown(const Vec2& pos)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if (widget)
     {
         widget->setFocused(true);
@@ -123,7 +123,7 @@ void Form::onMouseLeftDown(const Vec2& pos)
 
 void Form::onMouseLeftUp(const Vec2& pos)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if (widget)
     {
         widget->onMouseLeftUp(pos);
@@ -133,7 +133,7 @@ void Form::onMouseLeftUp(const Vec2& pos)
 
 void Form::onMouseRightDown(const Vec2& pos)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if (widget && widget->focused())
     {
         widget->setFocused(true);
@@ -144,7 +144,7 @@ void Form::onMouseRightDown(const Vec2& pos)
 
 void Form::onMouseRightUp(const Vec2& pos)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if (widget && widget->focused())
     {
         widget->onMouseRightUp(pos);
@@ -154,11 +154,9 @@ void Form::onMouseRightUp(const Vec2& pos)
 
 void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if(widget && widget->handleEvent())
     {
-        spdlog::info("widget {} handle event", widget->name());
-
         widget->setFocused(true);
         widget->onMouseLeftDrag(pos, offset);
     }
@@ -173,7 +171,7 @@ void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 
 void Form::onMouseWheel(const Vec2& pos, float dir)
 {
-    auto widget = _hoverWidget; //getWidgetAtPos(pos);
+    auto widget = _hoverWidget;
     if (widget)
     {
         widget->setFocused(true);
@@ -205,10 +203,8 @@ void Form::onMouseMotion(const Vec2& pos, const Vec2& offset)
     }
 
     _hoverWidget = widget;
-    if(_hoverWidget)
-    {
-        spdlog::info("hover wiget = {}", _hoverWidget->name());
-    }
 }
+
+
 
 }

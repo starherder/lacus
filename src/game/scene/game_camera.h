@@ -33,6 +33,8 @@ private:
     void stopCamera();
 
     void moveHome();
+
+    bool checkInputOK();
     
 private:
     Application* _application = nullptr;
