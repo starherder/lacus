@@ -2,6 +2,11 @@
 
 #include "braintree/brain_tree.h"
 #include "utility/i_singleton.h"
+#include "rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml_utils.hpp"
+#include "rapidxml/rapidxml_print.hpp"
+
+#include <filesystem>
 
 #define RegisterBehaviorNode(Name, NodeType)\
 class Behavior##NodeType##Register			\
@@ -9,144 +14,142 @@ class Behavior##NodeType##Register			\
 public:									    \
 	Behavior##NodeType##Register()			\
 	{									    \
-        BevTreeManager::inst().registerNode<NodeType>(Name);\
+        bevtree::BevTreeManager::inst().registerNode<NodeType>(Name);\
 	}									    \
-}g_Behavior##node##RegisterIniter;
+}g_Behavior##NodeType##RegisterIniter;
 
 
 namespace bevtree 
 {
     using XmlNode = BrainTree::XmlNode;   
+    using Blackboard = BrainTree::Blackboard;
+    using BevNode = BrainTree::Node;
     using BevNodePtr = std::shared_ptr<BrainTree::Node>; 
 
+    // --------------------bevtree-------------------------
+    class BehaviorTree : public BrainTree::BehaviorTree, 
+                         public std::enable_shared_from_this<BehaviorTree>
+    {
+    public:
+        using Ptr = std::shared_ptr<BehaviorTree>;
+
+        BehaviorTree(const std::string& name) : _name(name) { }
+
+        ~BehaviorTree() {}
+
+        bool load(const XmlNode* root) override;
+
+        auto& name() { return _name; }
+
+        BevNode* getNode(const std::string& name);
+
+    private:
+        BevNodePtr loadNode(const XmlNode* node, BevNodePtr parent);
+
+    private:
+        std::string _name;
+        std::unordered_map<std::string, BevNodePtr> _namedNodes;
+    };
+
+
+    // --------------------bev creator-------------------------
     class NodeCreator
     {
     public:
         using Ptr = std::shared_ptr<NodeCreator>;
-        virtual BevNodePtr create(BevNodePtr parent) = 0;
+        virtual BevNodePtr create() = 0;
     };
 
     template<typename NodeType>
     class BevNodeCreator : public NodeCreator
     {
     public:
-        BevNodePtr create(BevNodePtr parent) {
-            auto node = std::make_shared<NodeType>();
-            return node;
+        BevNodePtr create() 
+        {
+            return std::make_shared<NodeType>();
         }
     };
 
+    // --------------------bev manager-------------------------
     class BevTreeManager : public utility::ISingleton<BevTreeManager>
     {
+        friend class BehaviorTree;
+
     public:
         BevTreeManager();
+
         ~BevTreeManager();
 
+        bool load(const std::filesystem::path& filepath);
+
+        BehaviorTree::Ptr createBevTree(const std::string& name);
+
         template<typename NodeType>
-        void registerNode(const std::string_view& name) {
-            _creators[name] = std::make_shared<BevNodeCreator<NodeType>>();
-        }
-
-        BevNodePtr createNode(const std::string_view& name, BevNodePtr parent = nullptr);
+        void registerNode(const std::string& name);
 
     private:
-        NodeCreator::Ptr getNodeCreator(const std::string_view& name);
+        BevNodePtr createNode(const std::string& name);
+
+        NodeCreator::Ptr getNodeCreator(const std::string& name);
 
     private:
+        std::unique_ptr<rapidxml::file<>> _xmlFile = nullptr;
+        std::unique_ptr <rapidxml::xml_document<>> _xmlDoc = nullptr;
 
-        std::unordered_map<std::string_view, NodeCreator::Ptr> _creators;
+        std::unordered_map<std::string, XmlNode*> _xmlNodes;
+        std::unordered_map<std::string, NodeCreator::Ptr> _creators;
     };
 
-
-    // --------------------bevtree-------------------------
-    class BehaviorTree : public BrainTree::BehaviorTree
+    template<typename NodeType>
+    void BevTreeManager::registerNode(const std::string& name)
     {
-    public:
-        bool load(const XmlNode* root) override;
+        _creators[name.data()] = std::make_shared<BevNodeCreator<NodeType>>();
+    }
 
-    private:
-        BevNodePtr loadNode(const XmlNode* node, BevNodePtr parent);
-
-    private:
-        std::string_view _name;
-    };
-
-    
-    // --------------------composite-------------------------
+    // --------------------compositor-------------------------
 
     class Selector : public BrainTree::Selector
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
+    {};
 
     class Sequence : public BrainTree::Sequence
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
+    {};
+
+    class Parallel : public BrainTree::ParallelSequence
+    {};
 
     class StatefulSelector : public BrainTree::StatefulSelector
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
+    {};
 
     class StatefulSequence : public BrainTree::StatefulSequence
+    {};
+
+    class RandomSelector : public BrainTree::Composite 
     {
     public:
-        bool load(const XmlNode* node) override;
+        Status update() override;
     };
 
-    class ParallelSequence : public BrainTree::ParallelSequence
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
 
     // --------------------decorator-------------------------
 
     class Succeeder : public BrainTree::Succeeder
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
+    {};
 
     class Failer : public BrainTree::Failer
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
+    {};
 
     class Inverter : public BrainTree::Inverter
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
+    {};
+
+    class UntilSuccess : public BrainTree::UntilSuccess
+    {};
+
+    class UntilFailure : public BrainTree::UntilFailure
+    {};
 
     class Repeater : public BrainTree::Repeater
     {
     public:
         bool load(const XmlNode* node) override;
     };
-
-    class UntilSuccess : public BrainTree::UntilSuccess
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
-
-    class UntilFailure : public BrainTree::UntilFailure
-    {
-    public:
-        bool load(const XmlNode* node) override;
-    };
-
-
-
-
-
-
-
-
 }

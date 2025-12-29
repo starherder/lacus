@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <bev>
-    <bt name="bev_idle_npc">
-        <sequence>
-            <repeater count="3">
-                <action name="move" offset="100, 100"/>
-            </repeater>
-        </sequence>
-    </bt>
-       
-       
-    <bt name="bev_boring_npc">
-        <sequence>
-            <action name="move" offset="100, 100" speed="100"/>
-            <action name="resize" target="300, 300"/>
-            <action name="alpha" target="0"/>
-        </sequence>
-    </bt>
+  <bt name="idle_npc">
+    <sequence>
+      <repeater count="3">
+          <move name="idle_npc_move" speed="200"/>
+      </repeater>
+    </sequence>
+  </bt>
 
-    <bt name="bev_smart_npc">
-        <sequence>
-            <condition name="is_hungry">
-                <action name="eat" food="baozi"/>
-            </condition>
-            
-            <action name="move" offset="100, 100" speed="100"/>
-            <action name="resize" target="300, 300"/>
-            <action name="alpha" target="0"/>
-        </sequence>
-    </bt>
-
+  <bt name="boring_npc">
+    <sequence>
+      <move name="boring_npc_move" speed="100"/>
+      <resize name="boring_npc_resize" target_x="100" target_y="100"/>
+      <alpha name="boring_npc_alpha" />
+    </sequence>
+  </bt>
+  
+  <bt name="crazy_npc">
+    <parallel>
+      <move name="crazy_npc_move" speed="100"/>
+      <resize name="crazy_npc_resize" target_x="150" target_y="150"/>
+      <hue name="crazy_npc_hue" />
+    </parallel>
+  </bt>
 
 </bev>

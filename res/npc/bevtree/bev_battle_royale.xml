@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<bev>
+  
+  <bt name="common_role">
+    <selector>
+      <sequence desc="run-from-enemy">
+        <br_enemy_sensor/>
+        <br_move />
+      </sequence>
+
+      <sequence desc="chase-prey">
+        <br_prey_sensor  />
+        <br_move />
+        <br_kill />
+      </sequence>
+    </selector>
+  </bt>
+</bev>

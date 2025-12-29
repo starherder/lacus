@@ -9,79 +9,75 @@
 #include <string>
 #include <unordered_map>
 #include <cassert>
+#include <any>
+#include <functional>
 
 #include "rapidxml/rapidxml.hpp"
-
-
-//#define USE_EXT_CREATOR
 
 namespace BrainTree
 {
 
 using XmlNode = rapidxml::xml_node<>;
 
-class Blackboard
+class Blackboard 
 {
 public:
-    void setBool(std::string key, bool value) { bools[key] = value; }
-    bool getBool(std::string key)
-    {
-        if (bools.find(key) == bools.end()) {
-            bools[key] = false;
-        }
-        return bools[key];
-    }
-    bool hasBool(std::string key) const { return bools.find(key) != bools.end(); }
-
-    void setInt(std::string key, int value)  { ints[key] = value; }
-    int getInt(std::string key)
-    {
-        if (ints.find(key) == ints.end()) {
-            ints[key] = 0;
-        }
-        return ints[key];
-    }
-    bool hasInt(std::string key) const  { return ints.find(key) != ints.end(); }
-
-    void setFloat(std::string key, float value)  { floats[key] = value; }
-    float getFloat(std::string key)
-    {
-        if (floats.find(key) == floats.end()) {
-            floats[key] = 0.0f;
-        }
-        return floats[key];
-    }
-    bool hasFloat(std::string key) const  { return floats.find(key) != floats.end(); }
-
-    void setDouble(std::string key, double value)  { doubles[key] = value; }
-    double getDouble(std::string key)
-    {
-        if (doubles.find(key) == doubles.end()) {
-            doubles[key] = 0.0f;
-        }
-        return doubles[key];
-    }
-    bool hasDouble(std::string key) const  { return doubles.find(key) != doubles.end(); }
-
-    void setString(std::string key, std::string value)  { strings[key] = value; }
-    std::string getString(std::string key)
-    {
-        if (strings.find(key) == strings.end()) {
-            strings[key] = "";
-        }
-        return strings[key];
-    }
-    bool hasString(std::string key) const  { return strings.find(key) != strings.end(); }
-
     using Ptr = std::shared_ptr<Blackboard>;
+    using ObserveFunc = std::function<void(const std::string& key, const std::any& val)>;
 
-protected:
-    std::unordered_map<std::string, bool> bools;
-    std::unordered_map<std::string, int> ints;
-    std::unordered_map<std::string, float> floats;
-    std::unordered_map<std::string, double> doubles;
-    std::unordered_map<std::string, std::string> strings;
+public:
+    bool find(const std::string& name) 
+    {
+        return data.find(name) != data.end();
+    }
+
+    std::any get(const std::string& name, const std::any& def) 
+    {
+        auto it = data.find(name);
+        if (it == data.end()) return def;
+        return it->second.value;
+    }
+
+    void set(const std::string& name, const std::any& val) 
+    {
+        auto& item = data[name];
+        item.value = val; 
+
+        for(auto& obs : item.observers) 
+        {
+            obs(name, val);
+        }
+    }
+
+    template<typename T>
+    T getValue(const std::string& name, const T& def) 
+    {
+        auto it = data.find(name);
+        if(it==data.end()) return def;
+
+        try {
+            return std::any_cast<T>(it->second.value);
+        } catch (std::exception e) {
+            printf("any type unmatch!");
+            return def;
+        }
+    }
+
+    void addObserver(const std::string& key, ObserveFunc callback) 
+    {
+        data[key].observers.push_back(callback);
+    }
+
+private:
+    struct DataItem 
+    {
+        std::any value;
+        std::vector<ObserveFunc> observers;
+    };
+    std::unordered_map<std::string, DataItem> data;
 };
+
+
 
 class Node
 {
@@ -99,13 +95,16 @@ public:
     virtual ~Node() {}
 
     void setBlackboard(Blackboard::Ptr board) { blackboard = board; }
-    Blackboard::Ptr getBlackboard() const { return blackboard; }
+    Blackboard::Ptr getBlackboard() { return blackboard; }
 
     virtual bool load(const XmlNode* ele) {return true; }
 
     virtual Status update() = 0;
     virtual void initialize() {}
     virtual void terminate(Status s) {}
+
+    virtual void addChild(Node::Ptr child) {}
+    virtual bool hasChildren() const { return false; }
 
     Status tick()
     {
@@ -129,17 +128,6 @@ public:
 
     void reset() { status = Status::Invalid; }
 
-#ifdef USE_EXT_CREATOR    
-    template<typename NodeType, typename... Args>
-    NodeType* createChild(const Args&... args)
-    {
-        auto child = std::make_shared<NodeType>(args...);
-        child->setBlackboard(blackboard);
-        addChild(child);
-        return child.get();
-    }
-#endif
-
 protected:
     Status status = Status::Invalid;
     Blackboard::Ptr blackboard = nullptr;
@@ -150,8 +138,8 @@ class Composite : public Node
 public:
     virtual ~Composite() {}
     
-    void addChild(Node::Ptr child) { children.push_back(child); it=children.begin(); }
-    bool hasChildren() const { return !children.empty(); }
+    void addChild(Node::Ptr child) override { children.push_back(child); it=children.begin(); }
+    bool hasChildren()  const override { return !children.empty(); }
     
 protected:
     std::vector<Node::Ptr> children;
@@ -163,46 +151,33 @@ class Decorator : public Node
 public:
     virtual ~Decorator() {}
 
-    void setChild(Node::Ptr node) { child = node; }
-    bool hasChild() const { return child != nullptr; }
+    void addChild(Node::Ptr node) override { child = node; }
+    bool hasChildren() const override { return child != nullptr; }
     
 protected:
     Node::Ptr child = nullptr;
 };
+
 
 class Leaf : public Node
 {
 public:
     Leaf() {}
     virtual ~Leaf() {}
-    Leaf(Blackboard::Ptr blackboard) : blackboard(blackboard) {}
-    
     virtual Status update() = 0;
-
-protected:
-    Blackboard::Ptr blackboard;
 };
+
 
 class BehaviorTree : public Node
 {
 public:
-    BehaviorTree() {
-        blackboard = std::make_shared<Blackboard>();
-    }
+    BehaviorTree() { blackboard = std::make_shared<Blackboard>();}
+
     BehaviorTree(const Node::Ptr &rootNode) : BehaviorTree() { root = rootNode; }
     
     Status update() { return root->tick(); }
     
     void setRoot(const Node::Ptr &node) { root = node; }
-    
-#ifdef USE_EXT_CREATOR    
-    template<typename NodeType, typename... Args>
-    Node::Ptr createRoot(const Args&... args)
-    {
-        root = std::make_shared<NodeType>(args...);
-        return root;
-    }
-#endif
 
 private:
     Node::Ptr root = nullptr;
@@ -265,7 +240,7 @@ public:
     {
         auto child = std::make_shared<NodeType>((args)...);
         child->setBlackboard(node->getBlackboard());
-        node->setChild(child);
+        node->addChild(child);
         return *this;
     }
 
@@ -274,7 +249,7 @@ public:
     {
         auto child = std::make_shared<CompositeType>((args)...);
         child->setBlackboard(node->getBlackboard());
-        node->setChild(child);
+        node->addChild(child);
         return CompositeBuilder<DecoratorBuilder<Parent>>(this, (CompositeType*)child.get());
     }
 
@@ -283,7 +258,7 @@ public:
     {
         auto child = std::make_shared<DecoratorType>((args)...);
         child->setBlackboard(node->getBlackboard());
-        node->setChild(child);
+        node->addChild(child);
         return DecoratorBuilder<DecoratorBuilder<Parent>>(this, (DecoratorType*)child.get());
     }
 
@@ -554,22 +529,14 @@ class Repeater : public Decorator
 public:
     Repeater(int limit = 0) : limit(limit) {}
 
+    int getLimit() { return limit; }
+    void setLimit(int count) { limit = count; } 
+
     void initialize() override
     {
         counter = 0;
     }
 
-#if 0 // this is old braintree function, seems wrong, comment by amon-zhang
-    Status update() override
-    {
-        child->tick();
-        if (limit > 0 && ++counter == limit) {
-            return Status::Success;
-        }
-        
-        return Status::Running;
-    }
-#else // this is new one, write by amon-zhang
     Status update() override
     {
         auto status = child->tick();
@@ -582,7 +549,6 @@ public:
 
         return Status::Running;
     }
-#endif
 
 protected:
     int limit;

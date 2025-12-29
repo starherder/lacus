@@ -32,8 +32,19 @@ namespace samples {
         void onUpdate() override ;
 
         void onDraw() override ;
+
+    private:
+        void initBrainTree();
+
+        void initBevTree();
+
+        void initBattleRoyale();
+        void updateBattleRoyale();
+        void drawBattleRoyale(Renderer& renderer);
         
         std::vector<std::shared_ptr<Actor>> _actors;
+
+        float _frameSeconds = 0.0f;
 
     };
 }

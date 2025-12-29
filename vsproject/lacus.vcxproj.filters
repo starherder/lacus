@@ -211,6 +211,9 @@
     <ClCompile Include="..\src\bevtree\bevtree.cpp">
       <Filter>bevtree</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_bevtree_ex.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">

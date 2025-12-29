@@ -175,6 +175,7 @@
     <ClCompile Include="..\src\samples\sample_plugin_astar.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_audio.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_bevtree.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_bevtree_ex.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_draw.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_entt.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_manager.cpp" />

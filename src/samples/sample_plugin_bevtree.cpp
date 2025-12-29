@@ -2,8 +2,7 @@
 
 #include "engine/application.h"
 
-#include "braintree/brain_tree.h"
-#include <string>
+#include "bevtree/bevtree.h"
 
 namespace samples {
 
@@ -11,6 +10,7 @@ namespace samples {
 
     Vec2i g_wndSize = { 1280, 1024 };
     float g_frameSeconds = 0.0f;
+    std::vector<BrainTree::Node::Ptr> g_brain_trees;
 
     class NPC : public Actor
     {
@@ -43,7 +43,6 @@ namespace samples {
         Vec2 size = NpcDefaultSize;
         Vec2 vel = { 0, 0 };
         Color color = Color::Red;
-        float speed = 1.0f;
 
     private:
         BrainTree::Node::Ptr _bevTree = nullptr;
@@ -52,14 +51,23 @@ namespace samples {
 
     // =================================================================
 
-    class BtNode : public BrainTree::Node
+    class BtNode : public bevtree::BevNode
     {
     public:
-        BtNode() = delete;
+        BtNode() = default;
         ~BtNode() = default;
-        BtNode(const std::string& name) : _name(name) {}
+        BtNode(const std::string& name, NPC* npc) 
+        : _name(name), _npc(npc) {}
+
+        NPC* npc() { return _npc; }
+        void setNpc(NPC* npc) { _npc = npc; }
+
+        auto& name() { return _name; }
+        void setName(const std::string& name) { _name = name; }
+
     protected:
         std::string _name;
+        NPC* _npc = nullptr;
     };
 
 
@@ -67,15 +75,14 @@ namespace samples {
     class Move : public BtNode
     {
     public:
-        Move() = delete;
+        Move() = default;
         ~Move() = default;
         Move(const std::string& name, NPC* npc)
-            : BtNode(name), _npc(npc)
-        { }
+            : BtNode(name, npc) { }
 
         void initialize() override
         {
-            spdlog::info("Move({}) initialize", _name);
+            //spdlog::info("Move({}) initialize", _name);
 
             int symx = (rand() % 2 == 0) ? 1 : -1;
             int symy = (rand() % 2 == 0) ? 1 : -1;
@@ -83,12 +90,12 @@ namespace samples {
             int leny = symy * rand() % 300;
 
             _target = _npc->pos + Vec2(lenx, leny);
-            _npc->vel = glm::normalize(_target - _npc->pos) * _npc->speed;
+            _npc->vel = glm::normalize(_target - _npc->pos) * _speed;
         }
 
         void terminate(Status s) override
         {
-            spdlog::info("Move({}) terminate", _name);
+            //spdlog::info("Move({}) terminate", _name);
         }
 
         Status update() override
@@ -109,8 +116,18 @@ namespace samples {
             return Node::Status::Running;
         }
 
+        bool load(const bevtree::XmlNode* ele) 
+        { 
+            auto attr = ele->first_attribute("speed");
+            if(attr)
+            {
+                _speed = std::stof(attr->value());
+            }
+            return true; 
+        }
+
     private:
-        NPC* _npc = nullptr;
+        float _speed = 100.0f;
         Vec2 _target;
     };
 
@@ -120,22 +137,22 @@ namespace samples {
     {
         enum { ScaleNone, ScaleUp, ScaleDown, ScaleFinish };
     public:
-        Resize() = delete;
+        Resize() = default;
         ~Resize() = default;
         Resize(const std::string& name, NPC* npc)
-            : BtNode(name), _npc(npc)
+            : BtNode(name, npc)
         { }
 
         void initialize() override
         {
-            spdlog::info("Resize({}) initialize", _name);
+            //spdlog::info("Resize({}) initialize", _name);
             _npc->size = NpcDefaultSize;
             _scaleMode = ScaleNone;
         }
 
         void terminate(Status s) override
         {
-            spdlog::info("Resize({}) terminate", _name);
+            //spdlog::info("Resize({}) terminate", _name);
             _npc->size = NpcDefaultSize;
             _scaleMode = ScaleNone;
         }
@@ -166,33 +183,47 @@ namespace samples {
             return Node::Status::Running;
         }
 
+        bool load(const bevtree::XmlNode* ele)
+        {
+            auto attrx = ele->first_attribute("target_x");
+            if (attrx)
+            {
+                _target.x = std::stof(attrx->value());
+            }
+            auto attry = ele->first_attribute("target_y");
+            if (attry)
+            {
+                _target.y = std::stof(attry->value());
+            }
+            return true;
+        }
+
     private:
-        NPC* _npc = nullptr;
         Vec2 _target = NpcDefaultSize * 3.0f;
         int _scaleMode = ScaleNone;
         Vec2 _vec = {100, 100};
     };
 
 
+
     // ---------------------------------------------------------
     class Alpha : public BtNode
     {
     public:
-        Alpha() = delete;
+        Alpha() = default;
         ~Alpha() = default;
         Alpha(const std::string& name, NPC* npc)
-            : BtNode(name), _npc(npc)
-        { }
+            : BtNode(name, npc) { }
 
         void initialize() override
         {
-            spdlog::info("Alpha({}) initialize", _name);
+            //spdlog::info("Alpha({}) initialize", _name);
         }
 
         void terminate(Status s) override
         {
             _npc->color.a = 255;
-            spdlog::info("Alpha({}) terminate", _name);
+            //spdlog::info("Alpha({}) terminate", _name);
         }
 
         Status update() override
@@ -208,24 +239,26 @@ namespace samples {
             }
         }
 
-    private:
-        NPC* _npc = nullptr;
-
+        bool load(const bevtree::XmlNode* ele)
+        {
+            return true;
+        }
     };
+
 
     // ---------------------------------------------------------
     class Hue : public BtNode
     {
     public:
-        Hue() = delete;
+        Hue() = default;
         ~Hue() = default;
         Hue(const std::string& name, NPC* npc)
-            : BtNode(name), _npc(npc)
+            : BtNode(name, npc)
         { }
 
         void initialize() override
         {
-            spdlog::info("Alpha({}) initialize", _name);
+            //spdlog::info("Alpha({}) initialize", _name);
             _srcColor = _npc->color;
 
             _target = _npc->color.toHSV().h + 90;
@@ -235,7 +268,7 @@ namespace samples {
         void terminate(Status s) override
         {
             _npc->color = _srcColor;
-            spdlog::info("Alpha({}) terminate", _name);
+            //spdlog::info("Alpha({}) terminate", _name);
         }
 
         Status update() override
@@ -243,7 +276,7 @@ namespace samples {
             auto hsv = _npc->color.toHSV();
             if (std::fabs(hsv.h - _target) > 0.3)
             {
-                hsv.h += (_target - hsv.h) > 0 ? 0.3 : -0.3;
+                hsv.h += (_target - hsv.h) > 0 ? 0.3f : -0.3f;
                 Color c; c.fromHSV(hsv);
                 _npc->color = c;
                 return Node::Status::Running;
@@ -254,20 +287,38 @@ namespace samples {
             }
         }
 
+        bool load(const bevtree::XmlNode* ele)
+        {
+            return true;
+        }
+
     private:
-        NPC* _npc = nullptr;
         float _target = 0;
         Color _srcColor;
 
     };
 
-    // =============================================================
+    RegisterBehaviorNode("move", Move);
+    RegisterBehaviorNode("resize", Resize);
+    RegisterBehaviorNode("alpha", Alpha);
+    RegisterBehaviorNode("hue", Hue);
+
+    // ===================================================================================
 
     ///////////////////////////////////////////////////////////////////////////////////////
     void SamplePluginBevTree::onInit()
     {
         g_wndSize = application()->window().getSize();
 
+        //initBrainTree();
+
+        //initBevTree();
+
+        initBattleRoyale();
+    }
+
+    void SamplePluginBevTree::initBrainTree()
+    {
         auto npc0 = std::make_shared<NPC>("wang");
         auto bev_0 = BrainTree::Builder()
             .composite<BrainTree::Sequence>() 
@@ -276,11 +327,11 @@ namespace samples {
                 .end()
             .end()
             .build();
+        g_brain_trees.push_back(bev_0);
 
         npc0->setBevTree(bev_0);
         npc0->pos = { 700, 350 };
         npc0->color = Color::Yellow;
-        npc0->speed = 200.0f;
         _actors.push_back(npc0);
 
         auto npc1 = std::make_shared<NPC>("zhang");
@@ -294,12 +345,11 @@ namespace samples {
                 .leaf<Hue>("Hue1", npc1.get())
             .end()
             .build();
+        g_brain_trees.push_back(bev_1);
 
         npc1->setBevTree(bev_1);
         npc1->pos = { 200, 150 };
-        npc1->speed = 150.0f;
         _actors.push_back(npc1);
-
 
         auto npc2 = std::make_shared<NPC>("li");
         auto bev_2 = BrainTree::Builder()
@@ -309,12 +359,61 @@ namespace samples {
             .leaf<Alpha>("Alpha2", npc2.get())
             .leaf<Hue>("Hue2", npc2.get())
             .end().build();
+        g_brain_trees.push_back(bev_2);
 
         npc2->setBevTree(bev_2);
         npc2->color = Color::Cyan;
         npc2->pos = { 500, 400 };
-        npc2->speed = 200.0f;
         _actors.push_back(npc2);
+    }
+
+    void SamplePluginBevTree::initBevTree()
+    {
+        auto filepath = application()->resPath() / "npc/bevtree/bev_common_npc.xml";
+        bevtree::BevTreeManager::inst().load(filepath);
+
+        {
+            auto btree = bevtree::BevTreeManager::inst().createBevTree("idle_npc");
+            if(btree)
+            {
+                auto npc = std::make_shared<NPC>("liu");
+                npc->setBevTree(btree);
+                npc->pos = { 200, 200 };
+                npc->color = Color::LightYellow;
+                _actors.push_back(npc);
+                dynamic_cast<BtNode*>(btree->getNode("idle_npc_move"))->setNpc(npc.get());
+            }
+        }
+
+        {
+            auto btree1 = bevtree::BevTreeManager::inst().createBevTree("boring_npc");
+            if(btree1)
+            {
+                auto npc1 = std::make_shared<NPC>("zhao");
+                npc1->setBevTree(btree1);
+                npc1->pos = { 500, 400 };
+                npc1->color = Color::PaleBlue;
+                _actors.push_back(npc1);
+                dynamic_cast<BtNode*>(btree1->getNode("boring_npc_move"))->setNpc(npc1.get());
+                dynamic_cast<BtNode*>(btree1->getNode("boring_npc_resize"))->setNpc(npc1.get());
+                dynamic_cast<BtNode*>(btree1->getNode("boring_npc_alpha"))->setNpc(npc1.get());
+            }
+        }
+
+        {
+            auto btree2 = bevtree::BevTreeManager::inst().createBevTree("crazy_npc");
+            if (btree2)
+            {
+                auto npc2 = std::make_shared<NPC>("crazy-dev");
+                npc2->setBevTree(btree2);
+                npc2->pos = { 500, 400 };
+                npc2->color = Color::Red;
+                _actors.push_back(npc2);
+                dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_move"))->setNpc(npc2.get());
+                dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_resize"))->setNpc(npc2.get());
+                dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_hue"))->setNpc(npc2.get());
+            }
+        }
     }
 
     void SamplePluginBevTree::onEnable()
@@ -327,11 +426,10 @@ namespace samples {
 
     void SamplePluginBevTree::onUpdate()
     {
-        static auto old_ticks = SDL_GetTicks();
-        auto cur_ticks = SDL_GetTicks();
+        _frameSeconds = application()->fpsChecker().deltaSeconds();
+        g_frameSeconds = _frameSeconds;
 
-        g_frameSeconds = (float)(cur_ticks - old_ticks) / 1000.0f;
-        old_ticks = cur_ticks;
+        updateBattleRoyale();
 
         for (auto& actor : _actors)
         {
@@ -341,6 +439,8 @@ namespace samples {
 
     void SamplePluginBevTree::onDraw()
     {
+        drawBattleRoyale(application()->renderer());
+
         for (auto& actor : _actors)
         {
             actor->draw(application()->renderer());
