@@ -3,8 +3,6 @@
 #include "engine/application.h"
 #include "particle/particle_manager.h"
 
-#include "particle/editor/imform_particle.h"
-
 namespace samples 
 {
 
@@ -63,7 +61,7 @@ namespace samples
 			ImGui::Separator();
 			
 			char nameBuff[32] = { 0 };
-			strcpy(nameBuff, _particle->GetName().c_str());
+			strcpy_s(nameBuff, 32, _particle->GetName().c_str());
 			ImGui::LabelText("name", nameBuff);
 
 			static std::string btnText = "Stop";
@@ -91,7 +89,7 @@ namespace samples
 			}
 
 			char bufTexture[32] = { 0 };
-			strcpy(bufTexture, _particleDescript.sTexture.c_str());
+			strcpy_s(bufTexture, 32, _particleDescript.sTexture.c_str());
 			if (ImGui::InputText("texture", bufTexture, 32))
 			{
 				_particleDescript.sTexture = bufTexture;
