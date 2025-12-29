@@ -49,9 +49,6 @@
     <Filter Include="particle">
       <UniqueIdentifier>{779b5e2b-2268-4887-99d1-27b77a8a171d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="particle\entt">
-      <UniqueIdentifier>{e620e319-8f9b-404d-be5f-cb109bddf928}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -220,26 +217,23 @@
     <ClCompile Include="..\src\samples\sample_plugin_bevtree_ex.cpp">
       <Filter>samples</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\particle\entt\entt_particle.cpp">
-      <Filter>particle\entt</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\particle\ParticleEffect.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\particle\ParticleEmitter.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\particle\ParticleManager.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\particle\ParticleMemory.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
     <ClCompile Include="..\ext\tinyxml2\tinyxml2.cpp">
       <Filter>particle</Filter>
     </ClCompile>
     <ClCompile Include="..\src\samples\sample_plugin_particle.cpp">
       <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\particle\particle_effect.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\particle\particle_emitter.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\particle\particle_manager.cpp">
+      <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\particle\particle_memory.cpp">
+      <Filter>particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -450,30 +444,6 @@
     <ClInclude Include="..\src\bevtree\bevtree.h">
       <Filter>bevtree</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\particle\entt\entt_particle.h">
-      <Filter>particle\entt</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\header.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\ParticleCfg.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\ParticleDescription.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\ParticleEffect.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\ParticleEmitter.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\ParticleManager.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\particle\ParticleMemory.h">
-      <Filter>particle</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\utility\random.h">
       <Filter>utility</Filter>
     </ClInclude>
@@ -482,6 +452,24 @@
     </ClInclude>
     <ClInclude Include="..\src\samples\sample_plugin_particle.h">
       <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\particle\particle_cfg.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\particle\particle_effect.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\particle\particle_emitter.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\particle\particle_header.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\particle\particle_manager.h">
+      <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\particle\particle_memory.h">
+      <Filter>particle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

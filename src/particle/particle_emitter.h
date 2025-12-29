@@ -1,5 +1,5 @@
 #pragma once
-#include "ParticleCfg.h"
+#include "particle_cfg.h"
 
 #include <list>
 
@@ -26,8 +26,8 @@ namespace particle
 
 		bool isEmitting();
 
-		std::list<ParticleCfg*>* getParticleList() { return &vParticleList; }
-		ParticleEffect* getParticleEffect() { return pParticleEffect; }
+		std::list<ParticleCfg*>* getParticleList() { return &_particleList; }
+		ParticleEffect* getParticleEffect() { return _particleEffect; }
 
 		//===================== 发射器属性 =====================
 
@@ -53,11 +53,11 @@ namespace particle
 		MemberFunction(float, Duration, duration);
 
 	private:
-		ParticleEffect* pParticleEffect;
-		std::list<ParticleCfg*> vParticleList;
+		ParticleEffect* _particleEffect;
+		std::list<ParticleCfg*> _particleList;
 
-		bool bCanEmit;
-		float fElapsed;
-		float fEmitCounter;
+		bool _canEmit;
+		float _elapsed;
+		float _emitCounter;
 	};
 }

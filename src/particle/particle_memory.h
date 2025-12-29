@@ -1,7 +1,6 @@
 #pragma once
-#include "ParticleCfg.h"
+#include "particle_cfg.h"
 
-#include <vector>
 
 namespace particle
 {
@@ -15,10 +14,10 @@ namespace particle
 		static void freeParticle(ParticleCfg* particle);
 
 	private:
-		static std::vector<ParticleCfg*> vParticlePool;
-		static std::vector<ParticleCfg*> vUnusedParticleList;
+		static std::vector<ParticleCfg*> _particlePool;
+		static std::vector<ParticleCfg*> _unusedParticleList;
 
-		static int	nFreeIndex;
-		static bool bInit;
+		static int	_freeIndex;
+		static bool _init;
 	};
 }

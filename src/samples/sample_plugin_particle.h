@@ -2,39 +2,47 @@
 
 #include "engine/application.h"
 #include "imform/imform_manager.h"
+#include "particle/particle_manager.h"
 
-namespace particle {
-    class Particle;
-}
-
-namespace samples {
-
+namespace samples 
+{
     using namespace engine;
+    using namespace particle;
+    
 
-    class ImFormParticles : public imgui::ImForm
-    {
+	class ImParticleEditor : public imgui::ImForm
+	{
     public:
-        ImFormParticles();
-        ~ImFormParticles() = default;
-
-        signals::Signal<const char*> on_select_particle;
+        signals::Signal<const char*> on_particle_select;
         signals::Signal<> on_particle_start;
         signals::Signal<> on_particle_stop;
+        signals::Signal<> on_particle_reload;
+        signals::Signal<> on_particle_save;
 
-    private:
-        void draw() override;
+	public:
+		ImParticleEditor(Particle* particle);
+		~ImParticleEditor();
 
-        void init();
+		void init();
+		void draw() override;
 
-    private:
-        int _select_index = 0;
-        std::vector<const char*> _particles;
-    };
+        void setParticle(Particle* particle) { _particle = particle; }
+
+	private:
+		int _selectIndex = 0;
+		std::vector<const char*> _nameVector;
+
+		bool _modified = false;
+        Particle* _particle = nullptr;
+	};
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     class SamplePluginParticle final : public engine::Plugin , public signals::SlotHandler
     {
     public:
         SamplePluginParticle() = default;
+
         ~SamplePluginParticle() = default;
 
         const char* name() override { return "sample_particle_plugin"; }
@@ -57,10 +65,16 @@ namespace samples {
 
     private:
         void onParticleSelect(const char* particle);
+
         void onParticleStart();
+
         void onParticleStop();
 
+        void onParticleSave();
+
+        void onParticleReload();
+
     private:
-        std::shared_ptr<particle::Particle> _particle = nullptr;
+        std::shared_ptr<Particle> _particle = nullptr;
     };
 }

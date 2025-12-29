@@ -1,9 +1,7 @@
-#include "ParticleManager.h"
-#include "ParticleMemory.h"
+#include "particle_manager.h"
+#include "particle_memory.h"
 
-#include <Windows.h>
-#include <cstdarg>
-
+#include "engine/application.h"
 #include "tinyxml2/tinyxml2.h"
 
 #define MAX_PARTICLE	8192
@@ -66,15 +64,15 @@ namespace particle
 
 	Particle::Particle(const std::string& name)
 	{
-		m_Name = name;
-		m_pEmitter = std::make_unique<ParticleEmitter>();
+		_name = name;
+		_emitter = std::make_unique<ParticleEmitter>();
 
-		spdlog::info("Particle({}) construct.", m_Name);
+		spdlog::info("Particle({}) construct.", _name);
 	}
 
 	Particle::~Particle()
 	{
-		spdlog::info("Particle({}) destruct.", m_Name);
+		spdlog::info("Particle({}) destruct.", _name);
 	}
 
 
@@ -92,7 +90,7 @@ namespace particle
 
 	void Particle::Load(const std::string& filename)
 	{
-		m_File = filename;
+		_file = filename;
 
 		auto fullpath = ParticleManager::inst().GetApplication()->resPath() / filename;
 		
@@ -104,42 +102,42 @@ namespace particle
 	{
 		SetTexture(desc.sTexture);
 
-		if (m_pEmitter) {
-			m_pEmitter->setDecription(desc);
+		if (_emitter) {
+			_emitter->setDecription(desc);
 		}
 
-		m_VertexData.resize(desc.nParticleCount * 4);
-		m_Indices.resize(desc.nParticleCount * 6);
+		_vertexData.resize(desc.nParticleCount * 4);
+		_indices.resize(desc.nParticleCount * 6);
 
 		for (int i = 0; i < desc.nParticleCount; i++) {
-			m_VertexData[i * 4 + 0].tex_coord = { 0, 0 };
-			m_VertexData[i * 4 + 1].tex_coord = { 0, 1 };
-			m_VertexData[i * 4 + 2].tex_coord = { 1, 1 };
-			m_VertexData[i * 4 + 3].tex_coord = { 1, 0 };
+			_vertexData[i * 4 + 0].tex_coord = { 0, 0 };
+			_vertexData[i * 4 + 1].tex_coord = { 0, 1 };
+			_vertexData[i * 4 + 2].tex_coord = { 1, 1 };
+			_vertexData[i * 4 + 3].tex_coord = { 1, 0 };
 
-			m_Indices[i * 6 + 0] = i * 4 + 0;
-			m_Indices[i * 6 + 1] = i * 4 + 2;
-			m_Indices[i * 6 + 2] = i * 4 + 1;
-			m_Indices[i * 6 + 3] = i * 4 + 0;
-			m_Indices[i * 6 + 4] = i * 4 + 3;
-			m_Indices[i * 6 + 5] = i * 4 + 2;
+			_indices[i * 6 + 0] = i * 4 + 0;
+			_indices[i * 6 + 1] = i * 4 + 2;
+			_indices[i * 6 + 2] = i * 4 + 1;
+			_indices[i * 6 + 3] = i * 4 + 0;
+			_indices[i * 6 + 4] = i * 4 + 3;
+			_indices[i * 6 + 5] = i * 4 + 2;
 		}
 
 #ifdef Particle_Editor_Mode 
-		m_Descript = desc;
+		_descript = desc;
 #endif
 	}
 
 	void Particle::Update(float dt)
 	{
-		if (m_pEmitter) {
-			m_pEmitter->update(dt);
+		if (_emitter) {
+			_emitter->update(dt);
 		}
 	}
 
 	void Particle::Draw()
 	{
-		auto particleList = m_pEmitter->getParticleList();
+		auto particleList = _emitter->getParticleList();
 		if ( particleList->empty() ) return;
 
 		float s = 0, c = 0, x = 0, y = 0;
@@ -156,15 +154,15 @@ namespace particle
 			x = particle->vPos.x;
 			y = particle->vPos.y;
 
-			m_VertexData[i * 4 + 0].position = {x - c - s, y - c + s};
-			m_VertexData[i * 4 + 1].position = {x - c + s, y + c + s};
-			m_VertexData[i * 4 + 2].position = {x + c + s, y + c - s};
-			m_VertexData[i * 4 + 3].position = {x + c - s, y - c - s};
+			_vertexData[i * 4 + 0].position = {x - c - s, y - c + s};
+			_vertexData[i * 4 + 1].position = {x - c + s, y + c + s};
+			_vertexData[i * 4 + 2].position = {x + c + s, y + c - s};
+			_vertexData[i * 4 + 3].position = {x + c - s, y - c - s};
 
-			m_VertexData[i * 4 + 0].color = particle->cColor;
-			m_VertexData[i * 4 + 1].color = particle->cColor;
-			m_VertexData[i * 4 + 2].color = particle->cColor;
-			m_VertexData[i * 4 + 3].color = particle->cColor;
+			_vertexData[i * 4 + 0].color = particle->cColor;
+			_vertexData[i * 4 + 1].color = particle->cColor;
+			_vertexData[i * 4 + 2].color = particle->cColor;
+			_vertexData[i * 4 + 3].color = particle->cColor;
 
 			i++;
 		}
@@ -173,7 +171,7 @@ namespace particle
 		int idx_count = particleList->size() * 6;
 
 		auto& renderer = ParticleManager::inst().GetApplication()->renderer();
-		renderer.drawGeometry(m_Texture, m_VertexData.data(), m_VertexData.size(), m_Indices.data(), m_Indices.size());
+		renderer.drawGeometry(m_Texture, _vertexData.data(), _vertexData.size(), _indices.data(), _indices.size());
 	}
 
 	ParticleDescription Particle::CreateParticleDescription(const std::string& filename)
@@ -274,9 +272,9 @@ namespace particle
 
 	Vec2 Particle::GetPos()
 	{
-		if (m_pEmitter)
+		if (_emitter)
 		{
-			Vec2&& pos = m_pEmitter->GetEmitPos();
+			Vec2&& pos = _emitter->GetEmitPos();
 			return { (int)pos.x, (int)pos.y};
 		}
 
@@ -285,61 +283,61 @@ namespace particle
 
 	void Particle::SetPos(const Vec2& pos)
 	{
-		if (m_pEmitter)
+		if (_emitter)
 		{
-			m_pEmitter->SetEmitPos({(float)pos.x, (float)pos.y});
+			_emitter->SetEmitPos({(float)pos.x, (float)pos.y});
 		}
 	}
 
 	void Particle::Start()
 	{
-		if (m_pEmitter)
+		if (_emitter)
 		{
-			m_pEmitter->startEmitting();
+			_emitter->startEmitting();
 		}
 	}
 	
 	void Particle::Stop()
 	{
-		if (m_pEmitter)
+		if (_emitter)
 		{
-			m_pEmitter->stopEmitting();
+			_emitter->stopEmitting();
 		}
 	}
 
 	bool Particle::IsPlaying()
 	{
-		return m_pEmitter && m_pEmitter->isEmitting();
+		return _emitter && _emitter->isEmitting();
 	}
 
 	std::string Particle::GetName()
 	{
-		return m_Name;
+		return _name;
 	}
 
 	std::string Particle::GetFile()
 	{
-		return m_File;
+		return _file;
 	}
 
 #ifdef Particle_Editor_Mode
 
 	ParticleDescription& Particle::Description()
 	{
-		return m_Descript;
+		return _descript;
 	}
 
 	void Particle::Reset()
 	{
-		CorrectDescription(m_Descript);
+		CorrectDescription(_descript);
 
-		SetDescription(m_Descript);
+		SetDescription(_descript);
 	}
 
 	void Particle::Save()
 	{
 		using namespace tinyxml2;
-		auto fullpath = ParticleManager::inst().GetApplication()->resPath() / m_File;
+		auto fullpath = ParticleManager::inst().GetApplication()->resPath() / _file;
 		
 		tinyxml2::XMLDocument doc;
 		XMLError error = doc.LoadFile(fullpath.string().c_str());
@@ -350,52 +348,52 @@ namespace particle
 		}
 
 		PropMap props;
-		props["texture_file"] = m_Descript.sTexture;
-		props["start_pos"] = vec2ToString(m_Descript.vEmitPos);
-		props["start_pos_variance"] = vec2ToString(m_Descript.vEmitPosVar);
+		props["texture_file"] = _descript.sTexture;
+		props["start_pos"] = vec2ToString(_descript.vEmitPos);
+		props["start_pos_variance"] = vec2ToString(_descript.vEmitPosVar);
 
-		props["angle"] = std::to_string(m_Descript.fEmitAngle);
-		props["angle_variance"] = std::to_string(m_Descript.fEmitAngleVar);
-		props["speed"] = std::to_string(m_Descript.fEmitSpeed);
-		props["speed_variance"] = std::to_string(m_Descript.fEmitSpeedVar);
+		props["angle"] = std::to_string(_descript.fEmitAngle);
+		props["angle_variance"] = std::to_string(_descript.fEmitAngleVar);
+		props["speed"] = std::to_string(_descript.fEmitSpeed);
+		props["speed_variance"] = std::to_string(_descript.fEmitSpeedVar);
 
-		props["emit_type"] = std::to_string((int)m_Descript.emitterType);
-		props["duration"] = std::to_string(m_Descript.fDuration);
-		props["max_particles"] = std::to_string(m_Descript.nParticleCount);
+		props["emit_type"] = std::to_string((int)_descript.emitterType);
+		props["duration"] = std::to_string(_descript.fDuration);
+		props["max_particles"] = std::to_string(_descript.nParticleCount);
 
-		props["life_span"] = std::to_string(m_Descript.fLife);
-		props["life_span_variance"] = std::to_string(m_Descript.fLifeVar);
+		props["life_span"] = std::to_string(_descript.fLife);
+		props["life_span_variance"] = std::to_string(_descript.fLifeVar);
 
-		props["start_color"] = color4ToString(m_Descript.cBeginColor);
-		props["start_color_variance"] = color4ToString(m_Descript.cBeginColorVar);
-		props["finish_color"] = color4ToString(m_Descript.cEndColor);
-		props["finish_color_variance"] = color4ToString(m_Descript.cEndColorVar);
+		props["start_color"] = color4ToString(_descript.cBeginColor);
+		props["start_color_variance"] = color4ToString(_descript.cBeginColorVar);
+		props["finish_color"] = color4ToString(_descript.cEndColor);
+		props["finish_color_variance"] = color4ToString(_descript.cEndColorVar);
 
-		props["start_size"] = std::to_string(m_Descript.fBeginSize);
-		props["start_size_variance"] = std::to_string(m_Descript.fBeginSizeVar);
-		props["finish_size"] = std::to_string(m_Descript.fEndSize);
-		props["finish_size_variance"] = std::to_string(m_Descript.fEndSizeVar);
+		props["start_size"] = std::to_string(_descript.fBeginSize);
+		props["start_size_variance"] = std::to_string(_descript.fBeginSizeVar);
+		props["finish_size"] = std::to_string(_descript.fEndSize);
+		props["finish_size_variance"] = std::to_string(_descript.fEndSizeVar);
 
-		props["start_rotation"] = std::to_string(m_Descript.fBeginSpin);
-		props["start_rotation_variance"] = std::to_string(m_Descript.fBeginSpinVar);
+		props["start_rotation"] = std::to_string(_descript.fBeginSpin);
+		props["start_rotation_variance"] = std::to_string(_descript.fBeginSpinVar);
 
-		props["finish_rotation"] = std::to_string(m_Descript.fEndSpin);
-		props["finish_rotation_variance"] = std::to_string(m_Descript.fEndSpinVar);
+		props["finish_rotation"] = std::to_string(_descript.fEndSpin);
+		props["finish_rotation_variance"] = std::to_string(_descript.fEndSpinVar);
 
-		props["motion_mode"] = std::to_string((int)m_Descript.motionMode);
+		props["motion_mode"] = std::to_string((int)_descript.motionMode);
 
-		props["gravity"] = vec2ToString(m_Descript.gravityMode.vGravity);
-		props["radial_acc"] = std::to_string(m_Descript.gravityMode.fRadialAccel);
-		props["radial_acc_variance"] = std::to_string(m_Descript.gravityMode.fRadialAccelVar);
-		props["tangent_acc"] = std::to_string(m_Descript.gravityMode.fTangentialAccel);
-		props["tangent_acc_variance"] = std::to_string(m_Descript.gravityMode.fTangentialAccelVar);
+		props["gravity"] = vec2ToString(_descript.gravityMode.vGravity);
+		props["radial_acc"] = std::to_string(_descript.gravityMode.fRadialAccel);
+		props["radial_acc_variance"] = std::to_string(_descript.gravityMode.fRadialAccelVar);
+		props["tangent_acc"] = std::to_string(_descript.gravityMode.fTangentialAccel);
+		props["tangent_acc_variance"] = std::to_string(_descript.gravityMode.fTangentialAccelVar);
 
-		props["min_radius"] = std::to_string(m_Descript.radiusMode.fBeginRadius);
-		props["min_radius_variance"] = std::to_string(m_Descript.radiusMode.fBeginRadiusVar);
-		props["max_radius"] = std::to_string(m_Descript.radiusMode.fEndRadius);
-		props["max_radius_variance"] = std::to_string(m_Descript.radiusMode.fEndRadiusVar);
-		props["rotate_speed"] = std::to_string(m_Descript.radiusMode.fSpinPerSecond);
-		props["rotate_speed_variance"] = std::to_string(m_Descript.radiusMode.fSpinPerSecondVar);
+		props["min_radius"] = std::to_string(_descript.radiusMode.fBeginRadius);
+		props["min_radius_variance"] = std::to_string(_descript.radiusMode.fBeginRadiusVar);
+		props["max_radius"] = std::to_string(_descript.radiusMode.fEndRadius);
+		props["max_radius_variance"] = std::to_string(_descript.radiusMode.fEndRadiusVar);
+		props["rotate_speed"] = std::to_string(_descript.radiusMode.fSpinPerSecond);
+		props["rotate_speed_variance"] = std::to_string(_descript.radiusMode.fSpinPerSecondVar);
 
 
 		XMLElement* root = doc.RootElement();
@@ -439,8 +437,8 @@ namespace particle
 
 	ParticlePtr ParticleManager::CreateParticle(const std::string& name)
 	{
-		auto it = m_ParticleFiles.find(name);
-		if (it==m_ParticleFiles.end())
+		auto it = _particleFiles.find(name);
+		if (it==_particleFiles.end())
 		{
 			return nullptr;
 		}
@@ -475,7 +473,7 @@ namespace particle
 			std::string name = pEle->Attribute("name");
 			std::string file = pEle->Attribute("file");
 
-			m_ParticleFiles.insert({name, file});
+			_particleFiles.insert({name, file});
 
 			pEle = pEle->NextSiblingElement();
 		}

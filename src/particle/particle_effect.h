@@ -1,5 +1,5 @@
 #pragma once
-#include "ParticleCfg.h"
+#include "particle_cfg.h"
 
 namespace particle
 {

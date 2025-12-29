@@ -33,7 +33,7 @@ namespace imgui
 		void draw();
 
 		template<typename T>
-		T* getImGuiForm(const std::string& name);
+		T* getForm(const std::string& name);
 
 		template<class T, typename... Args>
 		T* showForm(const std::string& name, Args... args);
@@ -70,7 +70,7 @@ namespace imgui
 	};
 
 	template<typename T>
-	T* ImFormManager::getImGuiForm(const std::string& name)
+	T* ImFormManager::getForm(const std::string& name)
 	{
 		auto it = _forms.find(name);
 		if (it == _forms.end())
@@ -85,7 +85,7 @@ namespace imgui
 	template<class T, typename... Args>
 	T* ImFormManager::showForm(const std::string& name, Args... args)
 	{
-		auto form = getImGuiForm<T>(name);
+		auto form = getForm<T>(name);
 		if (form)
 		{
 			form->show(true);

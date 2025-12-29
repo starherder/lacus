@@ -1,7 +1,7 @@
-#include "ParticleEffect.h"
-#include "ParticleEmitter.h"
-#include "ParticleManager.h"
-#include "ParticleMemory.h"
+#include "particle_effect.h"
+#include "particle_emitter.h"
+#include "particle_manager.h"
+#include "particle_memory.h"
 
 namespace particle
 {

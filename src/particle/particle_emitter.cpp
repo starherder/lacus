@@ -1,21 +1,21 @@
-#include "ParticleEmitter.h"
-#include "ParticleEffect.h"
-#include "ParticleMemory.h"
+#include "particle_emitter.h"
+#include "particle_effect.h"
+#include "particle_memory.h"
 
 namespace particle
 {
 	ParticleEmitter::ParticleEmitter()
-		: pParticleEffect(nullptr)
-		, bCanEmit(true)
-		, fElapsed(0)
-		, fEmitCounter(0)
+		: _particleEffect(nullptr)
+		, _canEmit(true)
+		, _elapsed(0)
+		, _emitCounter(0)
 	{
 	}
 
 	ParticleEmitter::~ParticleEmitter()
 	{
-		if ( pParticleEffect ) {
-			delete pParticleEffect;
+		if ( _particleEffect ) {
+			delete _particleEffect;
 		}
 	}
 
@@ -53,19 +53,19 @@ namespace particle
 
 	void ParticleEmitter::setParticleEffect(ParticleEffect* effect)
 	{
-		if ( pParticleEffect ) {
-			delete pParticleEffect;
+		if ( _particleEffect ) {
+			delete _particleEffect;
 		}
-		pParticleEffect = effect;
+		_particleEffect = effect;
 	}
 
 	void ParticleEmitter::update(float dt)
 	{
-		if ( bCanEmit == false ) return;
+		if ( _canEmit == false ) return;
 
 		this->emitParticles(dt);
-		if (pParticleEffect) {
-			pParticleEffect->update(this, dt);
+		if (_particleEffect) {
+			_particleEffect->update(this, dt);
 		}
 	}
 
@@ -77,54 +77,54 @@ namespace particle
 		float emit_particle_time = 1 / emitRate;
 
 		/* 累计发射时间 */
-		if ( vParticleList.size() < particleCount ) {
-			fEmitCounter += dt;
+		if ( _particleList.size() < particleCount ) {
+			_emitCounter += dt;
 		}
 
 		/* 在时间 emit_counter 发射 emit_counter / rate 个粒子 */
-		while ( vParticleList.size() < particleCount && fEmitCounter > 0 ) {
+		while ( _particleList.size() < particleCount && _emitCounter > 0 ) {
 			this->addParticle();
-			fEmitCounter -= emit_particle_time;
+			_emitCounter -= emit_particle_time;
 		}
 
-		fElapsed += dt;
-		if ( duration != -1 && duration < fElapsed ) {
-			fElapsed = 0;
+		_elapsed += dt;
+		if ( duration != -1 && duration < _elapsed ) {
+			_elapsed = 0;
 			this->stopEmitting();
 		}
 	}
 
 	void ParticleEmitter::addParticle()
 	{
-		if ( vParticleList.size() == particleCount ) return;
+		if ( _particleList.size() == particleCount ) return;
 
 		ParticleCfg* particle = ParticleMemory::allocParticle();
 		fail_return(particle);
 
 		/* 存储粒子并初始化粒子 */
-		vParticleList.push_back(particle);
-		pParticleEffect->initParticle(this, particle);
+		_particleList.push_back(particle);
+		_particleEffect->initParticle(this, particle);
 	}
 
 
 	bool ParticleEmitter::isEmitting()
 	{
-		return bCanEmit;
+		return _canEmit;
 	}
 	
 	void ParticleEmitter::startEmitting()
 	{
-		bCanEmit = true;
+		_canEmit = true;
 	}
 
 	void ParticleEmitter::stopEmitting()
 	{
-		bCanEmit = false;
+		_canEmit = false;
 
 		/* 释放所有未发射的粒子 */
-		for ( auto& ele : vParticleList ) {
+		for ( auto& ele : _particleList ) {
 			ParticleMemory::freeParticle(ele);
 		}
-		vParticleList.clear();
+		_particleList.clear();
 	}
 }

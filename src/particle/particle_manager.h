@@ -1,9 +1,8 @@
 #pragma once
 
-#include "ParticleCfg.h"
-#include "ParticleEmitter.h"
-#include "ParticleEffect.h"
-#include "ParticleDescription.h"
+#include "particle_cfg.h"
+#include "particle_emitter.h"
+#include "particle_effect.h"
 
 #include "engine/application.h"
 #include "engine/texture.h"
@@ -38,8 +37,11 @@ namespace particle
 
 		bool IsPlaying();
 
-		ParticleEffect* GetEffect() { return m_pEmitter->getParticleEffect(); }
-		ParticleEmitter* GetEmitter() { return m_pEmitter.get(); }
+		ParticleEffect* GetEffect() { return _emitter->getParticleEffect(); }
+		ParticleEmitter* GetEmitter() { return _emitter.get(); }
+
+		// 修正一些数据(Editor 用)
+		static void CorrectDescription(ParticleDescription& desc);
 
 	private:
 		// 创建粒子描述
@@ -47,20 +49,18 @@ namespace particle
 
 		void SetTexture(const std::string& file);
 
-		// 修正一些数据
-		static void CorrectDescription(ParticleDescription& desc);
 
 	private:
-		std::string m_Name;
-		std::string m_File;
+		std::string _name;
+		std::string _file;
 
-		//ParticleEmitter* m_pEmitter;
-		std::unique_ptr<ParticleEmitter> m_pEmitter = nullptr;
+		//ParticleEmitter* _emitter;
+		std::unique_ptr<ParticleEmitter> _emitter = nullptr;
 
 		Texture* m_Texture = nullptr;
 
-		std::vector<Vertex> m_VertexData;
-		std::vector<int> m_Indices;
+		std::vector<Vertex> _vertexData;
+		std::vector<int> _indices;
 
 #define Particle_Editor_Mode
 #ifdef Particle_Editor_Mode
@@ -69,7 +69,7 @@ namespace particle
 		void Reset();
 		void Save();
 	private:
-		ParticleDescription m_Descript;
+		ParticleDescription _descript;
 #endif
 	};
 
@@ -93,14 +93,14 @@ namespace particle
 
 		ParticlePtr CreateParticle(const std::string& name);
 
-		const auto& GetAllParticleConfigs() { return m_ParticleFiles; }
+		const auto& GetAllParticleConfigs() { return _particleFiles; }
 
 	private:
 		engine::Application* GetApplication() { return _application; }
 
 	private:
 		engine::Application* _application;
-		StringStringMap m_ParticleFiles;
+		StringStringMap _particleFiles;
 
 	};
 }

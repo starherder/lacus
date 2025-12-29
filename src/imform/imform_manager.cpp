@@ -36,7 +36,7 @@ namespace imgui
 
 	void ImFormManager::closeForm(const std::string& name)
 	{
-		auto pForm = getImGuiForm<ImForm>(name);
+		auto pForm = getForm<ImForm>(name);
 		if (pForm)
 		{
 			pForm->close();

@@ -54,7 +54,7 @@ if(WIN32)
 endif()
 
 # 引用的imgui文件
-set(IMGUI_SOURCES
+set(OTHER_SOURCES
     ${IMGUI_PATH}/imgui.cpp
     ${IMGUI_PATH}/imgui_draw.cpp
     ${IMGUI_PATH}/imgui_tables.cpp
@@ -63,6 +63,9 @@ set(IMGUI_SOURCES
     # Backend files
     ${IMGUI_PATH}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_PATH}/backends/imgui_impl_sdlrenderer3.cpp
+    
+    ${EXT_PATH}/tinyxml2/tinyxml2.cpp
+
 )
 
 # 递归收集所有子目录的 cpp 文件
@@ -75,25 +78,9 @@ file(GLOB_RECURSE EXT_HEADERS "ext/*.h" "ext/*.hpp")
 # 添加可执行文件
 add_executable(${PROJECT_NAME} 
                 ${SOURCES} 
-                ${IMGUI_SOURCES}
+                ${OTHER_SOURCES}
                 ${HEADERS}
                 ${EXT_HEADERS}
-)
-
-# 为Visual Studio工程创建筛选器结构
-source_group(TREE ${CMAKE_SOURCE_DIR} 
-    PREFIX "Source Files" 
-    FILES ${SOURCES} ${HEADERS}
-)
-
-source_group(TREE ${CMAKE_SOURCE_DIR}/ext 
-    PREFIX "External Libraries" 
-    FILES ${EXT_HEADERS}
-)
-
-source_group(TREE ${IMGUI_PATH} 
-    PREFIX "ImGui" 
-    FILES ${IMGUI_SOURCES}
 )
 
 # 链接SDL3库和系统库
