@@ -1,0 +1,6 @@
+<ParticleList>
+	<Particle name="fire" file="particles/test_fire.xml" />
+	<Particle name="snow" file="particles/test_snow.xml" />
+	<Particle name="star" file="particles/test_star.xml" />
+	<Particle name="bullet" file="particles/bullet_bomb.xml" />
+</ParticleList>

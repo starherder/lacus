@@ -1,6 +1,7 @@
 #include "color.h"
 #include <algorithm>
 #include <cctype>
+#include <assert.h>
 
 namespace engine
 {
@@ -85,6 +86,79 @@ Color::Color(const SDL_FColor& sdlFColor) {
     a = static_cast<uint8_t>(std::clamp(sdlFColor.a * 255.0f, 0.0f, 255.0f));
 }
 
+Color Color::operator + (const Color& other)
+{
+    auto rr = std::clamp(r + other.r, 0, 255);
+    auto gg = std::clamp(g + other.g, 0, 255);
+    auto bb = std::clamp(b + other.b, 0, 255);
+    auto aa = std::clamp(a + other.a, 0, 255);
+    return {rr,gg,bb,aa};
+}
+
+Color& Color::operator += (const Color& other)
+{
+    r = std::clamp(r + other.r, 0, 255);
+    g = std::clamp(g + other.g, 0, 255);
+    b = std::clamp(b + other.b, 0, 255);
+    a = std::clamp(a + other.a, 0, 255);
+    return *this;
+}
+
+Color Color::operator - (const Color& other)
+{
+    auto rr = std::clamp(r - other.r, 0, 255);
+    auto gg = std::clamp(g - other.g, 0, 255);
+    auto bb = std::clamp(b - other.b, 0, 255);
+    auto aa = std::clamp(a - other.a, 0, 255);
+    return { rr,gg,bb,aa };
+
+}
+Color& Color::operator -= (const Color& other)
+{
+    r = std::clamp(r - other.r, 0, 255);
+    g = std::clamp(g - other.g, 0, 255);
+    b = std::clamp(b - other.b, 0, 255);
+    a = std::clamp(a - other.a, 0, 255);
+    return *this;
+}
+
+Color Color::operator * (float rval)
+{
+    auto rr = std::clamp((int)(r * rval), 0, 255);
+    auto gg = std::clamp((int)(g * rval), 0, 255);
+    auto bb = std::clamp((int)(b * rval), 0, 255);
+    auto aa = std::clamp((int)(a * rval), 0, 255);
+    return { rr,gg,bb,aa };
+}
+
+Color& Color::operator *= (float rval)
+{
+    r = std::clamp((int)(r * rval), 0, 255);
+    g = std::clamp((int)(g * rval), 0, 255);
+    b = std::clamp((int)(b * rval), 0, 255);
+    a = std::clamp((int)(a * rval), 0, 255);
+    return *this;
+}
+
+Color Color::operator / (float rval)
+{
+    assert(rval != 0);
+    auto rr = std::clamp((int)(r / rval), 0, 255);
+    auto gg = std::clamp((int)(g / rval), 0, 255);
+    auto bb = std::clamp((int)(b / rval), 0, 255);
+    auto aa = std::clamp((int)(a / rval), 0, 255);
+    return { rr,gg,bb,aa };
+}
+
+Color& Color::operator /= (float rval)
+{
+    assert(rval != 0);
+    r = std::clamp((int)(r / rval), 0, 255);
+    g = std::clamp((int)(g / rval), 0, 255);
+    b = std::clamp((int)(b / rval), 0, 255);
+    a = std::clamp((int)(a / rval), 0, 255);
+    return *this;
+}
 
 Color& Color::operator=(const Color& other)
 {

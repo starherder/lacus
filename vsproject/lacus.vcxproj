@@ -144,6 +144,7 @@
     <ClCompile Include="..\ext\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\ext\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\ext\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\ext\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="..\src\bevtree\bevtree.cpp" />
     <ClCompile Include="..\src\engine\application.cpp" />
     <ClCompile Include="..\src\engine\audio.cpp" />
@@ -172,6 +173,11 @@
     <ClCompile Include="..\src\imform\imform_demo.cpp" />
     <ClCompile Include="..\src\imform\imform_manager.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\particle\entt\entt_particle.cpp" />
+    <ClCompile Include="..\src\particle\ParticleEffect.cpp" />
+    <ClCompile Include="..\src\particle\ParticleEmitter.cpp" />
+    <ClCompile Include="..\src\particle\ParticleManager.cpp" />
+    <ClCompile Include="..\src\particle\ParticleMemory.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_astar.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_audio.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_bevtree.cpp" />
@@ -179,6 +185,7 @@
     <ClCompile Include="..\src\samples\sample_plugin_draw.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_entt.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_manager.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_particle.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_tilemap.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_tweeny.cpp" />
     <ClCompile Include="..\src\samples\tmxmap\tmx_layer.cpp" />
@@ -203,6 +210,7 @@
     <ClInclude Include="..\ext\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\ext\imgui\imstb_textedit.h" />
     <ClInclude Include="..\ext\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\ext\tinyxml2\tinyxml2.h" />
     <ClInclude Include="..\src\bevtree\bevtree.h" />
     <ClInclude Include="..\src\engine\application.h" />
     <ClInclude Include="..\src\engine\audio.h" />
@@ -232,6 +240,14 @@
     <ClInclude Include="..\src\imform\imform.h" />
     <ClInclude Include="..\src\imform\imform_demo.h" />
     <ClInclude Include="..\src\imform\imform_manager.h" />
+    <ClInclude Include="..\src\particle\entt\entt_particle.h" />
+    <ClInclude Include="..\src\particle\header.h" />
+    <ClInclude Include="..\src\particle\ParticleCfg.h" />
+    <ClInclude Include="..\src\particle\ParticleDescription.h" />
+    <ClInclude Include="..\src\particle\ParticleEffect.h" />
+    <ClInclude Include="..\src\particle\ParticleEmitter.h" />
+    <ClInclude Include="..\src\particle\ParticleManager.h" />
+    <ClInclude Include="..\src\particle\ParticleMemory.h" />
     <ClInclude Include="..\src\samples\sample_camera.h" />
     <ClInclude Include="..\src\samples\sample_plugin_astar.h" />
     <ClInclude Include="..\src\samples\sample_plugin_audio.h" />
@@ -240,6 +256,7 @@
     <ClInclude Include="..\src\samples\sample_plugin_entt.h" />
     <ClInclude Include="..\src\samples\sample_plugin_imgui.h" />
     <ClInclude Include="..\src\samples\sample_plugin_manager.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_particle.h" />
     <ClInclude Include="..\src\samples\sample_plugin_tilemap.h" />
     <ClInclude Include="..\src\samples\sample_plugin_tweeny.h" />
     <ClInclude Include="..\src\samples\tmxmap\tmx_layer.h" />
@@ -260,6 +277,7 @@
     <ClInclude Include="..\src\utility\dynamic_var.h" />
     <ClInclude Include="..\src\utility\expire_cache.h" />
     <ClInclude Include="..\src\utility\i_singleton.h" />
+    <ClInclude Include="..\src\utility\random.h" />
     <ClInclude Include="..\src\utility\signalslot.h" />
     <ClInclude Include="..\src\utility\skip_list.h" />
     <ClInclude Include="..\src\utility\string_util.h" />

@@ -3,19 +3,22 @@
 #include <spdlog/spdlog.h>
 #include <entt/entt.hpp>
 #include <utility/signalslot.h>
+#include <utility/random.h>
+#include <utility/i_singleton.h>
 
+#include <set>
+#include <map>
+#include <array>
 #include <string>
 #include <vector>
-#include <map>
-#include <memory.h>
-#include <unordered_map>
-#include <set>
-#include <array>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <optional>
 #include <format>
+#include <fstream>
+#include <iostream>
+#include <memory.h>
+#include <optional>
+#include <algorithm>
+#include <filesystem>
+#include <unordered_map>
 
 #include "color.h"
 #include "geometry.h"

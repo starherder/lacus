@@ -9,6 +9,7 @@
 #include "sample_plugin_astar.h"
 #include "sample_plugin_tilemap.h"
 #include "sample_plugin_bevtree.h"
+#include "sample_plugin_particle.h"
 
 #include "game/game_logic.h"
 
@@ -136,7 +137,13 @@ namespace samples {
         {
             SamplePluginManager::inst().setPluginEnable("sample_bevtree_plugin", bevtree_trigger);
         }
-        
+
+        static bool particle_trigger = false;
+        if (ImGui::MenuItem("particle", nullptr, &particle_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_particle_plugin", particle_trigger);
+        }
+
         static bool game_trigger = false;
         if (ImGui::MenuItem("game", nullptr, &game_trigger))
         {
@@ -224,6 +231,9 @@ namespace samples {
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginBevTree>();
+        plugin->setEnable(false);
+
+        plugin = addNormalPlugin<SamplePluginParticle>();
         plugin->setEnable(false);
 
         plugin = addNormalPlugin<game::GameLogicPlugin>(app);

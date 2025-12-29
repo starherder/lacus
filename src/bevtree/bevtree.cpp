@@ -13,6 +13,7 @@ namespace bevtree
         registerNode<bevtree::Sequence>("sequence");
         registerNode<bevtree::Parallel>("parallel");
 
+        registerNode<bevtree::RandomSelector>("random_selector");
         registerNode<bevtree::StatefulSelector>("stateful_selector");
         registerNode<bevtree::StatefulSequence>("stateful_sequence");
 

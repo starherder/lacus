@@ -81,6 +81,15 @@ public:
     Color(const SDL_Color& sdlColor);
     Color(const SDL_FColor& sdlFColor);
 
+    Color operator + (const Color& other);
+    Color& operator += (const Color& other);
+    Color operator - (const Color& other);
+    Color& operator -= (const Color& other);
+    Color operator * (float rval);
+    Color& operator *= (float rval);
+    Color operator / (float rval);
+    Color& operator /= (float rval);
+
     Color& operator = (const Color& other);
 
     bool operator==(const Color& other) const;
