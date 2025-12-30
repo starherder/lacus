@@ -222,7 +222,7 @@ bool GameScene::createObject(const MapObject& obj)
     //ObjectFactor::inst().createActor(obj);
 
     auto ent = createActor(obj.name, obj.pos);
-    auto [found, bevtree] = _tileMap.getObjectProperty<std::string>((int)tilemap::LayerId::Object, obj.id, "bevtree");
+    auto [found, bevtree] = _tileMap.getObjectProperty<std::string>(obj.id, "bevtree");
     if ( found && !bevtree.empty()) {
         _registry.emplace<CompBevtree>(ent, { bevtree, nullptr });
     }
