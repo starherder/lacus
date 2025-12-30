@@ -13,8 +13,13 @@ namespace game {
 
     using namespace engine;
 
+
     class GameScene : public engine::Scene, public signals::SlotHandler
     {
+        using NameEntityMap = std::unordered_map<std::string, entt::entity>;
+        using EcsSystemMap = std::multimap<EcsPriority, std::shared_ptr<EcsSystem>>;
+        using MapObject = tilemap::MapObject;
+
     public:
         GameScene() = default;
         GameScene(const GameScene&) = delete;
@@ -52,6 +57,8 @@ namespace game {
         void destroyActor(const std::string& name);
         void destroyAllActor();
 
+        bool createObject(const MapObject& obj);
+
     private:
         void showAllGui();
         void closeAllGui();
@@ -59,6 +66,9 @@ namespace game {
         void initEscSystem();
 
         void initPathFind();
+
+        void loadObjects();
+
         void drawDebugView();
 
         void onShowDebugInfo(bool show);
@@ -72,9 +82,9 @@ namespace game {
 
         GameCamera _camera;
 
-        std::unordered_map<std::string, entt::entity> _nameIdMap;
+        NameEntityMap _nameIdMap;
 
-        std::multimap<EcsPriority, std::shared_ptr<EcsSystem>> _ecsSystems;
+        EcsSystemMap _ecsSystems;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

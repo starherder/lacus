@@ -4,6 +4,10 @@
 #include "engine/wrapper.h"
 #include "engine/texture.h"
 
+namespace bevtree {
+    class BehaviorTree;
+}
+
 namespace game 
 {
     using namespace engine;
@@ -49,16 +53,31 @@ namespace game
         int duration;
     };
 
-    enum class ActorState {
+    enum class ActorState 
+    {
         Idle,
         Move,
         Attack,
         Die,
     };
 
-    struct CompState
+    struct CompState 
     {
         ActorState state = ActorState::Idle;
+    };
+
+    struct CompNpcPatrol {
+        Vec2 origin_pos;
+        float patrol_radius;
+        float patrol_speed;
+
+        std::vector<Vec2> patrol_path;
+    };
+
+    struct CompBevtree
+    {
+        std::string bt_name;
+        std::shared_ptr<bevtree::BehaviorTree> bevtree = nullptr;
     };
 
 }

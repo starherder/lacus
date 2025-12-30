@@ -105,7 +105,7 @@ bool SystemConfig::load(const fs::path& filepath)
             return false;
         }
 
-        debug_mode = json.value("debug", true);
+        debug_mode = json.value("debug", false);
     }
     catch(const std::exception& e)
     {

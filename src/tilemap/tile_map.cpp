@@ -7,6 +7,41 @@
 
 namespace tilemap {
 
+ImageLayer* TileMap::getBkgroundLayer()
+{
+    auto layer = getLayer((int)LayerId::BkGround);
+    if (layer && layer->type == MapLayerType::ImageLayer) {
+        return dynamic_cast<ImageLayer*>(layer);
+    }
+    return nullptr;
+}
+
+TileLayer* TileMap::getTileLayer()
+{
+    auto layer = getLayer((int)LayerId::TileMap);
+    if (layer && layer->type == MapLayerType::TileLayer) {
+        return dynamic_cast<TileLayer*>(layer);
+    }
+    return nullptr;
+}
+
+ObjectLayer* TileMap::getObjectLayer()
+{
+    auto layer = getLayer((int)LayerId::Object);
+    if (layer && layer->type == MapLayerType::ObjectLayer) {
+        return dynamic_cast<ObjectLayer*>(layer);
+    }
+    return nullptr;
+}
+
+TileLayer* TileMap::getDecorateLayer()
+{
+    auto layer = getLayer((int)LayerId::Decorate);
+    if (layer && layer->type == MapLayerType::TileLayer) {
+        return dynamic_cast<TileLayer*>(layer);
+    }
+    return nullptr;
+}
     
 bool TileMap::load(const engine::fs::path& filepath)
 {

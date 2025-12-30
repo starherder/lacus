@@ -27,6 +27,14 @@ namespace tilemap {
         GroupLayer
     };
 
+    enum class LayerId {
+        Invalid = 0,
+        BkGround = 1,
+        TileMap = 2,
+        Object = 3,
+        Decorate = 4,
+    };
+
     struct MapDrawCall {
         std::vector<engine::Vertex> vertexies;
 

@@ -12,6 +12,7 @@ GameLogicPlugin::GameLogicPlugin(engine::Application& app)
     : _app(app), _gameContext(app)
 {
     _scene = std::make_unique<GameScene>(_gameContext);
+    _gameContext.setCurrentScene(_scene.get());
 }
 
 void GameLogicPlugin::onInit() 
@@ -21,7 +22,6 @@ void GameLogicPlugin::onInit()
     _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
 
     //ui::GuiManager::inst().showForm<ui::FormDemo>("form_demo");
-
 }
 
 void GameLogicPlugin::onUpdate()

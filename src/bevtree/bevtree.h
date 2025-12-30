@@ -23,6 +23,7 @@ namespace bevtree
 {
     using XmlNode = BrainTree::XmlNode;   
     using Blackboard = BrainTree::Blackboard;
+    using Status = BrainTree::Node::Status;
     using BevNode = BrainTree::Node;
     using BevNodePtr = std::shared_ptr<BrainTree::Node>; 
 

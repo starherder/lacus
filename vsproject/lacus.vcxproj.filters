@@ -49,6 +49,9 @@
     <Filter Include="particle">
       <UniqueIdentifier>{779b5e2b-2268-4887-99d1-27b77a8a171d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game\behavior">
+      <UniqueIdentifier>{b43055a8-bb5f-4cf4-8da9-4fd5d51806c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -240,6 +243,12 @@
     </ClCompile>
     <ClCompile Include="..\src\game\play\system_render.cpp">
       <Filter>game\play</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\play\system_bevtree.cpp">
+      <Filter>game\play</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\behavior\bev_npc.cpp">
+      <Filter>game\behavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -485,6 +494,12 @@
     </ClInclude>
     <ClInclude Include="..\src\game\play\ecs_system.h">
       <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\system_bevtree.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\behavior\bev_npc.h">
+      <Filter>game\behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

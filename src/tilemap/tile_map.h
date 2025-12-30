@@ -26,19 +26,24 @@ namespace tilemap {
 
         void draw(engine::Renderer& renderer, const engine::Camera& camera);
 
-        template<typename T>
-        std::pair<bool, T> getObjectProperty(int layerId, int objectId, const std::string& name);
+        const auto& collisionPoints() const { return _collisionPoints; }
+        
+        ImageLayer* getBkgroundLayer();
+        TileLayer* getTileLayer();
+        ObjectLayer* getObjectLayer();
+        TileLayer* getDecorateLayer();
 
         template<typename T>
-        std::pair<bool, T> getTileProperty(int layerId, int x, int y, const std::string& name);
+        std::pair<bool, T> getObjectProperty(int objectId, const std::string& name);
+
+        template<typename T>
+        std::pair<bool, T> getTileProperty(int x, int y, const std::string& name);
 
         template<typename T>
         std::pair<bool, T> getTileProperty(int tileGid, const std::string& name);
 
         template<typename T>
         std::pair<bool, T> getLayerProperty(int id, const std::string& name);
-
-        const auto& collisionPoints() const { return _collisionPoints; }
 
     private:
         bool load_mapdata(const json& json);
@@ -56,9 +61,15 @@ namespace tilemap {
 
         MapTile* getInfoOfTile(int tileGid);
 
+        MapLayer* getLayer(int id);
+
         int getGidOfTile(int layerId, int x, int y);
 
-        MapLayer* getLayer(int id);
+        template<typename T>
+        std::pair<bool, T> getObjectProperty(int layerId, int objectId, const std::string& name);
+
+        template<typename T>
+        std::pair<bool, T> getTileProperty(int layerId, int x, int y, const std::string& name);
 
     private:
         fs::path _resPath;
@@ -90,6 +101,18 @@ namespace tilemap {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    std::pair<bool, T> TileMap::getObjectProperty(int objectId, const std::string& name)
+    {
+        return getObjectProperty((int)LayerId::Object, objectId, name);
+    }
+
+    template<typename T>
+    std::pair<bool, T> TileMap::getTileProperty(int x, int y, const std::string& name)
+    {
+        return getTileProperty((int)LayerId::TileMap, x, y, name);
+    }
 
     template<typename T>
     std::pair<bool, T> TileMap::getTileProperty(int tileGid, const std::string& name)

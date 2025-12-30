@@ -15,8 +15,6 @@ GameScene::GameScene(GameContext& context)
     _camera.setPos(Vec2{0, 0});
     _camera.setSize(Vec2{_context.window().getSize()});
 
-    context.setCurrentScene(this);
-
     initEscSystem();
 }
 
@@ -70,6 +68,8 @@ bool GameScene::load(const engine::fs::path& mapPath)
     _tileMap.bake(application().resourceManager());
 
     initPathFind();
+
+    loadObjects();
 
     return true;
 }
@@ -169,6 +169,16 @@ void GameScene::initPathFind()
     }
 }
 
+void GameScene::loadObjects()
+{
+    auto layer = _tileMap.getObjectLayer();
+    if (layer) {
+        for (auto& [id, obj] : layer->objects) {
+            createObject(obj);
+        }
+    }
+}
+
 void GameScene::drawDebugView()
 {
     if(!_context.debugMode())
@@ -203,6 +213,21 @@ void GameScene::drawDebugView()
         auto dstPos = _camera.projectPoint({tileSize.x*mapSize.x, y*tileSize.y});
         renderer.drawLine(srcPos, dstPos);
     }
+}
+
+
+bool GameScene::createObject(const MapObject& obj)
+{
+    // TODO:
+    //ObjectFactor::inst().createActor(obj);
+
+    auto ent = createActor(obj.name, obj.pos);
+    auto [found, bevtree] = _tileMap.getObjectProperty<std::string>((int)tilemap::LayerId::Object, obj.id, "bevtree");
+    if ( found && !bevtree.empty()) {
+        _registry.emplace<CompBevtree>(ent, { bevtree, nullptr });
+    }
+
+    return true;
 }
 
 entt::entity GameScene::createActor(const std::string& name, const Vec2& pos, const Vec2& size)
