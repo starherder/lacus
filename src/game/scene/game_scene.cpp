@@ -3,18 +3,58 @@
 #include "../ui/form_main.h"
 #include "../ui/imform_debug.h"
 
+#include "game/play/system_motion.h"
+#include "game/play/system_render.h"
+
 namespace game {
 
 
-GameScene::GameScene(engine::Application& app)
-    : engine::Scene(app)
+GameScene::GameScene(GameContext& context)
+    : engine::Scene(context.applicaton()), _context(context)
 {
     _camera.setPos(Vec2{0, 0});
-    _camera.setSize(Vec2{app.window().getSize()});
+    _camera.setSize(Vec2{_context.window().getSize()});
+
+    context.setCurrentScene(this);
+
+    initEscSystem();
 }
 
 GameScene::~GameScene()
 {
+}
+
+void GameScene::initEscSystem()
+{
+    _ecsSystems.insert({ EcsPriority::MotionSystem, std::make_shared<MotionSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::RenderSystem, std::make_shared<RenderSystem>(_context) });
+}
+
+Vec2 GameScene::mapSize()
+{
+    return _tileMap.mapSize();
+}
+
+Vec2 GameScene::tileSize()
+{
+    return _tileMap.tileSize();
+}
+
+Vec2i GameScene::getGridFromPos(const Vec2& pos)
+{
+    Vec2 gridf = pos / tileSize();
+    Vec2i grid = { (int)std::ceil(gridf.x) - 1, (int)std::ceil(gridf.y) - 1 };
+    return grid;
+}
+
+Vec2 GameScene::getGridLeftTopPos(const Vec2i& grid)
+{
+    return { grid.x * tileSize().x, grid.y * tileSize().y };
+}
+
+Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
+{
+    return { (grid.x + 0.5f) * tileSize().x, (grid.y + 0.5f) * tileSize().y };
 }
 
 bool GameScene::load(const engine::fs::path& mapPath)
@@ -25,11 +65,12 @@ bool GameScene::load(const engine::fs::path& mapPath)
         return false;
     }
 
+    _camera.init(&application());
+
     _tileMap.bake(application().resourceManager());
-    
+
     initPathFind();
 
-    _camera.init(&application());
     return true;
 }
 
@@ -46,9 +87,12 @@ bool GameScene::unload()
 
 void GameScene::onUpdate(float deltaTime)
 {
-    _gamePlay.update(deltaTime);
-
     _camera.update(deltaTime);
+
+    for (auto& [prio, sys] : _ecsSystems) 
+    {
+        sys->update(deltaTime);
+    }
 }
 
 void GameScene::onDraw() 
@@ -57,9 +101,12 @@ void GameScene::onDraw()
 
     _tileMap.draw(renderer, _camera);
 
-    drawDebugView();
+    for (auto& [prio, sys] : _ecsSystems)
+    {
+        sys->draw();
+    }
 
-    _gamePlay.draw(renderer, _camera);
+    drawDebugView();
 }
 
 void GameScene::onStart()
@@ -71,9 +118,6 @@ void GameScene::onStart()
 
 void GameScene::onStop()
 {
-    _gamePlay.motionStop(_actor);
-    _gamePlay.destroyActor("actor1");
-
     closeAllGui();
     
     spdlog::info("========================= GameScene::onStop =========================");
@@ -83,16 +127,20 @@ void GameScene::showAllGui()
 {
     //ui::GuiManager::inst().showForm<FormMain>("form_main");
 
-    imgui::ImFormManager::inst().setStyle(imgui::ImGuiTheme::Light);
-
     auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
     if(form_debug) 
     {
-        form_debug->on_show_collision_debug.connect(this, &GameScene::onShowCollisionDebug);
-        form_debug->on_motion_pause.connect(this, &GameScene::onMotionPause);
-        form_debug->on_motion_start.connect(this, &GameScene::onMotionStart);
-        form_debug->on_motion_speed_changed.connect(this, &GameScene::onMotionSpeedChanged);
+        form_debug->on_show_debug.connect(this, &GameScene::onShowDebugInfo);
+
+        //form_debug->on_motion_pause.connect(this, &GameScene::onMotionPause);
+        //form_debug->on_motion_start.connect(this, &GameScene::onMotionStart);
+        //form_debug->on_motion_speed_changed.connect(this, &GameScene::onMotionSpeedChanged);
     }
+}
+
+void GameScene::onShowDebugInfo(bool show)
+{
+    _context.setDebugMode(show);
 }
 
 void GameScene::closeAllGui()
@@ -103,18 +151,15 @@ void GameScene::closeAllGui()
 
 void GameScene::initPathFind()
 {
-    auto& mapSize = _tileMap.mapSize();
-
-    _generator.setWorldSize(mapSize);
-    _generator.setHeuristic(AStar::Heuristic::euclidean);
-    _generator.setDiagonalMovement(false); 
+    auto& pathFinder = _context.pathFinder();
+    pathFinder.setWorldSize(_tileMap.mapSize());
+    pathFinder.setHeuristic(AStar::Heuristic::euclidean);
+    pathFinder.setDiagonalMovement(true);
 
     for(auto& grid : _tileMap.collisionPoints()) 
     {
-        _generator.addCollision(grid);
+        pathFinder.addCollision(grid);
     }
-
-    _gamePlay.initPathFind(&_generator, _tileMap.mapSize(), _tileMap.tileSize() );
 
     // -------------- show collision info ------------------
     auto& tileSize = _tileMap.tileSize();
@@ -126,7 +171,7 @@ void GameScene::initPathFind()
 
 void GameScene::drawDebugView()
 {
-    if(!_showCollisionDebug)
+    if(!_context.debugMode())
     {
         return;
     }
@@ -151,6 +196,7 @@ void GameScene::drawDebugView()
         auto dstPos = _camera.projectPoint({x*tileSize.x, mapSize.y*tileSize.y});
         renderer.drawLine(srcPos, dstPos);
     }
+
     for(int y=0; y<=_tileMap.mapSize().y; ++y)
     {
         auto srcPos = _camera.projectPoint({0, y*tileSize.y});
@@ -159,42 +205,58 @@ void GameScene::drawDebugView()
     }
 }
 
-void GameScene::onShowCollisionDebug(bool show)
+entt::entity GameScene::createActor(const std::string& name, const Vec2& pos, const Vec2& size)
 {
-    _showCollisionDebug = show;
-    _gamePlay.setDebugMode(show);
+    auto entid = _registry.create();
+    _registry.emplace<CompNameId>(entid, entid, name);
+    _registry.emplace<CompTransform>(entid, pos, size, Vec2{ 0.0f,0.0f }, Vec2{ 1.0f,1.0f });
+    _registry.emplace<CompDisplay>(entid);
+    _registry.emplace<CompState>(entid);
+    _registry.emplace<CompMotion>(entid);
+
+    _nameIdMap.insert({ name, entid });
+    return entid;
 }
 
-void GameScene::onMotionStart(bool start, float speed)
+entt::entity GameScene::getActor(const std::string& name)
 {
-    auto& tileSize = _tileMap.tileSize();
-    Vec2 srcPos = {5*tileSize.x, 5*tileSize.y};
-    Vec2 destPos = {22*_tileMap.tileSize().x, 6*_tileMap.tileSize().y};
-
-    if(start)
+    auto it = _nameIdMap.find(name);
+    if (it != _nameIdMap.end())
     {
-        if(_actor == entt::null){
-            _actor = _gamePlay.createActor("actor1", srcPos, tileSize);
-        }
-
-        _gamePlay.setMotionSpeed(_actor, speed);
-        _gamePlay.motionStart(_actor, destPos);
+        return it->second;
     }
-    else
+
+    return entt::null;
+}
+
+ActorState GameScene::getActorState(entt::entity id)
+{
+    return _registry.get<CompState>(id).state;
+}
+
+void GameScene::destroyActor(entt::entity id)
+{
+    if (!_registry.valid(id))
     {
-        _gamePlay.motionStop(_actor);
-        _gamePlay.setActorPos(_actor, srcPos);
+        spdlog::warn("entity {} not exist.", (int32_t)id);
+        return;
+    }
+    _registry.destroy(id);
+}
+
+void GameScene::destroyActor(const std::string& name)
+{
+    auto id = getActor(name);
+    if (id != entt::null)
+    {
+        destroyActor(id);
     }
 }
 
-void GameScene::onMotionPause(bool pause)
+void GameScene::destroyAllActor()
 {
-    _gamePlay.motionPause(_actor, pause);
+    _registry.clear();
 }
 
-void GameScene::onMotionSpeedChanged(float speed)
-{
-    _gamePlay.setMotionSpeed(_actor, speed);
-}
 
 } 

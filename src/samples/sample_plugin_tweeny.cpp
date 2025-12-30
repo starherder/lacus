@@ -108,7 +108,7 @@ namespace samples {
     {
         if (!_tween.isFinished()) 
         {
-            auto delta = application()->fpsChecker().deltaTicks();
+            auto delta = application()->frameTicker().deltaTicks();
             //spdlog::info("delta = {}, time_point = {}, point = {}", 
             //    delta, _tween.currentTimePoint(), _tween.point());
 

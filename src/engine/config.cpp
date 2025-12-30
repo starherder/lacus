@@ -104,6 +104,8 @@ bool SystemConfig::load(const fs::path& filepath)
             spdlog::error("res path NOT set.");
             return false;
         }
+
+        debug_mode = json.value("debug", true);
     }
     catch(const std::exception& e)
     {

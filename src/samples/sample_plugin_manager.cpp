@@ -41,7 +41,7 @@ namespace samples {
 		window_flags |= ImGuiWindowFlags_NoMove;
     	ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
 
-		auto& fpsChecker = _application->fpsChecker();
+		auto& frameTicker = _application->frameTicker();
 
 		static bool open = true;
 		if (ImGui::Begin("Example: Simple overlay", &open, window_flags))
@@ -49,9 +49,9 @@ namespace samples {
 			ImGui::Text("render: ");
 			ImGui::Separator();
 			
-			ImGui::Text("fps: %d", 	 fpsChecker.fps());
-			ImGui::Text("avg_fps: %d", fpsChecker.avgFps());
-			ImGui::Text("fix_fps: %d", fpsChecker.fixedFps());
+			ImGui::Text("fps: %d", 	 frameTicker.fps());
+			ImGui::Text("avg_fps: %d", frameTicker.avgFps());
+			ImGui::Text("fix_fps: %d", frameTicker.fixedFps());
 
 			if (ImGui::BeginPopupContextWindow())
 			{

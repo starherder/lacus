@@ -4,7 +4,7 @@
 namespace engine {
 
 
-void FpsChecker::init(int fixed_fps)
+void FrameTicker::init(int fixed_fps)
 {
     if(fixed_fps > 0) {
         _fixedFps = fixed_fps;
@@ -16,7 +16,7 @@ void FpsChecker::init(int fixed_fps)
     _deltaTicks = 0;
 }
 
-bool FpsChecker::check()
+bool FrameTicker::check()
 {
     uint64_t current_ticks = SDL_GetTicks();
     if (current_ticks - _lastTicks < _frameTicks)

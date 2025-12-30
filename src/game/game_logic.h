@@ -11,6 +11,9 @@ class GameLogicPlugin: public engine::Plugin
 {
 public:
     GameLogicPlugin() = delete;
+    GameLogicPlugin(GameLogicPlugin&&) = delete;
+    GameLogicPlugin(const GameLogicPlugin&) = delete;
+
     GameLogicPlugin(engine::Application& app);
     ~GameLogicPlugin() = default;
         
@@ -27,6 +30,8 @@ public:
 
 private:
     std::unique_ptr<GameScene> _scene = nullptr;
+
+    GameContext _gameContext;
 
     engine::Application& _app;
 };

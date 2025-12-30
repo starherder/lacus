@@ -51,7 +51,7 @@ public:
 
     EventDispatcher& eventDispatcher() { return *_eventDispatcher; }
 
-    const FpsChecker& fpsChecker() { return _fps_checker; }
+    const FrameTicker& frameTicker() { return _frameTicker; }
 
     fs::path runPath();
     const fs::path& resPath();
@@ -88,7 +88,7 @@ private:
 
     SystemConfig _config;
 
-    FpsChecker _fps_checker;
+    FrameTicker _frameTicker;
     
     fs::path _resPath;
 

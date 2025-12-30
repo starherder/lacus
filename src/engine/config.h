@@ -47,6 +47,8 @@ public:
         fs::path path;
     }res;
 
+    bool debug_mode = false;
+
 public:    
     SystemConfig() = default;
     ~SystemConfig() = default;

@@ -20,7 +20,7 @@ private:
 };
 
 
-struct FpsChecker
+struct FrameTicker
 {
 public:
     void init(int fixed_fps);

@@ -426,7 +426,7 @@ namespace samples {
 
     void SamplePluginBevTree::onUpdate()
     {
-        _frameSeconds = application()->fpsChecker().deltaSeconds();
+        _frameSeconds = application()->frameTicker().deltaSeconds();
         g_frameSeconds = _frameSeconds;
 
         updateBattleRoyale();

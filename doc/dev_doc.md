@@ -49,13 +49,11 @@ mkdir build & cd build & cmake ..
 
     4. 逻辑层(ObjectLayer)，（刷怪点、触发区、标记...）：玩法逻辑
 
-
-
-- 行为树增加xml/json配置
-- sigslot槽函数增加返回值，用于判断消息是否继续传递（防止拖动界面时还能拖动场景）
+- ~~行为树增加xml/json配置~~
+- ~~简易2d粒子系统~~
+- ~~消息在场景和界面、imgui之间的传递~~
 - 场景增加context，gameplay中每个system独立成类，system中没有数据，通用的数据在context中保存
 - 简易技能系统，表现+伤害，表现层引入tweeny，伤害公式计算使用lua配置
-
 
 ## 日志
 
@@ -78,12 +76,12 @@ mkdir build & cd build & cmake ..
 - 需要进一步测试
 - 各个模块的初始化时机需要修改确定
 
-### 12.12
+### 12.12 entt及摄像机
 
 - 测试entt
 - 增加摄像机
 
-### 12.15
+### 12.15 插件管理器
 
 - 整理代码
 - 增加插件管理器和界面
@@ -132,6 +130,16 @@ mkdir build & cd build & cmake ..
 
 - 添加摄像机及摄像机的运动事件
 - braintree的测试例子 sample_plugin_bevtree
+
+### 12.26 行为树封装配置
+
+- 行为树读取xml
+- 增加行为树测试用例
+
+### 12.29 2D粒子系统
+
+- 引入ore项目的粒子系统
+- 引入ore项目的粒子编辑器
 
 ---
 

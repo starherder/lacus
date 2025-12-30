@@ -193,9 +193,6 @@
     <ClCompile Include="..\src\game\ui\imform_debug.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\play\game_play.cpp">
-      <Filter>game\play</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\game\scene\game_camera.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
@@ -234,6 +231,15 @@
     </ClCompile>
     <ClCompile Include="..\src\particle\particle_memory.cpp">
       <Filter>particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\play\game_context.cpp">
+      <Filter>game\play</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\play\system_motion.cpp">
+      <Filter>game\play</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\play\system_render.cpp">
+      <Filter>game\play</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -414,12 +420,6 @@
     <ClInclude Include="..\src\game\ui\imform_debug.h">
       <Filter>game\ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\play\components.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\game_play.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ui\ui.h">
       <Filter>gui</Filter>
     </ClInclude>
@@ -470,6 +470,21 @@
     </ClInclude>
     <ClInclude Include="..\src\particle\particle_memory.h">
       <Filter>particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\game_context.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\comp_common.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\system_motion.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\system_render.h">
+      <Filter>game\play</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\ecs_system.h">
+      <Filter>game\play</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

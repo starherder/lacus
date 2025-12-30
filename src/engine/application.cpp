@@ -106,7 +106,7 @@ bool Application::init(std::string_view configFile, std::string_view logFile)
         return false;
     }
 
-    _fps_checker.init(_config.window.fps);
+    _frameTicker.init(_config.window.fps);
 
     spdlog::info("---------------- engine init OK ----------------");
     return true;
@@ -239,7 +239,7 @@ void Application::input()
 
 bool Application::preFrame() 
 {
-    if (!_fps_checker.check()) 
+    if (!_frameTicker.check())
     {
         return false;
     }

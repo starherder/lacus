@@ -22,7 +22,7 @@ public:
     auto& fontManager() { return _app->resourceManager().fontManager(); }
     auto& textureManager() { return _app->resourceManager().textureManager(); }
     auto& eventDispatcher() { return _app->eventDispatcher(); }
-    auto& fpsChecker() { return _app->fpsChecker(); }
+    auto& frameTicker() { return _app->frameTicker(); }
         
     template<typename FormType, typename... Args>
     FormType* showForm(const std::string& name, const Args&... args);

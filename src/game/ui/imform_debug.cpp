@@ -16,12 +16,12 @@ void ImFormDebug::draw()
 {
     ImGui::Begin("debug");
     {
-        static bool showCollision = false;
-        if(ImGui::Checkbox("show grid", &showCollision))
+        static bool show_debug = false;
+        if(ImGui::Checkbox("show debug", &show_debug))
         {
-            on_show_collision_debug.emit(showCollision);
+            on_show_debug.emit(show_debug);
         }
-
+        /*
         static float motionSpeed = 10.0f;
         if(ImGui::SliderFloat("motion speed", &motionSpeed, 10.0f, 1000.0f)) {
             on_motion_speed_changed.emit(motionSpeed);
@@ -64,7 +64,7 @@ void ImFormDebug::draw()
                 }
             }
         }
-
+        */
     }
     ImGui::End();
 }

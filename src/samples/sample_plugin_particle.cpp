@@ -353,7 +353,7 @@ namespace samples
     {
         if (_particle) 
         {
-            _particle->Update(application()->fpsChecker().deltaSeconds());
+            _particle->Update(application()->frameTicker().deltaSeconds());
         }
     }
 

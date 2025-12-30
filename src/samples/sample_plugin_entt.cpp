@@ -110,7 +110,7 @@ void SamplePluginEntt::onUpdate()
 {
     if(_camera)
     {
-        _camera->update(application()->fpsChecker().deltaSeconds());
+        _camera->update(application()->frameTicker().deltaSeconds());
     }
 }
 

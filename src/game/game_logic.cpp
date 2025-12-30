@@ -9,10 +9,9 @@ namespace game {
 
 
 GameLogicPlugin::GameLogicPlugin(engine::Application& app) 
-    : _app(app)
+    : _app(app), _gameContext(app)
 {
-    _scene = std::make_unique<GameScene>(app);
-
+    _scene = std::make_unique<GameScene>(_gameContext);
 }
 
 void GameLogicPlugin::onInit() 
@@ -27,7 +26,7 @@ void GameLogicPlugin::onInit()
 
 void GameLogicPlugin::onUpdate()
 {
-    auto delta = _app.fpsChecker().deltaSeconds();
+    auto delta = _app.frameTicker().deltaSeconds();
     _scene->onUpdate(delta);
 
     ui::GuiManager::inst().update(delta);

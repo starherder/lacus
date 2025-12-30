@@ -11,11 +11,12 @@ namespace game
     class ImFormDebug : public imgui::ImForm
     {
     public:
-        signals::Signal<bool> on_show_collision_debug;
-        signals::Signal<float> on_motion_speed_changed;
+        signals::Signal<bool> on_show_debug;
 
-        signals::Signal<bool> on_motion_pause;
-        signals::Signal<bool, float> on_motion_start;
+
+        //signals::Signal<float> on_motion_speed_changed;
+        //signals::Signal<bool> on_motion_pause;
+        //signals::Signal<bool, float> on_motion_start;
 
     public:
         ImFormDebug();

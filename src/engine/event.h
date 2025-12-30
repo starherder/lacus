@@ -41,6 +41,11 @@ public:
 	bool isShiftKeyDown();
 
 	bool isCtrlKeyDown();
+
+	auto& logicDispatcher() { return _logicDispatcher;  }
+
+private:
+	entt::dispatcher _logicDispatcher;
 };
 
 }

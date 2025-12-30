@@ -5,7 +5,7 @@ namespace engine {
 
 void Scene::update()
 {
-    onUpdate(_app.fpsChecker().deltaSeconds());
+    onUpdate(_app.frameTicker().deltaSeconds());
 }
 
 void Scene::draw()

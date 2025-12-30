@@ -1,9 +1,11 @@
 #pragma once
 #include "engine/scene.h"
-#include "a_star/a_star.hpp"
-
 #include "tilemap/tile_map.h"
-#include "game/play/game_play.h"
+
+#include "game/play/comp_common.h"
+#include "game/play/game_context.h"
+#include "game/play/ecs_system.h"
+
 #include "game_camera.h"
 
 
@@ -19,8 +21,15 @@ namespace game {
         GameScene(GameScene&&) = delete;
         GameScene& operator=(const GameScene&) = delete;
         
-        GameScene(engine::Application& app);
+        GameScene(GameContext& context);
         ~GameScene();
+
+        Vec2 mapSize();
+        Vec2 tileSize();
+
+        Vec2i getGridFromPos(const Vec2& pos);
+        Vec2 getGridLeftTopPos(const Vec2i& grid);
+        Vec2 getGridCenterPos(const Vec2i& grid);
 
         bool load(const engine::fs::path& mapPath) override;
         bool unload() override;
@@ -31,33 +40,43 @@ namespace game {
         void onStart() override;
         void onStop() override;
 
+        GameCamera& camera() { return _camera; }
+        entt::registry& registry() { return _registry;  }
+
+        entt::entity createActor(const std::string& name, const Vec2& pos, const Vec2& size = { 64, 64 });
+        entt::entity getActor(const std::string& name);
+
+        ActorState getActorState(entt::entity id);
+
+        void destroyActor(entt::entity id);
+        void destroyActor(const std::string& name);
+        void destroyAllActor();
+
     private:
         void showAllGui();
         void closeAllGui();
 
+        void initEscSystem();
+
         void initPathFind();
         void drawDebugView();
 
-        void onMotionStart(bool start, float speed);
-        void onMotionPause(bool pause);
-
-        void onShowCollisionDebug(bool show);
-        void onMotionSpeedChanged(float speed);
+        void onShowDebugInfo(bool show);
 
     private:
         tilemap::TileMap _tileMap;
 
-        AStar::Generator _generator;
+        GameContext& _context;
 
-        GamePlay _gamePlay;
+        entt::registry _registry;
 
         GameCamera _camera;
 
-        // test
-        entt::entity _actor = entt::null;
+        std::unordered_map<std::string, entt::entity> _nameIdMap;
+
+        std::multimap<EcsPriority, std::shared_ptr<EcsSystem>> _ecsSystems;
 
         // debug
-        bool _showCollisionDebug = false;
         std::vector<Rect> _collisionDebugRects;
     };
 

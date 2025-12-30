@@ -164,7 +164,9 @@
     <ClCompile Include="..\src\engine\text_render.cpp" />
     <ClCompile Include="..\src\engine\window.cpp" />
     <ClCompile Include="..\src\game\game_logic.cpp" />
-    <ClCompile Include="..\src\game\play\game_play.cpp" />
+    <ClCompile Include="..\src\game\play\game_context.cpp" />
+    <ClCompile Include="..\src\game\play\system_motion.cpp" />
+    <ClCompile Include="..\src\game\play\system_render.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
     <ClCompile Include="..\src\game\ui\form_main.cpp" />
@@ -230,8 +232,11 @@
     <ClInclude Include="..\src\engine\window.h" />
     <ClInclude Include="..\src\engine\wrapper.h" />
     <ClInclude Include="..\src\game\game_logic.h" />
-    <ClInclude Include="..\src\game\play\components.h" />
-    <ClInclude Include="..\src\game\play\game_play.h" />
+    <ClInclude Include="..\src\game\play\comp_common.h" />
+    <ClInclude Include="..\src\game\play\ecs_system.h" />
+    <ClInclude Include="..\src\game\play\game_context.h" />
+    <ClInclude Include="..\src\game\play\system_motion.h" />
+    <ClInclude Include="..\src\game\play\system_render.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />
     <ClInclude Include="..\src\game\ui\form_main.h" />
