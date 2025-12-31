@@ -2,9 +2,11 @@
 #include "engine/scene.h"
 #include "tilemap/tile_map.h"
 
-#include "game/play/comp_common.h"
-#include "game/play/game_context.h"
-#include "game/play/ecs_system.h"
+#include "game/scene/game_context.h"
+
+#include "game/ecs/comm_comp.h"
+#include "game/ecs/comm_system.h"
+#include "game/ecs/comm_event.h"
 
 #include "game_camera.h"
 

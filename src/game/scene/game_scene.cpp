@@ -3,8 +3,9 @@
 #include "../ui/form_main.h"
 #include "../ui/imform_debug.h"
 
-#include "game/play/system_motion.h"
-#include "game/play/system_render.h"
+#include "game/ecs/system_motion.h"
+#include "game/ecs/system_render.h"
+#include "game/ecs/system_bevtree.h"
 
 namespace game {
 
@@ -26,6 +27,7 @@ void GameScene::initEscSystem()
 {
     _ecsSystems.insert({ EcsPriority::MotionSystem, std::make_shared<MotionSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::RenderSystem, std::make_shared<RenderSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::BevTreeSystem, std::make_shared<BevTreeSystem>(_context) });
 }
 
 Vec2 GameScene::mapSize()
@@ -222,9 +224,26 @@ bool GameScene::createObject(const MapObject& obj)
     //ObjectFactor::inst().createActor(obj);
 
     auto ent = createActor(obj.name, obj.pos);
+    if(obj.type == "patrol_npc")
+    {
+        CompNpcPatrol info = {
+            .origin_pos = obj.pos,
+            .patrol_radius = 200,
+            .patrol_speed = 100
+        };
+        _registry.emplace<CompNpcPatrol>(ent, info);
+    }
+
     auto [found, bevtree] = _tileMap.getObjectProperty<std::string>(obj.id, "bevtree");
-    if ( found && !bevtree.empty()) {
-        _registry.emplace<CompBevtree>(ent, { bevtree, nullptr });
+    if ( found && !bevtree.empty()) 
+    {
+        auto bev_tree = _context.bevtreeMgr().createBevTree(bevtree);
+        if(bev_tree) 
+        {
+            bev_tree->getBlackboard()->set("context", &_context);
+            bev_tree->getBlackboard()->set("actor", ent);
+        }
+        _registry.emplace<CompBevtree>(ent, bev_tree );
     }
 
     return true;

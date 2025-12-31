@@ -160,7 +160,7 @@ namespace utility
 			{
 				return {false, T()};
 			}
-			return {true, (T)it->second};
+			return {true, it->second.convert<T>()};
 		}
 
 		Var getVar(const K& key) const

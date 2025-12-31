@@ -53,7 +53,7 @@ namespace game
 
     void GameCamera::onKeyUp(KeyCode keyCode)
     {
-        spdlog::info("GameCamera::onKeyDown, onKeyUp = {}", (int)keyCode);
+        //spdlog::info("GameCamera::onKeyDown, onKeyUp = {}", (int)keyCode);
 
         switch (keyCode)
         {
@@ -74,8 +74,8 @@ namespace game
     {
         if(!checkInputOK()) return;
 
-        spdlog::info("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 
-            pos.x, pos.y, delta.x, delta.y);
+        //spdlog::info("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 
+        //    pos.x, pos.y, delta.x, delta.y);
 
         move(-delta);
     }
@@ -84,8 +84,8 @@ namespace game
     {
         if(!checkInputOK()) return;
 
-        spdlog::info("GameCamera::onMouseWheel, pos = ({}, {}), dir = {}", 
-            pos.x, pos.y, dir);
+        //spdlog::info("GameCamera::onMouseWheel, pos = ({}, {}), dir = {}", 
+        //    pos.x, pos.y, dir);
     }
 
     void GameCamera::update(float deltaTime)
@@ -110,8 +110,8 @@ namespace game
         }
 
         auto& pos = getPos();
-        spdlog::info("move camera ({}, {}), pos = ({}, {}), vec = ({}, {})", 
-            dir.x, dir.y, pos.x, pos.y, _vec.x, _vec.y);
+        //spdlog::info("move camera ({}, {}), pos = ({}, {}), vec = ({}, {})", 
+        //    dir.x, dir.y, pos.x, pos.y, _vec.x, _vec.y);
     }
 
     void GameCamera::stopCamera()

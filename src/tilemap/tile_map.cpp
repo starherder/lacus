@@ -200,7 +200,7 @@ bool TileMap::load_layers(const json& json)
         auto id = layer_json.value("id", 0);
         auto type = layer_json.value("type", "");
 
-        spdlog::info("load layer: {}, type: {}", id, type);
+        //spdlog::info("load layer: {}, type: {}", id, type);
 
         std::shared_ptr<MapLayer> layer = nullptr;
 

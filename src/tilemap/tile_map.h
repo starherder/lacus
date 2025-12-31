@@ -105,13 +105,13 @@ namespace tilemap {
     template<typename T>
     std::pair<bool, T> TileMap::getObjectProperty(int objectId, const std::string& name)
     {
-        return getObjectProperty((int)LayerId::Object, objectId, name);
+        return getObjectProperty<T>((int)LayerId::Object, objectId, name);
     }
 
     template<typename T>
     std::pair<bool, T> TileMap::getTileProperty(int x, int y, const std::string& name)
     {
-        return getTileProperty((int)LayerId::TileMap, x, y, name);
+        return getTileProperty<T>((int)LayerId::TileMap, x, y, name);
     }
 
     template<typename T>
@@ -168,16 +168,16 @@ namespace tilemap {
 
         // get prop in object
         auto& object = it->second;
-        auto it = object.properties.find(name);
-        if(it == object.properties.end()) {
+        auto iter = object.properties.find(name);
+        if(iter == object.properties.end()) {
             if(object.gid > 0) {
                 // get prop in tileset
-                return getTileProperty(object.gid, name);
+                return getTileProperty<T>(object.gid, name);
             }
 
             return {false, T{}};
         }
 
-        return {true, (T)it->second};
+        return {true, iter->second.convert<T>()};
     }
 }

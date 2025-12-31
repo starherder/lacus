@@ -92,7 +92,7 @@
                          "value":"npc_patrol"
                         }],
                  "rotation":0,
-                 "type":"npc",
+                 "type":"patrol_npc",
                  "visible":true,
                  "width":0,
                  "x":220,
@@ -110,7 +110,7 @@
                          "value":"npc_patrol"
                         }],
                  "rotation":0,
-                 "type":"npc",
+                 "type":"patrol_npc",
                  "visible":true,
                  "width":0,
                  "x":804,
@@ -128,7 +128,7 @@
                          "value":"npc_patrol"
                         }],
                  "rotation":0,
-                 "type":"npc",
+                 "type":"patrol_npc",
                  "visible":true,
                  "width":0,
                  "x":668,
@@ -146,7 +146,7 @@
                          "value":"npc_patrol"
                         }],
                  "rotation":0,
-                 "type":"npc",
+                 "type":"patrol_npc",
                  "visible":true,
                  "width":0,
                  "x":354.545454545455,

@@ -19,6 +19,9 @@ void GameLogicPlugin::onInit()
 {
     ui::GuiManager::inst().init(&_app);
 
+    auto filepath = application()->resPath() / "npc/bevtree/bev_common_npc.xml";
+    bevtree::BevTreeManager::inst().load(filepath);
+
     _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
 
     //ui::GuiManager::inst().showForm<ui::FormDemo>("form_demo");

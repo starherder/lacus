@@ -34,9 +34,6 @@
     <Filter Include="gui">
       <UniqueIdentifier>{b3a293d9-5944-4f62-9e4c-964650f911b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="game\play">
-      <UniqueIdentifier>{da3ec872-21bd-44cb-9665-5a53dcd959f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="game\ui">
       <UniqueIdentifier>{39b09be4-d9d3-47e6-9f9e-4fc2ac3b54f6}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,9 @@
     </Filter>
     <Filter Include="game\behavior">
       <UniqueIdentifier>{b43055a8-bb5f-4cf4-8da9-4fd5d51806c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game\ecs">
+      <UniqueIdentifier>{da3ec872-21bd-44cb-9665-5a53dcd959f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -235,20 +235,20 @@
     <ClCompile Include="..\src\particle\particle_memory.cpp">
       <Filter>particle</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\play\game_context.cpp">
-      <Filter>game\play</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\play\system_motion.cpp">
-      <Filter>game\play</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\play\system_render.cpp">
-      <Filter>game\play</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\play\system_bevtree.cpp">
-      <Filter>game\play</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\game\behavior\bev_npc.cpp">
       <Filter>game\behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\scene\game_context.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_bevtree.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_motion.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_render.cpp">
+      <Filter>game\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -480,26 +480,38 @@
     <ClInclude Include="..\src\particle\particle_memory.h">
       <Filter>particle</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\play\game_context.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\comp_common.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\system_motion.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\system_render.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\ecs_system.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\system_bevtree.h">
-      <Filter>game\play</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\game\behavior\bev_npc.h">
       <Filter>game\behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\comm_comp.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\comm_event.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\play\comm_system.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\game_context.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\comm_comp.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\comm_event.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\comm_system.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_bevtree.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_motion.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_render.h">
+      <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

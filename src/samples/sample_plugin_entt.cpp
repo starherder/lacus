@@ -80,18 +80,16 @@ struct TestDataMgr {
 
 void SamplePluginEntt::onInstall()  
 {
-    TestDataMgr mgr;
-    mgr.add("kitty", "i am a cat");
-    mgr.add("bark"_hs, "i am a dog");
-    mgr.add("pony"_hs, "i am a horse");
+    //TestDataMgr mgr;
+    //mgr.add("kitty", "i am a cat");
+    //mgr.add("bark"_hs, "i am a dog");
+    //mgr.add("pony"_hs, "i am a horse");
+    //
+    //spdlog::info("kitty = {}", mgr.get("kitty"));
+    //spdlog::info("bark = {}", mgr.get("bark"_hs));
+    //spdlog::info("pony = {}", mgr.get("pony"_hs));
 
-    spdlog::info("kitty = {}", mgr.get("kitty"));
-
-    spdlog::info("bark = {}", mgr.get("bark"_hs));
-
-    spdlog::info("pony = {}", mgr.get("pony"_hs));
-
-    mgr.output();
+    //mgr.output();
 }
 
 void SamplePluginEntt::onUninstall()  
