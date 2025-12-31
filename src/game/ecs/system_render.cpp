@@ -72,6 +72,9 @@ void RenderSystem::drawMotionDebug()
                 renderer.drawRect(rect);
                 lstPos = grid_pos;
             }
+
+            auto targetPos = camera.projectPoint(motion.targetPos);
+            renderer.drawLine(lstPos, targetPos);
         }
     }
 }

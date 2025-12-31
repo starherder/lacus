@@ -14,13 +14,15 @@ namespace game
 
 	void MotionSystem::update(float deltaTime)
 	{
+        deltaTime = std::clamp(deltaTime, 0.0f, 1.0f);
+
         auto ent_view = _context.registry().view<CompTransform, CompMotion, CompState>();
         for (auto& ent : ent_view)
         {
             auto& transform = ent_view.get<CompTransform>(ent);
             auto& motion = ent_view.get<CompMotion>(ent);
             auto& state = ent_view.get<CompState>(ent);
-            auto& pos = transform.position;
+            const auto& pos = transform.position;
 
             if (state.state == ActorState::Move)
             {
@@ -31,35 +33,39 @@ namespace game
 
                 if (motion.path.empty())
                 {
+                    motion.velocity = glm::normalize(motion.targetPos - pos);
+
                     if (glm::distance(motion.targetPos, pos) <= motion.speed * deltaTime)
                     {
                         spdlog::info("{} motion finish: at ({}, {})", (int32_t)ent, motion.targetPos.x, motion.targetPos.y);
 
+                        transform.position = motion.targetPos;
+
                         motionStop(ent);
-                        setActorPos(ent, motion.targetPos);
                     }
-                    continue;
-                }
-
-                const auto& cur_grid = _context.currentScene().getGridFromPos(pos);
-                const auto& next_grid = motion.path.back();
-
-                if (next_grid != cur_grid)
-                {
-                    motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(next_grid) - pos) * motion.speed;
                 }
                 else
                 {
-                    if (reachGridCenter(pos, next_grid, motion.speed * deltaTime))
-                    {
-                        spdlog::info("{} motion: reach ({}, {}), go next step ({}, {})",
-                            (int32_t)ent, cur_grid.x, cur_grid.y, next_grid.x, next_grid.y);
+                    const auto& cur_grid = _context.currentScene().getGridFromPos(pos);
+                    const auto& next_grid = motion.path.back();
 
-                        motion.path.pop_back();
+                    if (next_grid != cur_grid)
+                    {
+                        motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(next_grid) - pos);
+                    }
+                    else
+                    {
+                        if (reachGridCenter(pos, next_grid, motion.speed * deltaTime))
+                        {
+                            spdlog::info("{} motion: reach ({}, {}), go next step ({}, {})",
+                                (int32_t)ent, cur_grid.x, cur_grid.y, next_grid.x, next_grid.y);
+
+                            motion.path.pop_back();
+                        }
                     }
                 }
 
-                transform.position += motion.velocity * deltaTime;
+                transform.position += motion.velocity * motion.speed * deltaTime;
             }
         }
 	}
@@ -112,49 +118,56 @@ namespace game
         auto grid_pos = _context.currentScene().getGridCenterPos(grid);
 
         float dis = glm::distance(pos, grid_pos);
-        spdlog::info("dis: {}, epsilon: {}", dis, epsilon);
+        //spdlog::info("dis: {}, epsilon: {}", dis, epsilon);
 
         return dis < epsilon;
     }
 
-    bool MotionSystem::motionStart(entt::entity id, const Vec2& dst)
+    bool MotionSystem::motionStart(entt::entity id, const Vec2& dst, bool findPath)
     {
-        if (!motionStop(id))
-        {
-            return false;
-        }
-
         auto& transform = _context.registry().get<CompTransform>(id);
         auto& motion = _context.registry().get<CompMotion>(id);
-        auto& src = transform.position;
+        const auto& src = transform.position;
 
         // from world pos to grid
         Vec2i srcGrid = _context.currentScene().getGridFromPos(src);
         Vec2i dstGrid = _context.currentScene().getGridFromPos(dst);
 
-        spdlog::info("{} motion start: ({}, {}) -> ({}, {})", (int32_t)id, srcGrid.x, srcGrid.y, dstGrid.x, dstGrid.y);
+        spdlog::info("{} motion start: ({}, {})[{},{}] -> ({}, {})[{},{}]",
+            (int32_t)id, src.x, src.y, srcGrid.x, srcGrid.y, dst.x, dst.y, dstGrid.x, dstGrid.y);
 
-        // path find
-        auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
-        if (path.empty())
+        if (findPath)
         {
-            spdlog::info("path find failed.");
-            return false;
-        }
+            // path find
+            auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
+            if (path.empty())
+            {
+                spdlog::info("path find failed.");
+                motionStop(id);
+                return false;
+            }
 
-        // add path
-        motion.path.clear();
-        for (auto& grid : path)
-        {
-            motion.path.push_back(grid);
+            std::string pathlist;
+
+            // add path
+            motion.path.clear();
+            for (auto& grid : path)
+            {
+                pathlist += fmt::format("[{},{}]", grid.x, grid.y);
+
+                motion.path.push_back(grid);
+            }
+
+            spdlog::info("pathlist = {}", pathlist);
         }
 
         // set state
         auto& state = _context.registry().get<CompState>(id);
         state.state = ActorState::Move;
 
-        motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(motion.path.back()) - src) * motion.speed;
+        motion.targetPos = dst;
         motion.running = true;
+        motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(motion.path.back()) - src);
         return true;
     }
 
@@ -196,7 +209,9 @@ namespace game
 
     void MotionSystem::onEventMoveToPos(const MoveToPos& e)
     {
-        motionStart(e.actor, e.dest);
+        spdlog::info("MotionSystem::onEventMoveToPos  e.actor = {}, e.dest = ({},{})", (int)e.actor, e.dest.x, e.dest.y);
+
+        motionStart(e.actor, e.dest, e.findPath);
     }
 
 

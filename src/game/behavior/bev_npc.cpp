@@ -30,6 +30,8 @@ namespace game {
 		}
 
 		auto& motion = _context->registry().get<CompMotion>(_actor);
+		auto& trans = _context->registry().get<CompTransform>(_actor);
+		const auto& src = trans.position;
 	
 		auto pPatrolCom = _context->registry().try_get<CompNpcPatrol>(_actor);
 		if(pPatrolCom)
@@ -38,23 +40,27 @@ namespace game {
 				float angle = utility::random(-3.14f, 3.14f);
 				float dist = utility::random(pPatrolCom->patrol_radius/2.0f, pPatrolCom->patrol_radius);
 
-				Vec2 offset = Vec2{sin(angle), cos(angle) * dist };
-				Vec2 dest_pos = pPatrolCom->origin_pos + offset;
+				Vec2 offset = Vec2{sin(angle), cos(angle)} * dist;
+				Vec2 dest = pPatrolCom->origin_pos + offset;
 
-				auto& trans = _context->registry().get<CompTransform>(_actor);
-				auto path = _context->pathFinder().findPath(trans.position, dest_pos);
+				Vec2i srcGrid = _context->currentScene().getGridFromPos(src);
+				Vec2i dstGrid = _context->currentScene().getGridFromPos(dest);
+				auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
 				if(path.empty())
 				{
-					spdlog::warn("find patrol pos ({}, {}) unreachable, find again.", dest_pos.x, dest_pos.y);
+					spdlog::warn("find patrol pos ({}, {}) unreachable, find again.", dest.x, dest.y);
 					continue;
 				}
 
 				motion.path.clear(); 
-				motion.path.insert(motion.path.end(), path.begin(), path.end());
+				for (auto& grid : path) {
+					motion.path.push_back(grid);
+				}
+				motion.targetPos = dest;
 
-				getBlackboard()->set("patrol_dest", dest_pos);
+				getBlackboard()->set("patrol_dest", dest);
 
-				spdlog::info("BevNode_FindPatrolPos: path find OK! bev_node success!");
+				spdlog::info("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
 				return Status::Success;
 			}
 		}
@@ -112,7 +118,7 @@ namespace game {
 		_finished = false;
 
 		auto dest = getBlackboard()->getValue("patrol_dest", Vec2{ 0,0 });
-		_context->dispatcher().trigger(MoveToPos{ _actor, dest });
+		_context->dispatcher().trigger(MoveToPos{ _actor, dest, false });
 		_context->dispatcher().sink<MotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
 
 		spdlog::info("BevNode_PatrolMove: initialize");
@@ -142,7 +148,7 @@ namespace game {
 		if(attr) 
 		{
 			_idleTotalSeconds = std::stof(std::string(attr->value(), attr->value_size()));
-			spdlog::info("BevNode_Idle::load time = %f", _idleTotalSeconds);
+			spdlog::info("BevNode_Idle::load time = {}", _idleTotalSeconds);
 		}
 		return true;
 	}

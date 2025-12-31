@@ -239,6 +239,12 @@ namespace samples {
         }
 
         auto result_path = generator.findPath(_source, _target);
+        
+        std::string gridlist;
+        for (auto& grid : result_path) {
+            gridlist += fmt::format("[{},{}]", grid.x, grid.y);
+        }
+        spdlog::info("grid_list = {}", gridlist);
 
         _path.clear();
         _path.reserve(result_path.size());

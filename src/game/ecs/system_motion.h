@@ -28,7 +28,7 @@ namespace game {
 
         bool reachGridCenter(const Vec2& pos, const Vec2i& grid, float epsilon);
 
-        bool motionStart(entt::entity id, const Vec2& dst);
+        bool motionStart(entt::entity id, const Vec2& dst, bool findPath=true);
 
         bool motionStop(entt::entity id);
 
@@ -36,6 +36,7 @@ namespace game {
 
     private:
         void onEventMoveToPos(const MoveToPos& e);
+
 
 	};
 

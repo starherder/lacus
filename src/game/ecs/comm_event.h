@@ -9,6 +9,7 @@ namespace game {
 	struct MoveToPos {
 		entt::entity actor;
 		Vec2 dest;
+		bool findPath = false;
 	};
 
 	struct MotionStop {
