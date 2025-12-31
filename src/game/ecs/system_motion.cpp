@@ -140,7 +140,7 @@ namespace game
         {
             // path find
             auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
-            if (path.empty())
+            if (path)
             {
                 spdlog::info("path find failed.");
                 motionStop(id);
@@ -151,7 +151,7 @@ namespace game
 
             // add path
             motion.path.clear();
-            for (auto& grid : path)
+            for (auto& grid : path.value())
             {
                 pathlist += fmt::format("[{},{}]", grid.x, grid.y);
 

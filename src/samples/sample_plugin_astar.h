@@ -62,7 +62,9 @@ namespace samples {
     private:
         const Vec2i _sceneGrids = { 20, 20};
         const Vec2i _gridSize = { 40, 40};
-        const Vec2i _sceneOffset = {10, 400};
+        const Vec2i _sceneOffset = {10, 220};
+
+        std::string _tips;
 
         ImColor _bkColor = { 0.5f, 0.5f, 0.5f, 1.0f };
         ImColor _lnColor = { 1.0f, 1.0f, 1.0f, 1.0f };

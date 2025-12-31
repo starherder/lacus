@@ -9,6 +9,7 @@
 #include <set>
 #include <vector>
 #include <functional>
+#include <optional>
 
 #include "glm/glm.hpp"
 
@@ -86,12 +87,15 @@ namespace AStar
             heuristic = heuristic_;
         }
 
-        CoordinateList findPath(const Vec2i& source_, const Vec2i& target_) {
+        std::optional<CoordinateList> findPath(const Vec2i& source_, const Vec2i& target_) 
+        {
             Node* current = nullptr;
             NodeSet openSet, closedSet;
             openSet.reserve(100);
             closedSet.reserve(100);
             openSet.push_back(new Node(source_));
+
+            bool pathfound = false;
 
             while (!openSet.empty()) {
                 auto current_it = openSet.begin();
@@ -106,6 +110,7 @@ namespace AStar
                 }
 
                 if (current->coordinates == target_) {
+                    pathfound = true;
                     break;
                 }
 
@@ -133,6 +138,10 @@ namespace AStar
                         successor->G = totalCost;
                     }
                 }
+            }
+
+            if (!pathfound) {
+                return std::nullopt;
             }
 
             CoordinateList path;

@@ -46,14 +46,14 @@ namespace game {
 				Vec2i srcGrid = _context->currentScene().getGridFromPos(src);
 				Vec2i dstGrid = _context->currentScene().getGridFromPos(dest);
 				auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
-				if(path.empty())
+				if(!path)
 				{
 					spdlog::warn("find patrol pos ({}, {}) unreachable, find again.", dest.x, dest.y);
 					continue;
 				}
 
 				motion.path.clear(); 
-				for (auto& grid : path) {
+				for (auto& grid : path.value()) {
 					motion.path.push_back(grid);
 				}
 				motion.targetPos = dest;

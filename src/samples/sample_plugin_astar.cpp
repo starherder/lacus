@@ -25,7 +25,7 @@ namespace samples {
     {
         // 操作模式选择
         ImGui::Text("operator:");
-        ImGui::Separator();
+        ImGui::SameLine(0, 20);
         if (ImGui::RadioButton("source", _state == State::SetSource)) {
             _state = State::SetSource;
         }
@@ -43,9 +43,9 @@ namespace samples {
         }
 
         // 启发算法选择
-        ImGui::Dummy({10, 20});
+        ImGui::Dummy({10, 10});
         ImGui::Text("heuristic:");
-        ImGui::Separator();
+        ImGui::SameLine(0, 20);
         if (ImGui::RadioButton("Euclidean", _heuristic == Heuristic::Euclidean)) {
             _heuristic = Heuristic::Euclidean;
         }
@@ -58,26 +58,26 @@ namespace samples {
             _heuristic = Heuristic::Manhattan;
         }
 
-
         // 属性配置
-        ImGui::Dummy({ 10, 20 });
+        ImGui::Dummy({ 10, 10 });
         ImGui::Text("option:");
-        ImGui::Separator();
+        ImGui::SameLine(0, 20);
         ImGui::Checkbox("diagnal", &_diagonal);
 
-
         // 开始寻路
-        ImGui::Dummy({ 10, 20 });
+        ImGui::Dummy({ 10, 10 });
         ImGui::Text("find:");
-        ImGui::Separator();
-        if (ImGui::Button("reset")) {
+        ImGui::SameLine(0, 20);
+        if (ImGui::Button("reset", { 100, 30 })) {
             resetAll();
         }
         ImGui::SameLine(0, 20);
-        if (ImGui::Button("find", { 100, 0 })) {
+        if (ImGui::Button("find", { 100, 30 })) {
 
             findPath();
         }
+        ImGui::SameLine(0, 20);
+        ImGui::TextColored({ 255,0,0,255 }, _tips.c_str());
     }
 
     void ImPathFindForm::drawScene()
@@ -210,12 +210,15 @@ namespace samples {
 
         _path.clear();
         _blocks.clear();
+
+        _tips.clear();
     }
 
     void ImPathFindForm::findPath()
     {
         _path.clear();
         _state = State::Normal;
+        _tips.clear();
 
         spdlog::info("start find pos: src = ({}, {}),  dst = ({}, {})", 
             _source.x, _source.y, _target.x, _target.y);
@@ -238,17 +241,25 @@ namespace samples {
             generator.setHeuristic(AStar::Heuristic::euclidean);
         }
 
-        auto result_path = generator.findPath(_source, _target);
-        
+        auto result = generator.findPath(_source, _target);
+        if (!result)
+        {
+            _tips = "find path failed.";
+            spdlog::error("findpath faild. ({},{}) -> ({},{})", _source.x, _source.y, _target.x, _target.y);
+            return;
+        }
+
         std::string gridlist;
-        for (auto& grid : result_path) {
+        auto& pathgrids = result.value();
+        for (auto& grid : pathgrids) 
+        {
             gridlist += fmt::format("[{},{}]", grid.x, grid.y);
         }
         spdlog::info("grid_list = {}", gridlist);
 
         _path.clear();
-        _path.reserve(result_path.size());
-        _path.insert(_path.end(), result_path.begin(), result_path.end());
+        _path.reserve(pathgrids.size());
+        _path.insert(_path.end(), pathgrids.begin(), pathgrids.end());
     }
 
     ////////////////////////////////////////////////////////////////
