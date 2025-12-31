@@ -60,7 +60,7 @@ namespace game {
 
 				getBlackboard()->set("patrol_dest", dest);
 
-				spdlog::info("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
+				//spdlog::info("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
 				return Status::Success;
 			}
 		}
@@ -73,12 +73,12 @@ namespace game {
 		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 
-		spdlog::info("BevNode_FindPatrolPos: initialize");
+		//spdlog::info("BevNode_FindPatrolPos: initialize");
 	}
 
 	void BevNode_FindPatrolPos::terminate(Status s)
 	{
-		spdlog::info("BevNode_FindPatrolPos: terminate");
+		//spdlog::info("BevNode_FindPatrolPos: terminate");
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ namespace game {
 	{
 		if(_finished) 
 		{
-			spdlog::info("BevNode_PatrolMove: update success");
+			//spdlog::info("BevNode_PatrolMove: update success");
 			return Status::Success;
 		}
 
@@ -121,12 +121,12 @@ namespace game {
 		_context->dispatcher().trigger(MoveToPos{ _actor, dest, false });
 		_context->dispatcher().sink<MotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
 
-		spdlog::info("BevNode_PatrolMove: initialize");
+		//spdlog::info("BevNode_PatrolMove: initialize");
 	}
 	
 	void BevNode_PatrolMove::terminate(Status s) 
 	{
-		spdlog::info("BevNode_PatrolMove: terminate");
+		//spdlog::info("BevNode_PatrolMove: terminate");
 	}
 
 	void BevNode_PatrolMove::onMotionStop(const MotionStop& e)
@@ -136,7 +136,7 @@ namespace game {
 			return;
 		}
 
-		spdlog::info("BevNode_PatrolMove: onMotionStop");
+		//spdlog::info("BevNode_PatrolMove: onMotionStop");
 		_finished = true;
 	}
 
@@ -148,7 +148,7 @@ namespace game {
 		if(attr) 
 		{
 			_idleTotalSeconds = std::stof(std::string(attr->value(), attr->value_size()));
-			spdlog::info("BevNode_Idle::load time = {}", _idleTotalSeconds);
+			//spdlog::info("BevNode_Idle::load time = {}", _idleTotalSeconds);
 		}
 		return true;
 	}
@@ -163,7 +163,7 @@ namespace game {
 		_idleCurSeconds += _context->frameTicker().deltaSeconds();
 		if(_idleCurSeconds > _idleTotalSeconds) 
 		{
-			spdlog::info("BevNode_Idle: update success");
+			//spdlog::info("BevNode_Idle: update success");
 			return Status::Success;
 		}
 
@@ -175,12 +175,12 @@ namespace game {
 		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
 		_idleCurSeconds = 0.0f;
 
-		spdlog::info("BevNode_Idle: initialize");
+		//spdlog::info("BevNode_Idle: initialize");
 	}
 
 	void BevNode_Idle::terminate(Status s) 
 	{
-		spdlog::info("BevNode_Idle: terminate");
+		//spdlog::info("BevNode_Idle: terminate");
 	}
 
 }

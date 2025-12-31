@@ -12,6 +12,7 @@
 #include <optional>
 
 #include "glm/glm.hpp"
+#include "spdlog/spdlog.h"
 
 namespace AStar
 {
@@ -89,6 +90,14 @@ namespace AStar
 
         std::optional<CoordinateList> findPath(const Vec2i& source_, const Vec2i& target_) 
         {
+            auto tick_begin = clock();
+
+            if (detectCollision(source_) || detectCollision(target_)) {
+
+                spdlog::info("find path failed, time use : {}", clock() - tick_begin);
+                return std::nullopt;
+            }
+
             Node* current = nullptr;
             NodeSet openSet, closedSet;
             openSet.reserve(100);
@@ -141,6 +150,8 @@ namespace AStar
             }
 
             if (!pathfound) {
+
+                spdlog::info("find path failed, time use : {}", clock() - tick_begin);
                 return std::nullopt;
             }
 
@@ -153,6 +164,7 @@ namespace AStar
             releaseNodes(openSet);
             releaseNodes(closedSet);
 
+            spdlog::info("find path success, time use : {}", clock() - tick_begin);
             return path;
         }
 

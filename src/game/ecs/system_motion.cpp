@@ -37,10 +37,9 @@ namespace game
 
                     if (glm::distance(motion.targetPos, pos) <= motion.speed * deltaTime)
                     {
-                        spdlog::info("{} motion finish: at ({}, {})", (int32_t)ent, motion.targetPos.x, motion.targetPos.y);
+                        //spdlog::info("{} motion finish: at ({}, {})", (int32_t)ent, motion.targetPos.x, motion.targetPos.y);
 
                         transform.position = motion.targetPos;
-
                         motionStop(ent);
                     }
                 }
@@ -57,8 +56,8 @@ namespace game
                     {
                         if (reachGridCenter(pos, next_grid, motion.speed * deltaTime))
                         {
-                            spdlog::info("{} motion: reach ({}, {}), go next step ({}, {})",
-                                (int32_t)ent, cur_grid.x, cur_grid.y, next_grid.x, next_grid.y);
+                            //spdlog::info("{} motion: reach ({}, {}), go next step ({}, {})",
+                            //    (int32_t)ent, cur_grid.x, cur_grid.y, next_grid.x, next_grid.y);
 
                             motion.path.pop_back();
                         }
@@ -133,8 +132,8 @@ namespace game
         Vec2i srcGrid = _context.currentScene().getGridFromPos(src);
         Vec2i dstGrid = _context.currentScene().getGridFromPos(dst);
 
-        spdlog::info("{} motion start: ({}, {})[{},{}] -> ({}, {})[{},{}]",
-            (int32_t)id, src.x, src.y, srcGrid.x, srcGrid.y, dst.x, dst.y, dstGrid.x, dstGrid.y);
+        //spdlog::info("{} motion start: ({}, {})[{},{}] -> ({}, {})[{},{}]",
+        //    (int32_t)id, src.x, src.y, srcGrid.x, srcGrid.y, dst.x, dst.y, dstGrid.x, dstGrid.y);
 
         if (findPath)
         {
@@ -147,18 +146,15 @@ namespace game
                 return false;
             }
 
-            std::string pathlist;
-
+            //std::string pathlist;
             // add path
             motion.path.clear();
             for (auto& grid : path.value())
             {
-                pathlist += fmt::format("[{},{}]", grid.x, grid.y);
-
+                //pathlist += fmt::format("[{},{}]", grid.x, grid.y);
                 motion.path.push_back(grid);
             }
-
-            spdlog::info("pathlist = {}", pathlist);
+            //spdlog::info("pathlist = {}", pathlist);
         }
 
         // set state
@@ -179,7 +175,7 @@ namespace game
             return false;
         }
 
-        spdlog::info("motion stop: {} ");
+        //spdlog::info("motion stop: {} ");
 
         auto& motion = _context.registry().get<CompMotion>(id);
         motion.path.clear();
@@ -209,8 +205,7 @@ namespace game
 
     void MotionSystem::onEventMoveToPos(const MoveToPos& e)
     {
-        spdlog::info("MotionSystem::onEventMoveToPos  e.actor = {}, e.dest = ({},{})", (int)e.actor, e.dest.x, e.dest.y);
-
+        //spdlog::info("MotionSystem::onEventMoveToPos  e.actor = {}, e.dest = ({},{})", (int)e.actor, e.dest.x, e.dest.y);
         motionStart(e.actor, e.dest, e.findPath);
     }
 

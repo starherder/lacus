@@ -133,10 +133,6 @@ void GameScene::showAllGui()
     if(form_debug) 
     {
         form_debug->on_show_debug.connect(this, &GameScene::onShowDebugInfo);
-
-        //form_debug->on_motion_pause.connect(this, &GameScene::onMotionPause);
-        //form_debug->on_motion_start.connect(this, &GameScene::onMotionStart);
-        //form_debug->on_motion_speed_changed.connect(this, &GameScene::onMotionSpeedChanged);
     }
 }
 
@@ -156,7 +152,7 @@ void GameScene::initPathFind()
     auto& pathFinder = _context.pathFinder();
     pathFinder.setWorldSize(_tileMap.mapSize());
     pathFinder.setHeuristic(AStar::Heuristic::euclidean);
-    pathFinder.setDiagonalMovement(true);
+    pathFinder.setDiagonalMovement(false);
 
     for(auto& grid : _tileMap.collisionPoints()) 
     {
