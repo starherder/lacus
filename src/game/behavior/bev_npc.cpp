@@ -144,12 +144,7 @@ namespace game {
 
 	bool BevNode_Idle::load(const XmlNode* node) 
 	{
-		auto attr = node->first_attribute("time");
-		if(attr) 
-		{
-			_idleTotalSeconds = std::stof(std::string(attr->value(), attr->value_size()));
-			//spdlog::info("BevNode_Idle::load time = {}", _idleTotalSeconds);
-		}
+		_idleTotalSeconds = node->FloatAttribute("time");
 		return true;
 	}
 

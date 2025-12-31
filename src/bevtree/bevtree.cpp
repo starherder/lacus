@@ -32,39 +32,22 @@ namespace bevtree
 
     bool BevTreeManager::load(const std::filesystem::path& filepath)
     {
-        try 
+        using namespace tinyxml2;
+
+        _xmlDoc = std::make_unique<XMLDocument>();
+        XMLError error = _xmlDoc->LoadFile(filepath.string().c_str());
+        if (error != XML_SUCCESS)
         {
-            _xmlFile = std::make_unique<rapidxml::file<>>(filepath.string().c_str());
-            _xmlDoc = std::make_unique<rapidxml::xml_document<>>();
-            _xmlDoc->parse<0>(_xmlFile->data());
-  
-            auto root = _xmlDoc->first_node();
-            if(!root) 
-            {
-                spdlog::error("root node not found.");
-                return false;
-            }
-
-            auto bevnode = root->first_node();
-            while(bevnode) 
-            {
-                auto nameattr = bevnode->first_attribute("name");
-                if(!nameattr) 
-                {
-                    spdlog::error("root node name NOT found.");
-                    return false;
-                }
-
-                auto name = std::string(nameattr->value(), nameattr->value_size());
-                _xmlNodes[name] = bevnode;
-
-                bevnode = bevnode->next_sibling();
-            }
-        }
-        catch (std::exception& e) 
-        {
-            spdlog::error("load file ({}) failed. err = {}", filepath.string(), e.what());
             return false;
+        }
+
+        auto root = _xmlDoc->RootElement();
+        auto bevnode = root->FirstChildElement();
+        while (bevnode) {
+            auto name = bevnode->Attribute("name");
+            _xmlNodes[name] = bevnode;
+
+            bevnode = bevnode->NextSiblingElement();
         }
 
         return true;
@@ -116,15 +99,9 @@ namespace bevtree
     {
         assert(btnode);
 
-        auto nameattr = btnode->first_attribute("name");
-        if(!nameattr) {
-            spdlog::info("name not found.");
-            return false;
-        }
+        _name = btnode->Attribute("name");
 
-        _name = std::string(nameattr->value(), nameattr->value_size());
-
-        auto rootnode = btnode->first_node();
+        auto rootnode = btnode->FirstChildElement();
         if (!rootnode) {
             spdlog::error("bevtree must have a root node");
             return false; 
@@ -142,7 +119,8 @@ namespace bevtree
 
     BevNodePtr BehaviorTree::loadNode(const XmlNode* xmlnode, BevNodePtr parent)
     {
-        auto type = std::string(xmlnode->name(), xmlnode->name_size());
+        //auto type = std::string(xmlnode->name(), xmlnode->name_size());
+        auto type = xmlnode->Name();
 
         auto node = BevTreeManager::inst().createNode(type);
         if (!node) {
@@ -156,16 +134,16 @@ namespace bevtree
             parent->addChild(node);
         }
 
-        auto nameattr = xmlnode->first_attribute("name");
-        if(nameattr) {
-            auto name = std::string(nameattr->value(), nameattr->value_size());
+        std::string name = xmlnode->Attribute("name");
+        if (!name.empty())
+        {
             _namedNodes[name] = node;
         }
-
-        auto xmlchild = xmlnode->first_node();
+        
+        auto xmlchild = xmlnode->FirstChildElement();
         while (xmlchild) {
             loadNode(xmlchild, node);
-            xmlchild = xmlchild->next_sibling();
+            xmlchild = xmlchild->NextSiblingElement();
         }
 
         return node;
@@ -184,12 +162,8 @@ namespace bevtree
     {
         try 
         {
-            auto countattr = node->first_attribute("count");
-            if(countattr)
-            {
-                int count = std::stoi(countattr->value());
-                setLimit(count);
-            }
+            int count = node->IntAttribute("count", 0);
+            setLimit(count);
         } 
         catch (std::exception& e ) 
         {

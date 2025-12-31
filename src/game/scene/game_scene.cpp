@@ -220,6 +220,7 @@ bool GameScene::createObject(const MapObject& obj)
     // TODO:
     //ObjectFactor::inst().createActor(obj);
 
+
     auto ent = createActor(obj.name, obj.pos);
     if(obj.type == "patrol_npc")
     {

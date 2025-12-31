@@ -118,11 +118,7 @@ namespace samples {
 
         bool load(const bevtree::XmlNode* ele) 
         { 
-            auto attr = ele->first_attribute("speed");
-            if(attr)
-            {
-                _speed = std::stof(attr->value());
-            }
+            _speed = ele->FloatAttribute("speed");
             return true; 
         }
 
@@ -185,16 +181,9 @@ namespace samples {
 
         bool load(const bevtree::XmlNode* ele)
         {
-            auto attrx = ele->first_attribute("target_x");
-            if (attrx)
-            {
-                _target.x = std::stof(attrx->value());
-            }
-            auto attry = ele->first_attribute("target_y");
-            if (attry)
-            {
-                _target.y = std::stof(attry->value());
-            }
+            _target.x = ele->FloatAttribute("target_x");
+            _target.y = ele->FloatAttribute("target_y");
+
             return true;
         }
 

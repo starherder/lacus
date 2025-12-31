@@ -12,12 +12,12 @@
 #include <any>
 #include <functional>
 
-#include "rapidxml/rapidxml.hpp"
+#include "tinyxml2/tinyxml2.h"
 
 namespace BrainTree
 {
 
-using XmlNode = rapidxml::xml_node<>;
+using XmlNode = tinyxml2::XMLElement;
 
 class Blackboard 
 {

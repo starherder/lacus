@@ -51,15 +51,6 @@ namespace game
         Rect texture_rect;
     };
 
-    enum TweenEaseMode {Once, Loop, Yoyo};
-    struct ComMotionTween
-    {
-        std::string ease_type;
-        Vec2 source;
-        Vec2 target;
-        int duration;
-    };
-
     struct CompNpcPatrol {
         Vec2 origin_pos;
         float patrol_radius;

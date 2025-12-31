@@ -486,15 +486,6 @@
     <ClInclude Include="..\src\game\behavior\bev_npc.h">
       <Filter>game\behavior</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\play\comm_comp.h">
-      <Filter>game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\comm_event.h">
-      <Filter>game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\play\comm_system.h">
-      <Filter>game</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\game\scene\game_context.h">
       <Filter>game\scene</Filter>
     </ClInclude>

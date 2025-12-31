@@ -2,9 +2,6 @@
 
 #include "braintree/brain_tree.h"
 #include "utility/i_singleton.h"
-#include "rapidxml/rapidxml.hpp"
-#include "rapidxml/rapidxml_utils.hpp"
-#include "rapidxml/rapidxml_print.hpp"
 
 #include <filesystem>
 
@@ -94,8 +91,7 @@ namespace bevtree
         NodeCreator::Ptr getNodeCreator(const std::string& name);
 
     private:
-        std::unique_ptr<rapidxml::file<>> _xmlFile = nullptr;
-        std::unique_ptr <rapidxml::xml_document<>> _xmlDoc = nullptr;
+        std::unique_ptr <tinyxml2::XMLDocument> _xmlDoc = nullptr;
 
         std::unordered_map<std::string, XmlNode*> _xmlNodes;
         std::unordered_map<std::string, NodeCreator::Ptr> _creators;

@@ -5,14 +5,14 @@
   <bt name="common_role">
     <selector>
       <sequence desc="run-from-enemy">
-        <br_enemy_sensor/>
-        <br_move />
+        <br_enemy_sensor name="enemy_sensor"/>
+        <br_move name="move"/>
       </sequence>
 
       <sequence desc="chase-prey">
-        <br_prey_sensor  />
-        <br_move />
-        <br_kill />
+        <br_prey_sensor name="prey_sensor" />
+        <br_move name="move2"/>
+        <br_kill name="kill"/>
       </sequence>
     </selector>
   </bt>
