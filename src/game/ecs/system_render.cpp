@@ -47,14 +47,13 @@ void RenderSystem::drawMotionDebug()
     Renderer& renderer = _context.renderer();
     GameCamera& camera = _context.camera();
 
-    auto ent_view = _context.registry().view<CompTransform, CompMotion, CompState>();
+    auto ent_view = _context.registry().view<CompTransform, CompMotion>();
     for (auto& ent : ent_view)
     {
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& motion = ent_view.get<CompMotion>(ent);
-        auto& state = ent_view.get<CompState>(ent);
 
-        if (state.state == ActorState::Move && motion.path.size() > 0)
+        if (motion.state == MotionState::Moving && motion.path.size() > 0)
         {
             renderer.setDrawColor(Color::Red);
             auto lstPos = camera.projectPoint(transform.position);

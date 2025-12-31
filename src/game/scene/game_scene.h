@@ -53,8 +53,6 @@ namespace game {
         entt::entity createActor(const std::string& name, const Vec2& pos, const Vec2& size = { 64, 64 });
         entt::entity getActor(const std::string& name);
 
-        ActorState getActorState(entt::entity id);
-
         void destroyActor(entt::entity id);
         void destroyActor(const std::string& name);
         void destroyAllActor();

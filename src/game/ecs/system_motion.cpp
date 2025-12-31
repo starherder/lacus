@@ -16,29 +16,21 @@ namespace game
 	{
         deltaTime = std::clamp(deltaTime, 0.0f, 1.0f);
 
-        auto ent_view = _context.registry().view<CompTransform, CompMotion, CompState>();
+        auto ent_view = _context.registry().view<CompTransform, CompMotion>();
         for (auto& ent : ent_view)
         {
             auto& transform = ent_view.get<CompTransform>(ent);
             auto& motion = ent_view.get<CompMotion>(ent);
-            auto& state = ent_view.get<CompState>(ent);
             const auto& pos = transform.position;
 
-            if (state.state == ActorState::Move)
+            if (motion.state == MotionState::Moving)
             {
-                if (!motion.running)
-                {
-                    continue;
-                }
-
                 if (motion.path.empty())
                 {
                     motion.velocity = glm::normalize(motion.targetPos - pos);
 
                     if (glm::distance(motion.targetPos, pos) <= motion.speed * deltaTime)
                     {
-                        //spdlog::info("{} motion finish: at ({}, {})", (int32_t)ent, motion.targetPos.x, motion.targetPos.y);
-
                         transform.position = motion.targetPos;
                         motionStop(ent);
                     }
@@ -47,7 +39,6 @@ namespace game
                 {
                     const auto& cur_grid = _context.currentScene().getGridFromPos(pos);
                     const auto& next_grid = motion.path.back();
-
                     if (next_grid != cur_grid)
                     {
                         motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(next_grid) - pos);
@@ -56,14 +47,10 @@ namespace game
                     {
                         if (reachGridCenter(pos, next_grid, motion.speed * deltaTime))
                         {
-                            //spdlog::info("{} motion: reach ({}, {}), go next step ({}, {})",
-                            //    (int32_t)ent, cur_grid.x, cur_grid.y, next_grid.x, next_grid.y);
-
                             motion.path.pop_back();
                         }
                     }
                 }
-
                 transform.position += motion.velocity * motion.speed * deltaTime;
             }
         }
@@ -115,11 +102,7 @@ namespace game
     bool MotionSystem::reachGridCenter(const Vec2& pos, const Vec2i& grid, float epsilon)
     {
         auto grid_pos = _context.currentScene().getGridCenterPos(grid);
-
-        float dis = glm::distance(pos, grid_pos);
-        //spdlog::info("dis: {}, epsilon: {}", dis, epsilon);
-
-        return dis < epsilon;
+        return glm::distance(pos, grid_pos) < epsilon;
     }
 
     bool MotionSystem::motionStart(entt::entity id, const Vec2& dst, bool findPath)
@@ -132,9 +115,6 @@ namespace game
         Vec2i srcGrid = _context.currentScene().getGridFromPos(src);
         Vec2i dstGrid = _context.currentScene().getGridFromPos(dst);
 
-        //spdlog::info("{} motion start: ({}, {})[{},{}] -> ({}, {})[{},{}]",
-        //    (int32_t)id, src.x, src.y, srcGrid.x, srcGrid.y, dst.x, dst.y, dstGrid.x, dstGrid.y);
-
         if (findPath)
         {
             // path find
@@ -146,23 +126,16 @@ namespace game
                 return false;
             }
 
-            //std::string pathlist;
             // add path
             motion.path.clear();
             for (auto& grid : path.value())
             {
-                //pathlist += fmt::format("[{},{}]", grid.x, grid.y);
                 motion.path.push_back(grid);
             }
-            //spdlog::info("pathlist = {}", pathlist);
         }
 
-        // set state
-        auto& state = _context.registry().get<CompState>(id);
-        state.state = ActorState::Move;
-
         motion.targetPos = dst;
-        motion.running = true;
+        motion.state = MotionState::Moving;
         motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(motion.path.back()) - src);
         return true;
     }
@@ -175,15 +148,10 @@ namespace game
             return false;
         }
 
-        //spdlog::info("motion stop: {} ");
-
         auto& motion = _context.registry().get<CompMotion>(id);
         motion.path.clear();
         motion.velocity = { 0, 0 };
-        motion.running = false;
-
-        auto& state = _context.registry().get<CompState>(id);
-        state.state = ActorState::Idle;
+        motion.state = MotionState::Resting;
 
         _context.dispatcher().trigger(MotionStop{id});
         return true;
@@ -198,14 +166,12 @@ namespace game
         }
 
         auto& motion = _context.registry().get<CompMotion>(id);
-        motion.running = !pause;
+        motion.state = pause ? MotionState::Paused : MotionState::Moving;
         return true;
     }
 
-
     void MotionSystem::onEventMoveToPos(const MoveToPos& e)
     {
-        //spdlog::info("MotionSystem::onEventMoveToPos  e.actor = {}, e.dest = ({},{})", (int)e.actor, e.dest.x, e.dest.y);
         motionStart(e.actor, e.dest, e.findPath);
     }
 

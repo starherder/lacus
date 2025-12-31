@@ -26,13 +26,20 @@ namespace game
         Vec2 scale;
     };
 
+    enum class MotionState {
+        Moving,
+        Resting,
+        Paused,
+    };
+
     struct CompMotion
     {
-        bool running = false;
-        float speed = 50.0f;
-        Vec2 velocity;
+        MotionState state = MotionState::Resting;
 
         Vec2 targetPos;
+        Vec2 velocity;
+        float speed = 50.0f;
+
         std::list<Vec2i> path;
     };
 
@@ -53,25 +60,9 @@ namespace game
         int duration;
     };
 
-    enum class ActorState 
-    {
-        Idle,
-        Move,
-        Attack,
-        Die,
-    };
-
-    struct CompState 
-    {
-        ActorState state = ActorState::Idle;
-    };
-
     struct CompNpcPatrol {
         Vec2 origin_pos;
         float patrol_radius;
-        float patrol_speed;
-
-        std::vector<Vec2> patrol_path;
     };
 
     struct CompBevtree

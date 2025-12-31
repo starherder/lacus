@@ -6,6 +6,7 @@
 #include "game/ecs/system_motion.h"
 #include "game/ecs/system_render.h"
 #include "game/ecs/system_bevtree.h"
+#include "game/ecs/system_fight.h"
 
 namespace game {
 
@@ -224,8 +225,7 @@ bool GameScene::createObject(const MapObject& obj)
     {
         CompNpcPatrol info = {
             .origin_pos = obj.pos,
-            .patrol_radius = 200,
-            .patrol_speed = 100
+            .patrol_radius = 200
         };
         _registry.emplace<CompNpcPatrol>(ent, info);
     }
@@ -251,7 +251,6 @@ entt::entity GameScene::createActor(const std::string& name, const Vec2& pos, co
     _registry.emplace<CompNameId>(entid, entid, name);
     _registry.emplace<CompTransform>(entid, pos, size, Vec2{ 0.0f,0.0f }, Vec2{ 1.0f,1.0f });
     _registry.emplace<CompDisplay>(entid);
-    _registry.emplace<CompState>(entid);
     _registry.emplace<CompMotion>(entid);
 
     _nameIdMap.insert({ name, entid });
@@ -267,11 +266,6 @@ entt::entity GameScene::getActor(const std::string& name)
     }
 
     return entt::null;
-}
-
-ActorState GameScene::getActorState(entt::entity id)
-{
-    return _registry.get<CompState>(id).state;
 }
 
 void GameScene::destroyActor(entt::entity id)

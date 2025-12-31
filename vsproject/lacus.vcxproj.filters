@@ -250,6 +250,9 @@
     <ClCompile Include="..\src\game\ecs\system_render.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_fight.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -511,6 +514,9 @@
       <Filter>game\ecs</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_render.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_fight.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>
