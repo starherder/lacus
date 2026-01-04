@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "misc.h"
 #include "wrapper.h"
@@ -54,8 +54,10 @@ public:
     FontManager(const FontManager&) = delete;
     ~FontManager();
 
-    Font* load(const HashString& str, int pointSize);
+    Font* get(const std::string& str, int pointSize);
     Font* get(const HashString& str, int pointSize);
+
+    Font* load(const HashString& str, int pointSize);
     void unload(const HashString& name, int size);
 
     void clear();

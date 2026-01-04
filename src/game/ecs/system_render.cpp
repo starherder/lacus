@@ -1,4 +1,4 @@
-#include "system_render.h"
+﻿#include "system_render.h"
 
 namespace game 
 {
@@ -26,9 +26,9 @@ void RenderSystem::draw()
         }
         else
         {
-            painter.FillRect(display.ground_color, dstrect);
+            painter.fillRect(display.ground_color, dstrect);
 
-            painter.DrawRect(display.border_color, dstrect);
+            painter.drawRect(display.border_color, dstrect);
 
             painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, display.font_color);
         }

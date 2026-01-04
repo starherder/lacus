@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "braintree/brain_tree.h"
 #include "utility/i_singleton.h"

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "sample_plugin_entt.h"
 

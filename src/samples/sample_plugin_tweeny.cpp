@@ -1,4 +1,4 @@
-#include "sample_plugin_tweeny.h"
+﻿#include "sample_plugin_tweeny.h"
 #include "magic_enum/magic_enum.h"
 
 namespace samples {

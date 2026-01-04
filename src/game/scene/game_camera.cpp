@@ -1,4 +1,4 @@
-#include "game_camera.h"
+﻿#include "game_camera.h"
 #include <namespaceapi.h>
 #include "imform/imform_manager.h"
 

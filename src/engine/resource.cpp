@@ -1,4 +1,4 @@
-#include "resource.h"
+﻿#include "resource.h"
 #include "application.h"
 #include "misc.h"
 #include "texture.h"   

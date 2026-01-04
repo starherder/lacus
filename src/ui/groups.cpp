@@ -1,4 +1,4 @@
-#include "groups.h"
+﻿#include "groups.h"
 #include "gui_manager.h"
 #include "widget.h"
 

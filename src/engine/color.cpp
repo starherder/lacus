@@ -1,4 +1,4 @@
-#include "color.h"
+﻿#include "color.h"
 #include <algorithm>
 #include <cctype>
 #include <assert.h>

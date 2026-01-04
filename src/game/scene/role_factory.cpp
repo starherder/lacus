@@ -1,4 +1,4 @@
-#include "role_factory.h"
+﻿#include "role_factory.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -62,6 +62,7 @@ namespace game
 		}
 
 		_jsonCfgs[id] = jsonptr;
+		return true;
 	}
 
 	entt::entity RoleFactory::createRole(const std::string& cfgid)
@@ -219,7 +220,6 @@ namespace game
 			_context->registry().emplace<CompItems>(role, compItems);
 		}
 		
-
 		return role;
 	}
 	

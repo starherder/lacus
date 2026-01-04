@@ -1,4 +1,4 @@
-#include "form_demo.h"
+﻿#include "form_demo.h"
 #include "groups.h"
 #include "gui_manager.h"
 #include "buttons.h"
@@ -45,7 +45,7 @@ FormDemo::FormDemo(const std::string& name) : Form(name)
 		ctl_red->setSize({300, 50});
 		ctl_red->setBgColor({ 255, 125, 125, 255 });
 
-		auto texture = GuiManager::inst().textureManager().get("textures/UI/emote.png");
+		auto texture = GuiManager::inst().textureManager().get("textures/UI/emote.png"_hs);
 		auto ctl_txt = grp_right->createChild<Widget>("ctl_txt");
 		ctl_txt->setPos({ 50, 150 });
 		ctl_txt->setSize({ 300, 50 });

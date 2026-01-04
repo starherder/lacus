@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "bevtree/bevtree.h"
 #include "game/ecs/comm_event.h"

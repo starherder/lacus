@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "particle_cfg.h"
 
 #include <list>

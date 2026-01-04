@@ -1,4 +1,4 @@
-#include "sample_plugin_manager.h"
+﻿#include "sample_plugin_manager.h"
 #include "imform/imform_demo.h"
 
 #include "sample_plugin_draw.h"

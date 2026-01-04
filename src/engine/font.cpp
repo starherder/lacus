@@ -1,4 +1,4 @@
-#include "font.h"
+﻿#include "font.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -85,6 +85,11 @@ namespace engine {
         }
 
         return nullptr;
+    }
+
+    Font* FontManager::get(const std::string& str, int pointSize)
+    {
+        return get(HashString(str.c_str()), pointSize);
     }
 
     Font* FontManager::get(const HashString& str, int size)

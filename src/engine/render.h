@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "text_render.h"
 #include "wrapper.h"

@@ -1,4 +1,4 @@
-
+﻿
 
 #pragma once
 
@@ -25,60 +25,59 @@ namespace engine
 		Painter(Application& app);
 		~Painter();
 
-		void SetClearColor(const Color& color);
+		void setClearColor(const Color& color);
 
-		void FillRect(const Color& color, Rect rect, float round = 0);
-		void DrawRect(const Color& color, Rect rect, float round = 0, float lineWidth = 1);
+		void fillRect(const Color& color, Rect rect, float round = 0);
+		void drawRect(const Color& color, Rect rect, float round = 0, float lineWidth = 1);
 
-		void DrawCircle(const Color& color, const Vec2& center, float radius, int segments = 12, float thickness = 1.0f);
-		void FillCircle(const Color& color, const Vec2& center, float radius, int segments = 12);
+		void drawCircle(const Color& color, const Vec2& center, float radius, int segments = 12, float thickness = 1.0f);
+		void fillCircle(const Color& color, const Vec2& center, float radius, int segments = 12);
 
-		void DrawTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3, float thickness = 1.0f);
-		void FillTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3);
+		void drawTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3, float thickness = 1.0f);
+		void fillTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3);
 
-		void DrawLine(const Color& color, Vec2 beginPos, Vec2 endPos, float lineWidth = 1);
-		void DrawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f);
+		void drawLine(const Color& color, Vec2 beginPos, Vec2 endPos, float lineWidth = 1);
+		void drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f);
 
 		void drawTexture(Texture* pTexture, const Rect& uv, const Rect& dst);
 
 		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 });
 
-		void SetClipRect(const Rect& rect);
-		Rect GetClipRect();
+		void setClipRect(const Rect& rect);
+		Rect getClipRect();
 
-		bool IsAntiAlaised() const { return m_bAntiAliased; }
-		void SetAntiAlaised(bool anti_aliased = true);
+		bool isAntiAlaised() const { return _antiAliased; }
+		void setAntiAlaised(bool anti_aliased = true);
 
 	private:
-		void PathLineTo(const Vec2& pos);
+		void pathLineTo(const Vec2& pos);
 
-		void PathArcTo(const Vec2& centre, float radius, float min, float max, int segments = 10);
+		void pathArcTo(const Vec2& centre, float radius, float min, float max, int segments = 10);
 
-		void PathArcToFast(const Vec2& centre, float radius, int a_min_of_12, int a_max_of_12);
+		void pathArcToFast(const Vec2& centre, float radius, int a_min_of_12, int a_max_of_12);
 
-		void PathRect(const Vec2& tl, const Vec2& br, float rounding = 0.0f);
+		void pathRect(const Vec2& tl, const Vec2& br, float rounding = 0.0f);
 
-		void PrimRect(const Color& color, const Vec2& tl, const Vec2& br);
+		void primRect(const Color& color, const Vec2& tl, const Vec2& br);
 
-		void StrokePolyline(const Color& color, bool closed, float thickness);
+		void strokePolyline(const Color& color, bool closed, float thickness);
 
-		void StrokeConvexPolyFilled(const Color& color);
+		void strokeConvexPolyFilled(const Color& color);
 
-		void DrawPath();
+		void drawPath();
 
 	private:
 		Application& _application;
 
-		SDL_Window* m_pWindow = nullptr;
+		Rect _clipRect;
 
-		Rect m_ClipRect;
+		std::vector<Vec2> _vPaths;
 
-		std::vector<Vec2> m_vPaths;
+		std::vector<Vertex> _geometryVertices;
+		
+		std::vector<int> _geometryIndices;
 
-		std::vector<Vertex> m_GeometryVertices;
-		std::vector<int> m_vGeometryIndices;
-
-		bool m_bAntiAliased = false;
+		bool _antiAliased = false;
 	};
 	
 

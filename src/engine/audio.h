@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "misc.h"
 #include "wrapper.h"
@@ -53,14 +53,18 @@ public:
     AudioManager(const AudioManager&) = delete;
     ~AudioManager();
 
-    Sound* loadSound(const HashString& file);
+    Sound* getSound(const std::string& file);
     Sound* getSound(const HashString& file);
+
+    Music* getMusic(const std::string& file);
+    Music* getMusic(const HashString& file);
+
+    Sound* loadSound(const HashString& file);
     void unloadSound(const HashString& file);
 
     void clearSounds();
 
     Music* loadMusic(const HashString& file);
-    Music* getMusic(const HashString& file);
     void unloadMusic(const HashString& file);
 
     void clearMusics();

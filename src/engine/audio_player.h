@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "audio_player.h"
 #include "resource.h"

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <random>
 #include <cstdlib>
@@ -57,19 +57,19 @@ namespace utility
 		return RandomHelper::random_real(min, max);
 	}
 
-	/* ·µ»Ø 0 µ½ RAND_MAX Ëæ»ú¸¡µãÊý */
+	// [0, RAND_MAX)
 	inline int random()
 	{
 		return random(0, RAND_MAX);
 	}
 
-	/* ·µ»Ø -1 µ½ 1 Ëæ»ú¸¡µãÊý */
+	//  [-1, 1)
 	inline float rand_minus1_1()
 	{
 		return ((std::rand() / ( float ) RAND_MAX) * 2) - 1;
 	}
 
-	/* ·µ»Ø 0 µ½ 1 Ëæ»ú¸¡µãÊý */
+	//  [0, 1)
 	inline float rand_0_1()
 	{
 		return std::rand() / ( float ) RAND_MAX;

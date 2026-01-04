@@ -1,4 +1,4 @@
-#include "audio.h"
+﻿#include "audio.h"
 
 #include <SDL3_mixer/SDL_mixer.h>
 
@@ -94,6 +94,11 @@ namespace engine {
         return loadSound(file.value(), file.data());
     }
 
+    Sound* AudioManager::getSound(const std::string& file)
+    {
+        return getSound(HashString(file.c_str()));
+    }
+
     Sound* AudioManager::getSound(const HashString& file)
     {
         return getSound(file.value(), file.data());
@@ -160,6 +165,11 @@ namespace engine {
         return loadMusic(file.value(), file.data());
     }
     
+    Music*  AudioManager::getMusic(const std::string& file)
+    {
+        return getMusic(HashString(file.c_str()));
+    }
+
     Music* AudioManager::getMusic(const HashString& file)
     {
         return getMusic(file.value(), file.data());

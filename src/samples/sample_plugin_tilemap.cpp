@@ -1,4 +1,4 @@
-#include "sample_plugin_tilemap.h"
+﻿#include "sample_plugin_tilemap.h"
 #include "magic_enum/magic_enum.h"
 #include "tmxmap/tmx_map_loader.h"
 

@@ -1,4 +1,4 @@
-#include "particle_manager.h"
+﻿#include "particle_manager.h"
 #include "particle_memory.h"
 
 #include "engine/application.h"

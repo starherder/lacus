@@ -1,4 +1,4 @@
-#include "render.h"
+﻿#include "render.h"
 
 #include "wrapper.h"
 #include "text_render.h"

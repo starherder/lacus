@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "entt/entt.hpp"
 #include "engine/wrapper.h"
@@ -78,13 +78,13 @@ namespace game
         Rect tex_rect;
     };
 
-    // Ô¤Éè£ºÖÇÁ¦¡¢ÁéÇÉ¡¢ÁéĞÔ¡¢Á¦Á¿µÈÔ¤ÉèÖµ
+    // é¢„è®¾ï¼šæ™ºåŠ›ã€çµå·§ã€çµæ€§ã€åŠ›é‡ç­‰é¢„è®¾å€¼
     struct CompPresets
     {
         utility::DynamicStruct<std::string> properties;
     };
 
-    // HP¡¢¹¥»÷Á¦¡¢·ÀÓùÁ¦¡¢ÒÆ¶¯ËÙ¶È¡¢¹¥»÷ËÙ¶ÈµÈ¾­¹ı¹«Ê½¼ÆËãºóµÃµ½µÄÊôĞÔ
+    // HPã€æ”»å‡»åŠ›ã€é˜²å¾¡åŠ›ã€ç§»åŠ¨é€Ÿåº¦ã€æ”»å‡»é€Ÿåº¦ç­‰ç»è¿‡å…¬å¼è®¡ç®—åå¾—åˆ°çš„å±æ€§
     struct CompProps
     {
         utility::DynamicStruct<std::string> properties;

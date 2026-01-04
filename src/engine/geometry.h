@@ -1,4 +1,4 @@
-#include <SDL3/SDL.h>
+﻿#include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 #include "utility/string_util.h"
 

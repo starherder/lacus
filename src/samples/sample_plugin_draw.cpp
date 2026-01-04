@@ -1,4 +1,4 @@
-#include "sample_plugin_draw.h"
+﻿#include "sample_plugin_draw.h"
 
 #include "engine/application.h"
 #include "engine/color.h"
@@ -113,31 +113,31 @@ namespace samples {
         timepassed += application()->frameTicker().deltaSeconds();
         if(timepassed > 2.0f) 
         { 
-            painter.SetAntiAlaised(!painter.IsAntiAlaised());
+            painter.setAntiAlaised(!painter.isAntiAlaised());
             timepassed = 0.0f;
         }
         
-        bool anti = painter.IsAntiAlaised(); 
+        bool anti = painter.isAntiAlaised(); 
         auto font = application()->resourceManager().fontManager().get("fonts/msyh.ttf"_hs, 20);
 
-        painter.DrawRect(Color::PaleBlue, {980, 80, 600, 800}, 5.0f, 3.0f);
+        painter.drawRect(Color::PaleBlue, {980, 80, 600, 800}, 5.0f, 3.0f);
         painter.drawText(anti?"aniti_alaised":"", font, {1000, 100});
 
-        painter.DrawCircle(Color::Pink, {1200, 100}, 50, 30, 3);
-        painter.FillCircle(Color::LightPink, {1500, 100}, 50, 20);
+        painter.drawCircle(Color::Pink, {1200, 100}, 50, 30, 3);
+        painter.fillCircle(Color::LightPink, {1500, 100}, 50, 20);
 
-        painter.DrawLine(Color::DarkCyan, {1000, 150}, {1500, 180}, 5);
+        painter.drawLine(Color::DarkCyan, {1000, 150}, {1500, 180}, 5);
 
         std::vector<Vec2> points = {{1500, 100}, {1550, 200}, {1500, 300}, {1550, 370}};
-        painter.DrawLines(Color::Cyan, points.data(), points.size(), false, 1.0f);
+        painter.drawLines(Color::Cyan, points.data(), points.size(), false, 1.0f);
 
-        painter.DrawTriangle(Color::PaleRed, { 1000, 240 }, { 1200, 350 }, { 1100, 230 }, 2.0f);
-        painter.FillTriangle(Color::DarkRed, { 1000, 380 }, { 1250, 400 }, { 1020, 370 });
+        painter.drawTriangle(Color::PaleRed, { 1000, 240 }, { 1200, 350 }, { 1100, 230 }, 2.0f);
+        painter.fillTriangle(Color::DarkRed, { 1000, 380 }, { 1250, 400 }, { 1020, 370 });
         
-        painter.FillRect(Color::LightBlue, { 1000, 460, 200, 50}, 8.0f);
-        painter.FillRect(Color::DarkBlue, { 1000, 600, 200, 50 });
+        painter.fillRect(Color::LightBlue, { 1000, 460, 200, 50}, 8.0f);
+        painter.fillRect(Color::DarkBlue, { 1000, 600, 200, 50 });
 
         points = { {1500, 500}, {1550, 600}, {1500, 500}, {1550, 670} };
-        painter.DrawLines(Color::DarkPink, points.data(), points.size(), true, 1.0f);
+        painter.drawLines(Color::DarkPink, points.data(), points.size(), true, 1.0f);
     }
 }

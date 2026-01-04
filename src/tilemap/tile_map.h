@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "map_utils.h"
 #include "map_layer.h"

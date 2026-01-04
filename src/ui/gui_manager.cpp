@@ -1,4 +1,4 @@
-#include "gui_manager.h"
+﻿#include "gui_manager.h"
 
 namespace ui {
 

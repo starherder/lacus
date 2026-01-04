@@ -1,4 +1,4 @@
-#include "sample_plugin_audio.h"
+﻿#include "sample_plugin_audio.h"
 
 namespace samples {
     

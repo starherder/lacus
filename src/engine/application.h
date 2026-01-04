@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "misc.h"
 #include "render.h"

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "i_singleton.h"
 #include "string_util.h"

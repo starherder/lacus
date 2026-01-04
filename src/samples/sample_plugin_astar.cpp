@@ -1,4 +1,4 @@
-#include "sample_plugin_astar.h"
+﻿#include "sample_plugin_astar.h"
 #include "a_star/a_star.hpp"
 
 namespace samples {

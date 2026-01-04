@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "wrapper.h"
 #include "misc.h"
@@ -41,8 +41,10 @@ public:
     TextureManager(const TextureManager&) = delete;
     ~TextureManager() = default;
 
-    Texture* load(const HashString& file);
+    Texture* get(const std::string& file);
     Texture* get(const HashString& file);
+    
+    Texture* load(const HashString& file);
     void unload(const HashString& file);
 
     void clear();

@@ -1,4 +1,4 @@
-#include "texture.h"
+﻿#include "texture.h"
 #include "render.h"
 
 #include <SDL3/SDL.h>
@@ -94,6 +94,11 @@ namespace engine {
     Texture* TextureManager::load(const HashString& file)
     {
         return load(file.value(), file.data());
+    }
+
+    Texture* TextureManager::get(const std::string& file)
+    {
+        return get(HashString(file.c_str()));
     }
 
     Texture* TextureManager::get(const HashString& file)

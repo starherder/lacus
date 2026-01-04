@@ -1,4 +1,4 @@
-#include "particle_effect.h"
+﻿#include "particle_effect.h"
 #include "particle_emitter.h"
 #include "particle_manager.h"
 #include "particle_memory.h"

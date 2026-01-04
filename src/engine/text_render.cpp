@@ -1,4 +1,4 @@
-#include "text_render.h"
+﻿#include "text_render.h"
 #include "render.h"
 #include "font.h"
 #include <spdlog/spdlog.h>
