@@ -90,7 +90,7 @@ namespace ui {
 
     void HorizonalLayout::ajustLayout()
     {
-        int width_used = _padding.x * 2;
+        float width_used = _padding.x * 2;
 
         std::vector<Widget*> scalable_widgets;
 
@@ -184,7 +184,7 @@ namespace ui {
     
     void VerticalLayout::ajustLayout()
     {
-        int height_used = _padding.y * 2;
+        float height_used = _padding.y * 2;
 
         std::vector<Widget*> scalable_widgets;
 

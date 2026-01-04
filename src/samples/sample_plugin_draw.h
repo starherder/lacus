@@ -42,9 +42,7 @@ namespace samples {
 
         void drawText();
 
-        void paintNormal();
-
-        void paintEx();
+        void paint();
 
     private:
         std::vector<engine::Vertex> _vertices;

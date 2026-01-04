@@ -253,16 +253,13 @@
     <ClCompile Include="..\ext\tinyxml2\tinyxml2.cpp">
       <Filter>utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\painter.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\game\scene\role_factory.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
     <ClCompile Include="..\src\utility\string_util.cpp">
       <Filter>utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\ex_painter.cpp">
+    <ClCompile Include="..\src\engine\painter.cpp">
       <Filter>engine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -522,16 +519,13 @@
     <ClInclude Include="..\ext\tinyxml2\tinyxml2.h">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\engine\painter.h">
-      <Filter>engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\game\scene\role_factory.h">
       <Filter>game\scene</Filter>
     </ClInclude>
     <ClInclude Include="..\src\utility\translator.h">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\engine\ex_painter.h">
+    <ClInclude Include="..\src\engine\painter.h">
       <Filter>engine</Filter>
     </ClInclude>
   </ItemGroup>

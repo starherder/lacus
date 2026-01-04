@@ -155,7 +155,6 @@
     <ClCompile Include="..\src\engine\color.cpp" />
     <ClCompile Include="..\src\engine\config.cpp" />
     <ClCompile Include="..\src\engine\event.cpp" />
-    <ClCompile Include="..\src\engine\ex_painter.cpp" />
     <ClCompile Include="..\src\engine\font.cpp" />
     <ClCompile Include="..\src\engine\geometry.cpp" />
     <ClCompile Include="..\src\engine\misc.cpp" />
@@ -229,7 +228,6 @@
     <ClInclude Include="..\src\engine\color.h" />
     <ClInclude Include="..\src\engine\config.h" />
     <ClInclude Include="..\src\engine\event.h" />
-    <ClInclude Include="..\src\engine\ex_painter.h" />
     <ClInclude Include="..\src\engine\font.h" />
     <ClInclude Include="..\src\engine\geometry.h" />
     <ClInclude Include="..\src\engine\misc.h" />
