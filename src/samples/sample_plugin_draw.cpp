@@ -123,12 +123,12 @@ namespace samples {
         painter.drawRect(Color::PaleBlue, { 980, 80, 600, 800 }, 5.0f, 3.0f);
         painter.drawText(anti ? "aniti_alaised" : "", font, { 1000, 100 });
 
-        painter.drawCircle(Color::Pink, { 1200, 100 }, 50, 30, 3);
-        painter.fillCircle(Color::LightPink, { 1500, 100 }, 50, 20);
+        painter.drawCircle(Color::Pink, { 1200, 150 }, 50, 30, 3);
+        painter.fillCircle(Color::LightPink, { 1500, 150 }, 50, 20);
 
-        painter.drawLine(Color::DarkCyan, { 1000, 150 }, { 1500, 180 }, 5);
+        painter.drawLine(Color::Red, { 1000, 250 }, { 1500, 300 }, 5);
 
-        std::vector<Vec2> points = { {1500, 100}, {1550, 200}, {1500, 300}, {1550, 370} };
+        std::vector<Vec2> points = { {1500, 200}, {1550, 300}, {1500, 400}, {1550, 470} };
         painter.drawLines(Color::Cyan, points.data(), points.size(), false, 1.0f);
 
         painter.drawTriangle(Color::PaleRed, { 1000, 240 }, { 1200, 350 }, { 1100, 230 }, 2.0f);
