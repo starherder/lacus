@@ -56,4 +56,18 @@ bool Rect::operator!=(const Rect& other) const {
     return !(*this == other);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

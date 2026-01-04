@@ -214,48 +214,23 @@ void GameScene::drawDebugView()
     }
 }
 
-
 bool GameScene::createObject(const MapObject& obj)
 {
-    // TODO:
-    //ObjectFactor::inst().createActor(obj);
+    auto ent = RoleFactory::inst().createRole(obj.name);
 
+    auto& trans = _context.registry().get<CompTransform>(ent);
+    auto& patrol = _context.registry().get<CompNpcPatrol>(ent);
+    auto& btree = _context.registry().get<CompBevtree>(ent);
 
-    auto ent = createActor(obj.name, obj.pos);
-    if(obj.type == "patrol_npc")
+    trans.position = obj.pos;
+    patrol.origin_pos = obj.pos;
+
+    if (btree.bevtree) 
     {
-        CompNpcPatrol info = {
-            .origin_pos = obj.pos,
-            .patrol_radius = 200
-        };
-        _registry.emplace<CompNpcPatrol>(ent, info);
+        btree.bevtree->getBlackboard()->set("context", &_context);
+        btree.bevtree->getBlackboard()->set("actor", ent);
     }
-
-    auto [found, bevtree] = _tileMap.getObjectProperty<std::string>(obj.id, "bevtree");
-    if ( found && !bevtree.empty()) 
-    {
-        auto bev_tree = _context.bevtreeMgr().createBevTree(bevtree);
-        if(bev_tree) 
-        {
-            bev_tree->getBlackboard()->set("context", &_context);
-            bev_tree->getBlackboard()->set("actor", ent);
-        }
-        _registry.emplace<CompBevtree>(ent, bev_tree );
-    }
-
     return true;
-}
-
-entt::entity GameScene::createActor(const std::string& name, const Vec2& pos, const Vec2& size)
-{
-    auto entid = _registry.create();
-    _registry.emplace<CompNameId>(entid, entid, name);
-    _registry.emplace<CompTransform>(entid, pos, size, Vec2{ 0.0f,0.0f }, Vec2{ 1.0f,1.0f });
-    _registry.emplace<CompDisplay>(entid);
-    _registry.emplace<CompMotion>(entid);
-
-    _nameIdMap.insert({ name, entid });
-    return entid;
 }
 
 entt::entity GameScene::getActor(const std::string& name)

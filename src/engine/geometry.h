@@ -1,5 +1,10 @@
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
+#include "utility/string_util.h"
+
+#define PI		3.1415926535898f
+#define PI_2	6.2831853071795f
+#define PI_HALF		1.57079632f
 
 
 namespace engine {
@@ -45,5 +50,42 @@ public:
     bool operator!=(const Rect& other) const;
 };
 
+//------------------------------------------------------------
+
+inline SDL_FPoint ToPoint(const Vec2& v) {
+    return SDL_FPoint{ v.x, v.y };
+}
+
+inline Vec2 ToVec2(const SDL_FPoint& v) {
+    return Vec2{ v.x, v.y };
+}
+
+inline Vec2 ToVec2(const std::string& s) {
+    try {
+        auto arr = utility::StringUtil::split(s, ',');
+        assert(arr.size() == 2);
+
+        return { std::stof(arr[0].data()),
+                std::stof(arr[1].data()) };
+    }
+    catch (const std::exception& ) {
+        return { 0.0f, 0.0f};
+    }
+}
+
+inline Rect ToRect(const std::string& s) {
+   try {
+        auto arr = utility::StringUtil::split(s, ',');
+        assert(arr.size() == 4);
+
+        return { std::stof(arr[0].data()), 
+                std::stof(arr[1].data()), 
+                std::stof(arr[2].data()), 
+                std::stof(arr[3].data()) };
+   }
+   catch (const std::exception& ) {
+        return { 0.0f, 0.0f, 0.0f, 0.0f };
+   }
+}
 
 }

@@ -34,16 +34,16 @@ namespace tilemap {
         TileLayer* getDecorateLayer();
 
         template<typename T>
-        std::pair<bool, T> getObjectProperty(int objectId, const std::string& name);
+        std::optional<T> getObjectProperty(int objectId, const std::string& name);
 
         template<typename T>
-        std::pair<bool, T> getTileProperty(int x, int y, const std::string& name);
+        std::optional<T> getTileProperty(int x, int y, const std::string& name);
 
         template<typename T>
-        std::pair<bool, T> getTileProperty(int tileGid, const std::string& name);
+        std::optional<T> getTileProperty(int tileGid, const std::string& name);
 
         template<typename T>
-        std::pair<bool, T> getLayerProperty(int id, const std::string& name);
+        std::optional<T> getLayerProperty(int id, const std::string& name);
 
     private:
         bool load_mapdata(const json& json);
@@ -66,10 +66,10 @@ namespace tilemap {
         int getGidOfTile(int layerId, int x, int y);
 
         template<typename T>
-        std::pair<bool, T> getObjectProperty(int layerId, int objectId, const std::string& name);
+        std::optional<T> getObjectProperty(int layerId, int objectId, const std::string& name);
 
         template<typename T>
-        std::pair<bool, T> getTileProperty(int layerId, int x, int y, const std::string& name);
+        std::optional<T> getTileProperty(int layerId, int x, int y, const std::string& name);
 
     private:
         fs::path _resPath;
@@ -103,30 +103,30 @@ namespace tilemap {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    std::pair<bool, T> TileMap::getObjectProperty(int objectId, const std::string& name)
+    std::optional<T> TileMap::getObjectProperty(int objectId, const std::string& name)
     {
         return getObjectProperty<T>((int)LayerId::Object, objectId, name);
     }
 
     template<typename T>
-    std::pair<bool, T> TileMap::getTileProperty(int x, int y, const std::string& name)
+    std::optional<T> TileMap::getTileProperty(int x, int y, const std::string& name)
     {
         return getTileProperty<T>((int)LayerId::TileMap, x, y, name);
     }
 
     template<typename T>
-    std::pair<bool, T> TileMap::getTileProperty(int tileGid, const std::string& name)
+    std::optional<T> TileMap::getTileProperty(int tileGid, const std::string& name)
     {
         auto maptile = getInfoOfTile(tileGid);
         if(!maptile) {
-            return {false, T{}};
+            return std::nullopt;
         }
 
         return maptile->properties.get<T>(name);
     }
 
     template<typename T>
-    std::pair<bool, T> TileMap::getTileProperty(int layerId, int x, int y, const std::string& name) {
+    std::optional<T> TileMap::getTileProperty(int layerId, int x, int y, const std::string& name) {
 
         int gid = getGidOfTile(layerId, x, y);
         if(gid < 0)
@@ -138,32 +138,32 @@ namespace tilemap {
     }
 
     template<typename T>
-    std::pair<bool, T> TileMap::getLayerProperty(int id, const std::string& name)
+    std::optional<T> TileMap::getLayerProperty(int id, const std::string& name)
     {
         auto layer = getLayer(id);
         if(!layer) {
-            return {false, T{}};
+            return std::nullopt;
         }
 
         return layer->properties.get<T>(name);
     }
 
     template<typename T>
-    std::pair<bool, T> TileMap::getObjectProperty(int layerId, int objectId, const std::string& name)
+    std::optional<T> TileMap::getObjectProperty(int layerId, int objectId, const std::string& name)
     {
         auto layer = getLayer(layerId);
         if(!layer || layer->type != MapLayerType::ObjectLayer) {
-            return {false, T{}};
+            return std::nullopt;
         }
 
         auto objectLayer = dynamic_cast<ObjectLayer*>(layer);
         if(!objectLayer) {
-            return {false, T{}};
+            return std::nullopt;
         }
 
         auto it = objectLayer->objects.find(objectId);
         if(it == objectLayer->objects.end()) {
-            return {false, T{}};
+            return std::nullopt;
         }
 
         // get prop in object
@@ -175,9 +175,9 @@ namespace tilemap {
                 return getTileProperty<T>(object.gid, name);
             }
 
-            return {false, T{}};
+            return std::nullopt;
         }
 
-        return {true, iter->second.convert<T>()};
+        return iter->second.convert<T>();
     }
 }

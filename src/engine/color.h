@@ -39,6 +39,11 @@ public:
     static const Color LightRed;
     static const Color DarkRed;
 
+    static const Color Pink;
+    static const Color PalePink;
+    static const Color LightPink;
+    static const Color DarkPink;
+
     static const Color Green;
     static const Color PaleGreen;
     static const Color LightGreen;

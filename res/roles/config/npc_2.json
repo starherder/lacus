@@ -1,0 +1,63 @@
+{
+    "id": "npc_2",
+    "name" : "text_npc_name_2",
+
+    "common" : {
+        "type" : "patrol_npc",
+        "camp" : "official",
+        "desc" : "text_npc_2_desc"
+    },
+
+    "motion" : {
+        "tween" : "linear",
+        "speed" : 150
+    },
+
+    "patrol" : {
+        "raduis" : 100
+    },
+
+    "behavior" : {
+        "bevtree" : "npc_patrol"
+    },
+
+    "display": {
+        "size" : "64,64",
+        "groud_color": "#FFFF00FF",
+        "border_color": "#555555FF",
+        "font_color" : "#555555FF",
+        "texture": "textures/icon/sry1.png",
+        "tex_rect": "0,0,0.25,0.5",
+        "font_file" : "fonts/msyh.ttf",
+        "font_size" : 12
+    },
+
+    "properties": {
+        "intelligence": 20,
+        "strength": 13,
+        "tougth": 30,
+        "loyal" : 100,
+        "morale" : 20,
+        "move_speed": 100,
+        "attack_speed":120
+    },
+
+    "skills" : [
+        "sk_hit_hormal", 
+        "sk_hit_hard", 
+        "sk_bow_normal"
+    ],
+
+    "buffs" : [
+        "buff_on_heal", 
+        "buff_on_burn", 
+        "buff_on_spired"
+    ],
+
+    "items" : [
+        "weapon_blade", 
+        "wepon_bow", 
+        "helment_1"
+    ]
+    
+}

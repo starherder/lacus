@@ -56,6 +56,8 @@ namespace game {
 		GameCamera& camera();
 		PathFinder& pathFinder() { return _pathFinder; }
 
+		Painter& painter() { return _application.painter(); }
+
 		bool debugMode() { return _debugMode; }
 		void setDebugMode(bool debug) { _debugMode = debug; }
 

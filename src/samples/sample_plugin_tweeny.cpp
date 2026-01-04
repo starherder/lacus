@@ -106,7 +106,7 @@ namespace samples {
 
     void SamplePluginTweeny::onUpdate()
     {
-        if (!_tween.isFinished()) 
+        if (!_tween.isFinished() || _easeMode==EaseMode::Yoyo)
         {
             auto delta = application()->frameTicker().deltaTicks();
             //spdlog::info("delta = {}, time_point = {}, point = {}", 
@@ -131,6 +131,8 @@ namespace samples {
     void SamplePluginTweeny::onEaseModeSelect(const char* ease, EaseMode mode, int duration)
     {
         spdlog::info("ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
+        
+        _easeMode = mode;
 
         _tween = tweeny::from(_roleBeginPos.x, _roleBeginPos.y)  
                         .to(_roleEndPos.x, _roleEndPos.y)        
@@ -168,16 +170,19 @@ namespace samples {
 
         if (mode == EaseMode::Yoyo)
         {
-            _tween.onStep([ease](auto& t, int x, int y) {
-                if (t.progress() <= 0.001f) { 
-                    spdlog::info("{} forward!", ease);
-                    t.forward(); 
-                }
-                if (t.progress() >= 1.0f) {
-                    spdlog::info("{} backward!", ease);
-                    t.backward(); 
-                }
-                return false;
+            _tween.onStep([ease](auto& t, int x, int y) 
+                {
+                    spdlog::info("t.progress() = {}", t.progress());
+
+                    if (t.progress() <= 0.01f) { 
+                        spdlog::info("{} forward!", ease);
+                        t.forward(); 
+                    }
+                    if (t.progress() >= 1.0f) {
+                        spdlog::info("{} backward!", ease);
+                        t.backward(); 
+                    }
+                    return false;
             });
         }
     }

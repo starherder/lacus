@@ -391,8 +391,8 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
                     auto it = tileset.tiles.find(idIndex);
                     if(it != tileset.tiles.end() ) {
                         auto& tile = it->second;
-                        auto [found, walktype] = tile.properties.get<int>("walktype");
-                        if(found && walktype == (int)WalkType::Collision) {
+                        auto optWalktype = tile.properties.get<int>("walktype");
+                        if(optWalktype && optWalktype.value() == (int)WalkType::Collision) {
                             _collisionPoints.push_back({x, y});
                         }
                     }

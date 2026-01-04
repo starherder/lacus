@@ -6,7 +6,7 @@ namespace game
 
 void RenderSystem::draw()
 {
-    Renderer& renderer = _context.renderer();
+    Painter& painter = _context.painter();
     GameCamera& camera = _context.camera();
 
     auto ent_view = _context.registry().view<CompNameId, CompTransform, CompDisplay>();
@@ -21,18 +21,16 @@ void RenderSystem::draw()
 
         if (display.texture != nullptr)
         {
-            auto srcrect = display.texture_rect;
-            renderer.drawTexture(display.texture, srcrect, dstrect);
+            auto srcrect = display.tex_rect;
+            painter.drawTexture(display.texture, srcrect, dstrect);
         }
         else
         {
-            renderer.setDrawColor(display.ground_color);
-            renderer.drawFillRect(dstrect);
+            painter.FillRect(display.ground_color, dstrect);
 
-            renderer.setDrawColor(display.border_color);
-            renderer.drawRect(dstrect);
+            painter.DrawRect(display.border_color, dstrect);
 
-            renderer.drawDebugText(dstrect.pos() + Vec2{ 10,10 }, nameid.name.c_str());
+            painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, display.font_color);
         }
     }
 
@@ -52,13 +50,13 @@ void RenderSystem::drawMotionDebug()
     {
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& motion = ent_view.get<CompMotion>(ent);
-
+   
         if (motion.state == MotionState::Moving && motion.path.size() > 0)
         {
             renderer.setDrawColor(Color::Red);
             auto lstPos = camera.projectPoint(transform.position);
 
-            for (auto it = motion.path.rbegin(); it != motion.path.rend(); ++it)
+            for (auto it = motion.path_iterator; it != motion.path.rend(); ++it)
             {
                 auto grid_center = _context.currentScene().getGridCenterPos(*it);
                 auto grid_pos = camera.projectPoint(grid_center);
@@ -71,9 +69,6 @@ void RenderSystem::drawMotionDebug()
                 renderer.drawRect(rect);
                 lstPos = grid_pos;
             }
-
-            auto targetPos = camera.projectPoint(motion.targetPos);
-            renderer.drawLine(lstPos, targetPos);
         }
     }
 }

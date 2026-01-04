@@ -6,9 +6,9 @@
 
 namespace game {
 
-	struct MoveToPos {
+	struct MoveToGrid {
 		entt::entity actor;
-		Vec2 dest;
+		Vec2i dest;
 		bool findPath = false;
 	};
 

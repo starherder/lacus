@@ -10,6 +10,7 @@
 #include "resource.h"
 #include "audio.h"
 #include "audio_player.h"
+#include "painter.h"
 
 #include "utility/unsort_map.h"
 #include <map>
@@ -40,6 +41,8 @@ public:
     bool removePlugin(const std::string& name);
 
     Renderer& renderer() { return *_renderer; }
+
+    Painter& painter() { return *_painter; }
     
     Window& window() { return *_window; }
 
@@ -75,6 +78,8 @@ private:
 
 private:
     std::unique_ptr<Renderer> _renderer = nullptr;
+
+    std::unique_ptr<Painter> _painter = nullptr;
 
     std::unique_ptr<Window> _window = nullptr;
 

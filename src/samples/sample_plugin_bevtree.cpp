@@ -358,7 +358,7 @@ namespace samples {
 
     void SamplePluginBevTree::initBevTree()
     {
-        auto filepath = application()->resPath() / "npc/bevtree/bev_common_npc.xml";
+        auto filepath = application()->resPath() / "roles/bevtree/bev_common_npc.xml";
         bevtree::BevTreeManager::inst().load(filepath);
 
         {

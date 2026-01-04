@@ -29,8 +29,8 @@ namespace game {
 			return Status::Failure;
 		}
 
-		auto& motion = _context->registry().get<CompMotion>(_actor);
 		auto& trans = _context->registry().get<CompTransform>(_actor);
+		auto& motion = _context->registry().get<CompMotion>(_actor);
 		const auto& src = trans.position;
 	
 		auto pPatrolCom = _context->registry().try_get<CompNpcPatrol>(_actor);
@@ -45,6 +45,7 @@ namespace game {
 
 				Vec2i srcGrid = _context->currentScene().getGridFromPos(src);
 				Vec2i dstGrid = _context->currentScene().getGridFromPos(dest);
+
 				auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
 				if(!path)
 				{
@@ -52,13 +53,9 @@ namespace game {
 					continue;
 				}
 
-				motion.path.clear(); 
-				for (auto& grid : path.value()) {
-					motion.path.push_back(grid);
-				}
-				motion.targetPos = dest;
+				motion.path.swap(path.value());
 
-				getBlackboard()->set("patrol_dest", dest);
+				motion.targetGrid = dstGrid;
 
 				//spdlog::info("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
 				return Status::Success;
@@ -109,16 +106,13 @@ namespace game {
 			return;
 		}
 
-		if (!getBlackboard()->find("patrol_dest"))
-		{
-			spdlog::error("partol_dest NOT found.");
-			return;
-		}
-
 		_finished = false;
 
-		auto dest = getBlackboard()->getValue("patrol_dest", Vec2{ 0,0 });
-		_context->dispatcher().trigger(MoveToPos{ _actor, dest, false });
+
+		auto& motion = _context->registry().get<CompMotion>(_actor);
+
+		_context->dispatcher().trigger(MoveToGrid{ _actor, motion.targetGrid, false });
+
 		_context->dispatcher().sink<MotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
 
 		//spdlog::info("BevNode_PatrolMove: initialize");

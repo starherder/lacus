@@ -80,312 +80,55 @@
          "id":3,
          "name":"object",
          "objects":[
-                {
-                 "height":0,
-                 "id":1,
-                 "name":"npc_0",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":220,
-                 "y":189.333333333333
-                }, 
-                {
-                 "height":0,
-                 "id":5,
-                 "name":"npc_1",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":588,
-                 "y":221
-                }, 
-                {
-                 "height":0,
-                 "id":6,
-                 "name":"npc_2",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":363,
-                 "y":431
-                }, 
-                {
-                 "height":0,
-                 "id":7,
-                 "name":"npc_4",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":756,
-                 "y":747
-                }, 
-                {
-                 "height":0,
-                 "id":8,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":1105,
-                 "y":466
-                }, 
-                {
-                 "height":0,
-                 "id":9,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":757,
-                 "y":1168
-                }, 
-                {
-                 "height":0,
-                 "id":10,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":245,
-                 "y":1568
-                }, 
-                {
-                 "height":0,
-                 "id":11,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":446,
-                 "y":1557
-                }, 
-                {
-                 "height":0,
-                 "id":12,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":1070,
-                 "y":1839
-                }, 
-                {
-                 "height":0,
-                 "id":13,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":2092,
-                 "y":448
-                }, 
-                {
-                 "height":0,
-                 "id":16,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":1768,
-                 "y":2904
-                }, 
-                {
-                 "height":0,
-                 "id":18,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":400,
-                 "y":2388
-                }, 
-                {
-                 "height":0,
-                 "id":21,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":980,
-                 "y":3048
-                }, 
-                {
-                 "height":0,
-                 "id":69,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":1540,
-                 "y":2004
-                }, 
-                {
-                 "height":0,
-                 "id":70,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":1256,
-                 "y":2396
-                }, 
-                {
-                 "height":0,
-                 "id":77,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":676,
-                 "y":2812
-                }, 
-                {
-                 "height":0,
-                 "id":78,
-                 "name":"npc_3",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"bevtree",
-                         "type":"string",
-                         "value":"npc_patrol"
-                        }],
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":176,
-                 "y":2824
-                }],
+          {
+            "height": 0,
+            "id": 1,
+            "name": "npc_0",
+            "point": true,
+            "properties": [
+              {
+                "name": "bevtree",
+                "type": "string",
+                "value": "npc_patrol"
+              },
+              {
+                "name": "motion_tween",
+                "type": "string",
+                "value": "linear"
+              }
+            ],
+            "rotation": 0,
+            "type": "patrol_npc",
+            "visible": true,
+            "width": 0,
+            "x": 220,
+            "y": 189.333333333333
+          },
+          {
+            "height": 0,
+            "id": 2,
+            "name": "npc_1",
+            "point": true,
+            "properties": [
+              {
+                "name": "bevtree",
+                "type": "string",
+                "value": "npc_patrol"
+              },
+              {
+                "name": "motion_tween",
+                "type": "string",
+                "value": "cubicIn"
+              }
+            ],
+            "rotation": 0,
+            "type": "patrol_npc",
+            "visible": true,
+            "width": 0,
+            "x": 250,
+            "y": 250
+          }
+         ],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,

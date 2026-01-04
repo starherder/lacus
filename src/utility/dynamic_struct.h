@@ -128,7 +128,7 @@ namespace utility
 			_data.clear();
 		}
 
-		void swap(DynamicStruct& other) noexcept
+		void swap(DynamicStruct&& other) noexcept
 		{
 			_data.swap(other._data);
 		}
@@ -153,14 +153,14 @@ namespace utility
 		}
 
 		template<typename T>
-		std::pair<bool, T> get(const K& key) const
+		std::optional<T> get(const K& key) const
 		{
 			ConstIterator it = find(key);
 			if (it == end())
 			{
-				return {false, T()};
+				return std::nullopt;
 			}
-			return {true, it->second.convert<T>()};
+			return it->second.convert<T>();
 		}
 
 		Var getVar(const K& key) const

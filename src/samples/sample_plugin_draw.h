@@ -5,6 +5,8 @@
 
 namespace samples {
 
+    using namespace engine;
+
     class SamplePluginDraw final : public engine::Plugin 
     {
     public:
@@ -39,6 +41,8 @@ namespace samples {
         void drawTexture();
 
         void drawText();
+
+        void paint();
 
     private:
         std::vector<engine::Vertex> _vertices;

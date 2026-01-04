@@ -18,6 +18,11 @@ const Color Color::PaleRed(255, 200, 200);
 const Color Color::LightRed(255, 128, 128);
 const Color Color::DarkRed(128, 0, 0);
 
+const Color Color::Pink(255, 0, 255);
+const Color Color::PalePink(255, 200, 255);
+const Color Color::LightPink(255, 128, 255);
+const Color Color::DarkPink(128, 0, 128);
+
 const Color Color::Green(0, 255, 0);
 const Color Color::PaleGreen(200, 255, 200);
 const Color Color::LightGreen(128, 255, 128);

@@ -1,19 +1,21 @@
 #include "system_motion.h"
 #include "comm_event.h"
+#include "tweeny/tweeny.h"
 
 namespace game 
 {
+
     MotionSystem::MotionSystem(GameContext& context) : EcsSystem(context)
     {
-        context.dispatcher().sink<MoveToPos>().connect<&MotionSystem::onEventMoveToPos>(this);
+        context.dispatcher().sink<MoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
     }
 
     MotionSystem::~MotionSystem()
     {
     }
 
-	void MotionSystem::update(float deltaTime)
-	{
+    void MotionSystem::update(float deltaTime)
+    {
         deltaTime = std::clamp(deltaTime, 0.0f, 1.0f);
 
         auto ent_view = _context.registry().view<CompTransform, CompMotion>();
@@ -21,160 +23,136 @@ namespace game
         {
             auto& transform = ent_view.get<CompTransform>(ent);
             auto& motion = ent_view.get<CompMotion>(ent);
-            const auto& pos = transform.position;
 
-            if (motion.state == MotionState::Moving)
+            if (motion.state != MotionState::Moving)
             {
-                if (motion.path.empty())
-                {
-                    motion.velocity = glm::normalize(motion.targetPos - pos);
+                continue;
+            }
 
-                    if (glm::distance(motion.targetPos, pos) <= motion.speed * deltaTime)
-                    {
-                        transform.position = motion.targetPos;
-                        motionStop(ent);
-                    }
-                }
-                else
-                {
-                    const auto& cur_grid = _context.currentScene().getGridFromPos(pos);
-                    const auto& next_grid = motion.path.back();
-                    if (next_grid != cur_grid)
-                    {
-                        motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(next_grid) - pos);
-                    }
-                    else
-                    {
-                        if (reachGridCenter(pos, next_grid, motion.speed * deltaTime))
-                        {
-                            motion.path.pop_back();
-                        }
-                    }
-                }
-                transform.position += motion.velocity * motion.speed * deltaTime;
+            auto delta = _context.frameTicker().deltaTicks();
+            motion.tween.step(delta);
+
+            if(motion.tween.progress() >= 1.0f)
+            {
+                tweenNextGrid(ent);
             }
         }
-	}
-
-    void MotionSystem::setActorPos(entt::entity id, const Vec2& pos)
-    {
-        if (!_context.registry().valid(id))
-        {
-            spdlog::warn("entity {} not exist.", (int32_t)id);
-            return;
-        }
-
-        auto& transform = _context.registry().get<CompTransform>(id);
-        transform.position = pos;
     }
 
-    Vec2 MotionSystem::getActorPos(entt::entity id)
+    bool MotionSystem::motionStart(entt::entity id, const Vec2i& dstGrid, bool findPath)
     {
         if (!_context.registry().valid(id))
         {
-            spdlog::warn("entity {} not exist.", (int32_t)id);
-            return {};
+            spdlog::error("entity {} NOT found.", (uint32_t)id);
+            return false;
         }
-        return _context.registry().get<CompTransform>(id).position;
-    }
 
-    void MotionSystem::setMotionSpeed(entt::entity id, float speed)
-    {
-        if (!_context.registry().valid(id))
-        {
-            spdlog::warn("entity {} not exist.", (int32_t)id);
-            return;
-        }
         auto& motion = _context.registry().get<CompMotion>(id);
-        motion.speed = speed;
-    }
-
-    float MotionSystem::getMotionSpeed(entt::entity id)
-    {
-        if (!_context.registry().valid(id))
-        {
-            spdlog::warn("entity {} not exist.", (int32_t)id);
-            return 0.0f;
-        }
-        return _context.registry().get<CompMotion>(id).speed;
-    }
-
-    bool MotionSystem::reachGridCenter(const Vec2& pos, const Vec2i& grid, float epsilon)
-    {
-        auto grid_pos = _context.currentScene().getGridCenterPos(grid);
-        return glm::distance(pos, grid_pos) < epsilon;
-    }
-
-    bool MotionSystem::motionStart(entt::entity id, const Vec2& dst, bool findPath)
-    {
         auto& transform = _context.registry().get<CompTransform>(id);
-        auto& motion = _context.registry().get<CompMotion>(id);
-        const auto& src = transform.position;
 
-        // from world pos to grid
-        Vec2i srcGrid = _context.currentScene().getGridFromPos(src);
-        Vec2i dstGrid = _context.currentScene().getGridFromPos(dst);
+        const auto& srcPos = transform.position;
+        const auto& dstPos = _context.currentScene().getGridCenterPos(dstGrid);
+
+        Vec2i srcGrid = _context.currentScene().getGridFromPos(srcPos);
+        if(srcGrid == dstGrid)
+        {
+            spdlog::warn("src_grid == dst_grid");
+            return false;
+        }
 
         if (findPath)
         {
             // path find
             auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
-            if (path)
+            if (!path)
             {
                 spdlog::info("path find failed.");
                 motionStop(id);
                 return false;
             }
-
-            // add path
-            motion.path.clear();
-            for (auto& grid : path.value())
+            else
             {
-                motion.path.push_back(grid);
+                motion.path.swap(path.value());
             }
         }
 
-        motion.targetPos = dst;
+        if(motion.path.size() < 2) 
+        {
+            spdlog::warn("path TOO short!,only {} grids", motion.path.size());
+            return false;
+        }
+
         motion.state = MotionState::Moving;
-        motion.velocity = glm::normalize(_context.currentScene().getGridCenterPos(motion.path.back()) - src);
+        motion.path_iterator = motion.path.rbegin();
+
+        tweenNextGrid(id);
+
+        return true;
+    }
+
+    bool MotionSystem::tweenNextGrid(entt::entity id)
+    {
+        auto& motion = _context.registry().get<CompMotion>(id);
+        auto& transform = _context.registry().get<CompTransform>(id);
+
+        motion.path_iterator++;
+        if(motion.path_iterator == motion.path.rend())
+        {
+            transform.position = _context.currentScene().getGridCenterPos(motion.targetGrid);
+            motionStop(id);
+            return false;
+        }
+
+        const auto& curPos = transform.position;
+        const auto& nextGrid = *motion.path_iterator;
+        const auto& nextPos = _context.currentScene().getGridCenterPos(nextGrid);
+
+        int ticks = (glm::distance(curPos, nextPos) / motion.speed) * 1000;
+        motion.tween = tweeny::from(curPos.x, curPos.y)
+            .to(nextPos.x, nextPos.y)
+            .during(ticks)
+            .via(motion.tween_mode.c_str())
+            .onStep([&transform](auto& t, float x, float y) {
+                    transform.position = { x, y };
+                    return false;
+                });
+
         return true;
     }
 
     bool MotionSystem::motionStop(entt::entity id)
     {
-        if (!_context.registry().valid(id))
+        if (_context.registry().valid(id))
         {
-            spdlog::warn("entity {} not exist.", (int32_t)id);
-            return false;
+            auto& motion = _context.registry().get<CompMotion>(id);
+            motion.state = MotionState::Resting;
+            motion.path.clear();
+            motion.path_iterator = motion.path.rbegin();
         }
 
-        auto& motion = _context.registry().get<CompMotion>(id);
-        motion.path.clear();
-        motion.velocity = { 0, 0 };
-        motion.state = MotionState::Resting;
-
-        _context.dispatcher().trigger(MotionStop{id});
+        _context.dispatcher().trigger(MotionStop{ id });
         return true;
     }
 
     bool MotionSystem::motionPause(entt::entity id, bool pause)
     {
-        if (!_context.registry().valid(id))
+        if (_context.registry().valid(id))
         {
-            spdlog::warn("entity {} not exist.", (int32_t)id);
-            return false;
+            auto& motion = _context.registry().get<CompMotion>(id);
+            motion.state = pause ? MotionState::Paused : MotionState::Moving;
         }
 
-        auto& motion = _context.registry().get<CompMotion>(id);
-        motion.state = pause ? MotionState::Paused : MotionState::Moving;
         return true;
     }
 
-    void MotionSystem::onEventMoveToPos(const MoveToPos& e)
+    void MotionSystem::onEventMoveToGrid(const MoveToGrid& e)
     {
-        motionStart(e.actor, e.dest, e.findPath);
+        bool res = motionStart(e.actor, e.dest, e.findPath);
+        if (!res) 
+        {
+            motionStop(e.actor);
+        }
     }
-
 
 }
 

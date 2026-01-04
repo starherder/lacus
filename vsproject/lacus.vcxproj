@@ -156,6 +156,7 @@
     <ClCompile Include="..\src\engine\font.cpp" />
     <ClCompile Include="..\src\engine\geometry.cpp" />
     <ClCompile Include="..\src\engine\misc.cpp" />
+    <ClCompile Include="..\src\engine\painter.cpp" />
     <ClCompile Include="..\src\engine\plugin.cpp" />
     <ClCompile Include="..\src\engine\render.cpp" />
     <ClCompile Include="..\src\engine\resource.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="..\src\game\ecs\system_motion.cpp" />
     <ClCompile Include="..\src\game\ecs\system_render.cpp" />
     <ClCompile Include="..\src\game\game_logic.cpp" />
+    <ClCompile Include="..\src\game\scene\role_factory.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
     <ClCompile Include="..\src\game\scene\game_context.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
@@ -226,6 +228,7 @@
     <ClInclude Include="..\src\engine\font.h" />
     <ClInclude Include="..\src\engine\geometry.h" />
     <ClInclude Include="..\src\engine\misc.h" />
+    <ClInclude Include="..\src\engine\painter.h" />
     <ClInclude Include="..\src\engine\plugin.h" />
     <ClInclude Include="..\src\engine\render.h" />
     <ClInclude Include="..\src\engine\resource.h" />
@@ -243,6 +246,7 @@
     <ClInclude Include="..\src\game\ecs\system_motion.h" />
     <ClInclude Include="..\src\game\ecs\system_render.h" />
     <ClInclude Include="..\src\game\game_logic.h" />
+    <ClInclude Include="..\src\game\scene\role_factory.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />
     <ClInclude Include="..\src\game\scene\game_context.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />

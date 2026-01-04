@@ -12,6 +12,7 @@ GameLogicPlugin::GameLogicPlugin(engine::Application& app)
     : _app(app), _gameContext(app)
 {
     _scene = std::make_unique<GameScene>(_gameContext);
+    
     _gameContext.setCurrentScene(_scene.get());
 }
 
@@ -19,10 +20,25 @@ void GameLogicPlugin::onInit()
 {
     ui::GuiManager::inst().init(&_app);
 
-    auto filepath = application()->resPath() / "npc/bevtree/bev_common_npc.xml";
-    bevtree::BevTreeManager::inst().load(filepath);
+    auto btreePath = application()->resPath() / "roles/bevtree/bev_common_npc.xml";
+    bool res = bevtree::BevTreeManager::inst().load(btreePath);
+    if (!res) {
+        spdlog::error("load bevtree config: {} failed.", btreePath.string());
+        return;
+    }
 
-    _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
+    auto roleCfgs = application()->resPath() / "roles/roles.json";
+    res = RoleFactory::inst().load(_gameContext, roleCfgs);
+    if (!res) {
+        spdlog::error("load role config: {} failed.", roleCfgs.string());
+        return;
+    }
+
+    res = _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
+    if (!res) {
+        spdlog::error("load role config: {} failed.", roleCfgs.string());
+        return;
+    }
 
     //ui::GuiManager::inst().showForm<ui::FormDemo>("form_demo");
 }

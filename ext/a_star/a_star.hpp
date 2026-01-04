@@ -93,8 +93,6 @@ namespace AStar
             auto tick_begin = clock();
 
             if (detectCollision(source_) || detectCollision(target_)) {
-
-                spdlog::info("find path failed, time use : {}", clock() - tick_begin);
                 return std::nullopt;
             }
 
@@ -150,7 +148,6 @@ namespace AStar
             }
 
             if (!pathfound) {
-
                 spdlog::info("find path failed, time use : {}", clock() - tick_begin);
                 return std::nullopt;
             }
@@ -164,7 +161,10 @@ namespace AStar
             releaseNodes(openSet);
             releaseNodes(closedSet);
 
-            spdlog::info("find path success, time use : {}", clock() - tick_begin);
+            auto pass_tick = clock() - tick_begin;
+            if(pass_tick > 10) {
+                spdlog::warn("find path success, time use : {}", pass_tick);
+            }
             return path;
         }
 

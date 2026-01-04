@@ -1,6 +1,7 @@
 #include "sample_plugin_draw.h"
 
 #include "engine/application.h"
+#include "engine/color.h"
 
 namespace samples {
 
@@ -37,6 +38,8 @@ namespace samples {
         drawText();
 
         drawGeometry();
+
+        paint();
     }
 
     void SamplePluginDraw::onClose() 
@@ -75,7 +78,7 @@ namespace samples {
             if(tex)
             {
                 auto tex_sz = tex->size();
-                renderer.drawTexture(tex, {0.0f, 0.0f, tex_sz.x, tex_sz.y}, {50.0f, 400.0f, tex_sz.x/2,tex_sz.y/2} );
+                renderer.drawTexture(tex, {0.0f, 0.0f, tex_sz.x, tex_sz.y }, {50.0f, 400.0f, tex_sz.x/2,tex_sz.y/2} );
             }
         }
     }
@@ -98,5 +101,43 @@ namespace samples {
                 renderer.drawText("就是这个feel，倍er爽~", font, {800, 200}, {255, 200, 0, 255});
             }
         }
+    }
+
+
+    void SamplePluginDraw::paint()
+    {
+        auto& painter = application()->painter();
+
+
+        static float timepassed;
+        timepassed += application()->frameTicker().deltaSeconds();
+        if(timepassed > 2.0f) 
+        { 
+            painter.SetAntiAlaised(!painter.IsAntiAlaised());
+            timepassed = 0.0f;
+        }
+        
+        bool anti = painter.IsAntiAlaised(); 
+        auto font = application()->resourceManager().fontManager().get("fonts/msyh.ttf"_hs, 20);
+
+        painter.DrawRect(Color::PaleBlue, {980, 80, 600, 800}, 5.0f, 3.0f);
+        painter.drawText(anti?"aniti_alaised":"", font, {1000, 100});
+
+        painter.DrawCircle(Color::Pink, {1200, 100}, 50, 30, 3);
+        painter.FillCircle(Color::LightPink, {1500, 100}, 50, 20);
+
+        painter.DrawLine(Color::DarkCyan, {1000, 150}, {1500, 180}, 5);
+
+        std::vector<Vec2> points = {{1500, 100}, {1550, 200}, {1500, 300}, {1550, 370}};
+        painter.DrawLines(Color::Cyan, points.data(), points.size(), false, 1.0f);
+
+        painter.DrawTriangle(Color::PaleRed, { 1000, 240 }, { 1200, 350 }, { 1100, 230 }, 2.0f);
+        painter.FillTriangle(Color::DarkRed, { 1000, 380 }, { 1250, 400 }, { 1020, 370 });
+        
+        painter.FillRect(Color::LightBlue, { 1000, 460, 200, 50}, 8.0f);
+        painter.FillRect(Color::DarkBlue, { 1000, 600, 200, 50 });
+
+        points = { {1500, 500}, {1550, 600}, {1500, 500}, {1550, 670} };
+        painter.DrawLines(Color::DarkPink, points.data(), points.size(), true, 1.0f);
     }
 }

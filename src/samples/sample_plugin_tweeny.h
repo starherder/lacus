@@ -49,6 +49,8 @@ namespace samples {
        
         engine::Vec2 _rolePos = _roleBeginPos;
 
+        EaseMode _easeMode;
+
     public:
         SamplePluginTweeny() = default;
         ~SamplePluginTweeny() = default;

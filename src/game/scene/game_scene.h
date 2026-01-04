@@ -3,6 +3,7 @@
 #include "tilemap/tile_map.h"
 
 #include "game/scene/game_context.h"
+#include "game/scene/role_factory.h"
 
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comm_system.h"
@@ -50,7 +51,6 @@ namespace game {
         GameCamera& camera() { return _camera; }
         entt::registry& registry() { return _registry;  }
 
-        entt::entity createActor(const std::string& name, const Vec2& pos, const Vec2& size = { 64, 64 });
         entt::entity getActor(const std::string& name);
 
         void destroyActor(entt::entity id);

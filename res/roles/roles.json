@@ -1,0 +1,14 @@
+[
+	{
+		"id": "npc_0",
+		"cfg": "config/npc_0.json"
+	},
+	{
+		"id": "npc_1",
+		"cfg": "config/npc_1.json"
+	},
+	{
+		"id": "npc_2",
+		"cfg": "config/npc_2.json"
+	}
+]

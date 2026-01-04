@@ -1,0 +1,20 @@
+[
+	{
+		"name": "test_scene",
+		"type": "normal",
+		"tile_map": "scenes/level_test"
+	},
+
+	{
+		"name": "scene_shijie_village",
+		"type": "normal",
+		"tile_map": "scenes/shijie_village"
+	}
+
+	{
+		"name": "scene_dongxi_village",
+		"type": "normal",
+		"tile_map": "scenes/dongxi_village"
+	}
+
+]
