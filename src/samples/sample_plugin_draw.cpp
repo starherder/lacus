@@ -39,7 +39,9 @@ namespace samples {
 
         drawGeometry();
 
-        paint();
+        paintNormal();
+
+        paintEx();
     }
 
     void SamplePluginDraw::onClose() 
@@ -104,10 +106,9 @@ namespace samples {
     }
 
 
-    void SamplePluginDraw::paint()
+    void SamplePluginDraw::paintNormal()
     {
         auto& painter = application()->painter();
-
 
         static float timepassed;
         timepassed += application()->frameTicker().deltaSeconds();
@@ -139,5 +140,53 @@ namespace samples {
 
         points = { {1500, 500}, {1550, 600}, {1500, 500}, {1550, 670} };
         painter.drawLines(Color::DarkPink, points.data(), points.size(), true, 1.0f);
+    }
+
+    void SamplePluginDraw::paintEx()
+    {
+        auto& exp = application()->ex_painter();
+
+        static float timepassed;
+        timepassed += application()->frameTicker().deltaSeconds();
+        if (timepassed > 2.0f)
+        {
+            exp.setAntiAlaised(!exp.isAntiAlaised());
+            timepassed = 0.0f;
+        }
+
+        Vec2 pos = {150, 700};
+
+        exp.drawPixel(Color::Red, pos);
+
+        exp.drawArc(Color::Red, pos + Vec2{ 50,50 }, 50, 90, 180);
+        exp.drawCircle(Color::LightRed, pos + Vec2{ 110, 50 }, 50);
+        exp.drawEllipse(Color::Pink, pos + Vec2{ 50, 110 }, { 100, 50 });
+
+        exp.drawLine(Color::LightBlue, pos + Vec2{ 50, 180 }, pos + Vec2{ 200, 180 });
+        exp.drawLine(Color::DarkBlue, pos + Vec2{ 50, 200 }, pos + Vec2{ 200, 200 }, 5);
+
+        exp.drawPie(Color::Yellow, pos + Vec2{ 50, 240 }, 50, 0, 90);
+
+        exp.drawRect(Color::Cyan, { pos + Vec2{ 50, 300 }, Vec2{100, 50} });
+        exp.drawRect(Color::Blue, { pos + Vec2{ 50, 360 }, Vec2{100, 50} }, 10);
+
+        exp.drawTriangle(Color::White, pos + Vec2{ 50, 430 }, pos + Vec2{ 100, 430 }, pos + Vec2{ 70, 480 });
+
+
+        //-------------------------
+
+        pos = { 400, 700 };
+
+        exp.drawPixel(Color::Red, pos);
+
+        exp.fillCircle(Color::DarkRed, pos + Vec2{ 110, 50 }, 50);
+        exp.fillEllipse(Color::Pink, pos + Vec2{ 50, 110 }, { 100, 50 });
+
+        exp.fillPie(Color::Yellow, pos + Vec2{ 50, 240 }, 50, 0, 90);
+
+        exp.fillRect(Color::Cyan, { pos + Vec2{ 50, 300 }, Vec2{100, 50} });
+        exp.fillRect(Color::Blue, { pos + Vec2{ 50, 360 }, Vec2{100, 50} }, 10);
+
+        exp.fillTriangle(Color::White, pos + Vec2{ 50, 430 }, pos + Vec2{ 100, 430 }, pos + Vec2{ 70, 480 });
     }
 }

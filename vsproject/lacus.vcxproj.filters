@@ -262,6 +262,9 @@
     <ClCompile Include="..\src\utility\string_util.cpp">
       <Filter>utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\engine\ex_painter.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -527,6 +530,9 @@
     </ClInclude>
     <ClInclude Include="..\src\utility\translator.h">
       <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\ex_painter.h">
+      <Filter>engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

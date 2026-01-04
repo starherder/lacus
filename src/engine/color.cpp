@@ -233,7 +233,7 @@ void Color::fromFColor(const FColor& fcolor)
 
 uint32_t Color::toUint32() const
 {
-    return (r << 24) | (g << 16) | (b << 8) | a;
+    return (uint32_t)(r << 24) | (uint32_t)(g << 16) | (uint32_t)(b << 8) | (uint32_t)a;
 }
 
 void Color::fromUint32(uint32_t ul)

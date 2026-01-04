@@ -8,6 +8,7 @@ Application::Application()
 {
     _renderer = std::make_unique<Renderer>();
     _painter = std::make_unique<Painter>(*this);
+    _ex_painter = std::make_unique<ExPainter>(*this);
     _window = std::make_unique<Window>();
     _resourceMgr = std::make_unique<ResourceManager>(*this);
     _audioPlayer = std::make_unique<AudioPlayer>();

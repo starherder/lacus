@@ -89,10 +89,11 @@ add_executable(${PROJECT_NAME}
 if(WIN32 AND MINGW)
     target_link_libraries(${PROJECT_NAME} PRIVATE 
         SDL3-static
-        SDL3_image-static
-        SDL3_mixer-static
-        SDL3_ttf-static
-        SDL_uclibc
+        SDL3-image-static
+        SDL3-mixer-static
+        SDL3-ttf-static
+        SDL3-gfx-static
+        SDL-uclibc
         libtmxlite-static
         winmm
         setupapi
@@ -107,10 +108,11 @@ if(WIN32 AND MINGW)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE 
         SDL3-static
-        SDL3_image-static
-        SDL3_mixer-static
-        SDL3_ttf-static
-        SDL_uclibc
+        SDL3-image-static
+        SDL3-mixer-static
+        SDL3-ttf-static
+        SDL3-gfx-static
+        SDL-uclibc
         libtmxlite-static
         winmm
         setupapi
