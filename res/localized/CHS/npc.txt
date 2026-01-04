@@ -1,0 +1,6 @@
+text_npc_name_0=张散
+text_npc_name_1=李思
+text_npc_name_2=王巫
+text_npc_name_3=赵柳
+text_npc_name_4=陈奇
+text_npc_name_5=刘霸

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include "game/ecs/comm_comp.h"
+#include "utility/translator.h"
 
 namespace game 
 {
@@ -81,7 +82,8 @@ namespace game
 		auto& json = *jsonptr;
 		auto role = _context->registry().create();
 
-		auto name = json.value("name", "");
+		auto name = Trans(json.value("name", ""));
+
 		_context->registry().emplace<CompNameId>(role, role, name, cfgid);
 
 		if (json.contains("common"))

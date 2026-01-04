@@ -29,6 +29,7 @@ set(SPDLOG_PATH "${CMAKE_SOURCE_DIR}/ext/spdlog/")
 set(IMGUI_PATH "${CMAKE_SOURCE_DIR}/ext/imgui")
 set(TMXLITE_PATH "${CMAKE_SOURCE_DIR}/ext/tmxlite")
 set(EXT_PATH "${CMAKE_SOURCE_DIR}/ext/")
+set(UTILITY_PATH "${CMAKE_SOURCE_DIR}/src/utility/")
 
 
 # 手动设置包含目录
@@ -65,6 +66,7 @@ set(OTHER_SOURCES
     ${IMGUI_PATH}/backends/imgui_impl_sdlrenderer3.cpp
     
     ${EXT_PATH}/tinyxml2/tinyxml2.cpp
+    ${UTILITY_PATH}/string_util.cpp
 
 )
 

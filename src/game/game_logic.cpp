@@ -4,6 +4,7 @@
 #include "ui/form_demo.h"
 
 #include "bevtree/bevtree.h"
+#include "utility/translator.h"
 
 namespace game {
 
@@ -31,6 +32,13 @@ void GameLogicPlugin::onInit()
     res = RoleFactory::inst().load(_gameContext, roleCfgs);
     if (!res) {
         spdlog::error("load role config: {} failed.", roleCfgs.string());
+        return;
+    }
+
+    auto textFile = application()->resPath() / "localized/CHS/npc.txt";
+    res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textFile);
+    if (!res) {
+        spdlog::error("load translator file ({}) failed.", textFile.string());
         return;
     }
 

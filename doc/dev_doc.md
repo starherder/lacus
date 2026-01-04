@@ -39,20 +39,12 @@ mkdir build & cd build & cmake ..
 
 ## 计划
 
-    场景TileMap层级
-
-    1. 背景层(ImageLayer)，（棋盘...）：图片，装饰
-
-    2. 地形层(TileLayer)，（土地、草地、沙漠、水面、道路...）：用于行走
-
-    3. 前景层(ObjectLayer)，（树林、草丛、云雾、建筑...）：装饰遮挡
-
-    4. 逻辑层(ObjectLayer)，（刷怪点、触发区、标记...）：玩法逻辑
-
 - ~~行为树增加xml/json配置~~
 - ~~简易2d粒子系统~~
 - ~~消息在场景和界面、imgui之间的传递~~
-- 场景增加context，gameplay中每个system独立成类，system中没有数据，通用的数据在context中保存
+- ~~场景增加context，gameplay中每个system独立成类，system中没有数据，通用的数据在context中保存~~
+- ~~npc的配置读取创建~~
+- painter系统优化完善、译文系统
 - 简易技能系统，表现+伤害，表现层引入tweeny，伤害公式计算使用lua配置
 
 ## 日志
@@ -140,6 +132,26 @@ mkdir build & cd build & cmake ..
 
 - 引入ore项目的粒子系统
 - 引入ore项目的粒子编辑器
+
+### 12.30  整理场景和ECS模块组织
+
+- 整理ECS场景中模式
+- 增加GameContext类
+- 增加巡逻NPC行为树
+
+### 12.31 移动系统
+
+- motionSystem
+- renderSystem
+
+### 1.1 - 1.3 tween移动、npc配置
+
+- 使用tween实现移动功能，增加多种移动效果
+- 增加NPC配置
+
+### 1.4 NPC配置模块
+
+- 读取NPC配置创建NPC
 
 ---
 

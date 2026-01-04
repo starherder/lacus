@@ -206,6 +206,7 @@
     <ClCompile Include="..\src\ui\gui_manager.cpp" />
     <ClCompile Include="..\src\ui\ui_utils.cpp" />
     <ClCompile Include="..\src\ui\widget.cpp" />
+    <ClCompile Include="..\src\utility\string_util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdl3.h" />
@@ -294,6 +295,7 @@
     <ClInclude Include="..\src\utility\signalslot.h" />
     <ClInclude Include="..\src\utility\skip_list.h" />
     <ClInclude Include="..\src\utility\string_util.h" />
+    <ClInclude Include="..\src\utility\translator.h" />
     <ClInclude Include="..\src\utility\unsort_map.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
