@@ -44,6 +44,8 @@ namespace samples {
 
         void paint();
 
+        void gfx_paint();
+
     private:
         std::vector<engine::Vertex> _vertices;
         engine::Texture* _texture = nullptr;

@@ -40,6 +40,8 @@ namespace samples {
         drawGeometry();
 
         paint();
+
+        gfx_paint();
     }
 
     void SamplePluginDraw::onClose() 
@@ -103,10 +105,45 @@ namespace samples {
         }
     }
 
-
     void SamplePluginDraw::paint()
     {
-        auto& exp = application()->painter();
+        auto& painter = application()->painter();
+
+        static float timepassed;
+        timepassed += application()->frameTicker().deltaSeconds();
+        if (timepassed > 2.0f)
+        {
+            painter.setAntiAlaised(!painter.isAntiAlaised());
+            timepassed = 0.0f;
+        }
+
+        bool anti = painter.isAntiAlaised();
+        auto font = application()->resourceManager().fontManager().get("fonts/msyh.ttf"_hs, 20);
+
+        painter.drawRect(Color::PaleBlue, { 980, 80, 600, 800 }, 5.0f, 3.0f);
+        painter.drawText(anti ? "aniti_alaised" : "", font, { 1000, 100 });
+
+        painter.drawCircle(Color::Pink, { 1200, 100 }, 50, 30, 3);
+        painter.fillCircle(Color::LightPink, { 1500, 100 }, 50, 20);
+
+        painter.drawLine(Color::DarkCyan, { 1000, 150 }, { 1500, 180 }, 5);
+
+        std::vector<Vec2> points = { {1500, 100}, {1550, 200}, {1500, 300}, {1550, 370} };
+        painter.drawLines(Color::Cyan, points.data(), points.size(), false, 1.0f);
+
+        painter.drawTriangle(Color::PaleRed, { 1000, 240 }, { 1200, 350 }, { 1100, 230 }, 2.0f);
+        painter.fillTriangle(Color::DarkRed, { 1000, 380 }, { 1250, 400 }, { 1020, 370 });
+
+        painter.fillRect(Color::LightBlue, { 1000, 460, 200, 50 }, 8.0f);
+        painter.fillRect(Color::DarkBlue, { 1000, 600, 200, 50 });
+
+        points = { {1500, 500}, {1550, 600}, {1500, 500}, {1550, 670} };
+        painter.drawLines(Color::DarkPink, points.data(), points.size(), true, 1.0f);
+    }
+
+    void SamplePluginDraw::gfx_paint()
+    {
+        auto& exp = application()->gfx_painter();
 
         static float timepassed;
         timepassed += application()->frameTicker().deltaSeconds();
@@ -116,11 +153,11 @@ namespace samples {
             timepassed = 0.0f;
         }
 
-        Vec2 pos = {650, 300};
+        Vec2 pos = {100, 650};
 
         auto text = exp.isAntiAlaised() ? "anti-aliaised" : "";
         auto font = application()->resourceManager().fontManager().get("fonts/VonwaonBitmap-16px.ttf"_hs, 20);
-        exp.drawText(text, font, pos + Vec2{150, -50}, Color::Green);
+        exp.drawText(text, font, pos + Vec2{200, -20}, Color::Green);
 
         exp.drawPixel(Color::Red, pos);
 
@@ -140,7 +177,7 @@ namespace samples {
 
         // ----------------------------------------------------------------------------------------------------
 
-        pos = { 900, 300 };
+        pos = { 400, 650 };
 
         exp.drawPixel(Color::Red, pos);
 

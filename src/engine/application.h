@@ -11,6 +11,7 @@
 #include "audio.h"
 #include "audio_player.h"
 #include "painter.h"
+#include "gfx_painter.h"
 
 #include "utility/unsort_map.h"
 #include <map>
@@ -43,6 +44,8 @@ public:
     Renderer& renderer() { return *_renderer; }
 
     Painter& painter() { return *_painter; }
+
+    GFXPainter& gfx_painter() { return *_gfx_painter; }
 
     Window& window() { return *_window; }
 
@@ -80,6 +83,7 @@ private:
     std::unique_ptr<Renderer> _renderer = nullptr;
 
     std::unique_ptr<Painter> _painter = nullptr;
+    std::unique_ptr<GFXPainter> _gfx_painter = nullptr;
 
     std::unique_ptr<Window> _window = nullptr;
 
