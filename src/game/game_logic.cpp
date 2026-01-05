@@ -21,15 +21,15 @@ void GameLogicPlugin::onInit()
 {
     ui::GuiManager::inst().init(&_app);
 
-    auto btreePath = application()->resPath() / "roles/bevtree/bev_common_npc.xml";
+    auto btreePath = application()->resPath() / "objects/bevtree/bev_common_npc.xml";
     bool res = bevtree::BevTreeManager::inst().load(btreePath);
     if (!res) {
         spdlog::error("load bevtree config: {} failed.", btreePath.string());
         return;
     }
 
-    auto roleCfgs = application()->resPath() / "roles/roles.json";
-    res = RoleFactory::inst().load(_gameContext, roleCfgs);
+    auto roleCfgs = application()->resPath() / "objects/objects.json";
+    res = ObjectFactory::inst().load(_gameContext, roleCfgs);
     if (!res) {
         spdlog::error("load role config: {} failed.", roleCfgs.string());
         return;
@@ -42,9 +42,10 @@ void GameLogicPlugin::onInit()
         return;
     }
 
-    res = _scene->load(_app.resPath()/"scenes/level_test/test_map.tmj");
+    auto mapFile = _app.resPath() /"scenes/level_test/test_map.tmj";
+    res = _scene->load(mapFile);
     if (!res) {
-        spdlog::error("load role config: {} failed.", roleCfgs.string());
+        spdlog::error("load level test: {} failed.", mapFile.string());
         return;
     }
 

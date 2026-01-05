@@ -253,7 +253,7 @@
     <ClCompile Include="..\ext\tinyxml2\tinyxml2.cpp">
       <Filter>utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\scene\role_factory.cpp">
+    <ClCompile Include="..\src\game\scene\object_factory.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
     <ClCompile Include="..\src\utility\string_util.cpp">
@@ -264,6 +264,12 @@
     </ClCompile>
     <ClCompile Include="..\src\engine\painter.cpp">
       <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_pickup.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_dead.cpp">
+      <Filter>game\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -522,7 +528,7 @@
     <ClInclude Include="..\ext\tinyxml2\tinyxml2.h">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\scene\role_factory.h">
+    <ClInclude Include="..\src\game\scene\object_factory.h">
       <Filter>game\scene</Filter>
     </ClInclude>
     <ClInclude Include="..\src\utility\translator.h">
@@ -533,6 +539,12 @@
     </ClInclude>
     <ClInclude Include="..\src\engine\painter.h">
       <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_pickup.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_dead.h">
+      <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

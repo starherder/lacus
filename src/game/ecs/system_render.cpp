@@ -32,6 +32,11 @@ void RenderSystem::draw()
 
             painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, display.font_color);
         }
+
+        if(display.particle)
+        {
+            display.particle->Draw();
+        }
     }
 
     if (_context.debugMode())

@@ -28,6 +28,8 @@ namespace game {
         void onEventMoveToGrid(const MoveToGrid& e);
 
         bool tweenNextGrid(entt::entity id);
+
+        void checkEntityGrid(entt::entity ent, const Vec2& lstpos, const Vec2& curpos);
     };
 }
 

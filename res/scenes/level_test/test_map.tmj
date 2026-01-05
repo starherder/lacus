@@ -103,30 +103,20 @@
             "width": 0,
             "x": 220,
             "y": 189.333333333333
-          },
+          },   
           {
             "height": 0,
             "id": 2,
-            "name": "npc_1",
+            "name": "item_0",
             "point": true,
             "properties": [
-              {
-                "name": "bevtree",
-                "type": "string",
-                "value": "npc_patrol"
-              },
-              {
-                "name": "motion_tween",
-                "type": "string",
-                "value": "cubicIn"
-              }
             ],
             "rotation": 0,
             "type": "patrol_npc",
             "visible": true,
             "width": 0,
-            "x": 250,
-            "y": 250
+            "x": 300,
+            "y": 200
           }
          ],
          "opacity":1,

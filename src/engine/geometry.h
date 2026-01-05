@@ -52,6 +52,11 @@ public:
 
 //------------------------------------------------------------
 
+inline bool operator < (const Vec2i& lval, const Vec2i& rval) {
+    if(lval.x == rval.x) return lval.y < rval.y;
+    return lval.x < rval.x;
+}
+
 inline SDL_FPoint ToPoint(const Vec2& v) {
     return SDL_FPoint{ v.x, v.y };
 }

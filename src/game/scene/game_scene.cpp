@@ -7,6 +7,8 @@
 #include "game/ecs/system_render.h"
 #include "game/ecs/system_bevtree.h"
 #include "game/ecs/system_fight.h"
+#include "game/ecs/system_pickup.h"
+#include "game/ecs/system_dead.h"
 
 namespace game {
 
@@ -26,9 +28,13 @@ GameScene::~GameScene()
 
 void GameScene::initEscSystem()
 {
-    _ecsSystems.insert({ EcsPriority::MotionSystem, std::make_shared<MotionSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::RenderSystem, std::make_shared<RenderSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::BevTreeSystem, std::make_shared<BevTreeSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<MotionSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<RenderSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_context) });
+
+    _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
 }
 
 Vec2 GameScene::mapSize()
@@ -216,20 +222,35 @@ void GameScene::drawDebugView()
 
 bool GameScene::createObject(const MapObject& obj)
 {
-    auto ent = RoleFactory::inst().createRole(obj.name);
-
-    auto& trans = _context.registry().get<CompTransform>(ent);
-    auto& patrol = _context.registry().get<CompNpcPatrol>(ent);
-    auto& btree = _context.registry().get<CompBevtree>(ent);
-
-    trans.position = obj.pos;
-    patrol.origin_pos = obj.pos;
-
-    if (btree.bevtree) 
+    auto ent = ObjectFactory::inst().createRole(obj.name);
+    if(ent==entt::null) 
     {
-        btree.bevtree->getBlackboard()->set("context", &_context);
-        btree.bevtree->getBlackboard()->set("actor", ent);
+        return false;
     }
+
+    auto* trans = _context.registry().try_get<CompTransform>(ent);
+    if(trans) 
+    {
+        trans->position = obj.pos;
+    }
+
+    auto* patrol = _context.registry().try_get<CompNpcPatrol>(ent);
+    if(patrol) 
+    {
+        patrol->origin_pos = obj.pos;
+    }
+
+    auto* btree = _context.registry().try_get<CompBevtree>(ent);
+    if (btree && btree->bevtree) 
+    {
+        btree->bevtree->getBlackboard()->set("context", &_context);
+        btree->bevtree->getBlackboard()->set("actor", ent);
+    }
+
+    auto grid = getGridFromPos(obj.pos);
+    addObjectToGrid(ent, grid);
+
+    spdlog::info("createObject: id = {}, name = {}", (int)ent, obj.name);
     return true;
 }
 
@@ -268,5 +289,29 @@ void GameScene::destroyAllActor()
     _registry.clear();
 }
 
+void GameScene::onRoleCrossGrid(const RoleCrossGrid& e)
+{
+    auto& lstset = _gridObjects[e.lst_grid];
+    lstset.erase(e.actor);
+
+    auto& curset = _gridObjects[e.cur_grid];
+    curset.insert(e.actor);
+
+    //spdlog::info("onRoleCrossGrid: lst_grid({},{}).size = {}, cur_grid({},{}).size = {}", 
+    //    e.lst_grid.x, e.lst_grid.y, lstset.size(), e.cur_grid.x, e.cur_grid.y, curset.size());
+}
+
+void GameScene::addObjectToGrid(entt::entity ent, const Vec2i& grid)
+{
+    _gridObjects[grid].insert(ent);
+
+    //spdlog::info("addObjectToGrid: cur_grid({},{}).size = {}",
+    //    grid.x, grid.y, _gridObjects[grid].size());
+}
+
+const GameScene::EntitySet& GameScene::getObjectsInGrid(const Vec2i& grid)
+{ 
+    return _gridObjects[grid]; 
+}
 
 } 

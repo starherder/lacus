@@ -258,7 +258,7 @@ RegisterBehaviorNode("br_kill", BrKillPrey);
 
 void SamplePluginBevTree::initBattleRoyale()
 {
-    auto filepath = application()->resPath() / "roles/bevtree/bev_battle_royale.xml";
+    auto filepath = application()->resPath() / "objects/bevtree/bev_battle_royale.xml";
     bevtree::BevTreeManager::inst().load(filepath);
 
     for(int i=0; i<50; i++)

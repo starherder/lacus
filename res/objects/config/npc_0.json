@@ -2,10 +2,15 @@
     "id": "npc_0",
     "name" : "text_npc_name_0",
 
-    "common" : {
-        "type" : "patrol_npc",
-        "camp" : "official",
-        "desc" : "text_npc_0_desc"
+  "common": {
+    "type": "patrol_npc",
+    "camp": "gangster",
+    "desc": "text_npc_0_desc"
+  },
+
+    "pick": {
+      "range": 100,
+      "types": ["coin", "weapon"]
     },
 
     "motion" : {

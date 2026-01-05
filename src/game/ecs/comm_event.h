@@ -16,5 +16,11 @@ namespace game {
 		entt::entity actor;
 	};
 
+	struct RoleCrossGrid {
+		entt::entity actor;
+		Vec2i lst_grid;
+		Vec2i cur_grid;
+	};
+
 
 }

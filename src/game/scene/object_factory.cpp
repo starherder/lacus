@@ -1,4 +1,4 @@
-﻿#include "role_factory.h"
+﻿#include "object_factory.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -8,7 +8,7 @@
 namespace game 
 {
 
-	bool RoleFactory::load(GameContext& context, const fs::path& roles_cfg)
+	bool ObjectFactory::load(GameContext& context, const fs::path& roles_cfg)
 	{
 		_context = &context;
 
@@ -42,7 +42,7 @@ namespace game
 		return true;
 	}
 	
-	bool RoleFactory::loadRoleCfg(const std::string& id, const fs::path& cfgfile)
+	bool ObjectFactory::loadRoleCfg(const std::string& id, const fs::path& cfgfile)
 	{
 		auto jsonptr = std::make_shared<nlohmann::json>();
 
@@ -65,27 +65,29 @@ namespace game
 		return true;
 	}
 
-	entt::entity RoleFactory::createRole(const std::string& cfgid)
+	entt::entity ObjectFactory::createObject(const std::string& cfgid)
 	{
-		if (!_context) 
+		if (!_context)
 		{
-			spdlog::error("roleFactory need Load first.");
+			spdlog::error("ObjectFactory need Load first.");
 			return entt::null;
 		}
 
 		auto jsonptr = _jsonCfgs[cfgid];
-		if(!jsonptr)
+		if (!jsonptr)
 		{
-			spdlog::error("role ({}) cfg NOT found.", cfgid);
+			spdlog::error("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
 		auto& json = *jsonptr;
-		auto role = _context->registry().create();
+		auto object = _context->registry().create();
 
 		auto name = Trans(json.value("name", ""));
+		_context->registry().emplace<CompNameId>(object, object, name, cfgid);
 
-		_context->registry().emplace<CompNameId>(role, role, name, cfgid);
+		CompTransform comtrans;
+		_context->registry().emplace<CompTransform>(object, comtrans);
 
 		if (json.contains("common"))
 		{
@@ -94,7 +96,80 @@ namespace game
 			CompComm comm;
 			comm.type = cmmJs.value("type", "");
 			comm.desc = cmmJs.value("desc", "");
+			comm.state = LifeState::Normal;
 
+			_context->registry().emplace<CompComm>(object, comm);
+		}
+
+		if (json.contains("display"))
+		{
+			auto& display = json["display"];
+			auto& trans = _context->registry().get<CompTransform>(object);
+			trans.size = ToVec2(display.value("size", "64,64"));
+
+			Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
+			Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
+			Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
+
+			auto texture = display.value("texture", "");
+			auto tex_rect = ToRect(display.value("tex_rect", "0,0,0,0"));
+			auto font_file = display.value("font_file", "fonts/msyh.ttf");
+			auto font_size = display.value("font_size", 12);
+
+			CompDisplay comdis;
+			comdis.ground_color = bg;
+			comdis.border_color = bd;
+			comdis.font_color = fc;
+			comdis.texture = _context->textureMgr().get(HashString(texture.c_str()));
+			comdis.tex_rect = tex_rect;
+			comdis.font = _context->fontMgr().get(HashString(font_file.c_str()), font_size);
+			_context->registry().emplace<CompDisplay>(object, comdis);
+		}
+
+		if (json.contains("pickable"))
+		{
+			auto& pickable = json["pickable"];
+
+			CompPickable com;
+			com.amount = pickable.value("amount", 1);
+
+			auto effect = pickable.value("effect", "");
+			if(!effect.empty()) 
+			{
+				auto& comDisplay = _context->registry().get<CompDisplay>(object);
+				comDisplay.particle = particle::ParticleManager::inst().CreateParticle(effect);
+				if(comDisplay.particle)
+				{
+					comDisplay.particle->Stop();
+				}
+			}
+
+			_context->registry().emplace<CompPickable>(object, com);
+		}
+
+		return object;
+	}
+
+	entt::entity ObjectFactory::createRole(const std::string& cfgid)
+	{
+		auto role = createObject(cfgid);
+		if(role == entt::null) {
+			return role;
+		}
+
+		auto jsonptr = _jsonCfgs[cfgid];
+		if (!jsonptr)
+		{
+			spdlog::error("object ({}) cfg NOT found.", cfgid);
+			return entt::null;
+		}
+
+		auto& comm = _context->registry().get<CompComm>(role);
+
+		auto& json = *jsonptr;
+		if (json.contains("common"))
+		{
+			auto& cmmJs = json["common"];
 			auto campstr = cmmJs.value("camp", "gangster");
 			if (campstr == "official") {
 				comm.comp = CompComm::CampSide::Officer;
@@ -113,8 +188,6 @@ namespace game
 				spdlog::error("camp ({}) NOT support", campstr);
 			}
 
-			_context->registry().emplace<CompComm>(role, comm);
-
 			if (comm.type == "patrol_npc")
 			{
 				if (json.contains("patrol"))
@@ -129,6 +202,15 @@ namespace game
 			}
 		}
 
+		if (json.contains("pick"))
+		{
+			auto& pickJs = json["pick"];
+			CompRolePick pick;
+			pick.range = pickJs.value("range", 100);
+			pick.pick_types = pickJs["types"];
+			_context->registry().emplace<CompRolePick>(role, pick);
+		}
+
 		if (json.contains("motion"))
 		{
 			auto& motionJs = json["motion"];
@@ -137,33 +219,6 @@ namespace game
 			motion.tween_mode = motionJs.value("tween", "");
 			motion.speed = motionJs.value("speed", 0.0f);
 			_context->registry().emplace<CompMotion>(role, motion);
-		}
-
-		if(json.contains("display")) 
-		{
-			auto& display = json["display"];
-
-			CompTransform comtrans;
-			comtrans.size = ToVec2(display.value("size", "64,64"));
-			_context->registry().emplace<CompTransform>(role, comtrans);
-
-			Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
-			Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
-			Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
-
-			auto texture = display.value("texture", "");
-			auto tex_rect = ToRect(display.value("tex_rect", "0,0,0,0"));
-			auto font_file = display.value("font_file", "fonts/msyh.ttf");
-			auto font_size = display.value("font_size", 12);
-
-			CompDisplay comdis;
-			comdis.ground_color = bg;
-			comdis.border_color = bd;
-			comdis.font_color = fc;
-			comdis.texture = _context->textureMgr().get(HashString(texture.c_str()));
-			comdis.tex_rect = tex_rect;
-			comdis.font = _context->fontMgr().get(HashString(font_file.c_str()), font_size);
-			_context->registry().emplace<CompDisplay>(role, comdis);
 		}
 
 		if (json.contains("properties")) 
@@ -223,18 +278,18 @@ namespace game
 		return role;
 	}
 	
-	void RoleFactory::destroyRole(entt::entity entityid)
+	void ObjectFactory::destroyObject(entt::entity entityid)
 	{
 		if (!_context)
 		{
-			spdlog::error("roleFactory need Load first.");
+			spdlog::error("ObjectFactory need Load first.");
 			return ;
 		}
 
 		_context->registry().destroy(entityid);
 	}
 
-	std::optional<utility::Var> RoleFactory::jsonToVar(const nlohmann::json& value)
+	std::optional<utility::Var> ObjectFactory::jsonToVar(const nlohmann::json& value)
 	{
 		try {
 			if (value.is_null()) {

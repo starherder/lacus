@@ -7,6 +7,7 @@
 #include "utility/dynamic_struct.h"
 
 #include "tweeny/tweeny.h"
+#include "particle/particle_manager.h"
 
 namespace bevtree {
     class BehaviorTree;
@@ -23,10 +24,16 @@ namespace game
         std::string cfg_id;
     };
 
+    enum class LifeState {
+        Normal,
+        Dead,
+        Destroy,
+    };
 
     struct CompComm {
         std::string type;
         std::string desc;
+        LifeState state = LifeState::Normal;
 
         enum class CampSide {
             Officer,
@@ -76,6 +83,13 @@ namespace game
         Font* font = nullptr;
         Texture* texture = nullptr;
         Rect tex_rect;
+
+        particle::ParticlePtr particle;
+    };
+
+    struct CompRolePick {
+        float range = 100.0f;
+        std::vector<std::string> pick_types;
     };
 
     // 预设：智力、灵巧、灵性、力量等预设值
@@ -102,7 +116,6 @@ namespace game
         std::vector<std::string> items;
     };
 
-
     struct CompNpcPatrol 
     {
         Vec2 origin_pos;
@@ -112,6 +125,13 @@ namespace game
     struct CompBevtree
     {
         std::shared_ptr<bevtree::BehaviorTree> bevtree = nullptr;
+    };
+
+    struct CompPickable {
+        int amount = 0;
+
+        bool picked = false;
+        tweeny::tween<float, float> tween;
     };
 
 }

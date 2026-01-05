@@ -8,20 +8,22 @@
 namespace game 
 {
 
-	class RoleFactory  : public utility::ISingleton<RoleFactory>
+	class ObjectFactory  : public utility::ISingleton<ObjectFactory>
 	{
 	public:
-		RoleFactory() = default;
-		~RoleFactory() = default;
+		ObjectFactory() = default;
+		~ObjectFactory() = default;
 
-		RoleFactory(RoleFactory&&) = delete;
-		RoleFactory(const RoleFactory&) = delete;
+		ObjectFactory(ObjectFactory&&) = delete;
+		ObjectFactory(const ObjectFactory&) = delete;
 
 		bool load(GameContext& context, const fs::path& rolescfg);
-	
+
+		entt::entity createObject(const std::string& cfgid);
+
 		entt::entity createRole(const std::string& cfgid);
 	
-		void destroyRole(entt::entity entityid);
+		void destroyObject(entt::entity entityid);
 
 	private:
 		bool loadRoleCfg(const std::string& id, const fs::path& cfgfile);

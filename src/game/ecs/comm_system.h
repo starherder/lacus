@@ -6,11 +6,11 @@ namespace game {
 
 	enum class EcsPriority 
 	{	
-		MotionSystem,
-		RenderSystem,
-		BevTreeSystem,
+		High,
+		Middle,
+		Low,
 
-		MaxSystem,
+		Max,
 	};
 
 

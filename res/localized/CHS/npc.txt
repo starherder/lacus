@@ -4,3 +4,6 @@ text_npc_name_2=王巫
 text_npc_name_3=赵柳
 text_npc_name_4=陈奇
 text_npc_name_5=刘霸
+
+text_item_name_0=金币
+text_item_name_1=药水

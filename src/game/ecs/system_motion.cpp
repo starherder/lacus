@@ -90,16 +90,16 @@ namespace game
         return true;
     }
 
-    bool MotionSystem::tweenNextGrid(entt::entity id)
+    bool MotionSystem::tweenNextGrid(entt::entity entid)
     {
-        auto& motion = _context.registry().get<CompMotion>(id);
-        auto& transform = _context.registry().get<CompTransform>(id);
+        auto& motion = _context.registry().get<CompMotion>(entid);
+        auto& transform = _context.registry().get<CompTransform>(entid);
 
         motion.path_iterator++;
         if(motion.path_iterator == motion.path.rend())
         {
             transform.position = _context.currentScene().getGridCenterPos(motion.targetGrid);
-            motionStop(id);
+            motionStop(entid);
             return false;
         }
 
@@ -112,7 +112,9 @@ namespace game
             .to(nextPos.x, nextPos.y)
             .during(ticks)
             .via(motion.tween_mode.c_str())
-            .onStep([&transform](auto& t, float x, float y) {
+            .onStep([&transform, entid, this](auto& t, float x, float y)
+                {
+                    checkEntityGrid(entid, transform.position, Vec2{x, y});
                     transform.position = { x, y };
                     return false;
                 });
@@ -151,6 +153,20 @@ namespace game
         if (!res) 
         {
             motionStop(e.actor);
+        }
+    }
+
+    void MotionSystem::checkEntityGrid(entt::entity ent, const Vec2& lstpos, const Vec2& curpos)
+    {
+        auto lstgrid = _context.currentScene().getGridFromPos(lstpos);
+        auto curgrid = _context.currentScene().getGridFromPos(curpos);
+        if(curgrid != lstgrid) 
+        {
+            RoleCrossGrid e;
+            e.actor = ent;
+            e.cur_grid = curgrid;
+            e.lst_grid = lstgrid;
+            _context.dispatcher().trigger(e);
         }
     }
 

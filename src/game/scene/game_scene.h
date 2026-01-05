@@ -3,7 +3,7 @@
 #include "tilemap/tile_map.h"
 
 #include "game/scene/game_context.h"
-#include "game/scene/role_factory.h"
+#include "game/scene/object_factory.h"
 
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comm_system.h"
@@ -17,8 +17,18 @@ namespace game {
     using namespace engine;
 
 
+    struct Vec2Compare{
+        bool operator () (const Vec2i& lval, const Vec2i rval) const {
+            if (lval.x == rval.x) return lval.y < rval.y;
+            return lval.x < rval.x;
+        }
+    };
+
+
     class GameScene : public engine::Scene, public signals::SlotHandler
     {
+        using EntitySet = std::set<entt::entity>;
+        using GridEntityMap = std::map<Vec2i, EntitySet, Vec2Compare>;
         using NameEntityMap = std::unordered_map<std::string, entt::entity>;
         using EcsSystemMap = std::multimap<EcsPriority, std::shared_ptr<EcsSystem>>;
         using MapObject = tilemap::MapObject;
@@ -59,6 +69,9 @@ namespace game {
 
         bool createObject(const MapObject& obj);
 
+        void addObjectToGrid(entt::entity ent, const Vec2i& grid);
+        const EntitySet& getObjectsInGrid(const Vec2i& grid);
+
     private:
         void showAllGui();
         void closeAllGui();
@@ -73,6 +86,8 @@ namespace game {
 
         void onShowDebugInfo(bool show);
 
+        void onRoleCrossGrid(const RoleCrossGrid& e);
+
     private:
         tilemap::TileMap _tileMap;
 
@@ -85,6 +100,8 @@ namespace game {
         NameEntityMap _nameIdMap;
 
         EcsSystemMap _ecsSystems;
+
+        GridEntityMap _gridObjects;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

@@ -10,5 +10,13 @@
 	{
 		"id": "npc_2",
 		"cfg": "config/npc_2.json"
+	},
+	{
+		"id": "item_0",
+		"cfg": "config/item_0.json"
+	},
+	{
+		"id": "item_1",
+		"cfg": "config/item_1.json"
 	}
 ]
