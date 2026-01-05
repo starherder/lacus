@@ -16,7 +16,6 @@ namespace game
         Select,
         MoveToGrid,
         PutObject,
-        PutRole,
     };
 
 
@@ -41,6 +40,7 @@ namespace game
 
     public:
         entt::entity _selectEntity = entt::null;
+        std::string _selectCfgId;
 
         GameContext* _context = nullptr;
 

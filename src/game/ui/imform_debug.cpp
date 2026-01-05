@@ -50,14 +50,25 @@ void ImFormDebug::draw()
             _debugMode = DebugMode::MoveToGrid;
         }
 
-        ImGui::SameLine();
         if (ImGui::RadioButton("put_obj##input", _debugMode == DebugMode::PutObject)) {
             _debugMode = DebugMode::PutObject;
         }
-
         ImGui::SameLine();
-        if (ImGui::RadioButton("put_role##input", _debugMode == DebugMode::PutRole)) {
-            _debugMode = DebugMode::PutRole;
+
+        static int select_index = 0;
+        const auto& cfgs = ObjectFactory::inst().getAllObjectCfgIds();
+        if (ImGui::BeginCombo("##combo_cfgs", cfgs[select_index].c_str()))
+        {
+            for (int n = 0; n < cfgs.size(); n++)
+            {
+                bool is_selected = (select_index == n);
+                if (ImGui::Selectable(cfgs[n].c_str(), is_selected))
+                {
+                    _selectCfgId = cfgs[n];
+                    select_index = n;
+                }
+            }
+            ImGui::EndCombo();
         }
 
         ImVec2 winpos = ImGui::GetWindowPos();
@@ -93,13 +104,7 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     }break;
     case DebugMode::PutObject:
     {
-        std::string item_cfg = "item_0";
-        _context->currentScene().createObject(item_cfg, scenePos);
-    }break;
-    case DebugMode::PutRole:
-    {
-        std::string npc_cfg = "npc_0";
-        _context->currentScene().createObject(npc_cfg, scenePos);
+        _context->currentScene().createObject(_selectCfgId, scenePos);
     }break;
     case DebugMode::Null:
     {

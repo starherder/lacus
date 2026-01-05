@@ -25,6 +25,8 @@ namespace game
 	
 		void destroyObject(entt::entity entityid);
 
+		const auto& getAllObjectCfgIds() { return _objectCfgIds; }
+
 	private:
 		bool loadRoleCfg(const std::string& id, const fs::path& cfgfile);
 
@@ -32,6 +34,8 @@ namespace game
 
 	private:
 		GameContext* _context = nullptr;
+
+		std::vector<std::string> _objectCfgIds;
 
 		std::map<std::string, std::shared_ptr<nlohmann::json>> _jsonCfgs;
 	};

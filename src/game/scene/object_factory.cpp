@@ -37,6 +37,8 @@ namespace game
 			auto cfg = role.value("cfg", "");
 
 			loadRoleCfg(id, parentDir/cfg);
+
+			_objectCfgIds.push_back(id);
 		}
 
 		return true;
