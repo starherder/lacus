@@ -83,6 +83,7 @@ namespace game
         }
 
         motion.state = MotionState::Moving;
+        motion.targetGrid = dstGrid;
         motion.path_iterator = motion.path.rbegin();
 
         tweenNextGrid(id);

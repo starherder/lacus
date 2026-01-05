@@ -67,10 +67,17 @@ namespace game {
         void destroyActor(const std::string& name);
         void destroyAllActor();
 
+        entt::entity selectObjectAtPos(const Vec2& pos);
+
         bool createObject(const MapObject& obj);
+        bool createObject(const std::string& cfgid, const Vec2& pos);
 
         void addObjectToGrid(entt::entity ent, const Vec2i& grid);
         const EntitySet& getObjectsInGrid(const Vec2i& grid);
+
+        const std::multimap<float, Vec2i>& getGridsInCircle(const Vec2& center, float radius);
+
+        void setDebugInfo(bool show);
 
     private:
         void showAllGui();
@@ -83,8 +90,6 @@ namespace game {
         void loadObjects();
 
         void drawDebugView();
-
-        void onShowDebugInfo(bool show);
 
         void onRoleCrossGrid(const RoleCrossGrid& e);
 

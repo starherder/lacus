@@ -27,8 +27,13 @@
   
   <bt name="npc_patrol">
       <sequence>
-          <patrol_findpath />
-          <patrol_move />
+          <parallel fail_on_all="false" success_on_all="false" >
+            <sequence>
+              <patrol_findpath />
+              <patrol_move />
+            </sequence>
+            <pick_item/>
+          </parallel>
           <patrol_idle time="2.0" />
       </sequence>
   </bt>

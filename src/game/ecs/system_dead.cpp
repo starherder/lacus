@@ -13,8 +13,8 @@ namespace game
 		auto views = _context.registry().view<CompNameId, CompComm>();
 		for (auto& ent : views) 
 		{
-			auto& nameComp = _context.registry().get<CompNameId>(ent);
-			auto& commComp = _context.registry().get<CompComm>(ent);
+			auto& nameComp = views.get<CompNameId>(ent);
+			auto& commComp = views.get<CompComm>(ent);
 
 			if (commComp.state == LifeState::Destroy)
 			{

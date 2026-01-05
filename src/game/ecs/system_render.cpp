@@ -27,10 +27,14 @@ void RenderSystem::draw()
         else
         {
             painter.fillRect(display.ground_color, dstrect);
-
             painter.drawRect(display.border_color, dstrect);
-
             painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, display.font_color);
+        }
+
+        auto selectComp = _context.registry().try_get<CompSelection>(ent);
+        if (selectComp && selectComp->selected)
+        {
+            painter.drawRect(selectComp->border_color, dstrect, 0, selectComp->border_size);
         }
 
         if(display.particle)

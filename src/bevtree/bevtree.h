@@ -112,7 +112,10 @@ namespace bevtree
     {};
 
     class Parallel : public BrainTree::ParallelSequence
-    {};
+    {
+    public:
+        bool load(const XmlNode* node) override;
+    };
 
     class StatefulSelector : public BrainTree::StatefulSelector
     {};

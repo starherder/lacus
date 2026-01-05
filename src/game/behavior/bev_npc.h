@@ -22,6 +22,30 @@ namespace game
 		entt::entity _actor;
 	};
 
+	class BevNode_PickItem : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		void onRolePickItem(const RolePickItem& e);
+		void onRoleEnterGrid(const RoleCrossGrid& e);
+
+		Status checkPickUp();
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor;
+
+		bool _pickOK = false;
+		bool _needCheck = false;
+	};
 
 	class BevNode_PatrolMove : public BevNode
 	{

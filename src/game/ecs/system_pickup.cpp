@@ -43,7 +43,14 @@ namespace game
                                     .to(uipos.x, uipos.y)
                                     .via("linear")
                                     .during(2000)
-                                    .onStep([this, &transComp, &nameComp](auto& t, float x, float y) {
+                                    .onStep([this, obj](auto& t, float x, float y) 
+                                    {
+                                        if (!_context.registry().valid(obj)) {
+                                            return false;
+                                        }
+
+                                        auto& nameComp = _context.registry().get<CompNameId>(obj);
+                                        auto& transComp = _context.registry().get<CompTransform>(obj);
                                         transComp.position = {x,y };
 
                                         if (t.isFinished()) {
@@ -61,6 +68,8 @@ namespace game
         {
             display.particle->Start();
         }
+
+        _context.dispatcher().trigger<RolePickItem>(RolePickItem{role, obj});
     }
 
     void PickupSystem::onEventMoveToGrid(const RoleCrossGrid& e)

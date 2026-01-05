@@ -7,23 +7,46 @@
 namespace game 
 {
     using namespace engine;
+
+    class GameContext;
     
+    enum class DebugMode
+    {
+        Null,
+        Select,
+        MoveToGrid,
+        PutObject,
+        PutRole,
+    };
+
+
     class ImFormDebug : public imgui::ImForm
     {
     public:
         signals::Signal<bool> on_show_debug;
 
-
-        //signals::Signal<float> on_motion_speed_changed;
-        //signals::Signal<bool> on_motion_pause;
-        //signals::Signal<bool, float> on_motion_start;
-
     public:
         ImFormDebug();
         ~ImFormDebug();
-        
+
+        void init(GameContext* context);
+
 	protected:
+
 		void draw() override;
+
+        void onMouseLeftClick(const Vec2& pos);
+
+        void moveSelectActor(const Vec2& pos);
+
+    public:
+        entt::entity _selectEntity = entt::null;
+
+        GameContext* _context = nullptr;
+
+        DebugMode _debugMode = DebugMode::Null;
+
+        Vec2 _windowPos, _windowSize;
     };
 
 }

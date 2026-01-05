@@ -74,6 +74,16 @@ namespace game
         std::vector<Vec2i>::reverse_iterator path_iterator;
     };
 
+    struct CompSelection
+    {
+        bool selected = false;
+
+        Color border_color = Color::Yellow;
+        float border_size = 3.0f;
+
+        particle::ParticlePtr particle = nullptr;
+    };
+
     struct CompDisplay
     {
         Color ground_color = Color::Yellow;
@@ -84,7 +94,7 @@ namespace game
         Texture* texture = nullptr;
         Rect tex_rect;
 
-        particle::ParticlePtr particle;
+        particle::ParticlePtr particle = nullptr;
     };
 
     struct CompRolePick {
@@ -122,8 +132,9 @@ namespace game
         float patrol_radius;
     };
 
-    struct CompBevtree
+    struct CompBehavior
     {
+        float vision_dis = 300.0f;
         std::shared_ptr<bevtree::BehaviorTree> bevtree = nullptr;
     };
 

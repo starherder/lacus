@@ -9,6 +9,9 @@
 #include "game/ecs/system_fight.h"
 #include "game/ecs/system_pickup.h"
 #include "game/ecs/system_dead.h"
+#include "game/ecs/system_selection.h"
+
+#include "glm/glm.hpp"
 
 namespace game {
 
@@ -33,6 +36,7 @@ void GameScene::initEscSystem()
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_context) });
 
     _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
 }
@@ -139,11 +143,11 @@ void GameScene::showAllGui()
     auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
     if(form_debug) 
     {
-        form_debug->on_show_debug.connect(this, &GameScene::onShowDebugInfo);
+        form_debug->init(&_context);
     }
 }
 
-void GameScene::onShowDebugInfo(bool show)
+void GameScene::setDebugInfo(bool show)
 {
     _context.setDebugMode(show);
 }
@@ -220,9 +224,44 @@ void GameScene::drawDebugView()
     }
 }
 
+entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
+{
+    auto grid = getGridFromPos(pos);
+    auto& objset = getObjectsInGrid(grid);
+    if (objset.empty()) 
+    {
+        _context.dispatcher().trigger(ObjectSelection{ entt::null });
+        return entt::null;
+    }
+
+    for (auto& obj : objset)
+    {
+        if (_context.registry().valid(obj)) 
+        {
+            const auto& transComp = _context.registry().get<CompTransform>(obj);
+            auto rect = Rect{ transComp.position - transComp.size / 2.0f, transComp.size };
+            if (rect.contains(pos)) 
+            {
+                spdlog::info("object ({}) selected.", (int)obj);
+                _context.dispatcher().trigger(ObjectSelection{ obj });
+                return obj;
+            }
+        }
+    }
+
+    spdlog::info("object (null) selected.");
+    _context.dispatcher().trigger(ObjectSelection{ entt::null });
+    return entt::null;
+}
+
 bool GameScene::createObject(const MapObject& obj)
 {
-    auto ent = ObjectFactory::inst().createRole(obj.name);
+    return createObject(obj.name, obj.pos);
+}
+
+bool GameScene::createObject(const std::string& cfgid, const Vec2& pos)
+{
+    auto ent = ObjectFactory::inst().createRole(cfgid);
     if(ent==entt::null) 
     {
         return false;
@@ -231,26 +270,27 @@ bool GameScene::createObject(const MapObject& obj)
     auto* trans = _context.registry().try_get<CompTransform>(ent);
     if(trans) 
     {
-        trans->position = obj.pos;
+        trans->position = pos;
     }
 
     auto* patrol = _context.registry().try_get<CompNpcPatrol>(ent);
     if(patrol) 
     {
-        patrol->origin_pos = obj.pos;
+        patrol->origin_pos = pos;
     }
 
-    auto* btree = _context.registry().try_get<CompBevtree>(ent);
+    auto* btree = _context.registry().try_get<CompBehavior>(ent);
     if (btree && btree->bevtree) 
     {
         btree->bevtree->getBlackboard()->set("context", &_context);
         btree->bevtree->getBlackboard()->set("actor", ent);
     }
 
-    auto grid = getGridFromPos(obj.pos);
+    auto grid = getGridFromPos(pos);
     addObjectToGrid(ent, grid);
 
-    spdlog::info("createObject: id = {}, name = {}", (int)ent, obj.name);
+    spdlog::info("createObject: id = {}, name = {}", (int)ent, cfgid);
+
     return true;
 }
 
@@ -312,6 +352,35 @@ void GameScene::addObjectToGrid(entt::entity ent, const Vec2i& grid)
 const GameScene::EntitySet& GameScene::getObjectsInGrid(const Vec2i& grid)
 { 
     return _gridObjects[grid]; 
+}
+
+const std::multimap<float, Vec2i>& GameScene::getGridsInCircle(const Vec2& center, float radius)
+{
+    static std::multimap<float, Vec2i> grids;
+    grids.clear();
+
+    float l = center.x - radius;
+    float r = center.x + radius;
+    float t = center.y - radius;
+    float b = center.y + radius;
+
+    Vec2i gridLT = getGridFromPos({ l, t });
+    Vec2i gridRB = getGridFromPos({ r, b });
+    for (int x = gridLT.x; x <= gridRB.x; x++)
+    {
+        for (int y = gridLT.y; y <= gridRB.y; y++)
+        {
+            Vec2i grid = {x, y};
+            auto gridCenter = getGridCenterPos(grid);
+            float dis = glm::distance(gridCenter, center);
+            if (dis <= radius)
+            {
+                grids.insert({dis, grid});
+            }
+        }
+    }
+
+    return grids;
 }
 
 } 

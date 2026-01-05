@@ -22,5 +22,13 @@ namespace game {
 		Vec2i cur_grid;
 	};
 
+	struct RolePickItem {
+		entt::entity actor;
+		entt::entity item;
+	};
+
+	struct ObjectSelection {
+		entt::entity object;
+	};
 
 }

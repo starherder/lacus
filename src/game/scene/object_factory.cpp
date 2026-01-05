@@ -89,6 +89,9 @@ namespace game
 		CompTransform comtrans;
 		_context->registry().emplace<CompTransform>(object, comtrans);
 
+		CompSelection comsel;
+		_context->registry().emplace<CompSelection>(object, comsel);
+
 		if (json.contains("common"))
 		{
 			auto& cmmJs = json["common"];
@@ -99,6 +102,18 @@ namespace game
 			comm.state = LifeState::Normal;
 
 			_context->registry().emplace<CompComm>(object, comm);
+		}
+
+		if (json.contains("selection"))
+		{
+			auto& selectJs = json["selection"];
+			auto comsel = _context->registry().try_get<CompSelection>(object);
+			if (comsel)
+			{
+				Color bc; bc.fromHexString(selectJs.value("border_color", "255,255,255,255"));
+				comsel->border_color = bc;
+				comsel->border_size = selectJs.value("border_size", 5.0f);
+			}
 		}
 
 		if (json.contains("display"))
@@ -245,9 +260,9 @@ namespace game
 			auto btname = behavior.value("bevtree", "");
 			if (!btname.empty()) 
 			{
-				CompBevtree compBT;
+				CompBehavior compBT;
 				compBT.bevtree = _context->bevtreeMgr().createBevTree(btname);
-				_context->registry().emplace<CompBevtree>(role, compBT);
+				_context->registry().emplace<CompBehavior>(role, compBT);
 			}
 		}
 

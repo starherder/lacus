@@ -271,6 +271,9 @@
     <ClCompile Include="..\src\game\ecs\system_dead.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_selection.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -544,6 +547,9 @@
       <Filter>game\ecs</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_dead.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_selection.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>

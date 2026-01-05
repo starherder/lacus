@@ -175,11 +175,20 @@ public:
 
     BehaviorTree(const Node::Ptr &rootNode) : BehaviorTree() { root = rootNode; }
     
-    Status update() { return root->tick(); }
+    Status update() { 
+        if (running) {
+            return root->tick();
+        }
+        return Status::Failure;
+    }
     
     void setRoot(const Node::Ptr &node) { root = node; }
 
+    void start() { running = true; }
+    void stop() { running = false; }
+
 private:
+    bool running = true;
     Node::Ptr root = nullptr;
 };
 
@@ -474,7 +483,7 @@ public:
         return Status::Running;
     }
 
-private:
+protected:
     bool useSuccessFailPolicy = false;
     bool successOnAll = true;
     bool failOnAll = true;

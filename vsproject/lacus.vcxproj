@@ -174,6 +174,7 @@
     <ClCompile Include="..\src\game\ecs\system_motion.cpp" />
     <ClCompile Include="..\src\game\ecs\system_pickup.cpp" />
     <ClCompile Include="..\src\game\ecs\system_render.cpp" />
+    <ClCompile Include="..\src\game\ecs\system_selection.cpp" />
     <ClCompile Include="..\src\game\game_logic.cpp" />
     <ClCompile Include="..\src\game\scene\object_factory.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="..\src\game\ecs\system_motion.h" />
     <ClInclude Include="..\src\game\ecs\system_pickup.h" />
     <ClInclude Include="..\src\game\ecs\system_render.h" />
+    <ClInclude Include="..\src\game\ecs\system_selection.h" />
     <ClInclude Include="..\src\game\game_logic.h" />
     <ClInclude Include="..\src\game\scene\object_factory.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />

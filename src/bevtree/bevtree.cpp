@@ -174,6 +174,20 @@ namespace bevtree
     }
 
 
+    bool Parallel::load(const XmlNode* node)
+    {
+        try
+        {
+            failOnAll = node->BoolAttribute("fail_on_all", true);
+            successOnAll = node->BoolAttribute("success_on_all", true);
+        }
+        catch (std::exception& e)
+        {
+            spdlog::warn("load repeator count failed. err = {}", e.what());
+        }
+
+        return true;
+    }
 
 
 
