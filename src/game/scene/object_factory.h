@@ -10,6 +10,8 @@ namespace game
 
 	class ObjectFactory  : public utility::ISingleton<ObjectFactory>
 	{
+		using ConfigJsonMap = std::map<std::string, std::shared_ptr<nlohmann::json>>;
+
 	public:
 		ObjectFactory() = default;
 		~ObjectFactory() = default;
@@ -17,18 +19,25 @@ namespace game
 		ObjectFactory(ObjectFactory&&) = delete;
 		ObjectFactory(const ObjectFactory&) = delete;
 
-		bool load(GameContext& context, const fs::path& rolescfg);
+		bool loadObjects(GameContext& context, const fs::path& rolescfg);
+
+		bool loadSkills(GameContext& context, const fs::path& skillscfg);
 
 		entt::entity createObject(const std::string& cfgid);
 
 		entt::entity createRole(const std::string& cfgid);
 	
+		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
+
 		void destroyObject(entt::entity entityid);
 
 		const auto& getAllObjectCfgIds() { return _objectCfgIds; }
+		const auto& getAllSkillCfgIds() { return _skillCfgIds; }
 
 	private:
-		bool loadRoleCfg(const std::string& id, const fs::path& cfgfile);
+		bool loadRoleCfg(const std::string& id, const fs::path& rolescfg);
+
+		bool loadSkillCfg(const std::string& id, const fs::path& skillcfg);
 
 		std::optional<utility::Var> jsonToVar(const nlohmann::json& value);
 
@@ -36,8 +45,10 @@ namespace game
 		GameContext* _context = nullptr;
 
 		std::vector<std::string> _objectCfgIds;
+		std::vector<std::string> _skillCfgIds;
 
-		std::map<std::string, std::shared_ptr<nlohmann::json>> _jsonCfgs;
+		ConfigJsonMap _jsonObjectCfgs;
+		ConfigJsonMap _jsonSkillCfgs;
 	};
 
 

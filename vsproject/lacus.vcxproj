@@ -249,6 +249,7 @@
     <ClInclude Include="..\src\game\ecs\comm_comp.h" />
     <ClInclude Include="..\src\game\ecs\comm_event.h" />
     <ClInclude Include="..\src\game\ecs\comm_system.h" />
+    <ClInclude Include="..\src\game\ecs\comp_fight.h" />
     <ClInclude Include="..\src\game\ecs\system_bevtree.h" />
     <ClInclude Include="..\src\game\ecs\system_dead.h" />
     <ClInclude Include="..\src\game\ecs\system_fight.h" />

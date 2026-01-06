@@ -3,7 +3,7 @@
     "name" : "text_npc_name_0",
 
   "common": {
-    "type": "patrol_npc",
+    "type": "npc",
     "camp": "gangster",
     "desc": "text_npc_0_desc"
   },
@@ -53,21 +53,11 @@
     },
 
     "skills" : [
-        "sk_hit_hormal", 
-        "sk_hit_hard", 
-        "sk_bow_normal"
+        "skill_combat"
     ],
 
-    "buffs" : [
-        "buff_on_heal", 
-        "buff_on_burn", 
-        "buff_on_spired"
-    ],
+    "buffs" : [],
 
-    "items" : [
-        "weapon_blade", 
-        "wepon_bow", 
-        "helment_1"
-    ]
+    "items" : []
     
 }

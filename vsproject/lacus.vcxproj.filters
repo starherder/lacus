@@ -552,5 +552,8 @@
     <ClInclude Include="..\src\game\ecs\system_selection.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\ecs\comp_fight.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

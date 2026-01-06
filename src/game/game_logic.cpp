@@ -29,9 +29,16 @@ void GameLogicPlugin::onInit()
     }
 
     auto roleCfgs = application()->resPath() / "objects/objects.json";
-    res = ObjectFactory::inst().load(_gameContext, roleCfgs);
+    res = ObjectFactory::inst().loadObjects(_gameContext, roleCfgs);
     if (!res) {
         spdlog::error("load role config: {} failed.", roleCfgs.string());
+        return;
+    }
+
+    auto skillCfgs = application()->resPath() / "objects/skills.json";
+    res = ObjectFactory::inst().loadSkills(_gameContext, skillCfgs);
+    if (!res) {
+        spdlog::error("load skill config: {} failed.", skillCfgs.string());
         return;
     }
 

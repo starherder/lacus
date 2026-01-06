@@ -38,6 +38,8 @@ namespace game
 
         void moveSelectActor(const Vec2& pos);
 
+        void roleExecSkill();
+
     public:
         entt::entity _selectEntity = entt::null;
         std::string _selectCfgId;

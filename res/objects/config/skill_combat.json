@@ -1,0 +1,28 @@
+{
+    "cfgid" : "skill_combat",
+    "type" : "combat",
+    "name" : "text_skill_combat",
+    "desc" : "text_skill_combat_desc",
+
+    "distance" : "0,64",
+    "cd_ticks" : 2000,
+
+    "affect" : {
+        "prev_ticks" : 200,
+        "post_ticks" : 200,
+
+        "affect_formula" : "skill_formula_combat",
+        "affect_target" : "role",
+        "affect_range" : 0,
+
+        "event" : ""
+    },
+
+    "tween" : {
+        "trans_type" : "motion",
+        "prev_tween" : "cubicIn",
+        "post_tween" : "cubicOut",
+        "value" : "0,0"
+    }
+
+}

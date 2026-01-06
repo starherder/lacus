@@ -2,6 +2,10 @@
 #include "spdlog/spdlog.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/game_context.h"
+#include "game/ecs/comp_fight.h"
+
+
+
 
 namespace game 
 {
@@ -57,6 +61,8 @@ void ImFormDebug::draw()
 
         static int select_index = 0;
         const auto& cfgs = ObjectFactory::inst().getAllObjectCfgIds();
+        _selectCfgId = cfgs[select_index];
+
         if (ImGui::BeginCombo("##combo_cfgs", cfgs[select_index].c_str()))
         {
             for (int n = 0; n < cfgs.size(); n++)
@@ -69,6 +75,12 @@ void ImFormDebug::draw()
                 }
             }
             ImGui::EndCombo();
+        }
+
+        ImGui::Separator();
+        if (ImGui::Button("exec_skill"))
+        {
+            roleExecSkill();
         }
 
         ImVec2 winpos = ImGui::GetWindowPos();
@@ -133,5 +145,37 @@ void ImFormDebug::moveSelectActor(const Vec2& pos)
     auto gridPos = _context->currentScene().getGridFromPos(pos);
     _context->dispatcher().trigger(MoveToGrid{_selectEntity, gridPos, true});
 }
+
+void ImFormDebug::roleExecSkill()
+{
+    if (_selectEntity == entt::null ||
+        _context->registry().valid(_selectEntity) == false)
+    {
+        return;
+    }
+
+    auto& trans = _context->registry().get<CompTransform>(_selectEntity);
+    auto& rolePos = trans.position;
+
+    auto& skills = _context->registry().get<CompSkills>(_selectEntity);
+    for (auto& skent : skills.skills)
+    {
+        auto& compSkill = _context->registry().get<CompSkillComm>(skent);
+        auto dis = compSkill.distance;
+
+        auto& objects = _context->currentScene().getObjectsInRing(rolePos, dis.x, dis.y);
+        for (auto& [dis, target] : objects) {
+            if (target == _selectEntity) continue;
+
+            auto& compComm = _context->registry().get<CompComm>(target);
+            if (compComm.type == ObjectType::Npc) {
+
+                _context->dispatcher().trigger(RoleExecSkillToObject{_selectEntity, target, skent});
+                return;
+            }
+        }
+    }
+}
+
 
 }

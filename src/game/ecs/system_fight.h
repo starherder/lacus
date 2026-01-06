@@ -7,18 +7,21 @@
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
 
-
 namespace game 
 {
 
     class FightSystem : public EcsSystem
     {
     public:
-        FightSystem(GameContext& context) : EcsSystem(context) {}
-        ~FightSystem() {}
+        FightSystem(GameContext& context);
+        ~FightSystem();
 
         void update(float delta) override;
 
+    private:
+        void onRoleExecSkillToObject(const RoleExecSkillToObject& e);
+
+        void skillAffectApplyToObject(const RoleExecSkillToObject& e);
     };
 
 

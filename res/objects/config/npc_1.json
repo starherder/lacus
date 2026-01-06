@@ -3,7 +3,7 @@
     "name" : "text_npc_name_1",
 
     "common" : {
-        "type" : "patrol_npc",
+        "type" : "npc",
         "camp" : "official",
         "desc" : "text_npc_1_desc"
     },
@@ -42,22 +42,12 @@
         "attack_speed":120
     },
 
-    "skills" : [
-        "sk_hit_hormal", 
-        "sk_hit_hard", 
-        "sk_bow_normal"
+    "skills" : [ 
+        "skill_archery"
     ],
 
-    "buffs" : [
-        "buff_on_heal", 
-        "buff_on_burn", 
-        "buff_on_spired"
-    ],
+    "buffs" : [],
 
-    "items" : [
-        "weapon_blade", 
-        "wepon_bow", 
-        "helment_1"
-    ]
+    "items" : []
     
 }

@@ -3,12 +3,48 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include "game/ecs/comm_comp.h"
+#include "game/ecs/comp_fight.h"
 #include "utility/translator.h"
 
 namespace game 
 {
+	bool ObjectFactory::loadSkills(GameContext& context, const fs::path& skill_cfg)
+	{
+		_context = &context;
 
-	bool ObjectFactory::load(GameContext& context, const fs::path& roles_cfg)
+		nlohmann::json json;
+
+		std::ifstream ifile(skill_cfg.string());
+		if (!ifile.is_open()) {
+			spdlog::error("open file '{}' failed.", skill_cfg.string());
+			return false;
+		}
+
+		try {
+			ifile >> json;
+			spdlog::info("load json from '{}' OK.", skill_cfg.string());
+		}
+		catch (const std::exception& e) {
+			spdlog::error("load json form '{}' failed, err = '{}'", skill_cfg.string(), e.what());
+			return false;
+		}
+
+		auto parentDir = skill_cfg.parent_path();
+
+		for (auto& role : json)
+		{
+			auto id = role.value("id", "");
+			auto cfg = role.value("cfg", "");
+
+			loadSkillCfg(id, parentDir / cfg);
+
+			_objectCfgIds.push_back(id);
+		}
+
+		return true;
+	}
+
+	bool ObjectFactory::loadObjects(GameContext& context, const fs::path& roles_cfg)
 	{
 		_context = &context;
 
@@ -63,7 +99,30 @@ namespace game
 			return false;
 		}
 
-		_jsonCfgs[id] = jsonptr;
+		_jsonObjectCfgs[id] = jsonptr;
+		return true;
+	}
+
+	bool ObjectFactory::loadSkillCfg(const std::string& id, const fs::path& cfgfile)
+	{
+		auto jsonptr = std::make_shared<nlohmann::json>();
+
+		std::ifstream ifile(cfgfile.string());
+		if (!ifile.is_open()) {
+			spdlog::error("open file '{}' failed.", cfgfile.string());
+			return false;
+		}
+
+		try {
+			ifile >> *jsonptr;
+			spdlog::info("load json from '{}' OK.", cfgfile.string());
+		}
+		catch (const std::exception& e) {
+			spdlog::error("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			return false;
+		}
+
+		_jsonSkillCfgs[id] = jsonptr;
 		return true;
 	}
 
@@ -75,7 +134,7 @@ namespace game
 			return entt::null;
 		}
 
-		auto jsonptr = _jsonCfgs[cfgid];
+		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
 		{
 			spdlog::error("object ({}) cfg NOT found.", cfgid);
@@ -99,8 +158,8 @@ namespace game
 			auto& cmmJs = json["common"];
 
 			CompComm comm;
-			comm.type = cmmJs.value("type", "");
-			comm.desc = cmmJs.value("desc", "");
+			comm.type = getNpcType(cmmJs.value("type", ""));
+			comm.desc = Trans(cmmJs.value("desc", ""));
 			comm.state = LifeState::Normal;
 
 			_context->registry().emplace<CompComm>(object, comm);
@@ -174,7 +233,7 @@ namespace game
 			return role;
 		}
 
-		auto jsonptr = _jsonCfgs[cfgid];
+		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
 		{
 			spdlog::error("object ({}) cfg NOT found.", cfgid);
@@ -187,35 +246,17 @@ namespace game
 		if (json.contains("common"))
 		{
 			auto& cmmJs = json["common"];
-			auto campstr = cmmJs.value("camp", "gangster");
-			if (campstr == "official") {
-				comm.comp = CompComm::CampSide::Officer;
-			}
-			else if (campstr == "foreign") { 
-				comm.comp = CompComm::CampSide::Foreign; 
-			}
-			else if (campstr == "rebel") {
-				comm.comp = CompComm::CampSide::Rebel;
-			}
-			else if (campstr == "gangster") {
-				comm.comp = CompComm::CampSide::Gangster;
-			}
-			else {
-				comm.comp = CompComm::CampSide::Gangster;
-				spdlog::error("camp ({}) NOT support", campstr);
-			}
 
-			if (comm.type == "patrol_npc")
+			comm.comp = getCompSide(cmmJs.value("camp", "gangster"));
+
+			if (json.contains("patrol"))
 			{
-				if (json.contains("patrol"))
-				{
-					auto& patrolJs = json["patrol"];
+				auto& patrolJs = json["patrol"];
 
-					CompNpcPatrol compPatrol;
-					compPatrol.patrol_radius = patrolJs.value("raduis", 0.0f);
+				CompNpcPatrol compPatrol;
+				compPatrol.patrol_radius = patrolJs.value("raduis", 0.0f);
 
-					_context->registry().emplace<CompNpcPatrol>(role, compPatrol);
-				}
+				_context->registry().emplace<CompNpcPatrol>(role, compPatrol);
 			}
 		}
 
@@ -274,8 +315,11 @@ namespace game
 			auto& skillsJs = json["skills"];
 			for(auto& sk : skillsJs) 
 			{
-				auto skname = sk.get<std::string>();
-				compSkills.skills.push_back(skname);
+				auto skillid = sk.get<std::string>();
+
+				auto skill = createSkill(role, skillid);
+
+				compSkills.skills.push_back(skill);
 			}
 			_context->registry().emplace<CompSkills>(role, compSkills);
 		}
@@ -287,7 +331,7 @@ namespace game
 			for (auto& it : itemsJs)
 			{
 				auto itname = it.get<std::string>();
-				compItems.items.push_back(itname);
+				//compItems.items.push_back(itname);
 			}
 			_context->registry().emplace<CompItems>(role, compItems);
 		}
@@ -295,6 +339,101 @@ namespace game
 		return role;
 	}
 	
+
+	entt::entity ObjectFactory::createSkill(entt::entity owner, const std::string& cfgid)
+	{
+		if (!_context)
+		{
+			spdlog::error("ObjectFactory need Load first.");
+			return entt::null;
+		}
+
+		auto jsonptr = _jsonSkillCfgs[cfgid];
+		if (!jsonptr)
+		{
+			spdlog::error("object ({}) cfg NOT found.", cfgid);
+			return entt::null;
+		}
+
+		auto& json = *jsonptr;
+		auto skill = _context->registry().create();
+
+		auto name = Trans(json.value("name", ""));
+		_context->registry().emplace<CompNameId>(skill, skill, name, cfgid);
+
+		CompSkillComm compComm;
+		compComm.owner = owner;
+		compComm.state = SkillState::OK;
+		compComm.type = getSkillType(json.value("type", ""));
+		compComm.desc = Trans(json.value("desc", ""));
+		compComm.distance = ToVec2(json.value("distance", "0,0"));
+		_context->registry().emplace<CompSkillComm>(skill, compComm);
+
+		CompSkillCD compCD;
+		compCD.current_tick = 0;
+		compCD.total_ticks = json.value("cd_ticks", 0);
+		_context->registry().emplace<CompSkillCD>(skill, compCD);
+
+		if (json.contains("affect"))
+		{
+			auto& affectJs = json["affect"];
+
+			CompSkillAffect compAffect;
+			compAffect.affect_formula = affectJs.value("affect_formula", "");
+			compAffect.affect_range = affectJs.value("affect_range", 0);
+			compAffect.affect_target = getSkillTarget(affectJs.value("affect_target", ""));
+			compAffect.prev_ticks = affectJs.value("prev_ticks", 0);
+			compAffect.post_ticks = affectJs.value("post_ticks", 0);
+			compAffect.event = affectJs.value("event", "");
+			_context->registry().emplace<CompSkillAffect>(skill, compAffect);
+		}
+
+		if (json.contains("tween"))
+		{
+			auto& tweenJs = json["tween"];
+
+			CompSkillTween compTween;
+			compTween.trans_type = getTransType(tweenJs.value("trans_type", ""));
+			compTween.value = ToVec2(tweenJs.value("value", "0,0"));
+			compTween.prev_tween = tweenJs.value("prev_tween", "");
+			compTween.post_tween = tweenJs.value("post_tween", "");
+			_context->registry().emplace<CompSkillTween>(skill, compTween);
+		}
+
+		if (json.contains("animation"))
+		{
+			auto& animJs = json["animation"];
+
+			CompSkillAnimation compAnim;
+			compAnim.animation = animJs.value("animation", "");
+			_context->registry().emplace<CompSkillAnimation>(skill, compAnim);
+		}
+
+		if (json.contains("particle"))
+		{
+			auto& animJs = json["animation"];
+
+			CompSkillParticle compParticle;
+			auto parname = animJs.value("animation", "");
+			compParticle.particle = particle::ParticleManager::inst().CreateParticle(parname);
+			_context->registry().emplace<CompSkillParticle>(skill, compParticle);
+		}
+
+		if (json.contains("projectile"))
+		{
+			auto& projectJs = json["projectile"];
+
+			CompProjectile compParticle;
+			compParticle.name = projectJs.value("name", "");
+			compParticle.speed = projectJs.value("speed", 0.0f);
+			compParticle.tween_type = projectJs.value("tween", 0.0f);
+			_context->registry().emplace<CompProjectile>(skill, compParticle);
+		}
+
+		spdlog::info("create skill ({}) on ({}) OK.", cfgid, (int)owner);
+		return skill;
+	}
+
 	void ObjectFactory::destroyObject(entt::entity entityid)
 	{
 		if (!_context)

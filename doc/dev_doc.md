@@ -44,7 +44,9 @@ mkdir build & cd build & cmake ..
 - ~~消息在场景和界面、imgui之间的传递~~
 - ~~场景增加context，gameplay中每个system独立成类，system中没有数据，通用的数据在context中保存~~
 - ~~npc的配置读取创建~~
-- painter系统优化完善、译文系统
+- ~~painter系统优化完善、译文系统~~
+- ~~物品、拾取、选择、debug~~
+- 伤害飘字、主界面、角色控制
 - 简易技能系统，表现+伤害，表现层引入tweeny，伤害公式计算使用lua配置
 
 ## 日志
@@ -152,6 +154,14 @@ mkdir build & cd build & cmake ..
 ### 1.4 NPC配置模块
 
 - 读取NPC配置创建NPC
+- 创建物品
+
+### 1.5 自动拾取、选择、debug模块
+
+- 根据配置创建物品
+- bevnode自动拾取逻辑
+- 选择对象、debug窗口
+
 
 ---
 

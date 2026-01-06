@@ -8,10 +8,9 @@
 
 #include "tweeny/tweeny.h"
 #include "particle/particle_manager.h"
+#include "bevtree/bevtree.h"
 
-namespace bevtree {
-    class BehaviorTree;
-}
+
 
 namespace game 
 {
@@ -30,17 +29,27 @@ namespace game
         Destroy,
     };
 
+    enum class ObjectType {
+        Item,
+        Npc,
+
+        Other,
+    };
+
+    enum class CampSide {
+        Officer,
+        Foreign,
+        Rebel,
+        Gangster,
+    };
+
     struct CompComm {
-        std::string type;
+        
+        ObjectType type;
+
         std::string desc;
         LifeState state = LifeState::Normal;
 
-        enum class CampSide {
-            Officer,
-            Foreign,
-            Rebel,
-            Gangster,
-        };
         CampSide comp = CampSide::Gangster;
     };
 
@@ -59,11 +68,20 @@ namespace game
         Paused,
     };
 
+    enum class MotionMode
+    {
+        Run,
+        Swim,
+        Ride,
+    };
+
     struct CompMotion
     {
         float speed = 150.0f;
 
         MotionState state = MotionState::Resting;
+        
+        MotionMode mode = MotionMode::Run;
 
         Vec2i targetGrid;
 
@@ -97,33 +115,10 @@ namespace game
         particle::ParticlePtr particle = nullptr;
     };
 
-    struct CompRolePick {
+    struct CompRolePick 
+    {
         float range = 100.0f;
         std::vector<std::string> pick_types;
-    };
-
-    // 预设：智力、灵巧、灵性、力量等预设值
-    struct CompPresets
-    {
-        utility::DynamicStruct<std::string> properties;
-    };
-
-    // HP、攻击力、防御力、移动速度、攻击速度等经过公式计算后得到的属性
-    struct CompProps
-    {
-        utility::DynamicStruct<std::string> properties;
-    };
-
-    struct CompSkills {
-        std::vector<std::string> skills;
-    };
-    
-    struct CompBuffs {
-        std::vector<std::string> buffs;
-    };
-    
-    struct CompItems {
-        std::vector<std::string> items;
     };
 
     struct CompNpcPatrol 
@@ -144,5 +139,30 @@ namespace game
         bool picked = false;
         tweeny::tween<float, float> tween;
     };
+
+
+
+
+
+    inline  ObjectType getNpcType(const std::string& npctype) 
+    {
+        if (npctype == "item") return ObjectType::Item;
+        if (npctype == "npc") return ObjectType::Npc;
+        if (npctype == "other") return ObjectType::Other;
+
+        spdlog::error("getNpcType: ({}) NOT support", npctype);
+        return ObjectType::Other;
+    };
+
+    inline CampSide getCompSide(const std::string& side)
+    {
+        if (side == "official") return CampSide::Officer;
+        if (side == "foreign") return CampSide::Foreign;
+        if (side == "rebel") return CampSide::Rebel;
+        if (side == "gangster") return CampSide::Gangster;
+        spdlog::error("camp ({}) NOT support", side);
+        return CampSide::Gangster;
+    };
+
 
 }

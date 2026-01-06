@@ -1,0 +1,28 @@
+{
+    "cfgid" : "skill_darkness",
+    "type" : "other",
+    "name" : "text_skill_darkness",
+    "desc" : "text_skill_drakness_desc",
+
+    "distance" : "0,0",
+    "cd_ticks" : 5000,
+
+    "affect" : {
+        "prev_ticks" : 1000,
+        "post_ticks" : 1000,
+
+        "affect_formula" : "skill_formula_combat",
+        "affect_target" : "other",
+        "affect_range" : 0,
+
+        "projectile" : "",
+        "event": "skill_darkness"
+    },
+
+    "tween" : {
+        "trans_type" : "scale",
+        "prev_tween" : "cubicIn",
+        "post_tween" : "cubicOut",
+        "value" : "0,0"
+    }
+}

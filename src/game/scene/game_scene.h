@@ -76,6 +76,10 @@ namespace game {
         const EntitySet& getObjectsInGrid(const Vec2i& grid);
 
         const std::multimap<float, Vec2i>& getGridsInCircle(const Vec2& center, float radius);
+        const std::multimap<float, Vec2i>& getGridsInRing(const Vec2& center, float min_radius, float max_radius);
+
+        const std::multimap<float, entt::entity>& getObjectsInCircle(const Vec2& center, float radius);
+        const std::multimap<float, entt::entity>& getObjectsInRing(const Vec2& center, float min_radius, float max_radius);
 
         void setDebugInfo(bool show);
 

@@ -10,6 +10,7 @@
 #include "game/ecs/system_pickup.h"
 #include "game/ecs/system_dead.h"
 #include "game/ecs/system_selection.h"
+#include "game/ecs/system_fight.h"
 
 #include "glm/glm.hpp"
 
@@ -37,6 +38,7 @@ void GameScene::initEscSystem()
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_context) });
 
     _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
 }
@@ -381,6 +383,87 @@ const std::multimap<float, Vec2i>& GameScene::getGridsInCircle(const Vec2& cente
     }
 
     return grids;
+}
+
+const std::multimap<float, Vec2i>& GameScene::getGridsInRing(const Vec2& center, float min_radius, float max_radius)
+{
+    static std::multimap<float, Vec2i> result;
+    result.clear();
+
+    if (min_radius >= max_radius)
+    {
+        spdlog::error("getGridsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
+        return result;
+    }
+
+    auto& outerObjects = getGridsInCircle(center, max_radius);
+
+    for (auto& [dis, grid] : outerObjects)
+    {
+        if (dis > min_radius)
+        {
+            result.insert({dis, grid});
+        }
+    }
+
+    return result;
+}
+
+const std::multimap<float, entt::entity>& GameScene::getObjectsInCircle(const Vec2& center, float radius)
+{
+    static std::multimap<float, entt::entity> result;
+    result.clear();
+
+    float l = center.x - radius;
+    float r = center.x + radius;
+    float t = center.y - radius;
+    float b = center.y + radius;
+
+    Vec2i gridLT = getGridFromPos({ l, t });
+    Vec2i gridRB = getGridFromPos({ r, b });
+    for (int x = gridLT.x; x <= gridRB.x; x++)
+    {
+        for (int y = gridLT.y; y <= gridRB.y; y++)
+        {
+            Vec2i grid = { x, y };
+            auto gridCenter = getGridCenterPos(grid);
+            float dis = glm::distance(gridCenter, center);
+            if (dis <= radius)
+            {
+                auto& gridobjs = getObjectsInGrid(grid);
+                for (auto& obj : gridobjs)
+                {
+                    result.insert({ dis, obj });
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+const std::multimap<float, entt::entity>& GameScene::getObjectsInRing(const Vec2& center, float min_radius, float max_radius)
+{
+    static std::multimap<float, entt::entity> result;
+    result.clear();
+
+    if (min_radius >= max_radius)
+    {
+        spdlog::error("getObjectsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
+        return result;
+    }
+
+    auto& outerObjects = getObjectsInCircle(center, max_radius);
+
+    for (auto& [dis, obj] : outerObjects)
+    {
+        if (dis >= min_radius)
+        {
+            result.insert({ dis, obj });
+        }
+    }
+
+    return result;
 }
 
 } 
