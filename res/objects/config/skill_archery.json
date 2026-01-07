@@ -25,11 +25,11 @@
         "post_tween" : "cubicOut"
     },
 
-    "projectile" : {
-        "name" : "skill_projectile_archery",
-        "particle" : "fire",
-        "speed" : 1000,
-        "tween" : "cubicIn"
-    }
+  "projectile": {
+    "name": "",
+    "particle": "trail",
+    "speed": 1000,
+    "tween": "cubicIn"
+  }
 
 }

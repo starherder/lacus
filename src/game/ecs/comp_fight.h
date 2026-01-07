@@ -55,16 +55,6 @@ namespace game
 		tweeny::tween<float, float> tween;
 	};
 
-	struct CompSkillAnimation
-	{
-		std::string animation;
-	};
-
-	struct CompSkillParticle
-	{
-		particle::ParticlePtr particle = nullptr;
-	};
-
 	struct CompSkillCD
 	{
 		int total_ticks = 0;
@@ -85,10 +75,6 @@ namespace game
 		tweeny::tween<float, float> tween;
 	};
 
-	struct CompBindParticle {
-		entt::entity owner;
-		particle::ParticlePtr particle = nullptr;
-	};
 
 	struct CompSkillAffect
 	{

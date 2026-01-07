@@ -32,6 +32,8 @@ namespace game
 		entt::entity createProjectile(const Vec2& source, const Vec2& target, float speed, 
 					const std::string& tween_type, const std::string& particle);
 
+		bool createParticleOnObject(entt::entity owner, const std::string& particle);
+
 		void destroyObject(entt::entity entityid);
 
 		const auto& getAllObjectCfgIds() { return _objectCfgIds; }

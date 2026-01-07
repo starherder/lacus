@@ -342,6 +342,9 @@ namespace samples
         form->on_particle_stop.connect(this, &SamplePluginParticle::onParticleStop);
         form->on_particle_save.connect(this, &SamplePluginParticle::onParticleSave);
         form->on_particle_reload.connect(this, &SamplePluginParticle::onParticleReload);
+
+
+		application()->eventDispatcher().onMouseLeftDrag.connect(this, &SamplePluginParticle::onMouseDrag);
     }
 
     void SamplePluginParticle::onDisable()
@@ -368,6 +371,14 @@ namespace samples
     void SamplePluginParticle::onClose() 
     {
     }
+
+	void SamplePluginParticle::onMouseDrag(const Vec2& pos, const Vec2& offset)
+	{
+		if (!_particle) return;
+
+		auto parpos = _particle->GetPos();
+		_particle->SetPos(parpos + offset);
+	}
 
     void SamplePluginParticle::onParticleSelect(const char* particle)
     {

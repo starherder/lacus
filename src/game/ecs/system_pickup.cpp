@@ -63,11 +63,7 @@ namespace game
                                         return false;
                                     });
         
-        auto& display = _context.registry().get<CompDisplay>(obj);
-        if(display.particle)
-        {
-            display.particle->Start();
-        }
+        _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
 
         _context.dispatcher().trigger<RolePickItemStart>(RolePickItemStart{role, obj});
 

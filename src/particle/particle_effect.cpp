@@ -185,9 +185,9 @@ namespace particle
 		assert(pe && particle);
 		fail_return(pe && particle);
 
-		assert(particle->fRemainingLife!=0);
-
 		ParticleEffect::initParticle(pe, particle);
+
+		assert(particle->fRemainingLife!=0);
 
 		float begin_radius = radiusMode.fBeginRadius + radiusMode.fBeginRadiusVar * utility::Random_Minus1_1();
 		float end_radius = radiusMode.fEndRadius + radiusMode.fEndRadiusVar * utility::Random_Minus1_1();

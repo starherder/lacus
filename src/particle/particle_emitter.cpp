@@ -71,7 +71,7 @@ namespace particle
 
 	void ParticleEmitter::emitParticles(float dt)
 	{
-		assert(emitRate!=0);
+		emitRate = emitRate == 0 ? 1 : emitRate;
 
 		/* 发射一个粒子所用时间 */
 		float emit_particle_time = 1 / emitRate;

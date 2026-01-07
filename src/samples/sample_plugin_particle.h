@@ -74,6 +74,8 @@ namespace samples
 
         void onParticleReload();
 
+        void onMouseDrag(const Vec2& pos, const Vec2& offset);
+
     private:
         std::shared_ptr<Particle> _particle = nullptr;
     };

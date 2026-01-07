@@ -3,7 +3,7 @@
 <particle version="1.0">
 
 	<system>
-		<prop name="texture_file" value="particles/fire.png"/>
+		<prop name="texture_file" value="particles/round.png"/>
 	</system>
 	<emmiter>
 		<prop name="start_pos" value="400,0"/>

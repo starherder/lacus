@@ -97,7 +97,10 @@ namespace game
 
         Color border_color = Color::Yellow;
         float border_size = 3.0f;
+    };
 
+    struct CompBindParticle 
+    {
         particle::ParticlePtr particle = nullptr;
     };
 
@@ -110,8 +113,6 @@ namespace game
         Font* font = nullptr;
         Texture* texture = nullptr;
         Rect tex_rect;
-
-        particle::ParticlePtr particle = nullptr;
     };
 
     struct CompRolePick 
@@ -136,6 +137,8 @@ namespace game
         int amount = 0;
 
         bool picked = false;
+        std::string effect;
+
         tweeny::tween<float, float> tween;
     };
 

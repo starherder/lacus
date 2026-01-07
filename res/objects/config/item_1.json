@@ -18,8 +18,8 @@
     "font_size": 9
   },
 
-  "useable": {
-    "use_effect" : "",
+  "pickable": {
+    "effect": "trail",
     "amount": 10
   }
 

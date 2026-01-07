@@ -209,18 +209,7 @@ namespace game
 
 			CompPickable com;
 			com.amount = pickable.value("amount", 1);
-
-			auto effect = pickable.value("effect", "");
-			if(!effect.empty()) 
-			{
-				auto& comDisplay = _context->registry().get<CompDisplay>(object);
-				comDisplay.particle = particle::ParticleManager::inst().CreateParticle(effect);
-				if(comDisplay.particle)
-				{
-					comDisplay.particle->Stop();
-				}
-			}
-
+			com.effect = pickable.value("effect", "");
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
@@ -415,25 +404,6 @@ namespace game
 			_context->registry().emplace<CompSkillTween>(skill, compTween);
 		}
 
-		if (json.contains("animation"))
-		{
-			auto& animJs = json["animation"];
-
-			CompSkillAnimation compAnim;
-			compAnim.animation = animJs.value("animation", "");
-			_context->registry().emplace<CompSkillAnimation>(skill, compAnim);
-		}
-
-		if (json.contains("particle"))
-		{
-			auto& animJs = json["animation"];
-
-			CompSkillParticle compParticle;
-			auto parname = animJs.value("animation", "");
-			compParticle.particle = particle::ParticleManager::inst().CreateParticle(parname);
-			_context->registry().emplace<CompSkillParticle>(skill, compParticle);
-		}
-
 		if (json.contains("projectile"))
 		{
 			auto& projectJs = json["projectile"];
@@ -451,6 +421,23 @@ namespace game
 		return skill;
 	}
 
+	bool ObjectFactory::createParticleOnObject(entt::entity owner, const std::string& particle)
+	{
+		if (!_context || _context->registry().valid(owner) == false)
+		{
+			spdlog::error("create particle ({}) on invald object({})", particle, (uint32_t)owner);
+			return false;
+		}
+
+		CompBindParticle compParticle;
+		compParticle.particle = particle::ParticleManager::inst().CreateParticle(particle);
+		if (compParticle.particle)
+		{
+			compParticle.particle->Start();
+		}
+
+		_context->registry().emplace<CompBindParticle>(owner, compParticle);
+	}
 
 	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, float speed, const std::string& tween_type, const std::string& particle)
 	{
@@ -480,7 +467,21 @@ namespace game
 		compTween.tween = tweeny::from(source.x, source.y)
 			.to(target.x, target.y)
 			.via(tween_type)
-			.during(during);
+			.during(during)
+			.to(target.x, target.y)
+			.via(tween_type)
+			.during(200);
+
+		// 先生效，等200ms再销毁
+		compTween.tween.onPoint([this, target, bullet](auto& t, float x, float y) {
+			auto& compTween = _context->registry().get<CompTweenVec2>(bullet);
+			ProjectileHitPos e;
+			e.projectile = bullet;
+			e.pos = target;
+			_context->dispatcher().trigger(e);
+
+			return false;
+		});
 
 		compTween.tween.onStep([this, target, bullet](auto& t, float x, float y) {
 			if (!_context->registry().valid(bullet)) {
@@ -488,29 +489,19 @@ namespace game
 			}
 
 			if (t.isFinished()) {
-
 				auto& compTween = _context->registry().get<CompTweenVec2>(bullet);
 				compTween.running = false;
-
 				_context->registry().emplace<CompDestroy>(bullet);
-
-				ProjectileHitPos e;
-				e.projectile = bullet;
-				e.pos = target;
-				_context->dispatcher().trigger(e);
-
 				return false;
 			}
 
 			auto& compTrans = _context->registry().get<CompTransform>(bullet);
 			compTrans.position = { x, y };
-
 			return false;
 		});
 		_context->registry().emplace<CompTweenVec2>(bullet, compTween);
 
 		CompBindParticle compParticle;
-		compParticle.owner = bullet;
 		compParticle.particle = particle::ParticleManager::inst().CreateParticle(particle);
 		if (compParticle.particle) 
 		{

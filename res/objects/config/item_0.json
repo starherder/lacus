@@ -19,7 +19,7 @@
 	},
 
 	"pickable": {
-		"effect" : "fire",
+		"effect": "trail",
 		"amount": 10
 	}
 

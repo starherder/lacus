@@ -51,11 +51,6 @@ void RenderSystem::draw()
         {
             painter.drawRect(selectComp->border_color, dstrect, 0, selectComp->border_size);
         }
-
-        if(display.particle)
-        {
-            display.particle->Draw();
-        }
     }
 
     // draw particles
