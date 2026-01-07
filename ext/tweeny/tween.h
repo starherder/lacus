@@ -494,8 +494,7 @@ namespace tweeny {
              * or seeking.
              * @returns std::tuple<Ts...> with the current tween values.
              */
-             const typename detail::tweentraits<T, Ts...>::valuesType peek(float progress) const;
-
+            const typename detail::tweentraits<T, Ts...>::valuesType peek(float progress) const;
 
             /**
              * @brief Calculates and return the tween values at a given time
@@ -572,6 +571,10 @@ namespace tweeny {
              */
             uint16_t point() const;
 
+            // add by amon
+            tween<T, Ts...>& onPoint(typename detail::tweentraits<T, Ts...>::callbackType callback);
+
+            // add by amon
             size_t point_count() const;
 
         private /* member types */:
@@ -585,6 +588,7 @@ namespace tweeny {
             typename traits::valuesType current;
             std::vector<typename traits::callbackType> onStepCallbacks;
             std::vector<typename traits::callbackType> onSeekCallbacks;
+            std::vector<typename traits::callbackType> onPointCallbacks;
             int8_t currentDirection = 1;
 
         private:
@@ -645,6 +649,10 @@ namespace tweeny {
             int direction() const; ///< @sa tween::direction
             const T & jump(size_t point, bool suppressCallbacks = false); ///< @sa tween::jump
             uint16_t point() const; ///< @sa tween::point
+            
+            // add by amon
+            tween<T>& onPoint(typename detail::tweentraits<T>::callbackType callback);
+            // add by amon
             size_t point_count() const;
 
         private /* member types */:
@@ -658,6 +666,7 @@ namespace tweeny {
             T current;
             std::vector<typename traits::callbackType> onStepCallbacks;
             std::vector<typename traits::callbackType> onSeekCallbacks;
+            std::vector<typename traits::callbackType> onPointCallbacks;
             int8_t currentDirection = 1;
 
         private:

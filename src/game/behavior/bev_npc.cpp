@@ -286,7 +286,7 @@ namespace game {
 	{
 		if (e.actor == _actor)
 		{
-			spdlog::info("BevNode_PickItem: role grid change, need check.");
+			//spdlog::info("BevNode_PickItem: role grid change, need check.");
 			_needCheck = true;
 		}
 	}

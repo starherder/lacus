@@ -55,8 +55,7 @@ namespace game
                                         if (t.isFinished()) {
                                             spdlog::info("pickable object {} tween finish", nameComp.cfg_id);
                                             
-                                            auto& commComp = _context.registry().get<CompComm>(nameComp.id);
-                                            commComp.state = LifeState::Destroy;
+                                            _context.registry().emplace<CompDestroy>(obj);
 
                                             _context.dispatcher().trigger<RolePickItemFinish>(RolePickItemFinish{ role, obj });
                                         }

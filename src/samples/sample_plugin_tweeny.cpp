@@ -166,7 +166,7 @@ namespace samples {
 
             spdlog::info("t.process = {} t.point = {}/{}, timePoint = {}", 
                 t.progress(), t.point(), t.point_count(), t.currentTimePoint());
-
+            /*
             if (t.point() != lstpoint) {
                 lstpoint = t.point();
                 _lights[lstpoint] = true;
@@ -174,10 +174,20 @@ namespace samples {
 
             if (t.isFinished()) {
                 _lights[t.point_count()-1] = true;
-            }
+            }*/
 
             _rolePos.x = x;
             _rolePos.y = y;
+            return false;
+        });
+
+
+        _tween.onPoint([this](auto& t, float x, float y) {
+            
+            spdlog::info("onPoint: current point = {}", t.point());
+
+            _lights[t.point()] = true;
+
             return false;
         });
 

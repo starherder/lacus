@@ -158,8 +158,12 @@ namespace tweeny {
     template<typename T>
     inline const T & tween<T>::step(int32_t dt, bool suppress) {
         dt *= currentDirection;
+        uint16_t lastPoint = currentPoint;
         seek(currentProgress + dt, true);
-        if (!suppress) dispatch(onStepCallbacks);
+        if (!suppress) {
+            dispatch(onStepCallbacks);
+            if(currentPoint != lastPoint) dispatch(onPointCallbacks);
+        }
         return current;
     }
 
@@ -216,6 +220,12 @@ namespace tweeny {
     template<typename T>
     tween<T> & tween<T>::onStep(typename detail::tweentraits<T>::callbackType callback) {
         onStepCallbacks.push_back(callback);
+        return *this;
+    }
+    
+    template<typename T>
+    tween<T> & tween<T>::onPoint(typename detail::tweentraits<T>::callbackType callback) {
+        onPointCallbacks.push_back(callback);
         return *this;
     }
 

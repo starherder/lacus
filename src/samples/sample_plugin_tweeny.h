@@ -38,15 +38,15 @@ namespace samples {
 
 
 
-    class SamplePluginTweeny final : public engine::Plugin, 
-                                     public utility::sigslot::SlotHandler
+    class SamplePluginTweeny final : public engine::Plugin,
+        public utility::sigslot::SlotHandler
     {
     private:
         tweeny::tween<float, float> _tween;
 
         std::vector<Vec2> _points = { { 100, 400 }, {300, 600}, {500,400}, {700, 600} };
 
-        std::vector<bool> _lights = { false, false, false, false };
+        std::vector<bool> _lights = { false, false, false, false};
 
         engine::Vec2 _rolePos = _points[0];
 

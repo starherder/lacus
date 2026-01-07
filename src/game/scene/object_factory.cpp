@@ -4,6 +4,8 @@
 #include <nlohmann/json.hpp>
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comp_fight.h"
+#include "game/ecs/comm_event.h"
+
 #include "utility/translator.h"
 
 namespace game 
@@ -160,7 +162,6 @@ namespace game
 			CompComm comm;
 			comm.type = getNpcType(cmmJs.value("type", ""));
 			comm.desc = Trans(cmmJs.value("desc", ""));
-			comm.state = LifeState::Normal;
 
 			_context->registry().emplace<CompComm>(object, comm);
 		}
@@ -437,18 +438,95 @@ namespace game
 		{
 			auto& projectJs = json["projectile"];
 
-			CompProjectile compParticle;
+			CompProjectileCfg compParticle;
 			compParticle.name = projectJs.value("name", "");
 			compParticle.speed = projectJs.value("speed", 10.0f);
-			compParticle.tween_type = projectJs.value("tween", "linear");
+			compParticle.tween = projectJs.value("tween", "linear");
+			compParticle.particle = projectJs.value("particle", "");
 
-			auto parname = projectJs.value("particle", "");
-			compParticle.particle = particle::ParticleManager::inst().CreateParticle(parname);
-			_context->registry().emplace<CompProjectile>(skill, compParticle);
+			_context->registry().emplace<CompProjectileCfg>(skill, compParticle);
 		}
 
 		spdlog::info("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
 		return skill;
+	}
+
+
+	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, float speed, const std::string& tween_type, const std::string& particle)
+	{
+		assert(speed != 0.0f);
+		speed = (speed == 0) ? 100.0f : speed;
+
+		auto bullet = _context->registry().create();
+
+		CompNameId compName;
+		compName.cfg_id = "";
+		compName.name = fmt::format("projectile_{}", (uint32_t)bullet);
+		compName.id = bullet;
+		_context->registry().emplace<CompNameId>(bullet, compName);
+
+		CompTransform compTrans;
+		compTrans.position = source;
+		compTrans.size = { 10, 10 };
+		compTrans.rotation = { 0,0 };
+		compTrans.scale = { 1,1 };
+		_context->registry().emplace<CompTransform>(bullet, compTrans);
+
+		float dis = glm::distance(source, target);
+		int during = static_cast<int>((dis / speed) * 1000);
+
+		CompTweenVec2 compTween;
+		compTween.running = true;
+		compTween.tween = tweeny::from(source.x, source.y)
+			.to(target.x, target.y)
+			.via(tween_type)
+			.during(during);
+
+		compTween.tween.onStep([this, target, bullet](auto& t, float x, float y) {
+			if (!_context->registry().valid(bullet)) {
+				return false;
+			}
+
+			if (t.isFinished()) {
+
+				auto& compTween = _context->registry().get<CompTweenVec2>(bullet);
+				compTween.running = false;
+
+				_context->registry().emplace<CompDestroy>(bullet);
+
+				ProjectileHitPos e;
+				e.projectile = bullet;
+				e.pos = target;
+				_context->dispatcher().trigger(e);
+
+				return false;
+			}
+
+			auto& compTrans = _context->registry().get<CompTransform>(bullet);
+			compTrans.position = { x, y };
+
+			return false;
+		});
+		_context->registry().emplace<CompTweenVec2>(bullet, compTween);
+
+		CompBindParticle compParticle;
+		compParticle.owner = bullet;
+		compParticle.particle = particle::ParticleManager::inst().CreateParticle(particle);
+		if (compParticle.particle) 
+		{
+			compParticle.particle->Start();
+		}
+		else 
+		{
+			spdlog::error("createProjectile: create particle failed.");
+		}
+
+		_context->registry().emplace<CompBindParticle>(bullet, compParticle);
+
+		spdlog::info("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
+			(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );
+
+		return bullet;
 	}
 
 	void ObjectFactory::destroyObject(entt::entity entityid)

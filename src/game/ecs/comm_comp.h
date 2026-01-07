@@ -23,12 +23,6 @@ namespace game
         std::string cfg_id;
     };
 
-    enum class LifeState {
-        Normal,
-        Dead,
-        Destroy,
-    };
-
     enum class ObjectType {
         Item,
         Npc,
@@ -43,12 +37,17 @@ namespace game
         Gangster,
     };
 
+    struct CompDead {
+    };
+
+    struct CompDestroy {
+    };
+
     struct CompComm {
         
         ObjectType type;
 
         std::string desc;
-        LifeState state = LifeState::Normal;
 
         CampSide comp = CampSide::Gangster;
     };

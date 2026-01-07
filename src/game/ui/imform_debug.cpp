@@ -102,7 +102,7 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     }
 
     auto scenePos = _context->currentScene().camera().screenToWorld(pos);
-    spdlog::info("pos = ({},{}), scene_pos = ({}, {})", pos.x, pos.y, scenePos.x, scenePos.y);
+    //spdlog::info("pos = ({},{}), scene_pos = ({}, {})", pos.x, pos.y, scenePos.x, scenePos.y);
 
     switch (_debugMode)
     {

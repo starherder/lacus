@@ -10,16 +10,17 @@ namespace game
 	{
 		std::vector<CompNameId> pending;
 
-		auto views = _context.registry().view<CompNameId, CompComm>();
-		for (auto& ent : views) 
+		auto deadViews = _context.registry().view<CompNameId, CompDead>();
+		for (auto& ent : deadViews)
 		{
-			auto& nameComp = views.get<CompNameId>(ent);
-			auto& commComp = views.get<CompComm>(ent);
+			//auto& nameComp = views.get<CompNameId>(ent);
+		}
 
-			if (commComp.state == LifeState::Destroy)
-			{
-				pending.push_back(nameComp);
-			}
+		auto destroyViews = _context.registry().view<CompNameId, CompDestroy>();
+		for (auto& ent : destroyViews)
+		{
+			auto& nameComp = destroyViews.get<CompNameId>(ent);
+			pending.push_back(nameComp);
 		}
 
 		// destroy

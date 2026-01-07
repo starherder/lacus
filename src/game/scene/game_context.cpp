@@ -1,6 +1,7 @@
 ﻿#include "game_context.h"
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
+#include "game/scene/object_factory.h"
 
 namespace game 
 {
@@ -13,6 +14,12 @@ namespace game
 	entt::dispatcher& GameContext::dispatcher()
 	{
 		return eventDispatcher().logicDispatcher();
+	}
+
+
+	ObjectFactory& GameContext::objectFactory()
+	{
+		return ObjectFactory::inst();
 	}
 
 	entt::registry& GameContext::registry()

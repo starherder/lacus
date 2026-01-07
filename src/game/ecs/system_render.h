@@ -15,6 +15,8 @@ public:
     RenderSystem(GameContext& context) : EcsSystem(context) {}
     ~RenderSystem() {}
 
+    void update(float delta);
+
     void draw();
 
 private:

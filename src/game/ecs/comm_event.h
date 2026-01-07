@@ -54,6 +54,11 @@ namespace game {
 		entt::entity skill;
 	};
 
+	struct ProjectileHitPos {
+		entt::entity projectile;
+		Vec2 pos;
+	};
+
 	struct ExecSkillEvent {
 		entt::entity source;
 		entt::entity skill;

@@ -4,11 +4,26 @@ namespace game
 {
 
 
+void RenderSystem::update(float delta)
+{
+    auto parEnts = _context.registry().view<CompTransform, CompBindParticle>();
+    for (auto& ent : parEnts)
+    {
+        auto& compTransform = parEnts.get<CompTransform>(ent);
+        auto& compParticle = parEnts.get<CompBindParticle>(ent);
+        if (compParticle.particle)
+        {
+            compParticle.particle->Update(delta);
+        }
+    }
+}
+
 void RenderSystem::draw()
 {
     Painter& painter = _context.painter();
     GameCamera& camera = _context.camera();
 
+    // draw objects
     auto ent_view = _context.registry().view<CompNameId, CompTransform, CompDisplay>();
     for (auto& ent : ent_view)
     {
@@ -40,6 +55,20 @@ void RenderSystem::draw()
         if(display.particle)
         {
             display.particle->Draw();
+        }
+    }
+
+    // draw particles
+    auto parEnts = _context.registry().view<CompTransform, CompBindParticle>();
+    for (auto& ent : parEnts)
+    {
+        auto& compTransform = parEnts.get<CompTransform>(ent);
+        auto& compParticle = parEnts.get<CompBindParticle>(ent);
+        auto& particle = compParticle.particle;
+        if (particle)
+        {
+            particle->SetPos(compTransform.position);
+            particle->Draw();
         }
     }
 
@@ -130,6 +159,8 @@ void RenderSystem::drawSceneDebug()
         {
             auto& objs = _context.currentScene().getObjectsInGrid({ x, y });
             auto pos = _context.currentScene().getGridCenterPos({ x, y });
+
+            pos = _context.camera().projectPoint(pos);
             renderer.drawDebugTextFormat(pos, "%d", (int)objs.size());
         }
     }

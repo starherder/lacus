@@ -25,7 +25,11 @@ namespace game
 
         void skillAffectApplyToObject(const RoleExecSkillToObject& e);
 
-        void onRoleSufferFromObject(const RoleOnAttack& e);
+        void onRoleUnderAttack(const RoleOnAttack& e);
+
+        void startProjectileObject(entt::entity source, entt::entity target, entt::entity skill);
+        
+        void onProjectileHitPos(const ProjectileHitPos& e);
 
         tweeny::tween<float, float> makeSkillTween(const RoleExecSkillToObject& e);
     };

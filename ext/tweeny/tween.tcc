@@ -166,9 +166,12 @@ namespace tweeny {
     template<typename T, typename... Ts>
     inline const typename detail::tweentraits<T, Ts...>::valuesType & tween<T, Ts...>::step(int32_t dt, bool suppress) {
         dt *= currentDirection;
+        uint16_t lastPoint = currentPoint;
         seek(currentProgress + dt, true);
-        if (!suppress)
+        if (!suppress) {
             dispatch(onStepCallbacks);
+            if(currentPoint != lastPoint) dispatch(onPointCallbacks);
+        }
         return current;
     }
 
@@ -233,10 +236,16 @@ namespace tweeny {
         currentPoint = pointAt(p);
         interpolate(p, currentPoint, current, detail::int2type<sizeof...(Ts) - 1 + 1 /* +1 for the T */>{ });
     }
-
+    
     template<typename T, typename... Ts>
     tween<T, Ts...> & tween<T, Ts...>::onStep(typename detail::tweentraits<T, Ts...>::callbackType callback) {
         onStepCallbacks.push_back(callback);
+        return *this;
+    }
+
+    template<typename T, typename... Ts>
+    tween<T, Ts...> & tween<T, Ts...>::onPoint(typename detail::tweentraits<T, Ts...>::callbackType callback) {
+        onPointCallbacks.push_back(callback);
         return *this;
     }
 

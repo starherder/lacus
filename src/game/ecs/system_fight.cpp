@@ -7,7 +7,8 @@ namespace game
 	FightSystem::FightSystem(GameContext& context) : EcsSystem(context) 
 	{
 		_context.dispatcher().sink<RoleExecSkillToObject>().connect<&FightSystem::onRoleExecSkillToObject>(this);
-		_context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleSufferFromObject>(this);
+		_context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
+		_context.dispatcher().sink<ProjectileHitPos>().connect<&FightSystem::onProjectileHitPos>(this);
 	}
 	
 	FightSystem::~FightSystem() 
@@ -43,7 +44,6 @@ namespace game
 					if (skillCD->current_tick >= skillCD->total_ticks) 
 					{
 						skillCD->current_tick = 0;
-
 						skillComm.state = SkillState::OK;
 					}
 				}
@@ -60,7 +60,6 @@ namespace game
 			}
 		}
 	}
-
 
 	tweeny::tween<float, float> FightSystem::makeSkillTween(const RoleExecSkillToObject& e)
 	{
@@ -141,36 +140,69 @@ namespace game
 		skillComm.state = SkillState::Launching;
 
 		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
+
 		skillTween.tween = makeSkillTween(e);
-		skillTween.tween.onStep([e, this](auto& t, float x, float y) {
+
+		skillTween.tween.onPoint([e, this](auto& t, float x, float y) {
 				if (_context.registry().valid(e.source) == false) {
 					return false;
 				}
 
-				if (t.isFinished())  {	
-					skillAffectApplyToObject(e);
-					return false;
-				}
+				skillAffectApplyToObject(e);
 				return false;
 			});
-	}
 
+		skillTween.tween.onStep([e, this](auto& t, float x, float y) {
+			if (t.isFinished()) {
+				auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
+				skillComm.state = SkillState::Cooling;
+				return false;
+			}
+		});
+	}
 
 	void FightSystem::skillAffectApplyToObject(const RoleExecSkillToObject& e)
 	{
-		spdlog::info("skill affect !");
-
+		auto& compName = _context.registry().get<CompNameId>(e.skill);
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
-		skillComm.state = SkillState::Cooling;
 
-		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-		_context.dispatcher().trigger(ExecSkillEvent{e.source, e.skill, skillAffect.event});
+		spdlog::info("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
 
-		_context.dispatcher().trigger(RoleOnAttack{e.source, e.target, e.skill});
+		if (skillComm.type == SkillType::Combat)
+		{
+			_context.dispatcher().trigger(RoleOnAttack{e.source, e.target, e.skill});
+		}
+		else if (skillComm.type == SkillType::Projectile)
+		{
+			startProjectileObject(e.source, e.target, e.skill);
+		}
+		else
+		{
+			auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
+			_context.dispatcher().trigger(ExecSkillEvent{e.source, e.skill, skillAffect.event});
+		}
 	}
 
+	void FightSystem::startProjectileObject(entt::entity source, entt::entity target, entt::entity skill)
+	{
+		auto projectComp = _context.registry().try_get<CompProjectileCfg>(skill);
+		if (!projectComp)
+		{
+			return;
+		}
 
-	void FightSystem::onRoleSufferFromObject(const RoleOnAttack& e)
+		auto& compProjectile = *projectComp;
+		auto& compSrcTrans = _context.registry().get<CompTransform>(source);
+		auto& compTgtTrans = _context.registry().get<CompTransform>(target);
+
+		const auto& srcPos = compSrcTrans.position;
+		const auto& dstPos = compTgtTrans.position;
+		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
+
+		_context.objectFactory().createProjectile(srcPos, dstPos, speed, compProjectile.tween, compProjectile.particle);
+	}
+
+	void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)
 	{
 		auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
 		if(!underatk)
@@ -219,7 +251,9 @@ namespace game
 			});
 	}
 
-
-
+	void FightSystem::onProjectileHitPos(const ProjectileHitPos& e)
+	{
+		spdlog::info("projectile: {} hit at ({},{})", (int)e.projectile, e.pos.x, e.pos.y);
+	}
 
 }

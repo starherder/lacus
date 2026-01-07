@@ -13,6 +13,7 @@ namespace game {
 
 	class GameScene;
 	class GameCamera;
+	class ObjectFactory;
 
 	class GameContext
 	{
@@ -49,6 +50,8 @@ namespace game {
 
 		GameScene& currentScene() { return *_currentScene;  }
 		void setCurrentScene(GameScene* scene) { _currentScene = scene; }
+
+		ObjectFactory& objectFactory();
 
 		entt::registry& registry();
 		entt::dispatcher& dispatcher();

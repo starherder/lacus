@@ -29,6 +29,9 @@ namespace game
 	
 		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
 
+		entt::entity createProjectile(const Vec2& source, const Vec2& target, float speed, 
+					const std::string& tween_type, const std::string& particle);
+
 		void destroyObject(entt::entity entityid);
 
 		const auto& getAllObjectCfgIds() { return _objectCfgIds; }

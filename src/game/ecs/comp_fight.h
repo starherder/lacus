@@ -71,15 +71,23 @@ namespace game
 		int current_tick = 0;
 	};
 
-	struct CompProjectile
+	struct CompProjectileCfg
 	{
 		std::string name;
 		float speed = 100.0f;
 
-		particle::ParticlePtr particle = nullptr;
+		std::string particle;
+		std::string tween;
+	};
 
-		std::string tween_type;
+	struct CompTweenVec2 {
+		bool running = false;
 		tweeny::tween<float, float> tween;
+	};
+
+	struct CompBindParticle {
+		entt::entity owner;
+		particle::ParticlePtr particle = nullptr;
 	};
 
 	struct CompSkillAffect
