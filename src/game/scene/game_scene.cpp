@@ -253,7 +253,7 @@ bool GameScene::createObject(const std::string& cfgid, const Vec2& pos)
     auto grid = getGridFromPos(pos);
     addObjectToGrid(ent, grid);
 
-    spdlog::info("createObject: id = {}, name = {}", (int)ent, cfgid);
+    spdlog::info("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
 
     return true;
 }
@@ -374,6 +374,17 @@ const std::multimap<float, entt::entity>& GameScene::getObjectsInCircle(const Ve
 {
     static std::multimap<float, entt::entity> result;
     result.clear();
+
+    if (radius == 0) 
+    {
+        auto grid = getGridFromPos(center);
+        auto objects = getObjectsInGrid(grid);
+        for (auto& obj : objects)
+        {
+            result.insert({0, obj});
+        }
+        return result;
+    }
 
     float l = center.x - radius;
     float r = center.x + radius;

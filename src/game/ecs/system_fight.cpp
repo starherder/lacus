@@ -121,11 +121,11 @@ namespace game
 
 	void FightSystem::onRoleExecSkillToObject(const RoleExecSkillToObject& e)
 	{
-		spdlog::info("RoleExecSkillToObject: source ({}) -> target ({})", (int)e.source, (int)e.target );
+		spdlog::info("RoleExecSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
 
 		if (_context.registry().valid(e.skill) == false)
 		{
-			spdlog::warn("onRoleExecSkillToObject: skill ({}) is invalid", (int)e.skill);
+			spdlog::warn("onRoleExecSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
 			return;
 		}
 
@@ -183,7 +183,7 @@ namespace game
 		}
 	}
 
-	void FightSystem::startProjectileObject(entt::entity source, entt::entity target, entt::entity skill)
+	void FightSystem::startProjectileObject(entt::entity srcid, entt::entity tarid, entt::entity skill)
 	{
 		auto projectComp = _context.registry().try_get<CompProjectileCfg>(skill);
 		if (!projectComp)
@@ -192,14 +192,64 @@ namespace game
 		}
 
 		auto& compProjectile = *projectComp;
-		auto& compSrcTrans = _context.registry().get<CompTransform>(source);
-		auto& compTgtTrans = _context.registry().get<CompTransform>(target);
+		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
+		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
 
-		const auto& srcPos = compSrcTrans.position;
-		const auto& dstPos = compTgtTrans.position;
+		const auto& tweentype = compProjectile.tween;
+		const auto& source = compSrcTrans.position;
+		const auto& target = compTgtTrans.position;
 		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
+		int during = static_cast<int>((glm::distance(source, target) / speed) * 1000);
 
-		_context.objectFactory().createProjectile(srcPos, dstPos, speed, compProjectile.tween, compProjectile.particle);
+		auto object = _context.objectFactory().createProjectile(source, target, speed, compProjectile.tween, compProjectile.particle);
+		if (!_context.registry().valid(object))
+		{
+			return;
+		}
+
+		auto& compTrans = _context.registry().get<CompTransform>(object);
+		compTrans.position = source;
+		compTrans.size = {10, 10};
+		compTrans.rotation = {0, 0};
+		compTrans.scale = { 1, 1 };
+
+		auto& compTween = _context.registry().get<CompTweenVec2>(object);
+		compTween.running = true;
+		compTween.tween = tweeny::from(source.x, source.y)
+			.to(target.x, target.y)
+			.via(tweentype)
+			.during(during)
+			.to(target.x, target.y)
+			.via(tweentype)
+			.during(200);
+
+		// 生效，等200ms再销毁，立刻摧毁显得效果僵硬
+		compTween.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
+			ProjectileHitPos e;
+			e.source = srcid;
+			e.skill = skill;
+			e.pos = target;
+			_context.dispatcher().trigger(e);
+			return false;
+		});
+
+		compTween.tween.onStep([this, target, object](auto& t, float x, float y) {
+			if (!_context.registry().valid(object)) {
+				return false;
+			}
+
+			if (t.isFinished()) {
+				auto& compTween = _context.registry().get<CompTweenVec2>(object);
+				compTween.running = false;
+				_context.registry().emplace<CompDestroy>(object);
+				return false;
+			}
+
+			auto& compTrans = _context.registry().get<CompTransform>(object);
+			compTrans.position = { x, y };
+			return false;
+		});
+
 	}
 
 	void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)
@@ -209,6 +259,12 @@ namespace game
 		{
 			return;
 		}
+
+		auto& targetNameComp = _context.registry().get<CompNameId>(e.target);
+		auto& skillNameComp = _context.registry().get<CompNameId>(e.skill);
+		spdlog::info("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
+			(uint32_t)targetNameComp.id, targetNameComp.cfg_id, targetNameComp.name,
+			skillNameComp.cfg_id, skillNameComp.name);
 
 		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
 		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
@@ -253,7 +309,21 @@ namespace game
 
 	void FightSystem::onProjectileHitPos(const ProjectileHitPos& e)
 	{
-		spdlog::info("projectile: {} hit at ({},{})", (int)e.projectile, e.pos.x, e.pos.y);
+		spdlog::info("projectile: source({}) skill({}) hit ({},{})", 
+			(uint32_t)e.source, (uint32_t)e.skill, e.pos.x, e.pos.y);
+
+		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
+		auto range = compAffect.affect_range;
+
+		auto objects = _context.currentScene().getObjectsInCircle(e.pos, range);
+		for (auto& [d,obj] : objects) 
+		{
+			auto& cmpComm = _context.registry().get<CompComm>(obj);
+			if (cmpComm.type == ObjectType::Npc)
+			{
+				_context.dispatcher().trigger(RoleOnAttack{ e.source, obj, e.skill });
+			}
+		}
 	}
 
 }

@@ -55,7 +55,9 @@ namespace game {
 	};
 
 	struct ProjectileHitPos {
-		entt::entity projectile;
+		entt::entity source;
+		entt::entity skill;
+		//entt::entity projectile;
 		Vec2 pos;
 	};
 

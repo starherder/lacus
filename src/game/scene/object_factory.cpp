@@ -453,52 +453,9 @@ namespace game
 		_context->registry().emplace<CompNameId>(bullet, compName);
 
 		CompTransform compTrans;
-		compTrans.position = source;
-		compTrans.size = { 10, 10 };
-		compTrans.rotation = { 0,0 };
-		compTrans.scale = { 1,1 };
 		_context->registry().emplace<CompTransform>(bullet, compTrans);
 
-		float dis = glm::distance(source, target);
-		int during = static_cast<int>((dis / speed) * 1000);
-
 		CompTweenVec2 compTween;
-		compTween.running = true;
-		compTween.tween = tweeny::from(source.x, source.y)
-			.to(target.x, target.y)
-			.via(tween_type)
-			.during(during)
-			.to(target.x, target.y)
-			.via(tween_type)
-			.during(200);
-
-		// 先生效，等200ms再销毁
-		compTween.tween.onPoint([this, target, bullet](auto& t, float x, float y) {
-			auto& compTween = _context->registry().get<CompTweenVec2>(bullet);
-			ProjectileHitPos e;
-			e.projectile = bullet;
-			e.pos = target;
-			_context->dispatcher().trigger(e);
-
-			return false;
-		});
-
-		compTween.tween.onStep([this, target, bullet](auto& t, float x, float y) {
-			if (!_context->registry().valid(bullet)) {
-				return false;
-			}
-
-			if (t.isFinished()) {
-				auto& compTween = _context->registry().get<CompTweenVec2>(bullet);
-				compTween.running = false;
-				_context->registry().emplace<CompDestroy>(bullet);
-				return false;
-			}
-
-			auto& compTrans = _context->registry().get<CompTransform>(bullet);
-			compTrans.position = { x, y };
-			return false;
-		});
 		_context->registry().emplace<CompTweenVec2>(bullet, compTween);
 
 		CompBindParticle compParticle;
