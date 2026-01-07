@@ -44,10 +44,12 @@ namespace samples {
     private:
         tweeny::tween<int, int> _tween;
 
-        Vec2i _roleBeginPos = { 100, 400 };
-        Vec2i _roleEndPos = { 1100, 400 };
+        Vec2i _rolePos0 = { 100, 400 };
+        Vec2i _rolePos1 = { 300, 600 };
+        Vec2i _rolePos2 = { 500, 400 };
+        Vec2i _rolePos3 = { 700, 600 };
        
-        engine::Vec2 _rolePos = _roleBeginPos;
+        engine::Vec2 _rolePos = _rolePos0;
 
         EaseMode _easeMode;
 

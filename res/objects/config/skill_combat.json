@@ -8,8 +8,8 @@
     "cd_ticks" : 2000,
 
     "affect" : {
-        "prev_ticks" : 200,
-        "post_ticks" : 200,
+        "prev_ticks" : 100,
+        "post_ticks" : 100,
 
         "affect_formula" : "skill_formula_combat",
         "affect_target" : "role",

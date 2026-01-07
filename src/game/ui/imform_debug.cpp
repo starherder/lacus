@@ -160,6 +160,7 @@ void ImFormDebug::roleExecSkill()
     auto& skills = _context->registry().get<CompSkills>(_selectEntity);
     for (auto& skent : skills.skills)
     {
+        auto& compName = _context->registry().get<CompNameId>(skent);
         auto& compSkill = _context->registry().get<CompSkillComm>(skent);
         auto dis = compSkill.distance;
 
@@ -174,7 +175,11 @@ void ImFormDebug::roleExecSkill()
                 return;
             }
         }
+
+        spdlog::info("skill ({}) find enemy faild.", compName.cfg_id);
     }
+
+
 }
 
 

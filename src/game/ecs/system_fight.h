@@ -7,6 +7,8 @@
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
 
+#include "tweeny/tweeny.h"
+
 namespace game 
 {
 
@@ -22,6 +24,10 @@ namespace game
         void onRoleExecSkillToObject(const RoleExecSkillToObject& e);
 
         void skillAffectApplyToObject(const RoleExecSkillToObject& e);
+
+        void onRoleSufferFromObject(const RoleOnAttack& e);
+
+        tweeny::tween<float, float> makeSkillTween(const RoleExecSkillToObject& e);
     };
 
 

@@ -43,6 +43,12 @@ namespace game {
 		entt::entity skill;
 	};
 
+	struct RoleOnAttack {
+		entt::entity source;
+		entt::entity target;
+		entt::entity skill;
+	};
+
 	struct ExecSkillEvent {
 		entt::entity source;
 		entt::entity skill;

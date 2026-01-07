@@ -1,6 +1,8 @@
 ﻿#include "sample_plugin_tweeny.h"
 #include "magic_enum/magic_enum.h"
 
+#include <array>
+
 namespace samples {
 
     ImFormTweenForm::ImFormTweenForm() 
@@ -121,7 +123,11 @@ namespace samples {
         auto& renderer = application()->renderer();
 
         renderer.setDrawColor({ 255, 255, 0, 255 });
-        renderer.drawFillRect({ _rolePos.x, _rolePos.y, 100.0f, 100.0f });
+        renderer.drawFillRect({ _rolePos.x-25, _rolePos.y-25, 50.0f, 50.0f });
+
+        renderer.setDrawColor({ 255, 0, 0, 255 });
+        std::array<engine::Vec2, 4> points = {_rolePos0, _rolePos1, _rolePos2, _rolePos3};
+        renderer.drawlines(points.data(), points.size());
     }
 
     void SamplePluginTweeny::onClose()
@@ -134,10 +140,16 @@ namespace samples {
         
         _easeMode = mode;
 
-        _tween = tweeny::from(_roleBeginPos.x, _roleBeginPos.y)  
-                        .to(_roleEndPos.x, _roleEndPos.y)        
+        _tween = tweeny::from(_rolePos0.x, _rolePos0.y)  
+                        .to(_rolePos1.x, _rolePos1.y)
+                        .via(ease)
+                        .during(duration)
+                        .to(_rolePos2.x, _rolePos2.y)
                         .during(duration)                        
-                        .via(ease)                               
+                        .via(ease)
+                        .to(_rolePos3.x, _rolePos3.y)
+                        .during(duration)
+                        .via(ease)
                         .onStep([this](auto& t, int x, int y) {  
                             _rolePos.x = x;
                             _rolePos.y = y;
@@ -172,7 +184,7 @@ namespace samples {
         {
             _tween.onStep([ease](auto& t, int x, int y) 
                 {
-                    spdlog::info("t.progress() = {}", t.progress());
+                    //spdlog::info("t.progress() = {}", t.progress());
 
                     if (t.progress() <= 0.01f) { 
                         spdlog::info("{} forward!", ease);

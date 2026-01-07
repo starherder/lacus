@@ -279,6 +279,18 @@ namespace game
 			_context->registry().emplace<CompMotion>(role, motion);
 		}
 
+		CompUnderAttack underATK;
+		if (json.contains("under_attack"))
+		{
+			auto& underAtkJs = json["under_attack"];
+			underATK.during = underAtkJs.value("during", 200);
+			underATK.motion_offset = underAtkJs.value("motion_offset", 10);
+
+			underATK.prev_tween = underAtkJs.value("prev_tween", "");
+			underATK.post_tween = underAtkJs.value("post_tween", "");
+		}
+		_context->registry().emplace<CompUnderAttack>(role, underATK);
+
 		if (json.contains("properties")) 
 		{
 			utility::DynamicStruct<std::string> ds;

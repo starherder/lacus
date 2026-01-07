@@ -42,6 +42,19 @@ namespace game
 		tweeny::tween<float, float> tween;
 	};
 
+	struct CompUnderAttack
+	{
+		bool under_attack = false;
+
+		int during = 200;
+		float motion_offset = 10;
+
+		std::string prev_tween = "quarticIn";
+		std::string post_tween = "quarticOut";
+
+		tweeny::tween<float, float> tween;
+	};
+
 	struct CompSkillAnimation
 	{
 		std::string animation;

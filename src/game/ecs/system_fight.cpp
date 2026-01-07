@@ -7,6 +7,7 @@ namespace game
 	FightSystem::FightSystem(GameContext& context) : EcsSystem(context) 
 	{
 		_context.dispatcher().sink<RoleExecSkillToObject>().connect<&FightSystem::onRoleExecSkillToObject>(this);
+		_context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleSufferFromObject>(this);
 	}
 	
 	FightSystem::~FightSystem() 
@@ -17,9 +18,21 @@ namespace game
 	{
 		auto deltaTicks = _context.frameTicker().deltaTicks();
 
+		// 受击特效
+		auto views1 = _context.registry().view<CompUnderAttack>();
+		for(auto& ent : views1)
+		{
+			auto underATK = _context.registry().try_get<CompUnderAttack>(ent);
+			if(underATK && underATK->under_attack)
+			{
+				underATK->tween.step(deltaTicks);
+			}
+		}
+
 		auto views = _context.registry().view<CompNameId, CompSkillComm>();
 		for (auto& ent : views)
 		{
+			// 技能冷却
 			auto& skillComm = _context.registry().get<CompSkillComm>(ent);
 			if (skillComm.state == SkillState::Cooling)
 			{
@@ -36,6 +49,7 @@ namespace game
 				}
 			}
 
+			// 技能特效
 			if (skillComm.state == SkillState::Launching)
 			{
 				auto skillTween = _context.registry().try_get<CompSkillTween>(ent);
@@ -45,6 +59,62 @@ namespace game
 				}
 			}
 		}
+	}
+
+
+	tweeny::tween<float, float> FightSystem::makeSkillTween(const RoleExecSkillToObject& e)
+	{
+		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
+		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
+
+		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
+		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
+
+		if(skillTween.trans_type == TweenTransform::Motion)
+		{
+			auto& srcPos = srcTrans.position;
+			auto& dstPos = dstTrans.position;
+
+			return tweeny::from(srcPos.x, srcPos.y)
+				.to(dstPos.x, dstPos.y)
+				.via(skillTween.prev_tween)
+				.during(skillAffect.prev_ticks)
+				.to(srcPos.x, srcPos.y)
+				.via(skillTween.post_tween)
+				.during(skillAffect.post_ticks)
+				.onStep([e, this](auto& t, float x, float y) {
+						if (_context.registry().valid(e.source)) {
+							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
+							srcTrans.position = { x, y };
+						}
+						return false;
+					});
+		} 
+		
+		if(skillTween.trans_type == TweenTransform::Scale)
+		{
+			auto& srcSize = srcTrans.size;
+			//auto& dstSize = dstTrans.size;
+			auto& dstSize = skillTween.value;
+
+			return tweeny::from(srcSize.x, srcSize.y)
+				.to(dstSize.x, dstSize.y)
+				.via(skillTween.prev_tween)
+				.during(skillAffect.prev_ticks)
+				.to(srcSize.x, srcSize.y)
+				.via(skillTween.post_tween)
+				.during(skillAffect.post_ticks)
+				.onStep([e, this](auto& t, float x, float y) {
+						if (_context.registry().valid(e.source)) {
+							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
+							srcTrans.size = { x, y };
+						}
+						return false;
+					});
+		}
+
+		tweeny::tween<float, float> tween;
+		return tween;
 	}
 
 	void FightSystem::onRoleExecSkillToObject(const RoleExecSkillToObject& e)
@@ -64,38 +134,20 @@ namespace game
 			spdlog::warn("onRoleExecSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
 			return;
 		}
+
 		skillComm.state = SkillState::Launching;
 
-		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
-
-		auto& srcPos = srcTrans.position;
-		auto& dstPos = dstTrans.position;
-
-		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
-
-		skillTween.tween = tweeny::from(srcPos.x, srcPos.y)
-			.to(dstPos.x, dstPos.y)
-			.via(skillTween.prev_tween)
-			.during(skillAffect.prev_ticks)
-			.onStep([e, this](auto& t, float x, float y) 
-			{
-				if (_context.registry().valid(e.source) == false)
-				{
+		skillTween.tween = makeSkillTween(e);
+		skillTween.tween.onStep([e, this](auto& t, float x, float y) {
+				if (_context.registry().valid(e.source) == false) {
 					return false;
 				}
 
-				if (t.isFinished()) 
-				{	
+				if (t.isFinished())  {	
 					skillAffectApplyToObject(e);
-
 					return false;
 				}
-
-				auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-				srcTrans.position = {x, y};
-
 				return false;
 			});
 	}
@@ -110,9 +162,59 @@ namespace game
 
 		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		_context.dispatcher().trigger(ExecSkillEvent{e.source, e.skill, skillAffect.event});
+
+		_context.dispatcher().trigger(RoleOnAttack{e.source, e.target, e.skill});
 	}
 
 
+	void FightSystem::onRoleSufferFromObject(const RoleOnAttack& e)
+	{
+		auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
+		if(!underatk)
+		{
+			return;
+		}
+
+		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
+		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
+		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
+
+		const auto& srcPos = srcTrans.position;
+		const auto& rolePos = dstTrans.position;
+
+		auto offset = glm::normalize(rolePos - srcPos)* underatk->motion_offset;
+		auto dstPos = rolePos + offset;
+
+		underatk->under_attack = true;
+		underatk->tween = tweeny::from(rolePos.x, rolePos.y)
+
+			.to(dstPos.x, dstPos.y)
+			.via(underatk->prev_tween)
+			.during(underatk->during / 2)
+
+			.to(rolePos.x, rolePos.y)
+			.via(underatk->post_tween)
+			.during(underatk->during / 2)
+
+			.onStep([e, this](auto& t, float x, float y) 
+			{
+				if (_context.registry().valid(e.target)) 
+				{
+					auto& dstTrans = _context.registry().get<CompTransform>(e.target);
+					dstTrans.position = { x, y };
+
+					if(t.isFinished())
+					{
+						auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
+						if(underatk) 
+						{
+							underatk->under_attack = false;
+						}
+					}
+				}
+				return false;
+			});
+	}
 
 
 
