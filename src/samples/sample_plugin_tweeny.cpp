@@ -126,8 +126,16 @@ namespace samples {
         renderer.drawFillRect({ _rolePos.x-25, _rolePos.y-25, 50.0f, 50.0f });
 
         renderer.setDrawColor({ 255, 0, 0, 255 });
-        std::array<engine::Vec2, 4> points = {_rolePos0, _rolePos1, _rolePos2, _rolePos3};
-        renderer.drawlines(points.data(), points.size());
+        renderer.drawlines(_points.data(), _points.size());
+
+        for (int i = 0; i < _lights.size(); i++) {
+            auto light = _lights[i];
+            if (light) {
+                auto point = _points[i];
+                renderer.setDrawColor({ 0, 255, 0, 255 });
+                renderer.drawFillRect({ point.x - 10, point.y - 10, 20.0f, 20.0f });
+            }
+        }
     }
 
     void SamplePluginTweeny::onClose()
@@ -140,21 +148,38 @@ namespace samples {
         
         _easeMode = mode;
 
-        _tween = tweeny::from(_rolePos0.x, _rolePos0.y)  
-                        .to(_rolePos1.x, _rolePos1.y)
-                        .via(ease)
-                        .during(duration)
-                        .to(_rolePos2.x, _rolePos2.y)
-                        .during(duration)                        
-                        .via(ease)
-                        .to(_rolePos3.x, _rolePos3.y)
-                        .during(duration)
-                        .via(ease)
-                        .onStep([this](auto& t, int x, int y) {  
-                            _rolePos.x = x;
-                            _rolePos.y = y;
-                            return false;
-                        });
+        for (int i = 1; i < _lights.size(); i++) {
+            _lights[i] = false;
+        }
+
+        auto& p = _points[0];
+        _tween = tweeny::from(p.x, p.y);
+
+        for (int i = 1; i < _points.size(); i++)
+        {
+            auto& p = _points[i];
+            _tween.to(p.x, p.y).via(ease).during(duration);
+        }
+
+        uint16_t lstpoint = -1;
+        _tween.onStep([this, &lstpoint] (auto& t, float x, float y) {
+
+            spdlog::info("t.process = {} t.point = {}/{}, timePoint = {}", 
+                t.progress(), t.point(), t.point_count(), t.currentTimePoint());
+
+            if (t.point() != lstpoint) {
+                lstpoint = t.point();
+                _lights[lstpoint] = true;
+            }
+
+            if (t.isFinished()) {
+                _lights[t.point_count()-1] = true;
+            }
+
+            _rolePos.x = x;
+            _rolePos.y = y;
+            return false;
+        });
 
         int start_ticks = (int)SDL_GetTicks();
 

@@ -42,14 +42,13 @@ namespace samples {
                                      public utility::sigslot::SlotHandler
     {
     private:
-        tweeny::tween<int, int> _tween;
+        tweeny::tween<float, float> _tween;
 
-        Vec2i _rolePos0 = { 100, 400 };
-        Vec2i _rolePos1 = { 300, 600 };
-        Vec2i _rolePos2 = { 500, 400 };
-        Vec2i _rolePos3 = { 700, 600 };
-       
-        engine::Vec2 _rolePos = _rolePos0;
+        std::vector<Vec2> _points = { { 100, 400 }, {300, 600}, {500,400}, {700, 600} };
+
+        std::vector<bool> _lights = { false, false, false, false };
+
+        engine::Vec2 _rolePos = _points[0];
 
         EaseMode _easeMode;
 

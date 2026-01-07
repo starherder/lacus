@@ -328,6 +328,10 @@ namespace tweeny {
     template<typename T> inline uint16_t tween<T>::point() const {
         return currentPoint;
     }
+    
+    template<typename T> inline size_t tween<T>::point_count() const {
+        return points.size();
+    }
 
     template<typename T> inline uint16_t tween<T>::pointAt(uint32_t timePoint) const {
         timePoint = detail::clip(timePoint, 0u, total);

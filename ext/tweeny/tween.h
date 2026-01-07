@@ -572,6 +572,8 @@ namespace tweeny {
              */
             uint16_t point() const;
 
+            size_t point_count() const;
+
         private /* member types */:
             using traits = detail::tweentraits<T, Ts...>;
 
@@ -643,6 +645,7 @@ namespace tweeny {
             int direction() const; ///< @sa tween::direction
             const T & jump(size_t point, bool suppressCallbacks = false); ///< @sa tween::jump
             uint16_t point() const; ///< @sa tween::point
+            size_t point_count() const;
 
         private /* member types */:
             using traits = detail::tweentraits<T>;
