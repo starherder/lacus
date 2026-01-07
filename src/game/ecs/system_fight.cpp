@@ -65,15 +65,17 @@ namespace game
 	tweeny::tween<float, float> FightSystem::makeSkillTween(const RoleExecSkillToObject& e)
 	{
 		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
+		auto& tgtTrans = _context.registry().get<CompTransform>(e.target);
 
 		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
+		auto& transValue = skillTween.trans_value;
 
 		if(skillTween.trans_type == TweenTransform::Motion)
 		{
 			auto& srcPos = srcTrans.position;
-			auto& dstPos = dstTrans.position;
+			auto& tgtPos = tgtTrans.position;
+			auto dstPos = srcPos + glm::normalize(tgtPos - srcPos)* transValue;
 
 			return tweeny::from(srcPos.x, srcPos.y)
 				.to(dstPos.x, dstPos.y)
@@ -94,8 +96,9 @@ namespace game
 		if(skillTween.trans_type == TweenTransform::Scale)
 		{
 			auto& srcSize = srcTrans.size;
-			//auto& dstSize = dstTrans.size;
-			auto& dstSize = skillTween.value;
+			//auto& tgtSize = tgtTrans.size;
+			auto transValue = skillTween.trans_value;
+			auto dstSize = srcSize + Vec2{transValue, transValue};
 
 			return tweeny::from(srcSize.x, srcSize.y)
 				.to(dstSize.x, dstSize.y)

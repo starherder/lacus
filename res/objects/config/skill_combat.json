@@ -20,9 +20,9 @@
 
     "tween" : {
         "trans_type" : "motion",
+        "trans_value" : 10,
         "prev_tween" : "cubicIn",
-        "post_tween" : "cubicOut",
-        "value" : "0,0"
+        "post_tween" : "cubicOut"
     }
 
 }

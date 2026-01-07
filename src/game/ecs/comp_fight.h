@@ -37,7 +37,7 @@ namespace game
 		std::string post_tween = "linear";
 
 		TweenTransform trans_type = TweenTransform::Motion;
-		Vec2 value; // 从初始值过渡到，中间生效时的值，之后回到初始值
+		float trans_value; 
 
 		tweeny::tween<float, float> tween;
 	};
@@ -75,7 +75,11 @@ namespace game
 	{
 		std::string name;
 		float speed = 100.0f;
+
+		particle::ParticlePtr particle = nullptr;
+
 		std::string tween_type;
+		tweeny::tween<float, float> tween;
 	};
 
 	struct CompSkillAffect

@@ -406,7 +406,7 @@ namespace game
 
 			CompSkillTween compTween;
 			compTween.trans_type = getTransType(tweenJs.value("trans_type", ""));
-			compTween.value = ToVec2(tweenJs.value("value", "0,0"));
+			compTween.trans_value = tweenJs.value("trans_value", 10.0f);
 			compTween.prev_tween = tweenJs.value("prev_tween", "");
 			compTween.post_tween = tweenJs.value("post_tween", "");
 			_context->registry().emplace<CompSkillTween>(skill, compTween);
@@ -437,8 +437,11 @@ namespace game
 
 			CompProjectile compParticle;
 			compParticle.name = projectJs.value("name", "");
-			compParticle.speed = projectJs.value("speed", 0.0f);
-			compParticle.tween_type = projectJs.value("tween", 0.0f);
+			compParticle.speed = projectJs.value("speed", 10.0f);
+			compParticle.tween_type = projectJs.value("tween", "linear");
+
+			auto parname = projectJs.value("particle", "");
+			compParticle.particle = particle::ParticleManager::inst().CreateParticle(parname);
 			_context->registry().emplace<CompProjectile>(skill, compParticle);
 		}
 

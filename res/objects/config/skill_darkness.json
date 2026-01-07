@@ -15,14 +15,13 @@
         "affect_target" : "other",
         "affect_range" : 0,
 
-        "projectile" : "",
         "event": "skill_darkness"
     },
 
     "tween" : {
         "trans_type" : "scale",
+        "trans_value" : 10,
         "prev_tween" : "cubicIn",
-        "post_tween" : "cubicOut",
-        "value" : "0,0"
-    }
+        "post_tween" : "cubicOut"
+    },
 }

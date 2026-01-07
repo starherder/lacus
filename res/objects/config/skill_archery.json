@@ -20,13 +20,14 @@
 
     "tween" : {
         "trans_type" : "scale",
+        "trans_value" : 10,
         "prev_tween" : "cubicIn",
-        "post_tween" : "cubicOut",
-        "value" : "0,0"
+        "post_tween" : "cubicOut"
     },
 
     "projectile" : {
         "name" : "skill_projectile_archery",
+        "particle" : "fire",
         "speed" : 1000,
         "tween" : "cubicIn"
     }
