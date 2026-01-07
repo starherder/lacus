@@ -43,8 +43,7 @@ namespace game
                                     .to(uipos.x, uipos.y)
                                     .via("linear")
                                     .during(2000)
-                                    .onStep([this, obj](auto& t, float x, float y) 
-                                    {
+                                    .onStep([this, role, obj](auto& t, float x, float y) {
                                         if (!_context.registry().valid(obj)) {
                                             return false;
                                         }
@@ -58,6 +57,8 @@ namespace game
                                             
                                             auto& commComp = _context.registry().get<CompComm>(nameComp.id);
                                             commComp.state = LifeState::Destroy;
+
+                                            _context.dispatcher().trigger<RolePickItemFinish>(RolePickItemFinish{ role, obj });
                                         }
 
                                         return false;
@@ -69,11 +70,14 @@ namespace game
             display.particle->Start();
         }
 
-        _context.dispatcher().trigger<RolePickItem>(RolePickItem{role, obj});
+        _context.dispatcher().trigger<RolePickItemStart>(RolePickItemStart{role, obj});
+
     }
 
     void PickupSystem::onEventMoveToGrid(const RoleCrossGrid& e)
     {
+        std::vector<entt::entity> pending_object;
+
         auto& objects = _context.currentScene().getObjectsInGrid(e.cur_grid);
         for(auto& obj : objects) 
         {
@@ -81,7 +85,13 @@ namespace game
             if (pickComp && pickComp->picked == false)
             {
                 pickUp(e.actor, obj, e.cur_grid);
+                pending_object.push_back(obj);
             }
+        }
+
+        for (auto& obj : pending_object)
+        {
+            _context.currentScene().removeObjectFromGrid(obj, e.cur_grid);
         }
     }
 }

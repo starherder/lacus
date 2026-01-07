@@ -73,6 +73,7 @@ namespace game {
         bool createObject(const std::string& cfgid, const Vec2& pos);
 
         void addObjectToGrid(entt::entity ent, const Vec2i& grid);
+        void removeObjectFromGrid(entt::entity ent, const Vec2i& grid);
         const EntitySet& getObjectsInGrid(const Vec2i& grid);
 
         const std::multimap<float, Vec2i>& getGridsInCircle(const Vec2& center, float radius);
@@ -82,6 +83,7 @@ namespace game {
         const std::multimap<float, entt::entity>& getObjectsInRing(const Vec2& center, float min_radius, float max_radius);
 
         void setDebugInfo(bool show);
+        auto& getCollisionDebugRects() { return _collisionDebugRects; }
 
     private:
         void showAllGui();
@@ -92,8 +94,6 @@ namespace game {
         void initPathFind();
 
         void loadObjects();
-
-        void drawDebugView();
 
         void onRoleCrossGrid(const RoleCrossGrid& e);
 

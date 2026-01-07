@@ -120,8 +120,6 @@ void GameScene::onDraw()
     {
         sys->draw();
     }
-
-    drawDebugView();
 }
 
 void GameScene::onStart()
@@ -187,42 +185,6 @@ void GameScene::loadObjects()
         for (auto& [id, obj] : layer->objects) {
             createObject(obj);
         }
-    }
-}
-
-void GameScene::drawDebugView()
-{
-    if(!_context.debugMode())
-    {
-        return;
-    }
-
-    // -------------- show collision info ------------------
-    static std::vector<Rect> rects;
-    rects.clear();
-    rects.reserve(_collisionDebugRects.size());
-    rects.insert(rects.begin(), _collisionDebugRects.begin(), _collisionDebugRects.end());
-    _camera.projectRects(rects.data(), (int)rects.size());
-
-    auto& renderer = application().renderer();
-    renderer.setDrawColor(Color{255, 0, 0, 100});
-    renderer.drawFillRects(rects.data(), (int)rects.size());
-
-    // -------------- show grids ------------------
-    auto& mapSize = _tileMap.mapSize();
-    auto& tileSize = _tileMap.tileSize();
-    for(int x=0; x<=mapSize.x; ++x)
-    {
-        auto srcPos = _camera.projectPoint({x*tileSize.x, 0});
-        auto dstPos = _camera.projectPoint({x*tileSize.x, mapSize.y*tileSize.y});
-        renderer.drawLine(srcPos, dstPos);
-    }
-
-    for(int y=0; y<=_tileMap.mapSize().y; ++y)
-    {
-        auto srcPos = _camera.projectPoint({0, y*tileSize.y});
-        auto dstPos = _camera.projectPoint({tileSize.x*mapSize.x, y*tileSize.y});
-        renderer.drawLine(srcPos, dstPos);
     }
 }
 
@@ -338,17 +300,16 @@ void GameScene::onRoleCrossGrid(const RoleCrossGrid& e)
 
     auto& curset = _gridObjects[e.cur_grid];
     curset.insert(e.actor);
-
-    //spdlog::info("onRoleCrossGrid: lst_grid({},{}).size = {}, cur_grid({},{}).size = {}", 
-    //    e.lst_grid.x, e.lst_grid.y, lstset.size(), e.cur_grid.x, e.cur_grid.y, curset.size());
 }
 
 void GameScene::addObjectToGrid(entt::entity ent, const Vec2i& grid)
 {
     _gridObjects[grid].insert(ent);
+}
 
-    //spdlog::info("addObjectToGrid: cur_grid({},{}).size = {}",
-    //    grid.x, grid.y, _gridObjects[grid].size());
+void GameScene::removeObjectFromGrid(entt::entity ent, const Vec2i& grid)
+{
+    _gridObjects[grid].erase(ent);
 }
 
 const GameScene::EntitySet& GameScene::getObjectsInGrid(const Vec2i& grid)

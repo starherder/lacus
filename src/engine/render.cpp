@@ -208,12 +208,16 @@ bool Renderer::drawDebugText(const Vec2& pos,const char* str) const {
     return SDL_RenderDebugText(_renderer, pos.x, pos.y, str);
 }
 
-bool Renderer::drawDebugTextFormat(const Vec2& pos, SDL_PRINTF_FORMAT_STRING const char* fmt, ...) const SDL_PRINTF_VARARG_FUNC(3) {
+bool Renderer::drawDebugTextFormat(const Vec2& pos, const char* fmt, ...) const {
+
+    char buffer[10240];  
+
     va_list args;
     va_start(args, fmt);
-    bool result = SDL_RenderDebugTextFormat(_renderer, pos.x, pos.y, fmt, args);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
     va_end(args);
-    return result;
+
+    return SDL_RenderDebugTextFormat(_renderer, pos.x, pos.y, "%s", buffer);
 }
 
 bool Renderer::present() const {

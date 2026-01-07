@@ -223,6 +223,8 @@ namespace game
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
+		spdlog::info("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
+		
 		return object;
 	}
 
@@ -445,7 +447,7 @@ namespace game
 			_context->registry().emplace<CompProjectile>(skill, compParticle);
 		}
 
-		spdlog::info("create skill ({}) on ({}) OK.", cfgid, (int)owner);
+		spdlog::info("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
 		return skill;
 	}
 

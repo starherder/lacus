@@ -34,7 +34,7 @@ namespace game
 		void terminate(Status s) override;
 
 	private:
-		void onRolePickItem(const RolePickItem& e);
+		void onRolePickItemStart(const RolePickItemStart& e);
 		void onRoleEnterGrid(const RoleCrossGrid& e);
 
 		Status checkPickUp();

@@ -19,6 +19,8 @@ public:
 
 private:
 	void drawMotionDebug();
+
+    void drawSceneDebug();
 };
 
 

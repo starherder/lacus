@@ -162,9 +162,9 @@ void ImFormDebug::roleExecSkill()
     {
         auto& compName = _context->registry().get<CompNameId>(skent);
         auto& compSkill = _context->registry().get<CompSkillComm>(skent);
-        auto dis = compSkill.distance;
+        auto dis_far = compSkill.distance.y;
 
-        auto& objects = _context->currentScene().getObjectsInRing(rolePos, dis.x, dis.y);
+        auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis_far);
         for (auto& [dis, target] : objects) {
             if (target == _selectEntity) continue;
 

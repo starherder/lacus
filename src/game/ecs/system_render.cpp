@@ -45,6 +45,8 @@ void RenderSystem::draw()
 
     if (_context.debugMode())
     {
+        drawSceneDebug();
+
         drawMotionDebug();
     }
 }
@@ -78,6 +80,57 @@ void RenderSystem::drawMotionDebug()
                 renderer.drawRect(rect);
                 lstPos = grid_pos;
             }
+        }
+    }
+}
+
+
+void RenderSystem::drawSceneDebug()
+{
+    if (!_context.debugMode())
+    {
+        return;
+    }
+
+    // -------------- show collision info ------------------
+    auto& _collisionDebugRects = _context.currentScene().getCollisionDebugRects();
+
+    static std::vector<Rect> rects;
+    rects.clear();
+    rects.reserve(_collisionDebugRects.size());
+    rects.insert(rects.begin(), _collisionDebugRects.begin(), _collisionDebugRects.end());
+    _context.camera().projectRects(rects.data(), (int)rects.size());
+
+    auto& renderer = _context.renderer();
+    renderer.setDrawColor(Color{ 255, 0, 0, 100 });
+    renderer.drawFillRects(rects.data(), (int)rects.size());
+
+    // -------------- show grids ------------------
+    auto mapSize = _context.currentScene().mapSize(); 
+    auto tileSize = _context.currentScene().tileSize();
+    for (int x = 0; x <= mapSize.x; ++x)
+    {
+        auto srcPos = _context.camera().projectPoint({ x * tileSize.x, 0 });
+        auto dstPos = _context.camera().projectPoint({ x * tileSize.x, mapSize.y * tileSize.y });
+        renderer.drawLine(srcPos, dstPos);
+    }
+
+    for (int y = 0; y <= mapSize.y; ++y)
+    {
+        auto srcPos = _context.camera().projectPoint({ 0, y * tileSize.y });
+        auto dstPos = _context.camera().projectPoint({ tileSize.x * mapSize.x, y * tileSize.y });
+        renderer.drawLine(srcPos, dstPos);
+    }
+
+    renderer.setDrawColor({ 0, 0, 255, 255 });
+
+    for (int x = 0; x <= mapSize.x; ++x)
+    {
+        for (int y = 0; y <= mapSize.y; ++y)
+        {
+            auto& objs = _context.currentScene().getObjectsInGrid({ x, y });
+            auto pos = _context.currentScene().getGridCenterPos({ x, y });
+            renderer.drawDebugTextFormat(pos, "%d", (int)objs.size());
         }
     }
 }

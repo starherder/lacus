@@ -23,5 +23,5 @@
         "trans_value" : 10,
         "prev_tween" : "cubicIn",
         "post_tween" : "cubicOut"
-    },
+    }
 }

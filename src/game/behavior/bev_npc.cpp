@@ -210,7 +210,7 @@ namespace game {
 		}
 
 		_pickOK = false;
-		_context->dispatcher().sink< RolePickItem>().connect<&BevNode_PickItem::onRolePickItem>(this);
+		_context->dispatcher().sink< RolePickItemStart>().connect<&BevNode_PickItem::onRolePickItemStart>(this);
 		_context->dispatcher().sink< RoleCrossGrid>().connect<&BevNode_PickItem::onRoleEnterGrid>(this);
 	}
 
@@ -273,11 +273,11 @@ namespace game {
 		return Status::Running;
 	}
 
-	void BevNode_PickItem::onRolePickItem(const RolePickItem& e)
+	void BevNode_PickItem::onRolePickItemStart(const RolePickItemStart& e)
 	{
 		if (e.actor == _actor) 
 		{
-			spdlog::info("BevNode_PickItem: onRolePickItem.");
+			spdlog::info("BevNode_PickItem: onRolePickItemStart.");
 			_pickOK = true;
 		}
 	}
