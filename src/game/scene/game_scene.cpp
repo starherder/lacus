@@ -370,6 +370,22 @@ const std::multimap<float, Vec2i>& GameScene::getGridsInRing(const Vec2& center,
     return result;
 }
 
+void GameScene::swichCoord(CompTransform& trans, CoordMode coordmode)
+{
+    if (trans.coord_mode == coordmode) return;
+
+    if (coordmode == CoordMode::ScreenSpace)
+    {
+        trans.position = _camera.worldToScreen(trans.position);
+    }
+    else
+    {
+        trans.position = _camera.screenToWorld(trans.position);
+    }
+
+    trans.coord_mode = coordmode;
+}
+
 const std::multimap<float, entt::entity>& GameScene::getObjectsInCircle(const Vec2& center, float radius)
 {
     static std::multimap<float, entt::entity> result;

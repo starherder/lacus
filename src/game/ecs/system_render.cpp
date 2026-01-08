@@ -13,6 +13,7 @@ void RenderSystem::update(float delta)
         auto& compParticle = parEnts.get<CompBindParticle>(ent);
         if (compParticle.particle)
         {
+            compParticle.particle->SetPos(compTransform.position);
             compParticle.particle->Update(delta);
         }
     }
@@ -33,7 +34,7 @@ void RenderSystem::draw()
 
         auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
 
-        if(transform.worldspace)
+        if(transform.coord_mode == CoordMode::WorldSpace)
         {
             dstrect = camera.projectRect(dstrect);
         }
@@ -66,7 +67,7 @@ void RenderSystem::draw()
         auto& compParticle = parEnts.get<CompBindParticle>(ent);
 
         Camera* pcamera = nullptr;
-        if(compTransform.worldspace)
+        if(compTransform.coord_mode == CoordMode::WorldSpace)
         {
             pcamera = &camera;
         }
@@ -74,8 +75,7 @@ void RenderSystem::draw()
         auto& particle = compParticle.particle;
         if (particle)
         {
-            particle->SetPos(compTransform.position);
-            particle->Draw(&camera);
+            particle->Draw(pcamera);
         }
     }
 

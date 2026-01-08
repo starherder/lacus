@@ -29,33 +29,26 @@ namespace game
 
     void PickupSystem::pickUp(entt::entity role, entt::entity obj, const Vec2i& grid)
     {
-        Vec2f curpos = _context.currentScene().getGridCenterPos(grid);
-        //Vec2f uipos = _context.camera().screenToWorld({0,0});
-
-        Vec2f uipos = {0, 0};
-        curpos = _context.camera().worldToScreen(curpos);
-
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         spdlog::info("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
 
         auto& transComp = _context.registry().get<CompTransform>(obj);
-        transComp.worldspace = false;
-        transComp.position = curpos;
+
+        // ÇÐ»»µ½ÆÁÄ»¿Õ¼ä
+        _context.currentScene().swichCoord(transComp, CoordMode::ScreenSpace);
+
+        const auto& curpos = transComp.position;
+        const Vec2 uipos = { 0, 0 };
 
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
 
-        bool res = _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
-        if(res)
-        {
-            auto& particleComp = _context.registry().get<CompBindParticle>(obj);
-            particleComp.particle->SetPos(curpos);
-        }
+         _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
 
         pickableComp.tween = tweeny::from(curpos.x, curpos.y)
                                     .to(uipos.x, uipos.y)
-                                    .via("linear")
-                                    .during(2000)
+                                    .via("quadraticIn")
+                                    .during(1000)
                                     .onStep([this, role, obj](auto& t, float x, float y) {
                                         if (!_context.registry().valid(obj)) {
                                             return false;

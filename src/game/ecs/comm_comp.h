@@ -52,6 +52,11 @@ namespace game
         CampSide comp = CampSide::Gangster;
     };
 
+    enum class CoordMode {
+        WorldSpace,
+        ScreenSpace,
+    };
+
     struct CompTransform
     {
         Vec2 position;
@@ -59,7 +64,7 @@ namespace game
         Vec2 rotation;
         Vec2 scale;
 
-        bool worldspace = true;
+        CoordMode coord_mode = CoordMode::WorldSpace;
     };
 
     enum class MotionState 

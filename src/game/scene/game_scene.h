@@ -49,6 +49,8 @@ namespace game {
         Vec2 getGridLeftTopPos(const Vec2i& grid);
         Vec2 getGridCenterPos(const Vec2i& grid);
 
+        void swichCoord(CompTransform& trans, CoordMode coordmode);
+
         bool load(const engine::fs::path& mapPath) override;
         bool unload() override;
 
