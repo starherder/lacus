@@ -102,7 +102,7 @@ namespace game {
 	{
 		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
-		if(!_context || _actor == entt::null) 
+		if(!_context || _context->registry().valid(_actor) == false) 
 		{
 			spdlog::error("actor NOT valid.");
 			return;

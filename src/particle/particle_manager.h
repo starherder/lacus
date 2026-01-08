@@ -91,7 +91,7 @@ namespace particle
 
 		void init(engine::Application* app);
 
-		bool LoadParticles(const std::string& file);
+		bool LoadParticles(const std::filesystem::path& file);
 
 		bool Reload();
 
@@ -107,7 +107,7 @@ namespace particle
 
 		StringStringMap _particleFiles;
 
-		std::string _cfgfile;
+		std::filesystem::path _cfgfile;
 
 	};
 }

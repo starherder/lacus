@@ -1,14 +1,14 @@
 [
     {
         "id" : "skill_combat",
-        "cfg" : "config/skill_combat.json"
+        "cfg" : "skill/skill_combat.json"
     },
     {
         "id" : "skill_archery",
-        "cfg" : "config/skill_archery.json"
+        "cfg" : "skill/skill_archery.json"
     },
     {
         "id" : "skill_darkness",
-        "cfg" : "config/skill_darkness.json"
+        "cfg" : "skill/skill_darkness.json"
     }
 ]

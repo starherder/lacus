@@ -21,24 +21,31 @@ void GameLogicPlugin::onInit()
 {
     ui::GuiManager::inst().init(&_app);
 
-    auto btreePath = application()->resPath() / "objects/bevtree/bev_common_npc.xml";
+    auto btreePath = application()->resPath() / "data/bevtree/bev_common_npc.xml";
     bool res = bevtree::BevTreeManager::inst().load(btreePath);
     if (!res) {
         spdlog::error("load bevtree config: {} failed.", btreePath.string());
         return;
     }
 
-    auto roleCfgs = application()->resPath() / "objects/objects.json";
+    auto roleCfgs = application()->resPath() / "data/objects.json";
     res = ObjectFactory::inst().loadObjects(_gameContext, roleCfgs);
     if (!res) {
         spdlog::error("load role config: {} failed.", roleCfgs.string());
         return;
     }
 
-    auto skillCfgs = application()->resPath() / "objects/skills.json";
+    auto skillCfgs = application()->resPath() / "data/skills.json";
     res = ObjectFactory::inst().loadSkills(_gameContext, skillCfgs);
     if (!res) {
         spdlog::error("load skill config: {} failed.", skillCfgs.string());
+        return;
+    }
+
+    auto particleCfgs = application()->resPath() / "particles/particles.xml";
+    res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
+    if (!res) {
+        spdlog::error("load partiles config: {} failed.", particleCfgs.string());
         return;
     }
 

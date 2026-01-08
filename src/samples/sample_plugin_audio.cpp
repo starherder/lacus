@@ -2,31 +2,67 @@
 
 namespace samples {
     
-	void ImGuiFormAudio::init()
+	void ImGuiFormAudio::onInit()
 	{
 		auto& audioMgr = _application->resourceManager().audioManager();
 		audioMgr.loadMusic("audio/hero_music.mp3"_hs);
 		audioMgr.loadMusic("audio/level_win.mp3"_hs);
 		audioMgr.loadSound("audio/bow_attack.wav"_hs);
+
+        std::filesystem::path audioPath = _application->resPath() / "audio";
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(audioPath)) 
+        {
+             if (entry.is_regular_file()) 
+             {
+                 auto audioname = entry.path().lexically_relative(_application->resPath());
+                 _audioNames.push_back(audioname.string());
+             }
+        }
+
+        for(auto& name : _audioNames)
+        {
+            _audioList.push_back(name.c_str());
+        }
 	}
 
 	void ImGuiFormAudio::draw()
 	{
-		ImGui::Begin("长风几万里");
-		{
-			if (ImGui::Button("喝一杯茶")) {
-				_application->audioPlayer().playMusic("audio/hero_music.mp3"_hs);
-			}
+        ImGui::Begin("audios");
+        {
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowSize({ viewport->Size.x, 500});
 
-			if (ImGui::Button("胜利！")) {
-				_application->audioPlayer().playMusic("audio/level_win.mp3"_hs, true, 1000);
-			}
+            static bool music_start = false;
+            static int sound_channel = -1;
+            static std::string audio_name;
 
-			if (ImGui::Button("大风！")) {
-				_application->audioPlayer().playSound("audio/bow_attack.wav"_hs);
-			}
-		}
-		ImGui::End();
+            static int listbox_item_current = 0;
+            if (ImGui::ListBox("##audio_list", &listbox_item_current, _audioList.data(), (int)_audioList.size()))
+            {
+                audio_name = _audioList[listbox_item_current];
+                sound_channel = _application->audioPlayer().playSound(engine::HashString(audio_name.c_str()));
+
+                music_start = true;
+            }
+
+            auto volume = _application->audioPlayer().getSoundVolume();
+            if (ImGui::SliderFloat("volumn##audio", &volume, 0.0f, 1.0f))
+            {
+                _application->audioPlayer().setSoundVolume(volume);
+            }
+
+            if (ImGui::Button(music_start ? "stop" : "start"))
+            {
+                if (music_start) {
+                    _application->audioPlayer().stopSound(sound_channel);
+                }
+                else {
+                    sound_channel = _application->audioPlayer().playSound(engine::HashString(audio_name.c_str()));
+                }
+                music_start = !music_start;
+            }
+        }
+        ImGui::End();
 	}
 
     ///////////////////////////////////////////////////////////////////////

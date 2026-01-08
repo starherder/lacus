@@ -48,12 +48,24 @@ namespace imgui
 		_pending_destroy = true;
 	}
 
+	void ImForm::onInit()
+	{
+
+	}
+
 	void ImForm::onShow() 
 	{
 	}
 
 	void ImForm::drawForm()
 	{
+		if (!_initilized)
+		{
+			onInit();
+
+			_initilized = true;
+		}
+
 		if (_visible)
 		{
 			draw();

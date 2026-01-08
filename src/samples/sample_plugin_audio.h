@@ -14,11 +14,15 @@ namespace samples {
 		~ImGuiFormAudio() = default;
 
 	protected:
-		void init();
+		void onInit() override;
+
 		void draw() override;
 
 	private:
 		engine::Application* _application = nullptr;
+
+        std::vector<std::string> _audioNames;
+        std::vector<const char*> _audioList;
 	};
 
 

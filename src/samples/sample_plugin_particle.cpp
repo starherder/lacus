@@ -43,6 +43,7 @@ namespace samples
 		ImGui::Begin("Particles Editor");
 
 		static int listbox_item_current = 0;
+		ImGui::SetNextWindowSize(ImVec2(-FLT_MIN, 400.0f));
 		if(ImGui::ListBox("particles##particle_list", &listbox_item_current, _nameVector.data(), (int)_nameVector.size()))
         {
             if(listbox_item_current != _selectIndex)
@@ -319,7 +320,9 @@ namespace samples
     {
         ParticleManager::inst().init(application());
 
-        bool res = ParticleManager::inst().LoadParticles("particles/particles.xml");
+		auto cfgfile = application()->resPath() / "particles/particles.xml";
+
+        bool res = ParticleManager::inst().LoadParticles(cfgfile);
         if (!res) {
             spdlog::error("load particles failed.");
             return;

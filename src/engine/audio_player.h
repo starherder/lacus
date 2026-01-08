@@ -20,6 +20,8 @@ namespace engine {
         bool close();
 
         int playSound(const HashString& name, int channel = -1);
+        void stopSound(int channel);
+
         void setSoundVolume(float volume, int channel = -1);
         float getSoundVolume(int channel = -1);
 

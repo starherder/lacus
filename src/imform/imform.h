@@ -32,7 +32,9 @@ namespace imgui
 	protected:
 		void drawForm();
 
+		virtual void onInit();
 		virtual void onShow();
+
 		virtual void draw() = 0;
 
 		bool getPendingDestroy();
@@ -42,6 +44,7 @@ namespace imgui
 	private:
 		std::string _name;
 		bool _pending_destroy = false;
+		bool _initilized = false;
 	};
 
 	using ImGuiFormSharePtr = std::shared_ptr<ImForm>;

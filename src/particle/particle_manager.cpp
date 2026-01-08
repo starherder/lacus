@@ -477,15 +477,13 @@ namespace particle
 		return LoadParticles(_cfgfile);
 	}
 	
-	bool ParticleManager::LoadParticles(const std::string& file)
+	bool ParticleManager::LoadParticles(const std::filesystem::path& file)
 	{
 		_cfgfile = file;
 		_particleFiles.clear();
 
-		auto fullpath = _application->resPath() / file;
-
 		tinyxml2::XMLDocument doc;
-		doc.LoadFile(fullpath.string().c_str());
+		doc.LoadFile(file.string().c_str());
 		fail_return_false(!doc.Error());
 
 		tinyxml2::XMLElement* pEle = doc.RootElement();

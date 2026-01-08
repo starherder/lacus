@@ -45,6 +45,11 @@ namespace engine {
 
         return true;
     }
+    
+    void AudioPlayer::stopSound(int channel)
+    {
+        Mix_HaltChannel(channel);
+    }
 
     int AudioPlayer::playSound(const HashString& name, int channel)
     {
