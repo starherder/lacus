@@ -57,7 +57,7 @@ namespace particle
 			return Color4f();
 		}
 		else {
-			float r, g, b, a; sscanf_s(it->second.c_str(), "%f,%f,%f,%f", &r, &g, &b, &a);
+			int r, g, b, a; sscanf_s(it->second.c_str(), "%d,%d,%d,%d", &r, &g, &b, &a);
 			return Color4f(r, g, b, a);
 		}
 	};
@@ -135,7 +135,7 @@ namespace particle
 		}
 	}
 
-	void Particle::Draw()
+	void Particle::Draw(engine::Camera* camera)
 	{
 		auto particleList = _emitter->getParticleList();
 		if ( particleList->empty() ) return;
@@ -154,10 +154,23 @@ namespace particle
 			x = particle->vPos.x;
 			y = particle->vPos.y;
 
-			_vertexData[i * 4 + 0].position = {x - c - s, y - c + s};
-			_vertexData[i * 4 + 1].position = {x - c + s, y + c + s};
-			_vertexData[i * 4 + 2].position = {x + c + s, y + c - s};
-			_vertexData[i * 4 + 3].position = {x + c - s, y - c - s};
+			Vec2 p1 = {x - c - s, y - c + s};
+			Vec2 p2 = {x - c + s, y + c + s};
+			Vec2 p3 = {x + c + s, y + c - s};
+			Vec2 p4 = {x + c - s, y - c - s};
+
+			if(camera) 
+			{
+				p1 = camera->projectPoint(p1);
+				p2 = camera->projectPoint(p2);
+				p3 = camera->projectPoint(p3);
+				p4 = camera->projectPoint(p4);
+			}
+
+			_vertexData[i * 4 + 0].position = ToPoint(p1);
+			_vertexData[i * 4 + 1].position = ToPoint(p2);
+			_vertexData[i * 4 + 2].position = ToPoint(p3);
+			_vertexData[i * 4 + 3].position = ToPoint(p4);
 
 			_vertexData[i * 4 + 0].color = particle->cColor;
 			_vertexData[i * 4 + 1].color = particle->cColor;
@@ -455,9 +468,20 @@ namespace particle
 
 		return pParticle;
 	}
+
+
+	bool ParticleManager::Reload()
+	{
+		if(_cfgfile.empty()) return false;
+
+		return LoadParticles(_cfgfile);
+	}
 	
 	bool ParticleManager::LoadParticles(const std::string& file)
 	{
+		_cfgfile = file;
+		_particleFiles.clear();
+
 		auto fullpath = _application->resPath() / file;
 
 		tinyxml2::XMLDocument doc;

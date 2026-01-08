@@ -32,7 +32,11 @@ void RenderSystem::draw()
         auto& display = ent_view.get<CompDisplay>(ent);
 
         auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
-        dstrect = camera.projectRect(dstrect);
+
+        if(transform.worldspace)
+        {
+            dstrect = camera.projectRect(dstrect);
+        }
 
         if (display.texture != nullptr)
         {
@@ -47,8 +51,9 @@ void RenderSystem::draw()
         }
 
         auto selectComp = _context.registry().try_get<CompSelection>(ent);
-        if (selectComp && selectComp->selected)
+        if (selectComp)
         {
+            painter.fillRect(selectComp->ground_color, dstrect);
             painter.drawRect(selectComp->border_color, dstrect, 0, selectComp->border_size);
         }
     }
@@ -59,11 +64,18 @@ void RenderSystem::draw()
     {
         auto& compTransform = parEnts.get<CompTransform>(ent);
         auto& compParticle = parEnts.get<CompBindParticle>(ent);
+
+        Camera* pcamera = nullptr;
+        if(compTransform.worldspace)
+        {
+            pcamera = &camera;
+        }
+
         auto& particle = compParticle.particle;
         if (particle)
         {
             particle->SetPos(compTransform.position);
-            particle->Draw();
+            particle->Draw(&camera);
         }
     }
 

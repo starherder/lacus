@@ -6,6 +6,7 @@
 
 #include "engine/application.h"
 #include "engine/texture.h"
+#include "engine/camera.h"
 #include "utility/i_singleton.h"
 
 
@@ -24,10 +25,11 @@ namespace particle
 		std::string GetFile();
 
 		void Load(const std::string& filename);
+
 		void SetDescription(const ParticleDescription& desc);
 
 		void Update(float dt);
-		void Draw();
+		void Draw(engine::Camera* camera = nullptr);
 
 		void Start();
 		void Stop();
@@ -49,7 +51,6 @@ namespace particle
 
 		void SetTexture(const std::string& file);
 
-
 	private:
 		std::string _name;
 		std::string _file;
@@ -60,6 +61,7 @@ namespace particle
 		Texture* m_Texture = nullptr;
 
 		std::vector<Vertex> _vertexData;
+
 		std::vector<int> _indices;
 
 #define Particle_Editor_Mode
@@ -91,6 +93,8 @@ namespace particle
 
 		bool LoadParticles(const std::string& file);
 
+		bool Reload();
+
 		ParticlePtr CreateParticle(const std::string& name);
 
 		const auto& GetAllParticleConfigs() { return _particleFiles; }
@@ -100,7 +104,10 @@ namespace particle
 
 	private:
 		engine::Application* _application;
+
 		StringStringMap _particleFiles;
+
+		std::string _cfgfile;
 
 	};
 }

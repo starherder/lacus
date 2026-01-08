@@ -152,9 +152,6 @@ namespace game
 		CompTransform comtrans;
 		_context->registry().emplace<CompTransform>(object, comtrans);
 
-		CompSelection comsel;
-		_context->registry().emplace<CompSelection>(object, comsel);
-
 		if (json.contains("common"))
 		{
 			auto& cmmJs = json["common"];
@@ -164,18 +161,6 @@ namespace game
 			comm.desc = Trans(cmmJs.value("desc", ""));
 
 			_context->registry().emplace<CompComm>(object, comm);
-		}
-
-		if (json.contains("selection"))
-		{
-			auto& selectJs = json["selection"];
-			auto comsel = _context->registry().try_get<CompSelection>(object);
-			if (comsel)
-			{
-				Color bc; bc.fromHexString(selectJs.value("border_color", "255,255,255,255"));
-				comsel->border_color = bc;
-				comsel->border_size = selectJs.value("border_size", 5.0f);
-			}
 		}
 
 		if (json.contains("display"))
@@ -437,6 +422,7 @@ namespace game
 		}
 
 		_context->registry().emplace<CompBindParticle>(owner, compParticle);
+		return true;
 	}
 
 	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, float speed, const std::string& tween_type, const std::string& particle)
@@ -458,18 +444,11 @@ namespace game
 		CompTweenVec2 compTween;
 		_context->registry().emplace<CompTweenVec2>(bullet, compTween);
 
-		CompBindParticle compParticle;
-		compParticle.particle = particle::ParticleManager::inst().CreateParticle(particle);
-		if (compParticle.particle) 
-		{
-			compParticle.particle->Start();
-		}
-		else 
+		auto res = createParticleOnObject(bullet, particle);
+		if (!res) 
 		{
 			spdlog::error("createProjectile: create particle failed.");
 		}
-
-		_context->registry().emplace<CompBindParticle>(bullet, compParticle);
 
 		spdlog::info("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
 			(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );

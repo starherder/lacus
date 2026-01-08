@@ -156,8 +156,8 @@ namespace game
 			if (t.isFinished()) {
 				auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
 				skillComm.state = SkillState::Cooling;
-				return false;
 			}
+			return false;
 		});
 	}
 

@@ -4,4 +4,5 @@
 	<Particle name="star" file="particles/test_star.xml" />
   <Particle name="bullet" file="particles/bullet_bomb.xml" />
   <Particle name="trail" file="particles/trailing.xml" />
+  <Particle name="golden_trail" file="particles/golden_trail.xml" />
 </ParticleList>

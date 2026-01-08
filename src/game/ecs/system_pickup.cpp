@@ -30,15 +30,28 @@ namespace game
     void PickupSystem::pickUp(entt::entity role, entt::entity obj, const Vec2i& grid)
     {
         Vec2f curpos = _context.currentScene().getGridCenterPos(grid);
-        Vec2f uipos = _context.camera().screenToWorld({0,0});
+        //Vec2f uipos = _context.camera().screenToWorld({0,0});
+
+        Vec2f uipos = {0, 0};
+        curpos = _context.camera().worldToScreen(curpos);
 
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         spdlog::info("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
 
         auto& transComp = _context.registry().get<CompTransform>(obj);
-        auto& pickableComp = _context.registry().get<CompPickable>(obj);
+        transComp.worldspace = false;
+        transComp.position = curpos;
 
+        auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
+
+        bool res = _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
+        if(res)
+        {
+            auto& particleComp = _context.registry().get<CompBindParticle>(obj);
+            particleComp.particle->SetPos(curpos);
+        }
+
         pickableComp.tween = tweeny::from(curpos.x, curpos.y)
                                     .to(uipos.x, uipos.y)
                                     .via("linear")
@@ -63,10 +76,7 @@ namespace game
                                         return false;
                                     });
         
-        _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
-
         _context.dispatcher().trigger<RolePickItemStart>(RolePickItemStart{role, obj});
-
     }
 
     void PickupSystem::onEventMoveToGrid(const RoleCrossGrid& e)

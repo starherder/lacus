@@ -21,13 +21,15 @@ namespace game
 
 	void SelectionSystem::onObjectSelection(const ObjectSelection& e)
 	{
-		auto views = _context.registry().view<CompNameId, CompSelection>();
+		auto views = _context.registry().view<CompSelection>();
 		for (auto ent : views)
 		{
-			auto& nameComp = views.get<CompNameId>(ent);
-			auto& selComp = views.get<CompSelection>(ent);
+			_context.registry().remove<CompSelection>(ent);
+		}
 
-			selComp.selected = (nameComp.id == e.object);
+		if(_context.registry().valid(e.object))
+		{
+			_context.registry().emplace<CompSelection>(e.object, CompSelection{});
 		}
 	}
 

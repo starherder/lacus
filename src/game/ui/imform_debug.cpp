@@ -34,7 +34,14 @@ void ImFormDebug::draw()
         {
             _context->currentScene().setDebugInfo(show_debug);
         }
-    
+
+        ImGui::Separator();
+
+        if(ImGui::Button("reload particle"))
+        {
+            particle::ParticleManager::inst().Reload();
+        }
+
         ImGui::Separator();
 
         ImGui::Text("input");

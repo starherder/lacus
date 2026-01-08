@@ -58,6 +58,8 @@ namespace game
         Vec2 size;
         Vec2 rotation;
         Vec2 scale;
+
+        bool worldspace = true;
     };
 
     enum class MotionState 
@@ -93,10 +95,9 @@ namespace game
 
     struct CompSelection
     {
-        bool selected = false;
-
-        Color border_color = Color::Yellow;
-        float border_size = 3.0f;
+        Color border_color = Color::Red;
+        Color ground_color = {255,255,255,128};
+        float border_size = 5.0f;
     };
 
     struct CompBindParticle 

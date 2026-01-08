@@ -19,7 +19,7 @@
 	},
 
 	"pickable": {
-		"effect": "trail",
+		"effect": "golden_trail",
 		"amount": 10
 	}
 
