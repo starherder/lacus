@@ -222,9 +222,8 @@ namespace game
 		compTrans.rotation = {0, 0};
 		compTrans.scale = { 1, 1 };
 
-		auto& compTween = _context.registry().get<CompTweenVec2>(object);
-		compTween.running = true;
-		compTween.tween = tweeny::from(source.x, source.y)
+		CompShoot compShoot;
+		compShoot.tween = tweeny::from(source.x, source.y)
 			.to(target.x, target.y)
 			.via(tweentype)
 			.during(during)
@@ -233,7 +232,7 @@ namespace game
 			.during(200);
 
 		// 生效，等200ms再销毁，立刻摧毁显得效果僵硬
-		compTween.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
+		compShoot.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
 			ProjectileHitPos e;
 			e.source = srcid;
 			e.skill = skill;
@@ -242,23 +241,21 @@ namespace game
 			return false;
 		});
 
-		compTween.tween.onStep([this, target, object](auto& t, float x, float y) {
+		compShoot.tween.onStep([this, object](auto& t, float x, float y) {
 			if (!_context.registry().valid(object)) {
 				return false;
 			}
 
 			if (t.isFinished()) {
-				auto& compTween = _context.registry().get<CompTweenVec2>(object);
-				compTween.running = false;
 				_context.registry().emplace<CompDestroy>(object);
-				return false;
+				return true;
 			}
 
 			auto& compTrans = _context.registry().get<CompTransform>(object);
 			compTrans.position = { x, y };
 			return false;
 		});
-
+		_context.registry().emplace<CompShoot>(object, compShoot);
 	}
 
 	void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)

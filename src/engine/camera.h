@@ -24,7 +24,10 @@ namespace engine {
 		Vec2 worldToScreen(const Vec2& pos) const;
 		Vec2 screenToWorld(const Vec2& pos) const;
 
-        virtual void update(float delta);
+        void update(float delta);
+
+		virtual void onUpdate(float delta) {}
+
         virtual bool handleEvent(const Event& event);
 
 		Vec2 projectPoint(const Vec2& point) const;
@@ -32,6 +35,8 @@ namespace engine {
 
 		Rect projectRect(const Rect& rect) const;
 		void projectRects(Rect* rect, size_t count) const;
+
+		void shake(float seconds, int frequency, int ampl);
 
 		//const Vec2& getScale() const { return _scale; }
 		//void setScale(const Vec2& scale) { _scale = scale; }
@@ -42,6 +47,8 @@ namespace engine {
 	private:
 		Vec2 _pos = {0, 0};
 		Vec2 _size = {1280, 1024};
+
+		bool _shaking = false;
 
 		// 先不管缩放旋转了
 		//Vec2 _scale;

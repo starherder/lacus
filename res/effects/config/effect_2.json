@@ -1,0 +1,18 @@
+{
+"name" : "effect_0",
+"desc" : "",
+"sub_0" : [
+        {
+            "type" : "motion",
+            "value" : "10,10",
+            "during" : 1000,
+            "tween" : "linear"
+        },
+        {
+            "type" : "color",
+            "value" : "255,0,0,255",
+            "during" : 1000,
+            "tween" : "linear"
+        }
+    ]
+}

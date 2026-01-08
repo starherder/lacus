@@ -52,6 +52,9 @@
     <Filter Include="game\ecs">
       <UniqueIdentifier>{da3ec872-21bd-44cb-9665-5a53dcd959f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game\effect">
+      <UniqueIdentifier>{0a8618d8-4809-4f75-b39d-3cdf53bc2245}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -273,6 +276,12 @@
     </ClCompile>
     <ClCompile Include="..\src\game\ecs\system_selection.cpp">
       <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\effect\effect_manager.cpp">
+      <Filter>game\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\effect\system_effect.cpp">
+      <Filter>game\effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -554,6 +563,15 @@
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\comp_fight.h">
       <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\effect\comp_effect.h">
+      <Filter>game\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\effect\effect_manager.h">
+      <Filter>game\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\effect\system_effect.h">
+      <Filter>game\effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

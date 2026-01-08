@@ -162,14 +162,14 @@ namespace game
     {
         SkyEffect effect;
 
-        //int fadein_ticks = 1000;
-        //int last_ticks = 3000;
-        //int fadeout_ticks = 1000;
-        //std::string particle;
-
         Color color;
 
         tweeny::tween<int> tween;
+    };
+
+    struct CompShoot
+    {
+        tweeny::tween<float, float> tween;
     };
 
 

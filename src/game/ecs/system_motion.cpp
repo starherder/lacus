@@ -18,14 +18,12 @@ namespace game
     {
         deltaTime = std::clamp(deltaTime, 0.0f, 1.0f);
 
-        auto tween_view = _context.registry().view< CompTweenVec2>();
-        for (auto& ent : tween_view)
+        auto shoot_view = _context.registry().view<CompShoot>();
+        for (auto& ent : shoot_view)
         {
-            auto& compTween = tween_view.get<CompTweenVec2>(ent);
-            if (compTween.running) {
-                auto delta = _context.frameTicker().deltaTicks();
-                compTween.tween.step(delta);
-            }
+            auto& compTween = shoot_view.get<CompShoot>(ent);
+            auto delta = _context.frameTicker().deltaTicks();
+            compTween.tween.step(delta);
         }
 
         auto ent_view = _context.registry().view<CompTransform, CompMotion>();

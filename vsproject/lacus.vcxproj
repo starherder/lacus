@@ -148,6 +148,8 @@
     <ClCompile Include="..\ext\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\ext\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="..\src\bevtree\bevtree.cpp" />
+    <ClCompile Include="..\src\effect\effect_manager.cpp" />
+    <ClCompile Include="..\src\effect\system_effect.cpp" />
     <ClCompile Include="..\src\engine\application.cpp" />
     <ClCompile Include="..\src\engine\audio.cpp" />
     <ClCompile Include="..\src\engine\audio_player.cpp" />
@@ -225,6 +227,9 @@
     <ClInclude Include="..\ext\imgui\imstb_truetype.h" />
     <ClInclude Include="..\ext\tinyxml2\tinyxml2.h" />
     <ClInclude Include="..\src\bevtree\bevtree.h" />
+    <ClInclude Include="..\src\effect\comp_effect.h" />
+    <ClInclude Include="..\src\effect\effect_manager.h" />
+    <ClInclude Include="..\src\effect\system_effect.h" />
     <ClInclude Include="..\src\engine\application.h" />
     <ClInclude Include="..\src\engine\audio.h" />
     <ClInclude Include="..\src\engine\audio_player.h" />

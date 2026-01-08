@@ -1,0 +1,46 @@
+{
+"name" : "effect_0",
+"desc" : "json子对象序列化执行，子对象数组并发执行， type:motion/scale/color/alpha/rotate/audio/particle",
+"sub_0" : {
+        "type":"group",
+        "during" : 100,
+        "list" : [
+            {
+                "type" : "motion",
+                "value" : "10,10",
+                "tween" : "linear"
+            },
+            {
+                "type" : "color",
+                "value" : "255,0,0,255",
+                "tween" : "linear"
+            }
+        ]
+    },
+
+    "sub_1" : {
+        "type" : "scale",
+        "during" : 100,
+        "value" : "10,10",
+        "tween" : "linear"
+    },
+
+    "sub_2" : {
+        "type" : "alpha",
+        "during" : 100,
+        "value" : "10",
+        "tween" : "linear"
+    },
+
+    "sub_3" : {
+        "type" : "audio",
+        "value" : "audio/ui_1.wav"
+    },
+
+    "sub_4" : {
+        "type" : "particle",
+        "during" : 1000,
+        "value" : "fire"
+    }
+
+}

@@ -70,11 +70,6 @@ namespace game
 		std::string tween;
 	};
 
-	struct CompTweenVec2 {
-		bool running = false;
-		tweeny::tween<float, float> tween;
-	};
-
 
 	struct CompSkillAffect
 	{

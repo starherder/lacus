@@ -88,7 +88,7 @@ namespace game
         //    pos.x, pos.y, dir);
     }
 
-    void GameCamera::update(float deltaTime)
+    void GameCamera::onUpdate(float deltaTime)
     {
         if (_vec.length() < 1e-8)
         {

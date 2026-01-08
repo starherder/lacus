@@ -15,7 +15,7 @@ public:
     SampleCamera(const Vec2& pos, const Vec2& size) 
         : Camera(pos, size) {}
 
-    void update(float delta) override
+    void onUpdate(float delta) override
     {
         if(_vec.length() < 1e-8)
         {

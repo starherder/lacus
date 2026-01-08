@@ -443,9 +443,6 @@ namespace game
 		CompTransform compTrans;
 		_context->registry().emplace<CompTransform>(bullet, compTrans);
 
-		CompTweenVec2 compTween;
-		_context->registry().emplace<CompTweenVec2>(bullet, compTween);
-
 		auto res = createParticleOnObject(bullet, particle);
 		if (!res) 
 		{

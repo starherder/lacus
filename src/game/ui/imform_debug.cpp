@@ -52,6 +52,12 @@ void ImFormDebug::draw()
             _showSkyWindow = !_showSkyWindow;
         }
 
+        ImGui::SameLine(0, 20);
+
+        if (ImGui::Button("camera")) {
+            _showCameraWindow = !_showCameraWindow;
+        }
+
         ImGui::Separator();
 
         ImGui::Text("input");
@@ -110,6 +116,11 @@ void ImFormDebug::draw()
     if (_showSkyWindow)
     {
         drawSkyWindow();
+    }
+
+    if (_showCameraWindow)
+    {
+        drawCameraWindow();
     }
 }
 
@@ -212,6 +223,31 @@ void ImFormDebug::roleExecSkill()
         }
 
     }
+}
+
+void ImFormDebug::drawCameraWindow()
+{
+    ImGui::Begin("windows");
+
+    ImGui::Text("shake");
+    ImGui::Separator();
+
+    static int ms = 0;
+    ImGui::SliderInt("ms##camerashake", &ms, 100, 10000);
+
+    static int freq = 0;
+    ImGui::SliderInt("freq##camerashake", &freq, 1, 200);
+
+    static int ampl = 0;
+    ImGui::SliderInt("ampl##camerashake", &ampl, 10, 300);
+
+    if (ImGui::Button("shake !")) 
+    {
+        _context->camera().shake(ms / 1000.0f, freq, ampl);
+    }
+
+    ImGui::End();
+
 }
 
 void ImFormDebug::drawSkyWindow()

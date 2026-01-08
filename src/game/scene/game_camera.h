@@ -17,7 +17,7 @@ public:
     
     void init(Application* app);
 
-    void update(float delta) override;
+    void onUpdate(float delta) override;
 
 private:
     void onKeyDown(KeyCode keyCode);

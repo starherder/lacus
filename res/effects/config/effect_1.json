@@ -1,0 +1,10 @@
+{
+    "name" : "effect_1",
+    "desc" : "",
+    "sub_1" : {
+        "type" : "scale",
+        "value" : "10,10",
+        "during" : 100,
+        "tween" : "linear"
+    }
+}

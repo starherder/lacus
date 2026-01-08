@@ -41,6 +41,8 @@ namespace game
         void roleExecSkill();
 
         void drawSkyWindow();
+        
+        void drawCameraWindow();
 
     public:
         entt::entity _selectEntity = entt::null;
@@ -51,6 +53,7 @@ namespace game
         DebugMode _debugMode = DebugMode::Null;
 
         bool _showSkyWindow = false;
+        bool _showCameraWindow = false;
 
         Vec2 _windowPos, _windowSize;
 

@@ -1,0 +1,14 @@
+[
+    {
+        "id" : "effect_0",
+        "cfg" : "config/effect_0.json"
+    },
+    {
+        "id" : "effect_1",
+        "cfg" : "config/effect_1.json"
+    },
+    {
+        "id" : "effect_2",
+        "cfg" : "config/effect_2.json"
+    }
+]
