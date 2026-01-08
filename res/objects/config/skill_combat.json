@@ -5,7 +5,7 @@
     "desc" : "text_skill_combat_desc",
 
     "distance" : "0,64",
-    "cd_ticks" : 2000,
+    "cd_ticks" : 1000,
 
     "affect" : {
         "prev_ticks" : 100,

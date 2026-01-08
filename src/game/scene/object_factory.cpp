@@ -7,6 +7,7 @@
 #include "game/ecs/comm_event.h"
 
 #include "utility/translator.h"
+#include "magic_enum/magic_enum.h"
 
 namespace game 
 {
@@ -39,8 +40,6 @@ namespace game
 			auto cfg = role.value("cfg", "");
 
 			loadSkillCfg(id, parentDir / cfg);
-
-			_objectCfgIds.push_back(id);
 		}
 
 		return true;
@@ -241,7 +240,7 @@ namespace game
 		{
 			auto& pickJs = json["pick"];
 			CompRolePick pick;
-			pick.range = pickJs.value("range", 100);
+			pick.range = pickJs.value("range", 100.0f);
 			pick.pick_types = pickJs["types"];
 			_context->registry().emplace<CompRolePick>(role, pick);
 		}
@@ -261,7 +260,7 @@ namespace game
 		{
 			auto& underAtkJs = json["under_attack"];
 			underATK.during = underAtkJs.value("during", 200);
-			underATK.motion_offset = underAtkJs.value("motion_offset", 10);
+			underATK.motion_offset = underAtkJs.value("motion_offset", 10.0f);
 
 			underATK.prev_tween = underAtkJs.value("prev_tween", "");
 			underATK.post_tween = underAtkJs.value("post_tween", "");
@@ -369,7 +368,7 @@ namespace game
 
 			CompSkillAffect compAffect;
 			compAffect.affect_formula = affectJs.value("affect_formula", "");
-			compAffect.affect_range = affectJs.value("affect_range", 0);
+			compAffect.affect_range = affectJs.value("affect_range", 0.0f);
 			compAffect.affect_target = getSkillTarget(affectJs.value("affect_target", ""));
 			compAffect.prev_ticks = affectJs.value("prev_ticks", 0);
 			compAffect.post_ticks = affectJs.value("post_ticks", 0);
@@ -406,23 +405,26 @@ namespace game
 		return skill;
 	}
 
-	bool ObjectFactory::createParticleOnObject(entt::entity owner, const std::string& particle)
+	particle::ParticlePtr ObjectFactory::createParticleOnObject(entt::entity owner, const std::string& particle)
 	{
 		if (!_context || _context->registry().valid(owner) == false)
 		{
 			spdlog::error("create particle ({}) on invald object({})", particle, (uint32_t)owner);
-			return false;
+			return nullptr;
 		}
 
-		CompBindParticle compParticle;
-		compParticle.particle = particle::ParticleManager::inst().CreateParticle(particle);
-		if (compParticle.particle)
+		auto particlePtr = particle::ParticleManager::inst().CreateParticle(particle);
+		if (particlePtr)
 		{
+			CompBindParticle compParticle;
+			compParticle.particle = particlePtr;
 			compParticle.particle->Start();
+			_context->registry().emplace<CompBindParticle>(owner, compParticle);
+
+			return particlePtr;
 		}
 
-		_context->registry().emplace<CompBindParticle>(owner, compParticle);
-		return true;
+		return nullptr;
 	}
 
 	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, float speed, const std::string& tween_type, const std::string& particle)
@@ -454,6 +456,41 @@ namespace game
 			(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );
 
 		return bullet;
+	}
+
+	void ObjectFactory::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)
+	{
+		auto sky = _context->registry().create();
+		CompTransform trans;
+		trans.position = { 0, 0 };
+		_context->registry().emplace<CompTransform>(sky, trans);
+
+		CompSkyEffect compSky;
+		compSky.color = color;
+		compSky.effect = effect;
+		compSky.tween = tweeny::from(0)
+			.to(color.a).via("linear").during(fadein)
+			.to(color.a).via("linear").during(last)
+			.to(0).via("linear").during(fadeout)
+			.onStep([sky, effect, this](auto& t, int a) {
+				if (!_context->registry().valid(sky)) {
+					return true;
+				}
+
+				if (t.isFinished()) {
+					spdlog::info("sky effect({}) finish", magic_enum::enum_name(effect).data());
+					_context->registry().emplace<CompDestroy>(sky);
+					return true;
+				}
+
+				spdlog::info("sky.color.a = {}", a);
+
+				auto& compSky = _context->registry().get<CompSkyEffect>(sky);
+				compSky.color.a = a;
+				return false;
+			});
+
+		_context->registry().emplace<CompSkyEffect>(sky, compSky);
 	}
 
 	void ObjectFactory::destroyObject(entt::entity entityid)

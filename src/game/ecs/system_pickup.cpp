@@ -43,7 +43,7 @@ namespace game
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
 
-         _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
+        _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
 
         pickableComp.tween = tweeny::from(curpos.x, curpos.y)
                                     .to(uipos.x, uipos.y)

@@ -31,6 +31,8 @@ namespace game
         
         void onProjectileHitPos(const ProjectileHitPos& e);
 
+        void onSkillEvent(const ExecSkillEvent& e);
+
         tweeny::tween<float, float> makeSkillTween(const RoleExecSkillToObject& e);
     };
 

@@ -23,6 +23,12 @@ private:
 	void drawMotionDebug();
 
     void drawSceneDebug();
+
+    void drawObjects();
+
+    void drawParticles();
+
+    void drawSkyEffect();
 };
 
 

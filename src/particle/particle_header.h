@@ -8,7 +8,6 @@ namespace particle
 {
 	using namespace engine;
 
-	using Color4f = Color;
 
 #define fail_return(exp) if (!(exp)) return;
 #define fail_return_result(exp, res) if(!(exp)) return (res);
@@ -29,7 +28,7 @@ vtype Get##name() {return mem;}
 #define DefineSetter(vtype, name, mem) \
 void Set##name(const vtype& val){mem=val;}			
 
-#define DefineGetterSetter(vtype, name, mem)	DefineGetter(vtype, name, mem); DefineSetter(vtype, name, mem);
+#define DefineGetterSetter(vtype, name, mem) DefineGetter(vtype, name, mem); DefineSetter(vtype, name, mem);
 
 #define MemberFunction(type, funcname, valname)		\
 	public:												\

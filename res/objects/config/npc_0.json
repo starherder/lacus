@@ -8,11 +8,6 @@
     "desc": "text_npc_0_desc"
   },
 
-  "pick": {
-    "range": 100,
-    "types": [ "coin", "weapon" ]
-  },
-
   "motion": {
     "tween": "linear",
     "speed": 150

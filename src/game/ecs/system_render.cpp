@@ -17,9 +17,48 @@ void RenderSystem::update(float delta)
             compParticle.particle->Update(delta);
         }
     }
+
+    auto ent_view = _context.registry().view<CompSkyEffect>();
+    for (auto ent : ent_view)
+    {
+        auto& skyEffect = _context.registry().get<CompSkyEffect>(ent);
+
+        auto delta = _context.frameTicker().deltaTicks();
+        skyEffect.tween.step(delta);
+    }
 }
 
 void RenderSystem::draw()
+{
+    drawObjects();
+
+    drawParticles();
+
+    drawSkyEffect();
+
+    if (_context.debugMode())
+    {
+        drawSceneDebug();
+
+        drawMotionDebug();
+    }
+}
+
+void RenderSystem::drawSkyEffect()
+{
+    auto sz = _context.applicaton().window().getSize();
+
+    auto ent_view = _context.registry().view<CompSkyEffect>();
+    for (auto ent : ent_view)
+    {
+        auto& skyEffect = _context.registry().get<CompSkyEffect>(ent);
+        _context.renderer().setDrawColor(skyEffect.color);
+        _context.renderer().drawFillRect({ {0,0}, sz });
+        return;
+    }
+}
+
+void RenderSystem::drawObjects()
 {
     Painter& painter = _context.painter();
     GameCamera& camera = _context.camera();
@@ -58,6 +97,11 @@ void RenderSystem::draw()
             painter.drawRect(selectComp->border_color, dstrect, 0, selectComp->border_size);
         }
     }
+}
+
+void RenderSystem::drawParticles()
+{
+    GameCamera& camera = _context.camera();
 
     // draw particles
     auto parEnts = _context.registry().view<CompTransform, CompBindParticle>();
@@ -77,13 +121,6 @@ void RenderSystem::draw()
         {
             particle->Draw(pcamera);
         }
-    }
-
-    if (_context.debugMode())
-    {
-        drawSceneDebug();
-
-        drawMotionDebug();
     }
 }
 
@@ -119,7 +156,6 @@ void RenderSystem::drawMotionDebug()
         }
     }
 }
-
 
 void RenderSystem::drawSceneDebug()
 {

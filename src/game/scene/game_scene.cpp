@@ -454,4 +454,16 @@ const std::multimap<float, entt::entity>& GameScene::getObjectsInRing(const Vec2
     return result;
 }
 
+SkyEffect GameScene::getSkyEffect()
+{
+    auto views = _registry.view<CompSkyEffect>();
+    for (auto ent : views)
+    {
+        auto& compSky = _context.registry().get<CompSkyEffect>(ent);
+        return compSky.effect;
+    }
+
+    return SkyEffect::None;
+}
+
 } 

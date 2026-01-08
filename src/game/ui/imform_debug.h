@@ -40,6 +40,8 @@ namespace game
 
         void roleExecSkill();
 
+        void drawSkyWindow();
+
     public:
         entt::entity _selectEntity = entt::null;
         std::string _selectCfgId;
@@ -48,7 +50,11 @@ namespace game
 
         DebugMode _debugMode = DebugMode::Null;
 
+        bool _showSkyWindow = false;
+
         Vec2 _windowPos, _windowSize;
+
+        std::vector<const char*> _particleNames;
     };
 
 }

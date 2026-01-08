@@ -5,17 +5,17 @@
     "desc" : "text_skill_drakness_desc",
 
     "distance" : "0,0",
-    "cd_ticks" : 5000,
+    "cd_ticks" : 1000,
 
     "affect" : {
-        "prev_ticks" : 1000,
-        "post_ticks" : 1000,
+        "prev_ticks" : 200,
+        "post_ticks" : 200,
 
         "affect_formula" : "skill_formula_combat",
         "affect_target" : "other",
         "affect_range" : 0,
 
-        "event": "skill_darkness"
+        "event": "sky_turn_dark,3000"
     },
 
     "tween" : {

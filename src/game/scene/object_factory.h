@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "game/scene/game_context.h"
+#include "game/ecs/comm_comp.h"
 
 #include "utility/dynamic_struct.h"
 #include "utility/i_singleton.h"
@@ -32,7 +33,9 @@ namespace game
 		entt::entity createProjectile(const Vec2& source, const Vec2& target, float speed, 
 					const std::string& tween_type, const std::string& particle);
 
-		bool createParticleOnObject(entt::entity owner, const std::string& particle);
+		particle::ParticlePtr createParticleOnObject(entt::entity owner, const std::string& particle);
+
+		void createSkyEffect(SkyEffect effect,  Color color, int last,int fadein = 500, int fadeout = 500);
 
 		void destroyObject(entt::entity entityid);
 

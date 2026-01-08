@@ -343,7 +343,6 @@ namespace samples
         form->on_particle_save.connect(this, &SamplePluginParticle::onParticleSave);
         form->on_particle_reload.connect(this, &SamplePluginParticle::onParticleReload);
 
-
 		application()->eventDispatcher().onMouseLeftDrag.connect(this, &SamplePluginParticle::onMouseDrag);
     }
 

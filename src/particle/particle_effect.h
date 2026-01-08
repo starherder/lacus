@@ -28,12 +28,12 @@ namespace particle
 		VirtualMemberFunction(float, LifeVar, lifeVar);
 
 		/* 粒子起始颜色  */
-		VirtualMemberFunction(Color4f, BeginColor, beginColor);
-		VirtualMemberFunction(Color4f, BeginColorVar, beginColorVar);
+		VirtualMemberFunction(Color, BeginColor, beginColor);
+		VirtualMemberFunction(Color, BeginColorVar, beginColorVar);
 
 		/* 粒子结束颜色 */
-		VirtualMemberFunction(Color4f, EndColor, endColor);
-		VirtualMemberFunction(Color4f, EndColorVar, endColorVar);
+		VirtualMemberFunction(Color, EndColor, endColor);
+		VirtualMemberFunction(Color, EndColorVar, endColorVar);
 
 		/* 粒子起始大小 */
 		VirtualMemberFunction(float, BeginSize, beginSize);

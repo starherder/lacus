@@ -23,6 +23,12 @@ void ImFormDebug::init(GameContext* context)
     _context = context;
 
     _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick);
+
+
+    auto& particles = particle::ParticleManager::inst().GetAllParticleConfigs();
+    for (auto& [name, file] : particles) {
+        _particleNames.push_back(name.c_str());
+    }
 }
 
 void ImFormDebug::draw()
@@ -40,6 +46,10 @@ void ImFormDebug::draw()
         if(ImGui::Button("reload particle"))
         {
             particle::ParticleManager::inst().Reload();
+        }
+
+        if (ImGui::Button("sky")) {
+            _showSkyWindow = !_showSkyWindow;
         }
 
         ImGui::Separator();
@@ -96,6 +106,11 @@ void ImFormDebug::draw()
         _windowSize = {winsize.x, winsize.y};
     }
     ImGui::End();
+
+    if (_showSkyWindow)
+    {
+        drawSkyWindow();
+    }
 }
 
 void ImFormDebug::onMouseLeftClick(const Vec2& pos)
@@ -169,25 +184,77 @@ void ImFormDebug::roleExecSkill()
     {
         auto& compName = _context->registry().get<CompNameId>(skent);
         auto& compSkill = _context->registry().get<CompSkillComm>(skent);
-        auto dis_far = compSkill.distance.y;
 
-        auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis_far);
-        for (auto& [dis, target] : objects) {
-            if (target == _selectEntity) continue;
+        if (compSkill.type == SkillType::Combat || compSkill.type == SkillType::Projectile)
+        {
+            // 需要目标，寻找目标
+            auto dis_far = compSkill.distance.y;
 
-            auto& compComm = _context->registry().get<CompComm>(target);
-            if (compComm.type == ObjectType::Npc) {
+            auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis_far);
+            for (auto& [dis, target] : objects) {
+                if (target == _selectEntity) continue;
 
-                _context->dispatcher().trigger(RoleExecSkillToObject{_selectEntity, target, skent});
-                return;
+                auto& compComm = _context->registry().get<CompComm>(target);
+                if (compComm.type == ObjectType::Npc) {
+
+                    _context->dispatcher().trigger(RoleExecSkillToObject{_selectEntity, target, skent});
+                    return;
+                }
             }
+
+            spdlog::info("skill ({}) find enemy faild.", compName.cfg_id);
+        }
+        else
+        {
+            spdlog::info("skill ({}) need NO enmey.", compName.cfg_id);
+
+            _context->dispatcher().trigger(RoleExecSkillToObject{ _selectEntity, entt::null, skent });
         }
 
-        spdlog::info("skill ({}) find enemy faild.", compName.cfg_id);
+    }
+}
+
+void ImFormDebug::drawSkyWindow()
+{
+    ImGui::Begin("windows");
+
+    static ImVec4 color;
+    ImGui::ColorPicker4("color", (float*)& color);
+
+    static int selectindex = 0;
+    if (ImGui::BeginCombo("particle", _particleNames[selectindex]))
+    {
+        for (int i = 0; i < _particleNames.size(); i++)
+        {
+            bool select = (selectindex == i);
+            if (ImGui::Selectable(_particleNames[i], &select))
+            {
+                selectindex = i;
+            }
+        }
+        ImGui::EndCombo();
     }
 
+    static int last = 2000;
+    ImGui::SliderInt("last_ms", &last, 1000, 60000);
 
+    static int fadein = 1000;
+    ImGui::SliderInt("fadein_ms", &fadein, 1000, 10000);
+
+    static int fadeout = 1000;
+    ImGui::SliderInt("fadeout_ms", &fadeout, 1000, 10000);
+
+    if (ImGui::Button("start"))
+    {
+        Color c = { color.x, color.y, color.z, color.w };
+        std::string particle = _particleNames[selectindex];
+
+        _context->objectFactory().createSkyEffect(SkyEffect::Dark, c, last, fadein, fadeout);
+    }
+
+    ImGui::End();
 }
+
 
 
 }

@@ -16,7 +16,7 @@ namespace particle
 		return val;
 	};
 
-	static auto color4ToString = [](const Color4f& c) {
+	static auto color4ToString = [](const Color& c) {
 		std::string val; 
 		val.append(std::to_string(c.r)).append(",")
 			.append(std::to_string(c.g)).append(",")
@@ -54,11 +54,11 @@ namespace particle
 	static auto getColor4f = [](const PropMap& props, const std::string& name) {
 		auto it = props.find(name);
 		if (it == props.end()) {
-			return Color4f();
+			return Color();
 		}
 		else {
 			int r, g, b, a; sscanf_s(it->second.c_str(), "%d,%d,%d,%d", &r, &g, &b, &a);
-			return Color4f(r, g, b, a);
+			return Color(r, g, b, a);
 		}
 	};
 

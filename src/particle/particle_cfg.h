@@ -50,8 +50,8 @@ namespace particle
 		Vec2 vChangePos = {0, 0};
 		Vec2 vStartPos = {0, 0};
 
-		Color4f cColor = {0,0,0,0};
-		Color4f cDeltaColor = {0,0,0,0};
+		Color cColor = {0,0,0,0};
+		Color cDeltaColor = {0,0,0,0};
 
 		float fCurrentSize = 0.0f;
 		float fSize = 0.0f;
@@ -106,10 +106,10 @@ namespace particle
 		float fLifeVar = 0.0f;
 
 		/* 粒子的颜色变化 */
-		Color4f cBeginColor;
-		Color4f cBeginColorVar;
-		Color4f cEndColor;
-		Color4f cEndColorVar;
+		Color cBeginColor;
+		Color cBeginColorVar;
+		Color cEndColor;
+		Color cEndColorVar;
 
 		/* 粒子的大小变化 */
 		float fBeginSize = 0.0f;

@@ -1,72 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <particle version="1.0">
-
-	<system>
-		<prop name="texture_file" value="particles/round.png"/>
-	</system>
-	<emmiter>
-		<prop name="start_pos" value="400,400"/>
-		<prop name="start_pos_variance" value="10,10"/>
-		
-		<prop name="angle" value="-90"/>
-		<prop name="angle_variance" value="8"/>
-		
-		<prop name="speed" value="150"/>
-		<prop name="speed_variance" value="20"/>
-		
-		<prop name="emit_type" value="0"/>
-		<prop name="duration" value="-1"/>
-		
-		<prop name="max_particles" value="1000"/>
-		
-		<prop name="life_span" value="2.0"/>
-		<prop name="life_span_variance" value="0.3"/>
-	</emmiter>
-	<effect>
-		<prop name="start_color" value="0.7,0.4,0,0.3"/>
-		<prop name="start_color_variance" value="0.6,0.1,0.3,0"/>
-		<prop name="finish_color" value="0.7,0.01,0,1"/>
-		<prop name="finish_color_variance" value="0,0,0.2,1"/>
-		
-		<prop name="start_size" value="30"/>
-		<prop name="start_size_variance" value="10"/>
-		<prop name="finish_size" value="0"/>
-		<prop name="finish_size_variance" value="0"/>
-		
-		<prop name="start_rotation" value="0"/>
-		<prop name="start_rotation_variance" value="0"/>
-		<prop name="finish_rotation" value="0"/>
-		<prop name="finish_rotation_variance" value="0"/>
-	
-		<prop name="motion_mode" value="0"/>
-		<prop name="gravity" value="0,10"/>
-	
-		<prop name="radial_acc" value="0"/>
-		<prop name="radial_acc_variance" value="0"/>
-	
-		<prop name="tangent_acc" value="0"/>
-		<prop name="tangent_acc_variance" value="0"/>
-	
-		<prop name="min_radius" value="0"/>
-		<prop name="min_radius_variance" value="0"/>
-	
-		<prop name="max_radius" value="0"/>
-		<prop name="max_radius_variance" value="0"/>
-	
-		<prop name="rotate_speed" value="0"/>
-		<prop name="rotate_speed_variance" value="0"/>
-	</effect>
-
+    <system>
+        <prop name="texture_file" value="particles/round.png"/>
+    </system>
+    <emmiter>
+        <prop name="start_pos" value="400.000000,400.000000"/>
+        <prop name="start_pos_variance" value="10.000000,10.000000"/>
+        <prop name="angle" value="-90.000000"/>
+        <prop name="angle_variance" value="8.000000"/>
+        <prop name="speed" value="150.000000"/>
+        <prop name="speed_variance" value="20.000000"/>
+        <prop name="emit_type" value="0"/>
+        <prop name="duration" value="-1.000000"/>
+        <prop name="max_particles" value="1000"/>
+        <prop name="life_span" value="2.000000"/>
+        <prop name="life_span_variance" value="0.300000"/>
+    </emmiter>
+    <effect>
+        <prop name="start_color" value="204,52,0,204"/>
+        <prop name="start_color_variance" value="0,0,0,204"/>
+        <prop name="finish_color" value="241,248,4,204"/>
+        <prop name="finish_color_variance" value="0,0,0,0"/>
+        <prop name="start_size" value="30.000000"/>
+        <prop name="start_size_variance" value="10.000000"/>
+        <prop name="finish_size" value="0.000000"/>
+        <prop name="finish_size_variance" value="0.000000"/>
+        <prop name="start_rotation" value="0.000000"/>
+        <prop name="start_rotation_variance" value="0.000000"/>
+        <prop name="finish_rotation" value="0.000000"/>
+        <prop name="finish_rotation_variance" value="0.000000"/>
+        <prop name="motion_mode" value="0"/>
+        <prop name="gravity" value="0.000000,10.000000"/>
+        <prop name="radial_acc" value="0.000000"/>
+        <prop name="radial_acc_variance" value="0.000000"/>
+        <prop name="tangent_acc" value="0.000000"/>
+        <prop name="tangent_acc_variance" value="0.000000"/>
+        <prop name="min_radius" value="0.000000"/>
+        <prop name="min_radius_variance" value="0.000000"/>
+        <prop name="max_radius" value="0.000000"/>
+        <prop name="max_radius_variance" value="0.000000"/>
+        <prop name="rotate_speed" value="0.000000"/>
+        <prop name="rotate_speed_variance" value="0.000000"/>
+    </effect>
 </particle>
-
-
-
-
-
-
-
-
-
-
-

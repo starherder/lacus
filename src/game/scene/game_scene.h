@@ -87,6 +87,8 @@ namespace game {
         void setDebugInfo(bool show);
         auto& getCollisionDebugRects() { return _collisionDebugRects; }
 
+        SkyEffect getSkyEffect();
+
     private:
         void showAllGui();
         void closeAllGui();
@@ -98,6 +100,7 @@ namespace game {
         void loadObjects();
 
         void onRoleCrossGrid(const RoleCrossGrid& e);
+
 
     private:
         tilemap::TileMap _tileMap;

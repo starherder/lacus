@@ -9,6 +9,8 @@ namespace game
 		_context.dispatcher().sink<RoleExecSkillToObject>().connect<&FightSystem::onRoleExecSkillToObject>(this);
 		_context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
 		_context.dispatcher().sink<ProjectileHitPos>().connect<&FightSystem::onProjectileHitPos>(this);
+		_context.dispatcher().sink<ExecSkillEvent>().connect<&FightSystem::onSkillEvent>(this);
+		
 	}
 	
 	FightSystem::~FightSystem() 
@@ -63,9 +65,12 @@ namespace game
 
 	tweeny::tween<float, float> FightSystem::makeSkillTween(const RoleExecSkillToObject& e)
 	{
-		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-		auto& tgtTrans = _context.registry().get<CompTransform>(e.target);
+		if (!_context.registry().valid(e.source))
+		{
+			return tweeny::tween<float, float>{};
+		}
 
+		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
 		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
 		auto& transValue = skillTween.trans_value;
@@ -73,7 +78,13 @@ namespace game
 		if(skillTween.trans_type == TweenTransform::Motion)
 		{
 			auto& srcPos = srcTrans.position;
-			auto& tgtPos = tgtTrans.position;
+			Vec2 tgtPos = { 0, 0 };
+			if (_context.registry().valid(e.target))
+			{
+				auto& tgtTrans = _context.registry().get<CompTransform>(e.target);
+				tgtPos = tgtTrans.position;
+			}
+
 			auto dstPos = srcPos + glm::normalize(tgtPos - srcPos)* transValue;
 
 			return tweeny::from(srcPos.x, srcPos.y)
@@ -95,7 +106,6 @@ namespace game
 		if(skillTween.trans_type == TweenTransform::Scale)
 		{
 			auto& srcSize = srcTrans.size;
-			//auto& tgtSize = tgtTrans.size;
 			auto transValue = skillTween.trans_value;
 			auto dstSize = srcSize + Vec2{transValue, transValue};
 
@@ -115,8 +125,7 @@ namespace game
 					});
 		}
 
-		tweeny::tween<float, float> tween;
-		return tween;
+		return tweeny::tween<float, float>{};
 	}
 
 	void FightSystem::onRoleExecSkillToObject(const RoleExecSkillToObject& e)
@@ -323,6 +332,28 @@ namespace game
 			{
 				_context.dispatcher().trigger(RoleOnAttack{ e.source, obj, e.skill });
 			}
+		}
+	}
+
+	void FightSystem::onSkillEvent(const ExecSkillEvent& e)
+	{
+		spdlog::info("onSkillEvent: event = source({}), skill({}), event({})", 
+			(uint32_t)e.source, (uint32_t)e.skill, e.event);
+
+		const auto& views = utility::StringUtil::split(e.event, ',');
+		if (views.size() < 1) return;
+
+		if (views[0] == "sky_turn_dark")
+		{
+			assert(views.size() == 2);
+
+			int ticks = std::stoi(views[1].data());
+			if (ticks < 2000) {
+				spdlog::error("sky_turn_dar time must greater than 2000");
+				ticks = 2000;
+			}
+
+			_context.objectFactory().createSkyEffect(SkyEffect::Dark, Color{ 0,0,0,200 }, ticks-1000, 500, 500);
 		}
 	}
 

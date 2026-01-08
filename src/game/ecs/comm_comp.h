@@ -92,7 +92,7 @@ namespace game
         Vec2i targetGrid;
 
         std::string tween_mode = "linear";
-        tweeny::tween<float,float> tween;
+        tweeny::tween<float, float> tween;
 
         std::vector<Vec2i> path;
         std::vector<Vec2i>::reverse_iterator path_iterator;
@@ -148,7 +148,29 @@ namespace game
         tweeny::tween<float, float> tween;
     };
 
+    enum class SkyEffect
+    {
+        None,
+        Dark,
+        Fog,
+        Cold,
+        Hot,
+        Rain,
+    };
 
+    struct CompSkyEffect
+    {
+        SkyEffect effect;
+
+        //int fadein_ticks = 1000;
+        //int last_ticks = 3000;
+        //int fadeout_ticks = 1000;
+        //std::string particle;
+
+        Color color;
+
+        tweeny::tween<int> tween;
+    };
 
 
 

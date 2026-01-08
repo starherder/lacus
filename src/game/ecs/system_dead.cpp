@@ -8,26 +8,25 @@ namespace game
 
 	void DeadSystem::update(float delta)
 	{
-		std::vector<CompNameId> pending;
+		std::vector<entt::entity> pending;
 
-		auto deadViews = _context.registry().view<CompNameId, CompDead>();
+		auto deadViews = _context.registry().view<CompDead>();
 		for (auto& ent : deadViews)
 		{
 			//auto& nameComp = views.get<CompNameId>(ent);
 		}
 
-		auto destroyViews = _context.registry().view<CompNameId, CompDestroy>();
+		auto destroyViews = _context.registry().view<CompDestroy>();
 		for (auto& ent : destroyViews)
 		{
-			auto& nameComp = destroyViews.get<CompNameId>(ent);
-			pending.push_back(nameComp);
+			pending.push_back(ent);
 		}
 
 		// destroy
-		for (auto& nameComp : pending)
+		for (auto& ent : pending)
 		{
-			spdlog::info("object: id {}, name {}, cfg {} destroy !", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
-			_context.registry().destroy(nameComp.id);
+			spdlog::info("object: id {} destroy !", (uint32_t)ent);
+			_context.registry().destroy(ent);
 		}
 	}
 

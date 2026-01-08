@@ -52,7 +52,7 @@ namespace particle
 		particle->fRemainingLife = std::max(0.1f, life + lifeVar * utility::Random_Minus1_1());
 
 		/* 粒子的颜色变化值 */
-		//Color4f begin_color, end_color;
+		//Color begin_color, end_color;
 		//begin_color.r = std::clamp(beginColor.r + beginColorVar.r * utility::Random_Minus1_1(), 0, 1);
 		//begin_color.g = std::clamp(beginColor.g + beginColorVar.g * utility::Random_Minus1_1(), 0, 1);
 		//begin_color.b = std::clamp(beginColor.b + beginColorVar.b * utility::Random_Minus1_1(), 0, 1);
@@ -62,8 +62,8 @@ namespace particle
 		//end_color.b = std::clamp(endColor.b + endColorVar.b * utility::Random_Minus1_1(), 0, 1);
 		//end_color.a = std::clamp(endColor.a + endColorVar.a * utility::Random_Minus1_1(), 0, 1);
 
-		Color4f begin_color = beginColor + beginColorVar * utility::Random_Minus1_1();
-		Color4f end_color = endColor + beginColorVar * utility::Random_Minus1_1();
+		Color begin_color = beginColor + beginColorVar * utility::Random_Minus1_1();
+		Color end_color = endColor + beginColorVar * utility::Random_Minus1_1();
 
 		assert(particle->fRemainingLife!=0);
 
