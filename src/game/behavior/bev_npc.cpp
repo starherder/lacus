@@ -220,6 +220,11 @@ namespace game {
 
 	Status BevNode_PickItem::checkPickUp()
 	{
+		if (!_context->registry().valid(_actor))
+		{
+			return Status::Failure;
+		}
+
 		auto& trans = _context->registry().get<CompTransform>(_actor);
 		auto& motion = _context->registry().get<CompMotion>(_actor);
 

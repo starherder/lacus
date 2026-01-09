@@ -36,6 +36,8 @@ void RenderSystem::draw()
 
     drawSkyEffect();
 
+    drawFightText();
+
     if (_context.debugMode())
     {
         drawSceneDebug();
@@ -55,6 +57,21 @@ void RenderSystem::drawSkyEffect()
         _context.renderer().setDrawColor(skyEffect.color);
         _context.renderer().drawFillRect({ {0,0}, sz });
         return;
+    }
+}
+
+void RenderSystem::drawFightText()
+{
+    auto ent_view = _context.registry().view<CompTransform, CompFightText>();
+    for (auto& ent : ent_view)
+    {
+        auto& compTrans = ent_view.get<CompTransform>(ent);
+        auto& compFt = ent_view.get<CompFightText>(ent);
+
+        auto pos = _context.camera().projectPoint(compTrans.position);
+
+        //_context.renderer().setDrawColor(compFt.color);
+        _context.renderer().drawText(compFt.text, compFt.font, pos, compFt.color);
     }
 }
 

@@ -29,6 +29,8 @@ private:
     void drawParticles();
 
     void drawSkyEffect();
+
+    void drawFightText();
 };
 
 

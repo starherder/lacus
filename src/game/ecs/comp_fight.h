@@ -170,22 +170,40 @@ namespace game
 		float par;
 	};
 
+	// 技能列表
 	struct CompSkills {
 		std::vector<entt::entity> skills;
 	};
 
+	// buf列表
 	struct CompBuffs {
 		std::vector<entt::entity> buffs;
 	};
 
+	// 物品列表
 	struct CompItems {
 		std::vector<entt::entity> items;
 	};
 
+	// 发射
 	struct CompShoot
 	{
 		tweeny::tween<float, float> tween;
 	};
+
+
+	// 战斗飘字
+	struct CompFightText
+	{
+		std::string text;
+
+		Color color;
+		Font* font = nullptr;
+
+		//float font_size;
+		tweeny::tween<float, float> tween;
+	};
+
 
 	inline SkillType getSkillType(const std::string& type) 
 	{

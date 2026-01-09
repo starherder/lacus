@@ -17,9 +17,9 @@
         <prop name="life_span_variance" value="0.000000"/>
     </emmiter>
     <effect>
-        <prop name="start_color" value="253,73,47,255"/>
+        <prop name="start_color" value="70,70,100,255"/>
         <prop name="start_color_variance" value="0,0,0,0"/>
-        <prop name="finish_color" value="250,203,203,255"/>
+        <prop name="finish_color" value="0,0,0,0"/>
         <prop name="finish_color_variance" value="0,0,0,0"/>
         <prop name="start_size" value="20.000000"/>
         <prop name="start_size_variance" value="0.000000"/>

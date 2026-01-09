@@ -58,6 +58,8 @@ namespace game
 
         void addHpToTarget(entt::entity target, float hp);
 
+        void showHpFloatingTip(entt::entity target, float hp);
+
         FuncFactorOpt parseFightFunc(const std::string& str);
     };
 

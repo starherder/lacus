@@ -11,7 +11,7 @@
     "prev_ticks" : 200,
     "post_ticks" : 200,
 
-    "func" : "hp:-20",
+    "func" : "hp-20",
     "target" : "role",
     "range" : 0,
 

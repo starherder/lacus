@@ -17,7 +17,14 @@ namespace game
 
     void FightSystem::update(float delta)
     {
+        auto views = _context.registry().view<CompFightText>();
+        for (auto& ent : views)
+        {
+            auto& ft = views.get<CompFightText>(ent);
 
+            auto delta = _context.frameTicker().deltaTicks();
+            ft.tween.step(delta);
+        }
     }
 
     void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)
@@ -197,10 +204,11 @@ namespace game
 
     void FightSystem::addHpToTarget(entt::entity target, float hp)
     {
+        auto& targetTrans = _context.registry().get<CompTransform>(target);
         auto& targetFight = _context.registry().get<CompFightProp>(target);
         targetFight.hp += hp;
 
-        spdlog::info("target({}) hp {}{}", (uint32_t)target, hp>0?"+":"", hp);
+        showHpFloatingTip(target, hp);
 
         _context.dispatcher().trigger(RolHpAlter{ target, hp });
     }
@@ -213,5 +221,45 @@ namespace game
     void FightSystem::removeBuf(entt::entity target, const std::string& buf)
     {
         spdlog::info("target({}) remove buff {}", (uint32_t)target, buf);
+    }
+
+    void FightSystem::showHpFloatingTip(entt::entity target, float hp)
+    {
+        auto& targetTrans = _context.registry().get<CompTransform>(target);
+        float curY = targetTrans.position.y;
+        float dstY = targetTrans.position.y - 100;
+
+        spdlog::info("target({}) hp {}{}", (uint32_t)target, hp > 0 ? "+" : "", hp);
+
+        auto word = _context.registry().create();
+        _context.registry().emplace<CompTransform>(word, targetTrans);
+        _context.registry().emplace<CompFightText>(word, CompFightText{});
+
+        auto& ft = _context.registry().get<CompFightText>(word);
+
+        // TODO: config it.
+        ft.font = _context.fontMgr().get(HashString("fonts/msyh.ttf"), 15);
+        ft.color = (hp > 0) ? Color::Green : Color::Red;
+
+        ft.text = fmt::format("HP{}{}", hp > 0 ? "+" : "", (int)hp);
+        ft.tween = tweeny::from(curY, 255.0f)
+            .to(dstY, 0.0f)
+            .via("cubicIn")
+            .during(1000)
+            .onStep([this, word](auto& t, float y, float a) {
+            if (t.isFinished()) {
+                _context.registry().emplace<CompDestroy>(word);
+                return true;
+            }
+
+            auto& compTrans = _context.registry().get<CompTransform>(word);
+            compTrans.position.y = y;
+
+            auto& compFightText = _context.registry().get<CompFightText>(word);
+            compFightText.color.a = a;
+
+            return false;
+        });
+
     }
 }
