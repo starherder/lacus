@@ -8,7 +8,6 @@ namespace game
 	{
 		_context.dispatcher().sink<CastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
 		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
-		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackHurt>(this);
 		_context.dispatcher().sink<ProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
 		_context.dispatcher().sink<ExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
 		
@@ -355,16 +354,4 @@ namespace game
 			});
 	}
 
-	void SkillSystem::onRoleUnderAttackHurt(const RoleOnAttack& e)
-	{
-		if (!_context.registry().valid(e.target))
-		{
-			return;
-		}
-
-		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-	
-
-		// "hp-100"
-	}
 }

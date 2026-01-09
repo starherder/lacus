@@ -30,7 +30,6 @@ namespace game
         void onCastSkillToObject(const CastSkillToObject& e);
 
         void onRoleUnderAttackEffect(const RoleOnAttack& e);
-        void onRoleUnderAttackHurt(const RoleOnAttack& e);
         
         void onProjectileHitPos(const ProjectileHitPos& e);
 
