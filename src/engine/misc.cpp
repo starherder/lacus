@@ -16,6 +16,11 @@ void FrameTicker::init(int fixed_fps)
     _deltaTicks = 0;
 }
 
+uint64_t FrameTicker::ticks()
+{
+    return SDL_GetTicks();
+}
+
 bool FrameTicker::check()
 {
     uint64_t current_ticks = SDL_GetTicks();

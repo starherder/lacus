@@ -142,6 +142,10 @@ namespace game
 		std::vector<entt::entity> items;
 	};
 
+	struct CompShoot
+	{
+		tweeny::tween<float, float> tween;
+	};
 
 	inline SkillType getSkillType(const std::string& type) 
 	{

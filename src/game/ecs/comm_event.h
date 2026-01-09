@@ -42,7 +42,7 @@ namespace game {
 		entt::entity skill;
 	};
 
-	struct RoleExecSkillToObject {
+	struct CastSkillToObject {
 		entt::entity source;
 		entt::entity target;
 		entt::entity skill;

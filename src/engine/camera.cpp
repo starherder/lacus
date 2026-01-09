@@ -19,7 +19,7 @@ namespace engine {
     {
         if (_shaking)
         {
-            g_cameraTween.step(delta);
+            g_cameraTween.step((int)(delta*1000));
         }
 
         onUpdate(delta);
@@ -59,30 +59,31 @@ namespace engine {
         }
     }
 
-    void Camera::shake(float seconds, int frequency, int ampl)
+    void Camera::shake(int duration, int frequency, int ampl)
     {
-        if (seconds <= 0 || frequency <= 0 || ampl <= 0)
+        if (duration <= 0 || frequency <= 0 || ampl <= 0)
         {
             spdlog::info("camera::shake: param <= 0");
             return;
         }
 
-        int count = (int)(frequency * seconds);
-
-        int ms = (int)(seconds * 1000) / count;
+        float fduration = static_cast<float>(duration);
+        int count = static_cast<int>(frequency * (fduration / 1000.0f));
+        int period = static_cast<int>(fduration / count);
 
         g_cameraTween = tweeny::from(_pos.x, _pos.y);
 
         for (int i = 0; i < count; i++)
         {
             Vec2 pos = _pos + Vec2{ utility::rand_minus1_1(), utility::rand_minus1_1() } * (float)ampl;
-            g_cameraTween.to(pos.x, pos.y).via("linear").during(ms);
+            g_cameraTween.to(pos.x, pos.y).via("linear").during(period);
         }
 
-        g_cameraTween.onStep([this](auto& t, auto x, auto y)
+        g_cameraTween.onStep([this, origin_pos=_pos](auto& t, auto x, auto y)
         {
             if (t.isFinished())
             {
+                _pos = origin_pos;
                 _shaking = false;
                 return true;
             }

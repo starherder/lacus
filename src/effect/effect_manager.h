@@ -78,15 +78,13 @@ namespace game
 		每个tween.point节点执行下一个特效， 执行时在entity身上创建一个对应的子特效组件，
 		子特效执行完就删除掉该组件。
 		所有特效组件的upate由effect_system负责
+
+		子特效类型有 移动、缩放、抖动、旋转、透明度变化、颜色渐变、粒子、声音等等
 	*/
 
 
 	class EffectManager : public utility::ISingleton<EffectManager>
 	{
-	public:
-
-
-
 	public:
 		EffectManager() = delete;
 		EffectManager(EffectManager&&) = delete;

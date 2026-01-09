@@ -6,7 +6,7 @@ namespace game
 {
 	FightSystem::FightSystem(GameContext& context) : EcsSystem(context) 
 	{
-		_context.dispatcher().sink<RoleExecSkillToObject>().connect<&FightSystem::onRoleExecSkillToObject>(this);
+		_context.dispatcher().sink<CastSkillToObject>().connect<&FightSystem::onCastSkillToObject>(this);
 		_context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
 		_context.dispatcher().sink<ProjectileHitPos>().connect<&FightSystem::onProjectileHitPos>(this);
 		_context.dispatcher().sink<ExecSkillEvent>().connect<&FightSystem::onSkillEvent>(this);
@@ -63,7 +63,7 @@ namespace game
 		}
 	}
 
-	tweeny::tween<float, float> FightSystem::makeSkillTween(const RoleExecSkillToObject& e)
+	tweeny::tween<float, float> FightSystem::makeSkillTween(const CastSkillToObject& e)
 	{
 		if (!_context.registry().valid(e.source))
 		{
@@ -128,13 +128,13 @@ namespace game
 		return tweeny::tween<float, float>{};
 	}
 
-	void FightSystem::onRoleExecSkillToObject(const RoleExecSkillToObject& e)
+	void FightSystem::onCastSkillToObject(const CastSkillToObject& e)
 	{
-		spdlog::info("RoleExecSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
+		spdlog::info("CastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
 
 		if (_context.registry().valid(e.skill) == false)
 		{
-			spdlog::warn("onRoleExecSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
+			spdlog::warn("onCastSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
 			return;
 		}
 
@@ -142,7 +142,7 @@ namespace game
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
 		if (skillComm.state != SkillState::OK)
 		{
-			spdlog::warn("onRoleExecSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
+			spdlog::warn("onCastSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
 			return;
 		}
 
@@ -170,7 +170,7 @@ namespace game
 		});
 	}
 
-	void FightSystem::skillAffectApplyToObject(const RoleExecSkillToObject& e)
+	void FightSystem::skillAffectApplyToObject(const CastSkillToObject& e)
 	{
 		auto& compName = _context.registry().get<CompNameId>(e.skill);
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);

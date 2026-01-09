@@ -21,9 +21,9 @@ namespace game
         void update(float delta) override;
 
     private:
-        void onRoleExecSkillToObject(const RoleExecSkillToObject& e);
+        void onCastSkillToObject(const CastSkillToObject& e);
 
-        void skillAffectApplyToObject(const RoleExecSkillToObject& e);
+        void skillAffectApplyToObject(const CastSkillToObject& e);
 
         void onRoleUnderAttack(const RoleOnAttack& e);
 
@@ -33,7 +33,7 @@ namespace game
 
         void onSkillEvent(const ExecSkillEvent& e);
 
-        tweeny::tween<float, float> makeSkillTween(const RoleExecSkillToObject& e);
+        tweeny::tween<float, float> makeSkillTween(const CastSkillToObject& e);
     };
 
 

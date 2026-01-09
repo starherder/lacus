@@ -208,7 +208,7 @@ void ImFormDebug::roleExecSkill()
                 auto& compComm = _context->registry().get<CompComm>(target);
                 if (compComm.type == ObjectType::Npc) {
 
-                    _context->dispatcher().trigger(RoleExecSkillToObject{_selectEntity, target, skent});
+                    _context->dispatcher().trigger(CastSkillToObject{_selectEntity, target, skent});
                     return;
                 }
             }
@@ -219,7 +219,7 @@ void ImFormDebug::roleExecSkill()
         {
             spdlog::info("skill ({}) need NO enmey.", compName.cfg_id);
 
-            _context->dispatcher().trigger(RoleExecSkillToObject{ _selectEntity, entt::null, skent });
+            _context->dispatcher().trigger(CastSkillToObject{ _selectEntity, entt::null, skent });
         }
 
     }
@@ -227,13 +227,13 @@ void ImFormDebug::roleExecSkill()
 
 void ImFormDebug::drawCameraWindow()
 {
-    ImGui::Begin("windows");
+    ImGui::Begin("camera");
 
     ImGui::Text("shake");
     ImGui::Separator();
 
-    static int ms = 0;
-    ImGui::SliderInt("ms##camerashake", &ms, 100, 10000);
+    static int duration = 0;
+    ImGui::SliderInt("ms##camerashake", &duration, 100, 10000);
 
     static int freq = 0;
     ImGui::SliderInt("freq##camerashake", &freq, 1, 200);
@@ -243,7 +243,7 @@ void ImFormDebug::drawCameraWindow()
 
     if (ImGui::Button("shake !")) 
     {
-        _context->camera().shake(ms / 1000.0f, freq, ampl);
+        _context->camera().shake(duration, freq, ampl);
     }
 
     ImGui::End();
@@ -252,7 +252,7 @@ void ImFormDebug::drawCameraWindow()
 
 void ImFormDebug::drawSkyWindow()
 {
-    ImGui::Begin("windows");
+    ImGui::Begin("sky");
 
     static ImVec4 color;
     ImGui::ColorPicker4("color", (float*)& color);

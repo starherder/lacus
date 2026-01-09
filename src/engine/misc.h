@@ -31,6 +31,8 @@ public:
 
     int deltaTicks() const { return _deltaTicks; }
 
+    uint64_t ticks();
+
     int fps() const { return _curFps; }
 
     int fixedFps() const { return _fixedFps; }

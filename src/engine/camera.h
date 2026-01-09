@@ -36,7 +36,7 @@ namespace engine {
 		Rect projectRect(const Rect& rect) const;
 		void projectRects(Rect* rect, size_t count) const;
 
-		void shake(float seconds, int frequency, int ampl);
+		void shake(int duration, int frequency, int ampl);
 
 		//const Vec2& getScale() const { return _scale; }
 		//void setScale(const Vec2& scale) { _scale = scale; }

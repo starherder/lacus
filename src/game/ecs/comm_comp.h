@@ -167,12 +167,6 @@ namespace game
         tweeny::tween<int> tween;
     };
 
-    struct CompShoot
-    {
-        tweeny::tween<float, float> tween;
-    };
-
-
 
     inline  ObjectType getNpcType(const std::string& npctype) 
     {
