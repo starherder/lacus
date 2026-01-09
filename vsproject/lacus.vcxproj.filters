@@ -250,7 +250,7 @@
     <ClCompile Include="..\src\game\ecs\system_render.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\ecs\system_fight.cpp">
+    <ClCompile Include="..\src\game\ecs\system_skill.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\tinyxml2\tinyxml2.cpp">
@@ -282,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="..\src\effect\system_effect.cpp">
       <Filter>game\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_fight.cpp">
+      <Filter>game\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -534,7 +537,7 @@
     <ClInclude Include="..\src\game\ecs\system_render.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\ecs\system_fight.h">
+    <ClInclude Include="..\src\game\ecs\system_skill.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\tinyxml2\tinyxml2.h">
@@ -572,6 +575,9 @@
     </ClInclude>
     <ClInclude Include="..\src\effect\system_effect.h">
       <Filter>game\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_fight.h">
+      <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 ﻿#include "string_util.h"
+#include <algorithm>
+
 
 #ifdef _WIN32
 #include <windows.h>
@@ -9,9 +11,18 @@
 
 namespace utility
 {
-	std::vector<std::string_view> StringUtil::split(const std::string& str, char delimiter)
+    bool StringUtil::is_number(const std::string& s)
+    {
+        return !s.empty() &&
+            std::all_of(s.begin(), s.end(),
+                [](unsigned char c) { return std::isdigit(c); });
+    }
+
+	const StrViewVector& StringUtil::split(const std::string& str, char delimiter)
 	{
-		std::vector<std::string_view> tokens;
+		static StrViewVector tokens;
+        tokens.clear();
+
 		std::string_view sv(str);
 
 		size_t start = 0;

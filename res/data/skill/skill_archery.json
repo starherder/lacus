@@ -1,29 +1,29 @@
 {
-    "cfgid" : "skill_archery",
-    "type" : "projectile",
-    "name" : "text_skill_archery",
-    "desc" : "text_skill_archery_desc",
+  "cfgid" : "skill_archery",
+  "type" : "projectile",
+  "name" : "text_skill_archery",
+  "desc" : "text_skill_archery_desc",
 
-    "distance" : "150,350",
-    "cd_ticks" : 1000,
+  "distance" : "150,350",
+  "cd_ticks" : 1000,
 
-    "affect" : {
-        "prev_ticks" : 200,
-        "post_ticks" : 200,
+  "affect" : {
+    "prev_ticks" : 200,
+    "post_ticks" : 200,
 
-        "affect_formula" : "skill_formula_combat",
-        "affect_target" : "role",
-        "affect_range" : 0,
+    "func" : "hp:-20",
+    "target" : "role",
+    "range" : 0,
 
-        "event" : ""
-    },
+    "event" : ""
+  },
 
-    "tween" : {
-        "trans_type" : "scale",
-        "trans_value" : 10,
-        "prev_tween" : "cubicIn",
-        "post_tween" : "cubicOut"
-    },
+  "tween" : {
+    "trans_type" : "scale",
+    "trans_value" : 10,
+    "prev_tween" : "cubicIn",
+    "post_tween" : "cubicOut"
+  },
 
   "projectile": {
     "name": "",

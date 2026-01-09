@@ -9,10 +9,10 @@ namespace game
 
 	enum class SkillType 
 	{
-		Combat, // ½üÕ½(µ¶Ç¹)
-		Projectile, // Ô¶³ÌÅ×Éä(¹­¼ı¡¢ÅÚï¥¡¢»ğÇòÊõ)
-		Remote, // Ô¶³ÌÄ§·¨£¨ÉÁµç,¼ÓBuffµÈ£©
-		Other, // ÆäËû£¨ÌìºÚ¡¢½µÓêµÈ£©
+		Combat, // è¿‘æˆ˜(åˆ€æª)
+		Projectile, // è¿œç¨‹æŠ›å°„(å¼“ç®­ã€ç‚®é“³ã€ç«çƒæœ¯)
+		Remote, // è¿œç¨‹é­”æ³•ï¼ˆé—ªç”µ,åŠ Buffç­‰ï¼‰
+		Other, // å…¶ä»–ï¼ˆå¤©é»‘ã€é™é›¨ç­‰ï¼‰
 	};
 
 	enum class SkillTarget 
@@ -73,13 +73,23 @@ namespace game
 
 	struct CompSkillAffect
 	{
-		std::string affect_formula; // Ó°Ïì¹«Ê½£¬ÓÉ¹«Ê½±à¼­Æ÷»òÕßluaÖĞ¸ù¾İ½ÇÉ«µÈ¼¶ÊôĞÔµÈ¼ÆËã³ö¶ÔÄ¿±êµÄÉËº¦»òÕß¼Ó³É
-		SkillTarget affect_target;
-		float affect_range;
+		// å‰æ‘‡æ—¶é—´
+		int prev_ticks = 0; 
+		// åæ‘‡æ—¶é—´
+		int post_ticks = 0; 
 
-		int prev_ticks = 0;
-		int post_ticks = 0;
+		// åŠŸèƒ½
+		// hp:+10,mp:-10,atk:+20%   åŠ å‡å±æ€§
+		// buf:+stun,buf:-slow  åŠ å‡buf
+		std::string func;  
 
+		// ç›®æ ‡ï¼šå¯¹è±¡è¿˜æ˜¯ä½ç½®ç­‰
+		SkillTarget target;
+
+		// ç›®æ ‡èŒƒå›´ï¼šaoe èŒƒå›´æ”»å‡»
+		float range;
+
+		// äº‹ä»¶ï¼šå¼•èµ·çš„é¢å¤–æ—¶é—´
 		std::string event;
 	};
 
@@ -117,17 +127,47 @@ namespace game
 		Vec2 distance = { 0, 0 };
 	};
 
-
-	// Ô¤Éè£ºÖÇÁ¦¡¢ÁéÇÉ¡¢ÁéĞÔ¡¢Á¦Á¿µÈÔ¤ÉèÖµ
-	struct CompPresets
+	struct CompBufComm 
 	{
-		utility::DynamicStruct<std::string> properties;
+		// åŠŸèƒ½
+		// hp:+10,mp:-10,atk:+10%   åŠ å‡å±æ€§
+		// buf:+stun,buf:-slow  åŠ å‡buf
+		std::string func;
+
+		// æŒç»­æ—¶é—´ï¼Œmsï¼Œ -1è¡¨ç¤ºæ°¸ä¹…
+		int druation; 
+
+		// å‘¨æœŸï¼ˆå®šæ—¶è§¦å‘ï¼‰
+		int period;
 	};
 
-	// HP¡¢¹¥»÷Á¦¡¢·ÀÓùÁ¦¡¢ÒÆ¶¯ËÙ¶È¡¢¹¥»÷ËÙ¶ÈµÈ¾­¹ı¹«Ê½¼ÆËãºóµÃµ½µÄÊôĞÔ
-	struct CompProps
+
+
+	// åŸºç¡€å±æ€§
+	struct CompBaseProp
 	{
-		utility::DynamicStruct<std::string> properties;
+		int lv;
+
+		float str;
+		float cst;
+		float dex;
+		float met;
+	};
+
+	// æˆ˜æ–—å±æ€§
+	struct CompFightProp
+	{
+		float hp;
+		float hpm;
+		float hpr;
+
+		float atk;
+		float def;
+		float mvs;
+		float ats;
+		float atd;
+		float crt;
+		float par;
 	};
 
 	struct CompSkills {

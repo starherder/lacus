@@ -267,22 +267,23 @@ namespace game
 		}
 		_context->registry().emplace<CompUnderAttack>(role, underATK);
 
-		if (json.contains("properties")) 
+		if (json.contains("base_prop")) 
 		{
-			utility::DynamicStruct<std::string> ds;
-			auto& props = json["properties"];
-			for(auto& [k, v] : props.items())
-			{
-				auto varopt = jsonToVar(v);
-				if(varopt) 
-				{
-					ds.insert({k, varopt.value()});
-				}
-			}
+			auto& baseJs = json["base_prop"];
+			float roll = baseJs["roll"];
 
-			CompPresets preset;
-			preset.properties.swap(std::move(ds));
-			_context->registry().emplace<CompPresets>(role, preset);
+			CompBaseProp compBase;
+			compBase.str = baseJs.value("str", 0.0f) + utility::Random_Minus1_1() * roll;
+			compBase.cst = baseJs.value("cst", 0.0f) + utility::Random_Minus1_1() * roll;
+			compBase.dex = baseJs.value("dex", 0.0f) + utility::Random_Minus1_1() * roll;
+			compBase.met = baseJs.value("met", 0.0f) + utility::Random_Minus1_1() * roll;
+
+			_context->registry().emplace<CompBaseProp>(role, compBase);
+
+			CompFightProp fightProp;
+			_context->registry().emplace<CompFightProp>(role, fightProp);
+
+			_context->dispatcher().trigger(RoleLevelAlter{role, 1});
 		}
 
 		if (json.contains("behavior"))
@@ -367,9 +368,9 @@ namespace game
 			auto& affectJs = json["affect"];
 
 			CompSkillAffect compAffect;
-			compAffect.affect_formula = affectJs.value("affect_formula", "");
-			compAffect.affect_range = affectJs.value("affect_range", 0.0f);
-			compAffect.affect_target = getSkillTarget(affectJs.value("affect_target", ""));
+			compAffect.func = affectJs.value("func", "");
+			compAffect.range = affectJs.value("range", 0.0f);
+			compAffect.target = getSkillTarget(affectJs.value("target", ""));
 			compAffect.prev_ticks = affectJs.value("prev_ticks", 0);
 			compAffect.post_ticks = affectJs.value("post_ticks", 0);
 			compAffect.event = affectJs.value("event", "");

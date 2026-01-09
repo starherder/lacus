@@ -5,6 +5,20 @@
 
 
 namespace game {
+	struct RolePropAlter {
+		entt::entity actor;
+		bool reset_hp = false;
+	};
+
+	struct RoleLevelAlter {
+		entt::entity actor;
+		int level = 0;
+	};
+
+	struct RolHpAlter {
+		entt::entity actor;
+		float diff = 0;
+	};
 
 	struct MoveToGrid {
 		entt::entity actor;

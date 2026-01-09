@@ -11,9 +11,9 @@
         "prev_ticks" : 100,
         "post_ticks" : 100,
 
-        "affect_formula" : "skill_formula_combat",
-        "affect_target" : "role",
-        "affect_range" : 0,
+        "func" : "hp-",
+        "target" : "role",
+        "range" : 0,
 
         "event" : ""
     },

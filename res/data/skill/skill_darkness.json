@@ -11,9 +11,9 @@
         "prev_ticks" : 200,
         "post_ticks" : 200,
 
-        "affect_formula" : "skill_formula_combat",
-        "affect_target" : "other",
-        "affect_range" : 0,
+        "func" : "mvs-10",
+        "target" : "all",
+        "range" : 0,
 
         "event": "sky_turn_dark,3000"
     },

@@ -43,18 +43,21 @@
     "font_size": 12
   },
 
-  "properties": {
-    "intelligence": 20,
-    "strength": 13,
-    "tougth": 30,
-    "loyal": 100,
-    "morale": 20,
-    "move_speed": 100,
-    "attack_speed": 120
+  "base_prop": {
+    "desc" : "str:力量,cst:体质,dex:敏捷,met:心智",
+    "roll" : 0,
+    "str": 20,
+    "cst": 20,
+    "dex": 20,
+    "met": 20
   },
 
   "skills": [
     "skill_combat"
+  ],
+
+  "talent" : [
+    ""
   ],
 
   "buffs": [],

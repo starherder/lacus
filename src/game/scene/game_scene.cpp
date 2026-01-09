@@ -6,7 +6,7 @@
 #include "game/ecs/system_motion.h"
 #include "game/ecs/system_render.h"
 #include "game/ecs/system_bevtree.h"
-#include "game/ecs/system_fight.h"
+#include "game/ecs/system_skill.h"
 #include "game/ecs/system_pickup.h"
 #include "game/ecs/system_dead.h"
 #include "game/ecs/system_selection.h"
@@ -38,6 +38,7 @@ void GameScene::initEscSystem()
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_context) });
+    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SkillSystem>(_context) });
     _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_context) });
 
     _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);

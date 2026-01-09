@@ -1,357 +1,217 @@
-Ôªø#include "system_fight.h"
+#include "system_fight.h"
 
 
-
-namespace game 
+namespace game
 {
-	FightSystem::FightSystem(GameContext& context) : EcsSystem(context) 
-	{
-		_context.dispatcher().sink<CastSkillToObject>().connect<&FightSystem::onCastSkillToObject>(this);
-		_context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
-		_context.dispatcher().sink<ProjectileHitPos>().connect<&FightSystem::onProjectileHitPos>(this);
-		_context.dispatcher().sink<ExecSkillEvent>().connect<&FightSystem::onSkillEvent>(this);
-		
-	}
-	
-	FightSystem::~FightSystem() 
-	{
-	}
 
-	void FightSystem::update(float delta)
-	{
-		auto deltaTicks = _context.frameTicker().deltaTicks();
+    FightSystem::FightSystem(GameContext& context) : EcsSystem(context)
+    {
+        _context.dispatcher().sink<RolePropAlter>().connect<&FightSystem::onRolePropAlter>(this);
+        _context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
+        _context.dispatcher().sink<RoleLevelAlter>().connect<&FightSystem::onRoleLevelAlter>(this);
+    }
 
-		// ÂèóÂáªÁâπÊïà
-		auto views1 = _context.registry().view<CompUnderAttack>();
-		for(auto& ent : views1)
-		{
-			auto underATK = _context.registry().try_get<CompUnderAttack>(ent);
-			if(underATK && underATK->under_attack)
-			{
-				underATK->tween.step(deltaTicks);
-			}
-		}
+    FightSystem::~FightSystem()
+    {
+    }
 
-		auto views = _context.registry().view<CompNameId, CompSkillComm>();
-		for (auto& ent : views)
-		{
-			// ÊäÄËÉΩÂÜ∑Âç¥
-			auto& skillComm = _context.registry().get<CompSkillComm>(ent);
-			if (skillComm.state == SkillState::Cooling)
-			{
-				auto skillCD = _context.registry().try_get<CompSkillCD>(ent);
-				if (skillCD)
-				{
-					skillCD->current_tick += deltaTicks;
-					if (skillCD->current_tick >= skillCD->total_ticks) 
-					{
-						skillCD->current_tick = 0;
-						skillComm.state = SkillState::OK;
-					}
-				}
-			}
+    void FightSystem::update(float delta)
+    {
 
-			// ÊäÄËÉΩÁâπÊïà
-			if (skillComm.state == SkillState::Launching)
-			{
-				auto skillTween = _context.registry().try_get<CompSkillTween>(ent);
-				if (skillTween)
-				{
-					skillTween->tween.step(deltaTicks);
-				}
-			}
-		}
-	}
+    }
 
-	tweeny::tween<float, float> FightSystem::makeSkillTween(const CastSkillToObject& e)
-	{
-		if (!_context.registry().valid(e.source))
-		{
-			return tweeny::tween<float, float>{};
-		}
+    void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)
+    {
+        // º∆À„…À∫¶
 
-		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
-		auto& transValue = skillTween.trans_value;
+        auto compName = _context.registry().get<CompNameId>(e.skill);
+        auto compAffect = _context.registry().get<CompSkillAffect>(e.skill);
+        
+        auto funcs = parseFightFunc(compAffect.func);
+        if (!funcs)
+        {
+            spdlog::error("skill: id({}) cfg({}), func config({}) error.", 
+                (uint32_t)e.skill, compName.cfg_id, compAffect.func);
+            return;
+        }
 
-		if(skillTween.trans_type == TweenTransform::Motion)
-		{
-			auto& srcPos = srcTrans.position;
-			Vec2 tgtPos = { 0, 0 };
-			if (_context.registry().valid(e.target))
-			{
-				auto& tgtTrans = _context.registry().get<CompTransform>(e.target);
-				tgtPos = tgtTrans.position;
-			}
+        for (auto& fac : funcs.value())
+        {
+            applyFuncToTarget(fac, e.source, e.target);
+        }
+    }
 
-			auto dstPos = srcPos + glm::normalize(tgtPos - srcPos)* transValue;
+    void FightSystem::onRolePropAlter(const RolePropAlter& e)
+    {
+        auto& base = _context.registry().get<CompBaseProp>(e.actor);
+        auto& fight = _context.registry().get<CompFightProp>(e.actor);
 
-			return tweeny::from(srcPos.x, srcPos.y)
-				.to(dstPos.x, dstPos.y)
-				.via(skillTween.prev_tween)
-				.during(skillAffect.prev_ticks)
-				.to(srcPos.x, srcPos.y)
-				.via(skillTween.post_tween)
-				.during(skillAffect.post_ticks)
-				.onStep([e, this](auto& t, float x, float y) {
-						if (_context.registry().valid(e.source)) {
-							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-							srcTrans.position = { x, y };
-						}
-						return false;
-					});
-		} 
-		
-		if(skillTween.trans_type == TweenTransform::Scale)
-		{
-			auto& srcSize = srcTrans.size;
-			auto transValue = skillTween.trans_value;
-			auto dstSize = srcSize + Vec2{transValue, transValue};
+        // TODO: º∆À„π´ Ω £°£°£°£°
 
-			return tweeny::from(srcSize.x, srcSize.y)
-				.to(dstSize.x, dstSize.y)
-				.via(skillTween.prev_tween)
-				.during(skillAffect.prev_ticks)
-				.to(srcSize.x, srcSize.y)
-				.via(skillTween.post_tween)
-				.during(skillAffect.post_ticks)
-				.onStep([e, this](auto& t, float x, float y) {
-						if (_context.registry().valid(e.source)) {
-							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-							srcTrans.size = { x, y };
-						}
-						return false;
-					});
-		}
+        fight.hpm = base.cst * 10; // hp max
+        fight.hpr = 0.1; // hp increase ratio
+        if (e.reset_hp) fight.hp = fight.hpm;
 
-		return tweeny::tween<float, float>{};
-	}
+        fight.atk = base.cst / 3 + base.str; 
+        fight.def = base.cst + base.str / 3; 
+        fight.mvs = base.dex;
+        fight.ats = base.dex;
+        fight.atd = base.dex + base.str;
+        fight.crt = base.dex / 10000;
+        fight.par = base.dex / 10000;
 
-	void FightSystem::onCastSkillToObject(const CastSkillToObject& e)
-	{
-		spdlog::info("CastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
+        // fight.xxx += buf.xxx // buf
+        // fight.xxx += equip.xxx // ◊∞±∏
+        // fight.xxx + carrier.xxx // ‘ÿæﬂ
+    }
 
-		if (_context.registry().valid(e.skill) == false)
-		{
-			spdlog::warn("onCastSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
-			return;
-		}
+    void FightSystem::onRoleLevelAlter(const RoleLevelAlter& e)
+    {
+        int level = e.level;
 
-		auto& compName = _context.registry().get<CompNameId>(e.skill);
-		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
-		if (skillComm.state != SkillState::OK)
-		{
-			spdlog::warn("onCastSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
-			return;
-		}
+        // TODO: º∆À„π´ Ω £°£°£°£°
+        auto& base = _context.registry().get<CompBaseProp>(e.actor);
+        base.cst += 10;
+        base.str += 10;
+        base.met += 10;
+        base.met += 10;
 
-		skillComm.state = SkillState::Launching;
+        _context.dispatcher().trigger(RolePropAlter{ e.actor, true });
+    }
 
-		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
+    FightSystem::FuncFactorOpt FightSystem::parseFightFunc(const std::string& str)
+    {
+        // hp-,hp+20,hp-2*,hp+30%,buf+bleed,buf-poison
 
-		skillTween.tween = makeSkillTween(e);
+        std::vector<FuncFactor> result;
 
-		skillTween.tween.onPoint([e, this](auto& t, float x, float y) {
-				if (_context.registry().valid(e.source) == false) {
-					return false;
-				}
+        auto& views = utility::StringUtil::split(str, ',');
+        for (auto& svitem : views)
+        {
+            std::string sitem{ svitem.data(), svitem.size() };
 
-				skillAffectApplyToObject(e);
-				return false;
-			});
+            FuncFactor fac;
+            size_t kpos = 0;
+            size_t mpos = 0;
+            size_t ppos = 0;
 
-		skillTween.tween.onStep([e, this](auto& t, float x, float y) {
-			if (t.isFinished()) {
-				auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
-				skillComm.state = SkillState::Cooling;
-			}
-			return false;
-		});
-	}
+            for (size_t i = 0; i < sitem.size(); i++) {
 
-	void FightSystem::skillAffectApplyToObject(const CastSkillToObject& e)
-	{
-		auto& compName = _context.registry().get<CompNameId>(e.skill);
-		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
+                if (sitem[i] == '+' || sitem[i] == '-') {
+                    kpos = i;
+                    fac.operate = (sitem[i] == '+') ? FuncOperate::Plus : FuncOperate::Minus;
+                }
 
-		spdlog::info("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
+                if (sitem[i] == '*') {
+                    mpos = i;
+                    fac.unit = FuncUnitType::Multi;
+                }
 
-		if (skillComm.type == SkillType::Combat)
-		{
-			_context.dispatcher().trigger(RoleOnAttack{e.source, e.target, e.skill});
-		}
-		else if (skillComm.type == SkillType::Projectile)
-		{
-			startProjectileObject(e.source, e.target, e.skill);
-		}
-		else
-		{
-			auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-			_context.dispatcher().trigger(ExecSkillEvent{e.source, e.skill, skillAffect.event});
-		}
-	}
+                if (sitem[i] == '%') {
+                    ppos = i;
+                    fac.unit = FuncUnitType::Percent;
+                }
+            }
 
-	void FightSystem::startProjectileObject(entt::entity srcid, entt::entity tarid, entt::entity skill)
-	{
-		auto projectComp = _context.registry().try_get<CompProjectileCfg>(skill);
-		if (!projectComp)
-		{
-			return;
-		}
+            if (kpos == 0) {
+                return std::nullopt;
+            }
 
-		auto& compProjectile = *projectComp;
-		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
-		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
+            size_t vpos = 0;
+            if (mpos != 0) {
+                vpos = mpos;
+            }
+            else if (ppos != 0) {
+                vpos = ppos;
+            }
+            else {
+                vpos = sitem.size();
+                fac.unit = FuncUnitType::Value;
+            }
 
-		const auto& tweentype = compProjectile.tween;
-		const auto& source = compSrcTrans.position;
-		const auto& target = compTgtTrans.position;
-		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
-		int during = static_cast<int>((glm::distance(source, target) / speed) * 1000);
+            fac.key = sitem.substr(0, kpos);
 
-		auto object = _context.objectFactory().createProjectile(source, target, speed, compProjectile.tween, compProjectile.particle);
-		if (!_context.registry().valid(object))
-		{
-			return;
-		}
+            std::string sval = sitem.substr(kpos + 1, vpos - kpos - 1);
+            if (utility::StringUtil::is_number(sval)) {
+                fac.fval = std::stof(sval);
+            }
+            else {
+                fac.sval = sval;
+            }
 
-		auto& compTrans = _context.registry().get<CompTransform>(object);
-		compTrans.position = source;
-		compTrans.size = {10, 10};
-		compTrans.rotation = {0, 0};
-		compTrans.scale = { 1, 1 };
+            result.push_back(fac);
+        }
 
-		CompShoot compShoot;
-		compShoot.tween = tweeny::from(source.x, source.y)
-			.to(target.x, target.y)
-			.via(tweentype)
-			.during(during)
-			.to(target.x, target.y)
-			.via(tweentype)
-			.during(200);
+        return result;
+    }
 
-		// ÁîüÊïàÔºåÁ≠â200msÂÜçÈîÄÊØÅÔºåÁ´ãÂàªÊëßÊØÅÊòæÂæóÊïàÊûúÂÉµÁ°¨
-		compShoot.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
-			ProjectileHitPos e;
-			e.source = srcid;
-			e.skill = skill;
-			e.pos = target;
-			_context.dispatcher().trigger(e);
-			return false;
-		});
+    void FightSystem::applyFuncToTarget(FuncFactor fac, entt::entity source, entt::entity target)
+    {
+        if (!_context.registry().valid(target)) {
+            spdlog::error("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
+            return;
+        }
 
-		compShoot.tween.onStep([this, object](auto& t, float x, float y) {
-			if (!_context.registry().valid(object)) {
-				return false;
-			}
+        //auto& compBase = _context.registry().get<CompBaseProp>(target);
+        auto& sourceFight = _context.registry().get<CompFightProp>(source);
+        auto& targetFight = _context.registry().get<CompFightProp>(target);
 
-			if (t.isFinished()) {
-				_context.registry().emplace<CompDestroy>(object);
-				return true;
-			}
+        if (fac.key == "buf")
+        {
+            if (fac.operate == FuncOperate::Plus)
+            {
+                addBuf(target, fac.sval);
+            }
+            else {
+                removeBuf(target, fac.sval);
+            }
+            return;
+        }
 
-			auto& compTrans = _context.registry().get<CompTransform>(object);
-			compTrans.position = { x, y };
-			return false;
-		});
-		_context.registry().emplace<CompShoot>(object, compShoot);
-	}
+        if (fac.key == "hp")
+        {
+            if (fac.fval == 0.0f) {
+                fac.fval = sourceFight.atk;
+            }
+            else
+            {
+                if (fac.unit == FuncUnitType::Multi) {
+                    fac.fval *= sourceFight.atk;
+                }
+                else if (fac.unit == FuncUnitType::Percent) {
+                    fac.fval /= 100.0f;
+                    fac.fval *= targetFight.hpm;
+                }
+                else {
+                    fac.fval = fac.fval;
+                }
+            }
+            
+            if (fac.operate == FuncOperate::Minus) {
+                fac.fval *= -1;
+            }
 
-	void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)
-	{
-		auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
-		if(!underatk)
-		{
-			return;
-		}
+            addHpToTarget(target, fac.fval);
+        }
+    }
 
-		auto& targetNameComp = _context.registry().get<CompNameId>(e.target);
-		auto& skillNameComp = _context.registry().get<CompNameId>(e.skill);
-		spdlog::info("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
-			(uint32_t)targetNameComp.id, targetNameComp.cfg_id, targetNameComp.name,
-			skillNameComp.cfg_id, skillNameComp.name);
+    void FightSystem::addHpToTarget(entt::entity target, float hp)
+    {
+        auto& targetFight = _context.registry().get<CompFightProp>(target);
+        targetFight.hp += hp;
 
-		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
-		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
+        spdlog::info("target({}) hp {}{}", (uint32_t)target, hp>0?"+":"", hp);
 
-		const auto& srcPos = srcTrans.position;
-		const auto& rolePos = dstTrans.position;
+        _context.dispatcher().trigger(RolHpAlter{ target, hp });
+    }
 
-		auto offset = glm::normalize(rolePos - srcPos)* underatk->motion_offset;
-		auto dstPos = rolePos + offset;
+    void FightSystem::addBuf(entt::entity target, const std::string& buf)
+    {
+        spdlog::info("target({}) add buff {}", (uint32_t)target, buf);
+    }
 
-		underatk->under_attack = true;
-		underatk->tween = tweeny::from(rolePos.x, rolePos.y)
-
-			.to(dstPos.x, dstPos.y)
-			.via(underatk->prev_tween)
-			.during(underatk->during / 2)
-
-			.to(rolePos.x, rolePos.y)
-			.via(underatk->post_tween)
-			.during(underatk->during / 2)
-
-			.onStep([e, this](auto& t, float x, float y) 
-			{
-				if (_context.registry().valid(e.target)) 
-				{
-					auto& dstTrans = _context.registry().get<CompTransform>(e.target);
-					dstTrans.position = { x, y };
-
-					if(t.isFinished())
-					{
-						auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
-						if(underatk) 
-						{
-							underatk->under_attack = false;
-						}
-					}
-				}
-				return false;
-			});
-	}
-
-	void FightSystem::onProjectileHitPos(const ProjectileHitPos& e)
-	{
-		spdlog::info("projectile: source({}) skill({}) hit ({},{})", 
-			(uint32_t)e.source, (uint32_t)e.skill, e.pos.x, e.pos.y);
-
-		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
-		auto range = compAffect.affect_range;
-
-		auto objects = _context.currentScene().getObjectsInCircle(e.pos, range);
-		for (auto& [d,obj] : objects) 
-		{
-			auto& cmpComm = _context.registry().get<CompComm>(obj);
-			if (cmpComm.type == ObjectType::Npc)
-			{
-				_context.dispatcher().trigger(RoleOnAttack{ e.source, obj, e.skill });
-			}
-		}
-	}
-
-	void FightSystem::onSkillEvent(const ExecSkillEvent& e)
-	{
-		spdlog::info("onSkillEvent: event = source({}), skill({}), event({})", 
-			(uint32_t)e.source, (uint32_t)e.skill, e.event);
-
-		const auto& views = utility::StringUtil::split(e.event, ',');
-		if (views.size() < 1) return;
-
-		if (views[0] == "sky_turn_dark")
-		{
-			assert(views.size() == 2);
-
-			int ticks = std::stoi(views[1].data());
-			if (ticks < 2000) {
-				spdlog::error("sky_turn_dar time must greater than 2000");
-				ticks = 2000;
-			}
-
-			_context.objectFactory().createSkyEffect(SkyEffect::Dark, Color{ 0,0,0,200 }, ticks-1000, 500, 500);
-		}
-	}
-
+    void FightSystem::removeBuf(entt::entity target, const std::string& buf)
+    {
+        spdlog::info("target({}) remove buff {}", (uint32_t)target, buf);
+    }
 }
