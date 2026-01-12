@@ -34,26 +34,26 @@
 
   "display": {
     "size": "64,64",
-    "groud_color": "#FFFF00FF",
+    "groud_color": "#FFAAFFFF",
     "border_color": "#555555FF",
     "font_color": "#555555FF",
-    "texture": "textures/icon/sry1.png",
-    "tex_rect": "0,0,0.25,0.5",
+    "# texture": "textures/icon/sry1.png",
+    "# tex_rect": "0,0,0.25,0.5",
     "font_file": "fonts/msyh.ttf",
     "font_size": 12
   },
 
   "base_prop": {
     "desc" : "str:力量,cst:体质,dex:敏捷,met:心智",
-    "roll" : 100,
-    "str": 20,
-    "cst": 20,
-    "dex": 20,
-    "met": 20
+    "roll" : 20,
+    "str": 30,
+    "cst": 30,
+    "dex": 30,
+    "met": 30
   },
 
   "skills": [
-    "skill_darkness"
+    "skill_poison"
   ],
 
   "buffs": [],

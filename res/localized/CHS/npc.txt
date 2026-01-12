@@ -7,3 +7,7 @@ text_npc_name_5=刘霸
 
 text_item_name_0=金币
 text_item_name_1=药水
+
+buff_name_poison=毒
+buff_name_slow=慢
+buff_name_encourage=激

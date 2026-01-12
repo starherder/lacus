@@ -9,6 +9,8 @@ namespace game
         _context.dispatcher().sink<RolePropAlter>().connect<&FightSystem::onRolePropAlter>(this);
         _context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
         _context.dispatcher().sink<RoleLevelAlter>().connect<&FightSystem::onRoleLevelAlter>(this);
+        _context.dispatcher().sink<AddFuncsToTarget>().connect<&FightSystem::applyAllFuncs>(this);
+
     }
 
     FightSystem::~FightSystem()
@@ -34,11 +36,20 @@ namespace game
         auto compName = _context.registry().get<CompNameId>(e.skill);
         auto compAffect = _context.registry().get<CompSkillAffect>(e.skill);
         
-        auto funcs = parseFightFunc(compAffect.func);
+        AddFuncsToTarget func;
+        func.source = e.source;
+        func.target = e.target;
+        func.funcs = compAffect.func;
+        _context.dispatcher().trigger(func);
+    }
+
+
+    void FightSystem::applyAllFuncs(const AddFuncsToTarget& e)
+    {
+        auto funcs = SystemUtils::parseFightFunc(e.funcs);
         if (!funcs)
         {
-            spdlog::error("skill: id({}) cfg({}), func config({}) error.", 
-                (uint32_t)e.skill, compName.cfg_id, compAffect.func);
+            spdlog::error("parse func config({}) error.", e.funcs);
             return;
         }
 
@@ -86,73 +97,7 @@ namespace game
         _context.dispatcher().trigger(RolePropAlter{ e.actor, true });
     }
 
-    FightSystem::FuncFactorOpt FightSystem::parseFightFunc(const std::string& str)
-    {
-        // hp-,hp+20,hp-2*,hp+30%,buf+bleed,buf-poison
-
-        std::vector<FuncFactor> result;
-
-        auto& views = utility::StringUtil::split(str, ',');
-        for (auto& svitem : views)
-        {
-            std::string sitem{ svitem.data(), svitem.size() };
-
-            FuncFactor fac;
-            size_t kpos = 0;
-            size_t mpos = 0;
-            size_t ppos = 0;
-
-            for (size_t i = 0; i < sitem.size(); i++) {
-
-                if (sitem[i] == '+' || sitem[i] == '-') {
-                    kpos = i;
-                    fac.operate = (sitem[i] == '+') ? FuncOperate::Plus : FuncOperate::Minus;
-                }
-
-                if (sitem[i] == '*') {
-                    mpos = i;
-                    fac.unit = FuncUnitType::Multi;
-                }
-
-                if (sitem[i] == '%') {
-                    ppos = i;
-                    fac.unit = FuncUnitType::Percent;
-                }
-            }
-
-            if (kpos == 0) {
-                return std::nullopt;
-            }
-
-            size_t vpos = 0;
-            if (mpos != 0) {
-                vpos = mpos;
-            }
-            else if (ppos != 0) {
-                vpos = ppos;
-            }
-            else {
-                vpos = sitem.size();
-                fac.unit = FuncUnitType::Value;
-            }
-
-            fac.key = sitem.substr(0, kpos);
-
-            std::string sval = sitem.substr(kpos + 1, vpos - kpos - 1);
-            if (utility::StringUtil::is_number(sval)) {
-                fac.fval = std::stof(sval);
-            }
-            else {
-                fac.sval = sval;
-            }
-
-            result.push_back(fac);
-        }
-
-        return result;
-    }
-
-    void FightSystem::applyFuncToTarget(FuncFactor fac, entt::entity source, entt::entity target)
+    void FightSystem::applyFuncToTarget(SystemUtils::FuncFactor fac, entt::entity source, entt::entity target)
     {
         if (!_context.registry().valid(target)) {
             spdlog::error("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
@@ -160,14 +105,13 @@ namespace game
         }
 
         //auto& compBase = _context.registry().get<CompBaseProp>(target);
-        auto& sourceFight = _context.registry().get<CompFightProp>(source);
         auto& targetFight = _context.registry().get<CompFightProp>(target);
 
         if (fac.key == "buf")
         {
-            if (fac.operate == FuncOperate::Plus)
+            if (fac.operate == SystemUtils::FuncOperate::Plus)
             {
-                addBuf(target, fac.sval);
+                addBuf(source, target, fac.sval);
             }
             else {
                 removeBuf(target, fac.sval);
@@ -178,14 +122,16 @@ namespace game
         if (fac.key == "hp")
         {
             if (fac.fval == 0.0f) {
+                auto& sourceFight = _context.registry().get<CompFightProp>(source);
                 fac.fval = sourceFight.atk;
             }
             else
             {
-                if (fac.unit == FuncUnitType::Multi) {
+                if (fac.unit == SystemUtils::FuncUnitType::Multi) {
+                    auto& sourceFight = _context.registry().get<CompFightProp>(source);
                     fac.fval *= sourceFight.atk;
                 }
-                else if (fac.unit == FuncUnitType::Percent) {
+                else if (fac.unit == SystemUtils::FuncUnitType::Percent) {
                     fac.fval /= 100.0f;
                     fac.fval *= targetFight.hpm;
                 }
@@ -194,33 +140,71 @@ namespace game
                 }
             }
             
-            if (fac.operate == FuncOperate::Minus) {
+            if (fac.operate == SystemUtils::FuncOperate::Minus) {
                 fac.fval *= -1;
             }
 
+            fac.fval = calcHpDamage(targetFight, fac.fval);
+
             addHpToTarget(target, fac.fval);
         }
+    }
+
+    float FightSystem::calcHpDamage(CompFightProp props, float hp)
+    {
+        if(hp < 0.0f)
+        {
+            // TODO: ÉËº¦¹«Ê½
+            return  hp;
+        } 
+
+        return hp;
     }
 
     void FightSystem::addHpToTarget(entt::entity target, float hp)
     {
         auto& targetTrans = _context.registry().get<CompTransform>(target);
         auto& targetFight = _context.registry().get<CompFightProp>(target);
-        targetFight.hp += hp;
 
-        showHpFloatingTip(target, hp);
+        float hp_old = targetFight.hp;
+
+        targetFight.hp += hp;
+        targetFight.hp = std::clamp(targetFight.hp, 0.0f, targetFight.hpm);
+
+        float dif_hp = targetFight.hp - hp_old;
+        if(dif_hp !=0 )
+        {
+            showHpFloatingTip(target, dif_hp);
+        }
+
+        auto pdead = _context.registry().try_get<CompDead>(target);
+        if(targetFight.hp <= 0.0f && pdead == nullptr) 
+        {
+            _context.registry().emplace<CompDead>(target);    
+        }
 
         _context.dispatcher().trigger(RolHpAlter{ target, hp });
     }
 
-    void FightSystem::addBuf(entt::entity target, const std::string& buf)
+    void FightSystem::addBuf(entt::entity source, entt::entity target, const std::string& buf)
     {
         spdlog::info("target({}) add buff {}", (uint32_t)target, buf);
+
+        AddBuffToObject buff;
+        buff.source = source;
+        buff.target = target;
+        buff.cfgid = buf;
+        _context.dispatcher().trigger(buff);
     }
 
     void FightSystem::removeBuf(entt::entity target, const std::string& buf)
     {
         spdlog::info("target({}) remove buff {}", (uint32_t)target, buf);
+
+        RemoveBuffFromObject buff;
+        buff.target = target;
+        buff.cfgid = buf;
+        _context.dispatcher().trigger(buff);
     }
 
     void FightSystem::showHpFloatingTip(entt::entity target, float hp)
@@ -256,10 +240,11 @@ namespace game
             compTrans.position.y = y;
 
             auto& compFightText = _context.registry().get<CompFightText>(word);
-            compFightText.color.a = a;
+            compFightText.color.a = (uint8_t)a;
 
             return false;
         });
+
 
     }
 }

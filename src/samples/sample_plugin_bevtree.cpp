@@ -90,7 +90,7 @@ namespace samples {
             int leny = symy * rand() % 300;
 
             _target = _npc->pos + Vec2(lenx, leny);
-            _npc->vel = glm::normalize(_target - _npc->pos) * _speed;
+            _npc->vel = SafeNormal(_target - _npc->pos) * _speed;
         }
 
         void terminate(Status s) override
@@ -358,7 +358,7 @@ namespace samples {
 
     void SamplePluginBevTree::initBevTree()
     {
-        auto filepath = application()->resPath() / "data/bevtree/bev_common_npc.xml";
+        auto filepath = application()->resPath() / "data/bevtree/";
         bevtree::BevTreeManager::inst().load(filepath);
 
         {

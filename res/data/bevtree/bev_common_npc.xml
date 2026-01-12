@@ -32,6 +32,7 @@
               <patrol_findpath />
               <patrol_move />
             </sequence>
+            <defend_attack />
             <pick_item/>
           </parallel>
           <patrol_idle time="2.0" />

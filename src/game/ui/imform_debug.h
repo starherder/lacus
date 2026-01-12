@@ -44,6 +44,8 @@ namespace game
         
         void drawCameraWindow();
 
+        void drawSelectEntityProps();
+
     public:
         entt::entity _selectEntity = entt::null;
         std::string _selectCfgId;

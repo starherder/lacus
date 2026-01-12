@@ -20,15 +20,16 @@ namespace game
 		ObjectFactory(ObjectFactory&&) = delete;
 		ObjectFactory(const ObjectFactory&) = delete;
 
-		bool loadObjects(GameContext& context, const fs::path& rolescfg);
-
-		bool loadSkills(GameContext& context, const fs::path& skillscfg);
+		bool loadObjects(GameContext& context, const fs::path& roledir);
+		bool loadSkills(GameContext& context, const fs::path& skilldif);
+		bool loadBuffs(GameContext& context, const fs::path& buffdir);
 
 		entt::entity createObject(const std::string& cfgid);
 
 		entt::entity createRole(const std::string& cfgid);
-	
+
 		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
+		entt::entity createBuff(entt::entity owner, const std::string& cfgid);
 
 		entt::entity createProjectile(const Vec2& source, const Vec2& target, float speed, 
 					const std::string& tween_type, const std::string& particle);
@@ -43,9 +44,10 @@ namespace game
 		const auto& getAllSkillCfgIds() { return _skillCfgIds; }
 
 	private:
-		bool loadRoleCfg(const std::string& id, const fs::path& rolescfg);
+		bool loadRoleCfg(const fs::path& rolescfg);
 
-		bool loadSkillCfg(const std::string& id, const fs::path& skillcfg);
+		bool loadSkillCfg(const fs::path& skillcfg);
+		bool loadBuffCfg(const fs::path& skillcfg);
 
 		std::optional<utility::Var> jsonToVar(const nlohmann::json& value);
 
@@ -54,9 +56,11 @@ namespace game
 
 		std::vector<std::string> _objectCfgIds;
 		std::vector<std::string> _skillCfgIds;
+		std::vector<std::string> _buffCfgIds;
 
 		ConfigJsonMap _jsonObjectCfgs;
 		ConfigJsonMap _jsonSkillCfgs;
+		ConfigJsonMap _jsonBuffCfgs;
 	};
 
 

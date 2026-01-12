@@ -184,7 +184,7 @@ public:
     void initialize() override {
         _role = getBlackboard()->getValue<BrRole*>("role", nullptr);
         _destination = getBlackboard()->getValue<Vec2>("destination", {0, 0});
-        _role->vel = glm::normalize(_destination - _role->pos);
+        _role->vel = SafeNormal(_destination - _role->pos);
     }
 
     void terminate(Status s) override {
@@ -258,7 +258,7 @@ RegisterBehaviorNode("br_kill", BrKillPrey);
 
 void SamplePluginBevTree::initBattleRoyale()
 {
-    auto filepath = application()->resPath() / "data/bevtree/bev_battle_royale.xml";
+    auto filepath = application()->resPath() / "data/bevtree/";
     bevtree::BevTreeManager::inst().load(filepath);
 
     for(int i=0; i<50; i++)

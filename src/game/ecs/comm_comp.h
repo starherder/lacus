@@ -38,6 +38,7 @@ namespace game
     };
 
     struct CompDead {
+        int ticks = 0;
     };
 
     struct CompDestroy {
@@ -146,6 +147,11 @@ namespace game
         std::string effect;
 
         tweeny::tween<float, float> tween;
+    };
+
+    struct CompAudio 
+    {
+        std::string audio_name;
     };
 
     enum class SkyEffect

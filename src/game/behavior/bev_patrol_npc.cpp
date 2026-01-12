@@ -1,5 +1,5 @@
 ﻿
-#include "bev_npc.h"
+#include "bev_patrol_npc.h"
 #include "bevtree/bevtree.h"
 
 #include "game/scene/game_scene.h"
@@ -16,6 +16,7 @@ namespace game {
 	RegisterBehaviorNode("patrol_move", BevNode_PatrolMove);
 	RegisterBehaviorNode("patrol_idle", BevNode_Idle);
 	RegisterBehaviorNode("pick_item", BevNode_PickItem);
+	RegisterBehaviorNode("defend_attack", BevNode_DefendAttack);
 
 
 	bool BevNode_FindPatrolPos::load(const bevtree::XmlNode* node)
@@ -25,13 +26,21 @@ namespace game {
 
 	Status BevNode_FindPatrolPos::update()
 	{
-		if (!_context || _actor==entt::null) 
+		if (!_context || _context->registry().valid(_actor)==false) 
 		{
 			return Status::Failure;
 		}
 
-		auto& trans = _context->registry().get<CompTransform>(_actor);
-		auto& motion = _context->registry().get<CompMotion>(_actor);
+		auto ptrans = _context->registry().try_get<CompTransform>(_actor);
+		auto pmotion = _context->registry().try_get<CompMotion>(_actor);
+		if(!ptrans || !pmotion)
+		{
+			spdlog::error("actor {} Have NO transform nor motion.", (uint32_t)_actor);
+			return Status::Failure;
+		}
+
+		auto& trans = *ptrans;
+		auto& motion = *pmotion;
 		const auto& src = trans.position;
 	
 		auto pPatrolCom = _context->registry().try_get<CompNpcPatrol>(_actor);
@@ -51,7 +60,6 @@ namespace game {
 				auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
 				if(!path)
 				{
-					spdlog::warn("find patrol pos ({}, {}) unreachable, find again.", dest.x, dest.y);
 					continue;
 				}
 
@@ -80,7 +88,9 @@ namespace game {
 		//spdlog::info("BevNode_FindPatrolPos: terminate");
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////
+
+	// ---------------------------------------------------------------------
+
 
 	bool BevNode_PatrolMove::load(const XmlNode* node) 
 	{
@@ -91,7 +101,6 @@ namespace game {
 	{
 		if(_finished) 
 		{
-			//spdlog::info("BevNode_PatrolMove: update success");
 			return Status::Success;
 		}
 
@@ -112,15 +121,11 @@ namespace game {
 
 		auto& motion = _context->registry().get<CompMotion>(_actor);
 		_context->dispatcher().trigger(MoveToGrid{ _actor, motion.targetGrid, false });
-
 		_context->dispatcher().sink<MotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
-
-		//spdlog::info("BevNode_PatrolMove: initialize");
 	}
 	
 	void BevNode_PatrolMove::terminate(Status s) 
 	{
-		//spdlog::info("BevNode_PatrolMove: terminate");
 	}
 
 	void BevNode_PatrolMove::onMotionStop(const MotionStop& e)
@@ -130,11 +135,11 @@ namespace game {
 			return;
 		}
 
-		//spdlog::info("BevNode_PatrolMove: onMotionStop");
 		_finished = true;
 	}
 
-	//////////////////////////////////////////////////////////////////////
+
+	// ---------------------------------------------------------------------
 
 	bool BevNode_Idle::load(const XmlNode* node) 
 	{
@@ -152,7 +157,6 @@ namespace game {
 		_idleCurSeconds += _context->frameTicker().deltaSeconds();
 		if(_idleCurSeconds > _idleTotalSeconds) 
 		{
-			//spdlog::info("BevNode_Idle: update success");
 			return Status::Success;
 		}
 
@@ -163,17 +167,14 @@ namespace game {
 	{
 		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
 		_idleCurSeconds = 0.0f;
-
-		//spdlog::info("BevNode_Idle: initialize");
 	}
 
 	void BevNode_Idle::terminate(Status s) 
 	{
-		//spdlog::info("BevNode_Idle: terminate");
 	}
 
 
-	////////////////////////////////////////////////////
+	// ---------------------------------------------------------------------
 
 
 	bool BevNode_PickItem::load(const XmlNode* node)
@@ -225,8 +226,15 @@ namespace game {
 			return Status::Failure;
 		}
 
-		auto& trans = _context->registry().get<CompTransform>(_actor);
-		auto& motion = _context->registry().get<CompMotion>(_actor);
+		auto ptrans = _context->registry().try_get<CompTransform>(_actor);
+		auto pmotion = _context->registry().try_get<CompMotion>(_actor);
+		if(!ptrans || !pmotion)
+		{
+			return Status::Failure;
+		}
+
+		auto& trans = *ptrans;
+		auto& motion = *pmotion;
 
 		const auto& src = trans.position;
 		auto srcGrid = _context->currentScene().getGridFromPos(src);
@@ -294,5 +302,73 @@ namespace game {
 			//spdlog::info("BevNode_PickItem: role grid change, need check.");
 			_needCheck = true;
 		}
+	}
+
+	// ---------------------------------------------------------------------
+
+
+	bool BevNode_DefendAttack::load(const XmlNode* node)
+	{
+		return true;
+	}
+
+	Status BevNode_DefendAttack::update()
+	{
+		return checkEnemy();
+	}
+
+	void BevNode_DefendAttack::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
+		if (!_context || _actor == entt::null)
+		{
+			spdlog::error("actor NOT valid.");
+			return;
+		}
+	}
+
+	void BevNode_DefendAttack::terminate(Status s)
+	{
+	}
+	
+	Status BevNode_DefendAttack::checkEnemy()
+	{
+		auto& trans = _context->registry().get<CompTransform>(_actor);
+		auto& rolePos = trans.position;
+		if(std::isnan(rolePos.x) || std::isnan(rolePos.y))
+		{
+			spdlog::error("rolepos ({}, {}) is nan!!", rolePos.x, rolePos.y);
+			return Status::Failure;
+		}
+
+		auto& skills = _context->registry().get<CompSkills>(_actor);
+		for (auto& skill_id : skills.skills)
+		{
+			auto& compName = _context->registry().get<CompNameId>(skill_id);
+			auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);
+
+			if (compSkill.type == SkillType::Combat || compSkill.type == SkillType::Projectile)
+			{
+				// 需要目标，寻找目标
+				auto dis = compSkill.distance;
+				auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
+				for (auto& [dis, target] : objects) {
+					if (target == _actor) continue;
+
+					auto pdead = _context->registry().try_get<CompDead>(target);
+					if(pdead) continue;
+
+					auto& compComm = _context->registry().get<CompComm>(target);
+					if (compComm.type == ObjectType::Npc) {
+
+						_context->dispatcher().trigger(CastSkillToObject{ _actor, target, skill_id });
+						return Status::Success;
+					}
+				}
+			}
+		}
+
+		return Status::Failure;
 	}
 }

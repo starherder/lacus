@@ -24,7 +24,7 @@ namespace particle
 		std::string GetName();
 		std::string GetFile();
 
-		void Load(const std::string& filename);
+		void Load(const std::string& cfgdir);
 
 		void SetDescription(const ParticleDescription& desc);
 
@@ -107,7 +107,7 @@ namespace particle
 
 		StringStringMap _particleFiles;
 
-		std::filesystem::path _cfgfile;
+		std::filesystem::path _cfgDir;
 
 	};
 }

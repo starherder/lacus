@@ -8,6 +8,7 @@ namespace game
 	{
 		_context.dispatcher().sink<CastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
 		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
+		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackHurt>(this);
 		_context.dispatcher().sink<ProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
 		_context.dispatcher().sink<ExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
 		
@@ -85,7 +86,7 @@ namespace game
 				tgtPos = tgtTrans.position;
 			}
 
-			auto dstPos = srcPos + glm::normalize(tgtPos - srcPos)* transValue;
+			auto dstPos = srcPos + SafeNormal(tgtPos-srcPos)* transValue;
 
 			return tweeny::from(srcPos.x, srcPos.y)
 				.to(dstPos.x, dstPos.y)
@@ -174,6 +175,12 @@ namespace game
 	{
 		auto& compName = _context.registry().get<CompNameId>(e.skill);
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
+
+		auto pcompAudio = _context.registry().try_get<CompAudio>(e.skill);
+		if(pcompAudio && pcompAudio->audio_name.size() > 0)
+		{
+			_context.audioPlayer().playSound(HashString(pcompAudio->audio_name.c_str()));
+		}
 
 		spdlog::info("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
 
@@ -320,7 +327,7 @@ namespace game
 		const auto& srcPos = srcTrans.position;
 		const auto& rolePos = dstTrans.position;
 
-		auto offset = glm::normalize(rolePos - srcPos)* underatk->motion_offset;
+		auto offset = SafeNormal(rolePos - srcPos) * underatk->motion_offset;
 		auto dstPos = rolePos + offset;
 
 		underatk->under_attack = true;
@@ -354,4 +361,16 @@ namespace game
 			});
 	}
 
+	void SkillSystem::onRoleUnderAttackHurt(const RoleOnAttack& e)
+	{
+		if (!_context.registry().valid(e.target))
+		{
+			return;
+		}
+
+		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
+	
+
+		// "hp-100"
+	}
 }

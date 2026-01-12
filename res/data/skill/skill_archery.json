@@ -4,14 +4,15 @@
   "name" : "text_skill_archery",
   "desc" : "text_skill_archery_desc",
 
-  "distance" : "150,350",
-  "cd_ticks" : 1000,
+  "distance" : 350,
+  "cd_ticks": 1000,
+  "sound" :  "audio/battle_of_tiles/arrow.wav",
 
   "affect" : {
     "prev_ticks" : 200,
     "post_ticks" : 200,
 
-    "func" : "hp-20",
+    "func" : "hp-50",
     "target" : "role",
     "range" : 0,
 
@@ -28,7 +29,7 @@
   "projectile": {
     "name": "",
     "particle": "trail",
-    "speed": 300,
+    "speed": 1000,
     "tween": "cubicIn"
   }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <particle version="1.0">
     <system>
-        <prop name="texture_file" value="particles/config/round.png"/>
+        <prop name="texture_file" value="particles/round.png"/>
     </system>
     <emmiter>
         <prop name="start_pos" value="0.000000,0.000000"/>
@@ -13,19 +13,19 @@
         <prop name="emit_type" value="0"/>
         <prop name="duration" value="-1.000000" desc="发射持续时间，-1表示一直发射"/>
         <prop name="max_particles" value="100" desc="粒子最大数量"/>
-        <prop name="life_span" value="0.5" desc="例子存在时间"/>
+        <prop name="life_span" value="0.200000" desc="例子存在时间"/>
         <prop name="life_span_variance" value="0.000000"/>
     </emmiter>
     <effect>
-        <prop name="start_color" value="255,255,0,200"/>
+        <prop name="start_color" value="70,70,100,255"/>
         <prop name="start_color_variance" value="0,0,0,0"/>
-        <prop name="finish_color" value="255,255,255,0"/>
+        <prop name="finish_color" value="0,0,0,0"/>
         <prop name="finish_color_variance" value="0,0,0,0"/>
-        <prop name="start_size" value="30.000000"/>
-        <prop name="start_size_variance" value="30.000000"/>
+        <prop name="start_size" value="20.000000"/>
+        <prop name="start_size_variance" value="0.000000"/>
         <prop name="finish_size" value="0.000000"/>
-        <prop name="finish_size_variance" value="20.000000"/>
-        <prop name="start_rotation" value="180.000000"/>
+        <prop name="finish_size_variance" value="0.000000"/>
+        <prop name="start_rotation" value="0.000000"/>
         <prop name="start_rotation_variance" value="0.000000"/>
         <prop name="finish_rotation" value="0.000000"/>
         <prop name="finish_rotation_variance" value="0.000000"/>

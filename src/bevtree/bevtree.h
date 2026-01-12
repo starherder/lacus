@@ -78,7 +78,7 @@ namespace bevtree
 
         ~BevTreeManager();
 
-        bool load(const std::filesystem::path& filepath);
+        bool load(const std::filesystem::path& cfgdir);
 
         BehaviorTree::Ptr createBevTree(const std::string& name);
 
@@ -91,9 +91,10 @@ namespace bevtree
         NodeCreator::Ptr getNodeCreator(const std::string& name);
 
     private:
-        std::unique_ptr <tinyxml2::XMLDocument> _xmlDoc = nullptr;
+        std::unordered_map<std::string, std::shared_ptr<tinyxml2::XMLDocument>> _xmlDocs;
 
         std::unordered_map<std::string, XmlNode*> _xmlNodes;
+
         std::unordered_map<std::string, NodeCreator::Ptr> _creators;
     };
 

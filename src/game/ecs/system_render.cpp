@@ -88,6 +88,9 @@ void RenderSystem::drawObjects()
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& display = ent_view.get<CompDisplay>(ent);
 
+        auto pdead = _context.registry().try_get<CompDead>(ent);
+        //bool dead = (pdead == nullptr);
+
         auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
 
         if(transform.coord_mode == CoordMode::WorldSpace)
@@ -102,9 +105,32 @@ void RenderSystem::drawObjects()
         }
         else
         {
-            painter.fillRect(display.ground_color, dstrect);
-            painter.drawRect(display.border_color, dstrect);
+            auto ground_color = display.ground_color;
+            auto border_color = display.border_color;
+            if(pdead)
+            {
+                ground_color = Color::Light;
+                border_color = Color::Gray;
+            }
+
+            painter.fillRect(ground_color, dstrect);
+            painter.drawRect(border_color, dstrect);
             painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, display.font_color);
+        }
+
+        auto pFight = _context.registry().try_get<CompFightProp>(ent);
+        if(pFight)
+        {
+            if (pFight->hpm > 0.0f) 
+            {
+                float ratio = pFight->hp/pFight->hpm;
+
+                Rect bgrect = {dstrect.x+5, dstrect.y+dstrect.w-10, dstrect.w-10, 5.0f};
+                Rect ftrect = {bgrect.x, bgrect.y, bgrect.w*ratio, bgrect.h};
+
+                painter.fillRect(Color::Light, bgrect);
+                painter.fillRect(Color::Red, ftrect);
+            }
         }
 
         auto selectComp = _context.registry().try_get<CompSelection>(ent);

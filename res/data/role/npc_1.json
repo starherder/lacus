@@ -40,7 +40,7 @@
 
   "base_prop": {
     "desc" : "str:力量,cst:体质,dex:敏捷,met:心智",
-    "roll" : 20,
+    "roll" : 10,
     "str": 20,
     "cst": 20,
     "dex": 20,

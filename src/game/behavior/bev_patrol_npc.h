@@ -85,4 +85,23 @@ namespace game
 		float _idleTotalSeconds = 1.0f;
 		float _idleCurSeconds = 0.0f;
 	};
+
+
+	class BevNode_DefendAttack : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+	private:
+		Status checkEnemy();
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor;
+	};
 }

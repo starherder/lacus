@@ -32,7 +32,20 @@ namespace utility
 
 		bool setLanguage(Language lan) { _language = lan; }
 
-		bool load(Language language, const std::filesystem::path& file_path)
+        bool load(Language language, const std::filesystem::path& dir)
+        {
+            for (const auto& entry : std::filesystem::directory_iterator(dir))
+            {
+                if (entry.is_regular_file())
+                {
+                    auto filename = entry.path();
+                    loadfile(language, filename);
+                }
+            }
+            return true;
+        }
+
+		bool loadfile(Language language, const std::filesystem::path& file_path)
 		{
             auto trim_space = [](std::string& s) {
                 s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {

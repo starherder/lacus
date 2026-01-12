@@ -101,7 +101,7 @@ namespace game
     void GameCamera::moveCamera(const Vec2& dir)
     {
         _vec += dir;
-        _vec = glm::normalize(_vec);
+        _vec = SafeNormal(_vec);
         _vec *= _speed;
 
         if (_application->eventDispatcher().isShiftKeyDown())

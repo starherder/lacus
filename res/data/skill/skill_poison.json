@@ -1,0 +1,35 @@
+{
+  "cfgid": "skill_poison",
+  "type": "projectile",
+  "name": "text_skill_poison",
+  "desc": "text_skill_poison_desc",
+
+  "distance": 300,
+  "cd_ticks": 1000,
+  "sound": "audio/battle_of_tiles/slime.wav",
+
+  "affect": {
+    "prev_ticks": 200,
+    "post_ticks": 200,
+
+    "func": "buf+buff_poison",
+    "target": "role",
+    "range": 0,
+
+    "event": ""
+  },
+
+  "tween": {
+    "trans_type": "scale",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "projectile": {
+    "name": "",
+    "particle": "trail",
+    "speed": 600,
+    "tween": "cubicIn"
+  }
+}

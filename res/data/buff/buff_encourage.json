@@ -1,0 +1,25 @@
+{
+  "cfgid": "buff_encourage",
+  "name": "buff_name_encourage",
+  "desc": "buff_desc_encourage",
+
+  "duration": -1,
+
+  "period": 0,
+
+  "func": "atk+20",
+
+  "event": "",
+
+  "display": {
+    "size": "16,16",
+    "groud_color": "#FF660088",
+    "border_color": "#55555588",
+    "font_color": "#55555588",
+    "# texture": "textures/icon/sry1.png",
+    "# tex_rect": "0,0,0.25,0.5",
+    "font_file": "fonts/msyh.ttf",
+    "font_size": 4
+  }
+
+}

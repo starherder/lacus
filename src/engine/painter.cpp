@@ -243,8 +243,8 @@ namespace engine
 		{
 			const int i2 = (i1 + 1) == points_count ? 0 : i1 + 1;
 			Vec2 diff = _vPaths[i2] - _vPaths[i1];
-			diff = glm::normalize(diff);
-
+			diff = SafeNormal(diff);
+			
 			temp_normals[i1].x = diff.y;
 			temp_normals[i1].y = -diff.x;
 		}
@@ -429,7 +429,7 @@ namespace engine
 				const Vec2& p0 = _vPaths[i0];
 				const Vec2& p1 = _vPaths[i1];
 				Vec2 diff = p1 - p0;
-				diff = glm::normalize(diff);
+				diff = SafeNormal(diff);
 
 				temp_normals[i0].x = diff.y;
 				temp_normals[i0].y = -diff.x;

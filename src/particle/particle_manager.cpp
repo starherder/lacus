@@ -472,32 +472,24 @@ namespace particle
 
 	bool ParticleManager::Reload()
 	{
-		if(_cfgfile.empty()) return false;
+		if(_cfgDir.empty()) return false;
 
-		return LoadParticles(_cfgfile);
+		return LoadParticles(_cfgDir);
 	}
 	
-	bool ParticleManager::LoadParticles(const std::filesystem::path& file)
+	bool ParticleManager::LoadParticles(const std::filesystem::path& cfgdir)
 	{
-		_cfgfile = file;
+		_cfgDir = cfgdir;
 		_particleFiles.clear();
 
-		tinyxml2::XMLDocument doc;
-		doc.LoadFile(file.string().c_str());
-		fail_return_false(!doc.Error());
-
-		tinyxml2::XMLElement* pEle = doc.RootElement();
-		fail_return_false(pEle);
-
-		pEle = pEle->FirstChildElement();
-		while (pEle)
+		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
 		{
-			std::string name = pEle->Attribute("name");
-			std::string file = pEle->Attribute("file");
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
 
-			_particleFiles.insert({name, file});
-
-			pEle = pEle->NextSiblingElement();
+				_particleFiles.insert({filename.stem().string(), filename.string() });
+			}
 		}
 
 		return true;

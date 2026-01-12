@@ -320,7 +320,7 @@ namespace samples
     {
         ParticleManager::inst().init(application());
 
-		auto cfgfile = application()->resPath() / "particles/particles.xml";
+		auto cfgfile = application()->resPath() / "particles/";
 
         bool res = ParticleManager::inst().LoadParticles(cfgfile);
         if (!res) {

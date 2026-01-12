@@ -11,77 +11,57 @@
 
 namespace game 
 {
-	bool ObjectFactory::loadSkills(GameContext& context, const fs::path& skill_cfg)
+
+	bool ObjectFactory::loadBuffs(GameContext& context, const fs::path& buffdir)
 	{
 		_context = &context;
 
-		nlohmann::json json;
-
-		std::ifstream ifile(skill_cfg.string());
-		if (!ifile.is_open()) {
-			spdlog::error("open file '{}' failed.", skill_cfg.string());
-			return false;
-		}
-
-		try {
-			ifile >> json;
-			spdlog::info("load json from '{}' OK.", skill_cfg.string());
-		}
-		catch (const std::exception& e) {
-			spdlog::error("load json form '{}' failed, err = '{}'", skill_cfg.string(), e.what());
-			return false;
-		}
-
-		auto parentDir = skill_cfg.parent_path();
-
-		for (auto& role : json)
+		for (const auto& entry : std::filesystem::directory_iterator(buffdir))
 		{
-			auto id = role.value("id", "");
-			auto cfg = role.value("cfg", "");
-
-			loadSkillCfg(id, parentDir / cfg);
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
+				loadBuffCfg(filename);
+			}
 		}
 
 		return true;
 	}
 
-	bool ObjectFactory::loadObjects(GameContext& context, const fs::path& roles_cfg)
+	bool ObjectFactory::loadSkills(GameContext& context, const fs::path& skilldir)
 	{
 		_context = &context;
 
-		nlohmann::json json;
-
-		std::ifstream ifile(roles_cfg.string());
-		if (!ifile.is_open()) {
-			spdlog::error("open file '{}' failed.", roles_cfg.string());
-			return false;
-		}
-
-		try {
-			ifile >> json;
-			spdlog::info("load json from '{}' OK.", roles_cfg.string());
-		}
-		catch (const std::exception& e) {
-			spdlog::error("load json form '{}' failed, err = '{}'", roles_cfg.string(), e.what());
-			return false;
-		}
-
-		auto parentDir = roles_cfg.parent_path();
-
-		for(auto& role : json) 
+		for (const auto& entry : std::filesystem::directory_iterator(skilldir))
 		{
-			auto id = role.value("id", "");
-			auto cfg = role.value("cfg", "");
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
+				loadSkillCfg(filename);
+			}
+		}
 
-			loadRoleCfg(id, parentDir/cfg);
+		return true;
+	}
 
-			_objectCfgIds.push_back(id);
+	bool ObjectFactory::loadObjects(GameContext& context, const fs::path& cfgdir)
+	{
+		_context = &context;
+
+
+		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
+		{
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
+				loadRoleCfg(filename);
+			}
 		}
 
 		return true;
 	}
 	
-	bool ObjectFactory::loadRoleCfg(const std::string& id, const fs::path& cfgfile)
+	bool ObjectFactory::loadRoleCfg(const fs::path& cfgfile)
 	{
 		auto jsonptr = std::make_shared<nlohmann::json>();
 
@@ -100,11 +80,20 @@ namespace game
 			return false;
 		}
 
-		_jsonObjectCfgs[id] = jsonptr;
+		std::string cfgid = jsonptr->value("id", "");
+		if (cfgid.empty())
+		{
+			spdlog::error("role file({}) NOT found cfgid.", cfgfile.string());
+			return false;
+		}
+
+		_objectCfgIds.push_back(cfgid);
+
+		_jsonObjectCfgs[cfgid] = jsonptr;
 		return true;
 	}
 
-	bool ObjectFactory::loadSkillCfg(const std::string& id, const fs::path& cfgfile)
+	bool ObjectFactory::loadSkillCfg(const fs::path& cfgfile)
 	{
 		auto jsonptr = std::make_shared<nlohmann::json>();
 
@@ -123,7 +112,48 @@ namespace game
 			return false;
 		}
 
-		_jsonSkillCfgs[id] = jsonptr;
+		std::string cfgid = jsonptr->value("cfgid", "");
+		if(cfgid.empty())
+		{
+			spdlog::error("skill file({}) NOT found cfgid.", cfgfile.string());
+			return false;
+		}
+
+		_skillCfgIds.push_back(cfgid);
+
+		_jsonSkillCfgs[cfgid] = jsonptr;
+		return true;
+	}
+
+	bool ObjectFactory::loadBuffCfg(const fs::path& cfgfile)
+	{
+		auto jsonptr = std::make_shared<nlohmann::json>();
+
+		std::ifstream ifile(cfgfile.string());
+		if (!ifile.is_open()) {
+			spdlog::error("open file '{}' failed.", cfgfile.string());
+			return false;
+		}
+
+		try {
+			ifile >> *jsonptr;
+			spdlog::info("load json from '{}' OK.", cfgfile.string());
+		}
+		catch (const std::exception& e) {
+			spdlog::error("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			return false;
+		}
+
+		std::string cfgid = jsonptr->value("cfgid", "");
+		if (cfgid.empty())
+		{
+			spdlog::error("buff file({}) NOT found cfgid.", cfgfile.string());
+			return false;
+		}
+
+		_buffCfgIds.push_back(cfgid);
+
+		_jsonBuffCfgs[cfgid] = jsonptr;
 		return true;
 	}
 
@@ -278,6 +308,11 @@ namespace game
 			compBase.dex = baseJs.value("dex", 0.0f) + utility::Random_Minus1_1() * roll;
 			compBase.met = baseJs.value("met", 0.0f) + utility::Random_Minus1_1() * roll;
 
+			compBase.str = std::clamp(compBase.str, 10.0f, 100.0f);
+			compBase.cst = std::clamp(compBase.cst, 10.0f, 100.0f);
+			compBase.dex = std::clamp(compBase.dex, 10.0f, 100.0f);
+			compBase.met = std::clamp(compBase.met, 10.0f, 100.0f);
+
 			_context->registry().emplace<CompBaseProp>(role, compBase);
 
 			CompFightProp fightProp;
@@ -298,11 +333,11 @@ namespace game
 			}
 		}
 
-		if(json.contains("skills")) 
+		if (json.contains("skills"))
 		{
 			CompSkills compSkills;
 			auto& skillsJs = json["skills"];
-			for(auto& sk : skillsJs) 
+			for (auto& sk : skillsJs)
 			{
 				auto skillid = sk.get<std::string>();
 
@@ -311,6 +346,20 @@ namespace game
 				compSkills.skills.push_back(skill);
 			}
 			_context->registry().emplace<CompSkills>(role, compSkills);
+		}
+
+		if (json.contains("buffs"))
+		{
+			CompBuffs compBuffs;
+			auto& skillsJs = json["buffs"];
+			for (auto& sk : skillsJs)
+			{
+				auto buffid = sk.get<std::string>();
+				auto buff = createBuff(role, buffid);
+
+				compBuffs.buffs.push_back(buff);
+			}
+			_context->registry().emplace<CompBuffs>(role, compBuffs);
 		}
 
 		if (json.contains("items"))
@@ -327,7 +376,65 @@ namespace game
 		
 		return role;
 	}
-	
+
+	entt::entity ObjectFactory::createBuff(entt::entity owner, const std::string& cfgid)
+	{
+		if (!_context)
+		{
+			spdlog::error("ObjectFactory need Load first.");
+			return entt::null;
+		}
+
+		auto jsonptr = _jsonBuffCfgs[cfgid];
+		if (!jsonptr)
+		{
+			spdlog::error("object ({}) cfg NOT found.", cfgid);
+			return entt::null;
+		}
+
+		auto& json = *jsonptr;
+		auto buff = _context->registry().create();
+
+		auto name = Trans(json.value("name", ""));
+		_context->registry().emplace<CompNameId>(buff, buff, name, cfgid);
+		_context->registry().emplace<CompTransform>(buff, CompTransform{});
+		_context->registry().emplace<CompBuffComm>(buff, CompBuffComm{});
+
+		auto& compBuff = _context->registry().get<CompBuffComm>(buff);
+		compBuff.owner = owner;
+		compBuff.cfgid = json.value("cfgid", "");
+		compBuff.duration = json.value("duration", 0);
+		compBuff.func = json.value("func", "");
+		compBuff.period = json.value("period", 0);
+
+		if (json.contains("display"))
+		{
+			auto& display = json["display"];
+
+			auto& trans = _context->registry().get<CompTransform>(buff);
+			trans.size = ToVec2(display.value("size", "16,16"));
+
+			Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
+			Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
+			Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
+
+			auto texture = display.value("texture", "");
+			auto tex_rect = ToRect(display.value("tex_rect", "0,0,0,0"));
+			auto font_file = display.value("font_file", "fonts/msyh.ttf");
+			auto font_size = display.value("font_size", 12);
+
+			CompDisplay comdis;
+			comdis.ground_color = bg;
+			comdis.border_color = bd;
+			comdis.font_color = fc;
+			comdis.texture = _context->textureMgr().get(HashString(texture.c_str()));
+			comdis.tex_rect = tex_rect;
+			comdis.font = _context->fontMgr().get(HashString(font_file.c_str()), font_size);
+			_context->registry().emplace<CompDisplay>(buff, comdis);
+		}
+
+		return buff;
+	}
 
 	entt::entity ObjectFactory::createSkill(entt::entity owner, const std::string& cfgid)
 	{
@@ -355,13 +462,20 @@ namespace game
 		compComm.state = SkillState::OK;
 		compComm.type = getSkillType(json.value("type", ""));
 		compComm.desc = Trans(json.value("desc", ""));
-		compComm.distance = ToVec2(json.value("distance", "0,0"));
+		compComm.distance = json.value("distance",0.0f);
 		_context->registry().emplace<CompSkillComm>(skill, compComm);
 
 		CompSkillCD compCD;
 		compCD.current_tick = 0;
 		compCD.total_ticks = json.value("cd_ticks", 0);
 		_context->registry().emplace<CompSkillCD>(skill, compCD);
+
+		if(json.contains("sound"))
+		{
+			CompAudio compAudio;
+			compAudio.audio_name = json.value("sound", "");
+			_context->registry().emplace<CompAudio>(skill, compAudio);
+		}
 
 		if (json.contains("affect"))
 		{

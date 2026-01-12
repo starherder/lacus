@@ -137,7 +137,7 @@ namespace particle
 				/* 径向加速度 */
 				if ( p->vChangePos.x || p->vChangePos.y ) {
 					offset = p->gravityMode.vInitialVelocity;
-					radial = glm::normalize(offset);
+					radial = SafeNormal(offset);
 				}
 				tangential = radial;
 				radial = radial * p->gravityMode.fRadialAccel;

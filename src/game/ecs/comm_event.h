@@ -62,6 +62,17 @@ namespace game {
 		entt::entity skill;
 	};
 
+	struct AddBuffToObject {
+		entt::entity source;
+		entt::entity target;
+		std::string cfgid;
+	};
+
+	struct RemoveBuffFromObject {
+		entt::entity target;
+		std::string cfgid;
+	};
+
 	struct RoleOnAttack {
 		entt::entity source;
 		entt::entity target;
@@ -79,5 +90,11 @@ namespace game {
 		entt::entity source;
 		entt::entity skill;
 		std::string event;
+	};
+
+	struct AddFuncsToTarget {
+		entt::entity source;
+		entt::entity target;
+		std::string funcs;
 	};
 }

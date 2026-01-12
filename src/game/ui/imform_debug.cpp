@@ -106,6 +106,8 @@ void ImFormDebug::draw()
             roleExecSkill();
         }
 
+        drawSelectEntityProps();
+
         ImVec2 winpos = ImGui::GetWindowPos();
         ImVec2 winsize = ImGui::GetWindowSize();
         _windowPos = {winpos.x, winpos.y};
@@ -179,6 +181,60 @@ void ImFormDebug::moveSelectActor(const Vec2& pos)
     _context->dispatcher().trigger(MoveToGrid{_selectEntity, gridPos, true});
 }
 
+void ImFormDebug::drawSelectEntityProps()
+{
+    if(!_context->registry().valid(_selectEntity))
+    {
+        return;
+    }
+
+    std::map<std::string, std::string> props;
+
+    auto pbase = _context->registry().try_get<CompBaseProp>(_selectEntity);
+    if(pbase)
+    {
+        props.insert({ "str", std::to_string(pbase->str) });
+        props.insert({ "cst", std::to_string(pbase->cst) });
+        props.insert({ "dex", std::to_string(pbase->dex) });
+        props.insert({ "met", std::to_string(pbase->met) });
+    }
+    auto pfight = _context->registry().try_get<CompFightProp>(_selectEntity);
+    if (pfight)
+    {
+        props.insert({ "hp", std::to_string(pfight->hp) });
+        props.insert({ "hpm", std::to_string(pfight->hpm) });
+        props.insert({ "hpr", std::to_string(pfight->hpr) });
+        props.insert({ "atk", std::to_string(pfight->atk) });
+        props.insert({ "def", std::to_string(pfight->def) });
+        props.insert({ "mvs", std::to_string(pfight->mvs) });
+        props.insert({ "ats", std::to_string(pfight->ats) });
+        props.insert({ "atd", std::to_string(pfight->atd) });
+        props.insert({ "crt", std::to_string(pfight->crt) });
+        props.insert({ "par", std::to_string(pfight->par) });
+    }
+
+    if(ImGui::BeginTable("props", 2))
+    {
+        ImGui::TableSetupColumn("name");
+        ImGui::TableSetupColumn("value");
+        ImGui::TableHeadersRow();
+
+        for(auto& [name, value] : props)
+        {
+            ImGui::TableNextRow();
+
+            ImGui::TableNextColumn();
+            ImGui::Text(name.c_str());
+
+
+            ImGui::TableNextColumn();
+            ImGui::Text(value.c_str());
+        }
+
+    }
+    ImGui::EndTable();
+}
+
 void ImFormDebug::roleExecSkill()
 {
     if (_selectEntity == entt::null ||
@@ -191,24 +247,26 @@ void ImFormDebug::roleExecSkill()
     auto& rolePos = trans.position;
 
     auto& skills = _context->registry().get<CompSkills>(_selectEntity);
-    for (auto& skent : skills.skills)
+    for (auto& skill_id : skills.skills)
     {
-        auto& compName = _context->registry().get<CompNameId>(skent);
-        auto& compSkill = _context->registry().get<CompSkillComm>(skent);
+        auto& compName = _context->registry().get<CompNameId>(skill_id);
+        auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);
 
         if (compSkill.type == SkillType::Combat || compSkill.type == SkillType::Projectile)
         {
             // 需要目标，寻找目标
-            auto dis_far = compSkill.distance.y;
-
-            auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis_far);
+            auto dis = compSkill.distance;
+            auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
             for (auto& [dis, target] : objects) {
                 if (target == _selectEntity) continue;
+
+                auto pdead = _context->registry().try_get<CompDead>(target);
+                if (pdead) continue;
 
                 auto& compComm = _context->registry().get<CompComm>(target);
                 if (compComm.type == ObjectType::Npc) {
 
-                    _context->dispatcher().trigger(CastSkillToObject{_selectEntity, target, skent});
+                    _context->dispatcher().trigger(CastSkillToObject{_selectEntity, target, skill_id });
                     return;
                 }
             }
@@ -219,7 +277,7 @@ void ImFormDebug::roleExecSkill()
         {
             spdlog::info("skill ({}) need NO enmey.", compName.cfg_id);
 
-            _context->dispatcher().trigger(CastSkillToObject{ _selectEntity, entt::null, skent });
+            _context->dispatcher().trigger(CastSkillToObject{ _selectEntity, entt::null, skill_id });
         }
 
     }

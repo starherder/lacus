@@ -21,38 +21,52 @@ void GameLogicPlugin::onInit()
 {
     ui::GuiManager::inst().init(&_app);
 
-    auto btreePath = application()->resPath() / "data/bevtree/bev_common_npc.xml";
+    auto btreePath = application()->resPath() / "data/bevtree/";
     bool res = bevtree::BevTreeManager::inst().load(btreePath);
     if (!res) {
         spdlog::error("load bevtree config: {} failed.", btreePath.string());
         return;
     }
 
-    auto roleCfgs = application()->resPath() / "data/objects.json";
+    auto roleCfgs = application()->resPath() / "data/role/";
     res = ObjectFactory::inst().loadObjects(_gameContext, roleCfgs);
     if (!res) {
         spdlog::error("load role config: {} failed.", roleCfgs.string());
         return;
     }
 
-    auto skillCfgs = application()->resPath() / "data/skills.json";
-    res = ObjectFactory::inst().loadSkills(_gameContext, skillCfgs);
+    auto itemCfgs = application()->resPath() / "data/item/";
+    res = ObjectFactory::inst().loadObjects(_gameContext, itemCfgs);
     if (!res) {
-        spdlog::error("load skill config: {} failed.", skillCfgs.string());
+        spdlog::error("load item config: {} failed.", itemCfgs.string());
         return;
     }
 
-    auto particleCfgs = application()->resPath() / "particles/particles.xml";
+    auto skilldir = application()->resPath() / "data/skill/";
+    res = ObjectFactory::inst().loadSkills(_gameContext, skilldir);
+    if (!res) {
+        spdlog::error("load skill config: {} failed.", skilldir.string());
+        return;
+    }
+
+    auto buffdir = application()->resPath() / "data/buff/";
+    res = ObjectFactory::inst().loadBuffs(_gameContext, buffdir);
+    if (!res) {
+        spdlog::error("load buff config: {} failed.", buffdir.string());
+        return;
+    }
+
+    auto particleCfgs = application()->resPath() / "particles/";
     res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
     if (!res) {
         spdlog::error("load partiles config: {} failed.", particleCfgs.string());
         return;
     }
 
-    auto textFile = application()->resPath() / "localized/CHS/npc.txt";
-    res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textFile);
+    auto textdir = application()->resPath() / "localized/CHS/";
+    res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
     if (!res) {
-        spdlog::error("load translator file ({}) failed.", textFile.string());
+        spdlog::error("load translator file ({}) failed.", textdir.string());
         return;
     }
 

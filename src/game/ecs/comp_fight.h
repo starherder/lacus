@@ -70,7 +70,6 @@ namespace game
 		std::string tween;
 	};
 
-
 	struct CompSkillAffect
 	{
 		// 前摇时间
@@ -123,24 +122,35 @@ namespace game
 
 		std::string desc;
 
-		// (min,max)
-		Vec2 distance = { 0, 0 };
+		float distance = 0.0f;
 	};
 
-	struct CompBufComm 
+	struct CompBuffComm 
 	{
+		std::string cfgid;
+		//std::string name;
+		//std::string desc;
+
+		entt::entity owner;
+		
 		// 功能
 		// hp:+10,mp:-10,atk:+10%   加减属性
 		// buf:+stun,buf:-slow  加减buf
 		std::string func;
 
 		// 持续时间，ms， -1表示永久
-		int druation; 
+		int duration = 0; 
 
 		// 周期（定时触发）
-		int period;
-	};
+		int period = 0;
 
+		int64_t period_flag = 0;
+
+		int64_t during_ticks = 0;
+
+		std::function<void(int64_t)> onUpdate = nullptr;
+		//tweeny::tween<float, float> tween;
+	};
 
 
 	// 基础属性
@@ -177,12 +187,12 @@ namespace game
 
 	// buf列表
 	struct CompBuffs {
-		std::vector<entt::entity> buffs;
+		std::list<entt::entity> buffs;
 	};
 
 	// 物品列表
 	struct CompItems {
-		std::vector<entt::entity> items;
+		std::list<entt::entity> items;
 	};
 
 	// 发射

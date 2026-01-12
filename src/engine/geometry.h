@@ -57,6 +57,12 @@ inline bool operator < (const Vec2i& lval, const Vec2i& rval) {
     return lval.x < rval.x;
 }
 
+inline Vec2 SafeNormal(const Vec2 val)
+{
+    if(val.x==0.0f && val.y==0.0f) return Vec2{0.0f, 0.0f};
+    return glm::normalize(val);
+}
+
 inline SDL_FPoint ToPoint(const Vec2& v) {
     return SDL_FPoint{ v.x, v.y };
 }

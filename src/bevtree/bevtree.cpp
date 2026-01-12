@@ -30,24 +30,35 @@ namespace bevtree
     {
     }
 
-    bool BevTreeManager::load(const std::filesystem::path& filepath)
+    bool BevTreeManager::load(const std::filesystem::path& cfgdir)
     {
         using namespace tinyxml2;
 
-        _xmlDoc = std::make_unique<XMLDocument>();
-        XMLError error = _xmlDoc->LoadFile(filepath.string().c_str());
-        if (error != XML_SUCCESS)
+
+        for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
         {
-            return false;
-        }
+            if (entry.is_regular_file())
+            {
+                auto filename = entry.path();
+                auto xmlDoc = std::make_shared<XMLDocument>();
+                XMLError error = xmlDoc->LoadFile(filename.string().c_str());
+                if (error != XML_SUCCESS)
+                {
+                    spdlog::error("load bevtree file({}) failed.", filename.string());
+                    continue;
+                }
 
-        auto root = _xmlDoc->RootElement();
-        auto bevnode = root->FirstChildElement();
-        while (bevnode) {
-            auto name = bevnode->Attribute("name");
-            _xmlNodes[name] = bevnode;
+                _xmlDocs[filename.filename().string()] = xmlDoc;
 
-            bevnode = bevnode->NextSiblingElement();
+                auto root = xmlDoc->RootElement();
+                auto bevnode = root->FirstChildElement();
+                while (bevnode) {
+                    auto name = bevnode->Attribute("name");
+                    _xmlNodes[name] = bevnode;
+
+                    bevnode = bevnode->NextSiblingElement();
+                }
+            }
         }
 
         return true;

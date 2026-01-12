@@ -1,0 +1,25 @@
+{
+  "cfgid": "buff_poison",
+  "name": "buff_name_poison",
+  "desc": "buff_desc_poison",
+
+  "duration": 5000,
+
+  "period": 1000,
+
+  "func": "hp-20",
+
+  "event": "",
+
+  "display": {
+    "size": "16,16",
+    "groud_color": "#FF00FF88",
+    "border_color": "#55555588",
+    "font_color": "#55555588",
+    "# texture": "textures/icon/sry1.png",
+    "# tex_rect": "0,0,0.25,0.5",
+    "font_file": "fonts/msyh.ttf",
+    "font_size": 4
+  }
+
+}

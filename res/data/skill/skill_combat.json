@@ -1,28 +1,29 @@
 {
-    "cfgid" : "skill_combat",
-    "type" : "combat",
-    "name" : "text_skill_combat",
-    "desc" : "text_skill_combat_desc",
+  "cfgid": "skill_combat",
+  "type": "combat",
+  "name": "text_skill_combat",
+  "desc": "text_skill_combat_desc",
 
-    "distance" : "0,64",
-    "cd_ticks" : 1000,
+  "distance": 64,
+  "cd_ticks": 1000,
+  "sound": "audio/battle_of_tiles/axe.wav",
 
-    "affect" : {
-        "prev_ticks" : 100,
-        "post_ticks" : 100,
+  "affect": {
+    "prev_ticks": 100,
+    "post_ticks": 100,
 
-        "func" : "hp-",
-        "target" : "role",
-        "range" : 0,
+    "func": "hp-",
+    "target": "role",
+    "range": 0,
 
-        "event" : ""
-    },
+    "event": ""
+  },
 
-    "tween" : {
-        "trans_type" : "motion",
-        "trans_value" : 10,
-        "prev_tween" : "cubicIn",
-        "post_tween" : "cubicOut"
-    }
+  "tween": {
+    "trans_type": "motion",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  }
 
 }
