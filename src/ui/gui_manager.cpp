@@ -188,7 +188,7 @@ namespace ui {
         void GuiManager::onMouseWheel(const Vec2& pos, float dir)
         {
             auto form = getFormAtPos(pos);
-            if(form && form->visible() && form->focused())
+            if(form && form->visible())
             {
                 form->onMouseWheel(pos, dir);
 

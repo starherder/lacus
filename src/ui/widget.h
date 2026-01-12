@@ -73,8 +73,8 @@ public:
     virtual void onMouseRightDown(const Vec2& pos) {}
     virtual void onMouseRightUp(const Vec2& pos) {}
 
-    virtual void onMouseLeftDrag(const Vec2& pos, const Vec2& offset) {}
-    virtual void onMouseWheel(const Vec2& pos, float dir) {}
+    virtual void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
+    virtual void onMouseWheel(const Vec2& pos, float dir);
 
     virtual void onChildSizeChanged(Widget* child) {}
     virtual void onChildPosChanged(Widget* child) {}

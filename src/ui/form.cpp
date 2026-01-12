@@ -96,7 +96,7 @@ void Form::onMouseLeftClick(const Vec2& pos)
         {
             widget->onMouseLeftClick(pos);
         }
-        _focused = false;
+        //_focused = false;
     }
 }
 
@@ -106,7 +106,7 @@ void Form::onMouseRightClick(const Vec2& pos)
     if (widget)
     {
         widget->onMouseRightClick(pos);
-        _focused = false;
+        //_focused = false;
     }
 }
 
@@ -127,7 +127,7 @@ void Form::onMouseLeftUp(const Vec2& pos)
     if (widget)
     {
         widget->onMouseLeftUp(pos);
-        _focused = false;
+        //_focused = false;
     }
 }
 
@@ -148,7 +148,7 @@ void Form::onMouseRightUp(const Vec2& pos)
     if (widget && widget->focused())
     {
         widget->onMouseRightUp(pos);
-        _focused = false;
+        //_focused = false;
     }
 }
 

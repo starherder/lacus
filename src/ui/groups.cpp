@@ -84,6 +84,8 @@ namespace ui {
         _contentPos = {0, 0};
         _contentSize = size();
 
+        setHandleEvent(true);
+
         _horizonSlider = createChild<ui::SliderBar>("__h_slider__");
         _horizonSlider->setDirection(ui::Coordinate::Horizonal);
         _horizonSlider->on_value_changed.connect(this, &ExpandGroup::onHorizonalSlide);
@@ -196,6 +198,30 @@ namespace ui {
     void ExpandGroup::onChildSizeChanged(Widget* child)
     {
         ajustContent();
+    }
+
+    void ExpandGroup::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+    {
+        if (_horizonSlider)
+        {
+            float val = _horizonSlider->value() - offset.x;
+            _horizonSlider->setValue(val);
+        }
+
+        if (_verticalSlider)
+        {
+            float val = _verticalSlider->value() - offset.y;
+            _verticalSlider->setValue(val);
+        }
+    }
+
+    void ExpandGroup::onMouseWheel(const Vec2& pos, float dir)
+    {
+        if (_verticalSlider)
+        {
+            float val = _verticalSlider->value() - dir * 10;
+            _verticalSlider->setValue(val);
+        }
     }
 
     void ExpandGroup::ajustScrollbar()

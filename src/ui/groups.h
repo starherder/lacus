@@ -73,6 +73,9 @@ private:
     void onChildPosChanged(Widget* child) override;
     void onChildSizeChanged(Widget* child) override;
 
+    void onMouseLeftDrag(const Vec2& pos, const Vec2& offset) override;
+    void onMouseWheel(const Vec2& pos, float dir) override;
+
     void ajustContent();
     void ajustScrollbar();
 

@@ -117,6 +117,16 @@ void Widget::draw()
     }
 }
 
+void Widget::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+{
+    if (_parent) _parent->onMouseLeftDrag(pos, offset);
+}
+
+void Widget::onMouseWheel(const Vec2& pos, float dir)
+{
+    if (_parent) _parent->onMouseWheel(pos, dir);
+}
+
 ////////////////////////////////////////////////////////////////////////////
 
 }

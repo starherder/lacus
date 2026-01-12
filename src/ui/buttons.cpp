@@ -450,10 +450,18 @@ namespace ui {
         setValue(_value);
     }
 
-    void SliderBar::rawSetMaxValue(float value)
+    void SliderBar::rawSetMaxValue(float maxval)
     {
+        if (maxval < _value)
+        {
+            _maxValue = _value;
+        }
+        else 
+        {
+            _maxValue = maxval;
+        }
+
         _maxValue = _maxValue == 0 ? 100 : _maxValue;
-        _maxValue = std::max(_maxValue, _value);
 
         rawSetValue(_value);
     }
