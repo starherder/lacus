@@ -14,6 +14,7 @@ public:
     ~Group();
 
     bool isGroup() const override { return true; }
+
     void update(float delta) override;
     void draw() override;
 
@@ -31,6 +32,8 @@ public:
     const auto& children() const { return _children; }
 
 protected:    
+    Vec2 getContentPos() const override { return Vec2{ 0.0f, 0.0f }; }
+
     virtual void onChildAdded(Widget* child);
     virtual void onChildRemoved(Widget* child);
 
@@ -41,6 +44,44 @@ private:
     std::list<SharedPtr> _children;
 
     bool _clipChildren = true;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+class ExpandGroup : public Group, public utility::sigslot::SlotHandler
+{
+public:
+public:
+    ExpandGroup() = delete;
+    ExpandGroup(const std::string& name, Widget* parent = nullptr);
+    ~ExpandGroup();
+
+    void update(float delta) override;
+    void draw() override;
+
+private:
+    Vec2 getContentPos() const override { return _contentPos; }
+
+    void onHorizonalSlide(class SliderBar* slider);
+    void onVerticalSlide(class SliderBar* slider);
+
+    void onChildAdded(Widget* child) override;
+    void onChildRemoved(Widget* child) override;
+
+    void onChildPosChanged(Widget* child) override;
+    void onChildSizeChanged(Widget* child) override;
+
+    void ajustContent();
+    void ajustScrollbar();
+
+private:
+    const int slider_bar_size = 25;
+
+    Vec2 _contentPos = { 0, 0 };
+    Vec2 _contentSize = { 0, 0 };
+
+    class SliderBar* _horizonSlider = nullptr;
+    class SliderBar* _verticalSlider = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +107,7 @@ protected:
     void onChildAdded(Widget* child) override;
     void onChildRemoved(Widget* child) override;
 
+    void onChildPosChanged(Widget* child) override;
     void onChildSizeChanged(Widget* child) override;
     void onChildVisibleChanged(Widget* child) override;
 

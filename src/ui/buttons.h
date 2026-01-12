@@ -25,7 +25,7 @@ public:
     const auto& textColor() { return status().text_color; }
     void setTextColor(const Color& color) { status().text_color = color; }
 
-    float fontSize() { return _fontSize; }
+    int fontSize() { return _fontSize; }
     const auto& fontName() { return _fontName; }
 
     Align textAlign() { return _textAlign; }
@@ -48,7 +48,7 @@ private:
     Align _textAlign = Align::Center;
 
     std::string _fontName;
-    float _fontSize = 20;
+    int _fontSize = 20;
     Font* _font = nullptr;
 };
 
@@ -113,6 +113,78 @@ private:
     bool _checked = false;
 };
 
+///////////////////////////////////////////////////////////////////////
+
+class RadioGroupImpl : public utility::sigslot::SlotHandler
+{
+public:
+    signal<int> on_radio_select;
+
+public:
+    RadioGroupImpl() = delete;
+    RadioGroupImpl(RadioGroupImpl&&) = delete;
+    RadioGroupImpl(const RadioGroupImpl&) = delete;
+    RadioGroupImpl(Group* group);
+    ~RadioGroupImpl();
+
+    int addItem(const std::string& text);
+    void removeItem(int index);
+
+    size_t itemCount();
+
+    int getSelectIndex();
+    void setSelectItem(int index);
+
+private:
+    void onItemSelect(CheckBox* cb);
+
+private:
+    Group* _group = nullptr;
+};
+
+class RadioHLayGroup : public HorizonalLayout
+{
+public:
+    signal<int> on_radio_select;
+
+public:
+    RadioHLayGroup() = delete;
+    ~RadioHLayGroup() {}
+    RadioHLayGroup(const std::string& name, Widget* parent = nullptr);
+
+    int addItem(const std::string& text);
+    void removeItem(int index);
+
+    size_t itemCount() { return children().size(); }
+
+    int getSelectIndex();
+    void setSelectItem(int index);
+
+private:
+    class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
+};
+
+class RadioVLayGroup : public VerticalLayout
+{
+public:
+    signal<int> on_radio_select;
+
+public:
+    RadioVLayGroup() = delete;
+    ~RadioVLayGroup() {}
+    RadioVLayGroup(const std::string& name, Widget* parent = nullptr);
+
+    int addItem(const std::string& text);
+    void removeItem(int index);
+
+    size_t itemCount() { return children().size(); }
+
+    int getSelectIndex();
+    void setSelectItem(int index);
+
+private:
+    class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
+};
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -153,6 +225,7 @@ public:
     SliderBlock(const std::string& name, Widget* parent = nullptr);
 
 public:
+    void onMouseLeftDown(const Vec2& pos) override;
     void onMouseLeftDrag(const Vec2& pos, const Vec2& offset) override;
 };
 
@@ -167,11 +240,16 @@ public:
     SliderBar(const std::string& name, Widget* parent = nullptr);
     ~SliderBar() = default;
 
+    void setSize(const Vec2& sz) override;
+    void rawSetSize(const Vec2& sz) override;
+
     float value() const { return _value; }
     void setValue(float value);
+    void rawSetValue(float value);
 
     float maxValue() const { return _maxValue; }
     void setMaxValue(float maxValue);
+    void rawSetMaxValue(float maxValue);
 
     Coordinate direction() const { return _direction; } 
     void setDirection(Coordinate dir);
@@ -182,6 +260,10 @@ public:
 private:
     void onSliderBlockDrag(const Vec2& pos, const Vec2& offset);
 
+    void onMouseLeftDown(const Vec2& pos) override;
+
+    void adjustSliderSize();
+
 private:
     Vec2 DefaultSize = {100, 30};
 
@@ -191,6 +273,26 @@ private:
     Coordinate _direction = Coordinate::Horizonal;
 
     SliderBlock* _slider = nullptr;
+
+    float _beginValue = 0.0f;
+    Vec2 _beginPos;
+};
+
+
+class ListBox : public ExpandGroup
+{
+public:
+    ListBox() = delete;
+    ListBox(const std::string& name, Widget* parent = nullptr);
+    ~ListBox();
+
+public:
+    Widget* addItem(const std::string& name, int pos_index = -1);
+
+    size_t rows() { return _items.size(); }
+
+private:
+    std::list<CheckBox*> _items;
 };
 
 }

@@ -10,6 +10,7 @@
 #include "sample_plugin_tilemap.h"
 #include "sample_plugin_bevtree.h"
 #include "sample_plugin_particle.h"
+#include "sample_plugin_ui.h"
 
 #include "game/game_logic.h"
 
@@ -144,6 +145,12 @@ namespace samples {
             SamplePluginManager::inst().setPluginEnable("sample_particle_plugin", particle_trigger);
         }
 
+        static bool ui_trigger = false;
+        if (ImGui::MenuItem("ui", nullptr, &ui_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_ui_plugin", ui_trigger);
+        }
+
         static bool game_trigger = false;
         if (ImGui::MenuItem("game", nullptr, &game_trigger))
         {
@@ -236,8 +243,12 @@ namespace samples {
         plugin = addNormalPlugin<SamplePluginParticle>();
         plugin->setEnable(false);
 
+        plugin = addNormalPlugin<SamplePluginUI>(app);
+        plugin->setEnable(false);
+
         plugin = addNormalPlugin<game::GameLogicPlugin>(app);
         plugin->setEnable(false);
+
     }
 
     bool SamplePluginManager::removePlugin(const std::string& name)

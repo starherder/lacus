@@ -93,14 +93,14 @@ namespace samples {
             auto font = resourceMgr.fontManager().get("fonts/VonwaonBitmap-16px.ttf"_hs, 30);
             if(font)
             {
-                renderer.drawText("WTF! 妙~", font, {800, 100}, {255, 100, 0, 255});
+                renderer.drawText("WTF! 妙~", font, {650, 100}, {255, 100, 0, 255});
             }
         }
         {
             auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 20);
             if(font)
             {
-                renderer.drawText("就是这个feel，倍er爽~", font, {800, 200}, {255, 200, 0, 255});
+                renderer.drawText("就是这个feel，倍er爽~", font, {650, 200}, {255, 200, 0, 255});
             }
         }
     }

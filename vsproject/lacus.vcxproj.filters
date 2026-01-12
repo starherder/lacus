@@ -172,9 +172,6 @@
     <ClCompile Include="..\src\ui\form.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ui\form_demo.cpp">
-      <Filter>gui</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\ui\groups.cpp">
       <Filter>gui</Filter>
     </ClCompile>
@@ -235,9 +232,6 @@
     <ClCompile Include="..\src\particle\particle_memory.cpp">
       <Filter>particle</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\behavior\bev_npc.cpp">
-      <Filter>game\behavior</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\game\scene\game_context.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
@@ -285,6 +279,18 @@
     </ClCompile>
     <ClCompile Include="..\src\game\ecs\system_fight.cpp">
       <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\behavior\bev_patrol_npc.cpp">
+      <Filter>imform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_buff.cpp">
+      <Filter>imform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_utils.cpp">
+      <Filter>imform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_ui.cpp">
+      <Filter>samples</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -438,9 +444,6 @@
     <ClInclude Include="..\src\ui\form.h">
       <Filter>gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ui\form_demo.h">
-      <Filter>gui</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ui\groups.h">
       <Filter>gui</Filter>
     </ClInclude>
@@ -513,9 +516,6 @@
     <ClInclude Include="..\src\particle\particle_memory.h">
       <Filter>particle</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\behavior\bev_npc.h">
-      <Filter>game\behavior</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\game\scene\game_context.h">
       <Filter>game\scene</Filter>
     </ClInclude>
@@ -578,6 +578,18 @@
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_fight.h">
       <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\behavior\bev_patrol_npc.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_buff.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_utils.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_ui.h">
+      <Filter>samples</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

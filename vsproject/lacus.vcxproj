@@ -205,6 +205,7 @@
     <ClCompile Include="..\src\samples\sample_plugin_particle.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_tilemap.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_tweeny.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_ui.cpp" />
     <ClCompile Include="..\src\samples\tmxmap\tmx_layer.cpp" />
     <ClCompile Include="..\src\samples\tmxmap\tmx_map_loader.cpp" />
     <ClCompile Include="..\src\tilemap\map_layer.cpp" />
@@ -212,7 +213,6 @@
     <ClCompile Include="..\src\tilemap\tile_map.cpp" />
     <ClCompile Include="..\src\ui\buttons.cpp" />
     <ClCompile Include="..\src\ui\form.cpp" />
-    <ClCompile Include="..\src\ui\form_demo.cpp" />
     <ClCompile Include="..\src\ui\groups.cpp" />
     <ClCompile Include="..\src\ui\gui_manager.cpp" />
     <ClCompile Include="..\src\ui\ui_utils.cpp" />
@@ -295,6 +295,7 @@
     <ClInclude Include="..\src\samples\sample_plugin_particle.h" />
     <ClInclude Include="..\src\samples\sample_plugin_tilemap.h" />
     <ClInclude Include="..\src\samples\sample_plugin_tweeny.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_ui.h" />
     <ClInclude Include="..\src\samples\tmxmap\tmx_layer.h" />
     <ClInclude Include="..\src\samples\tmxmap\tmx_map_loader.h" />
     <ClInclude Include="..\src\tilemap\map_layer.h" />
@@ -303,7 +304,6 @@
     <ClInclude Include="..\src\tilemap\tile_map.h" />
     <ClInclude Include="..\src\ui\buttons.h" />
     <ClInclude Include="..\src\ui\form.h" />
-    <ClInclude Include="..\src\ui\form_demo.h" />
     <ClInclude Include="..\src\ui\groups.h" />
     <ClInclude Include="..\src\ui\gui_manager.h" />
     <ClInclude Include="..\src\ui\ui.h" />

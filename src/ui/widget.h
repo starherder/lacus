@@ -20,14 +20,16 @@ public:
     virtual void draw();
 
     const Vec2& pos()  const { return _pos; }
-    void setPos(const Vec2& pos) { _pos = pos; }
+    virtual void setPos(const Vec2& pos);
+    virtual void rawSetPos(const Vec2& pos) { _pos = pos; }
 
     auto& size() const { return _size; }
-    void setSize(const Vec2& sz);
-    void rawSetSize(const Vec2& sz) { _size = sz; }
+    virtual void setSize(const Vec2& sz);
+    virtual void rawSetSize(const Vec2& sz) { _size = sz; }
     
     auto& visible() const { return _visible; }
-    void setVisible(bool visible);
+    virtual void setVisible(bool visible);
+    virtual void rawSetVisible(bool visible);
 
     auto& handleEvent() const { return _handleEvent; }
     void setHandleEvent(bool handle) { _handleEvent = handle;}
@@ -55,7 +57,9 @@ public:
     template<typename T>
     T getData(const std::string& key) const;
     void setData(const std::string& key, const utility::Var& value);
-    
+
+    Vec2 getRealPos() const;
+
 public:
     virtual void onMouseEnter(const Vec2& pos) {}
     virtual void onMouseLeave(const Vec2& pos) {}
@@ -73,10 +77,12 @@ public:
     virtual void onMouseWheel(const Vec2& pos, float dir) {}
 
     virtual void onChildSizeChanged(Widget* child) {}
+    virtual void onChildPosChanged(Widget* child) {}
     virtual void onChildVisibleChanged(Widget* child) {}
 
 protected:
-    Vec2 getRealPos() const;
+
+    virtual Vec2 getContentPos() const { return Vec2{0.0f, 0.0f}; }
     
     virtual WidgetStatus& status() { return _normalStatus; }
 

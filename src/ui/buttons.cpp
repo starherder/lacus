@@ -133,6 +133,11 @@ namespace ui {
 
     void CheckBox::setChecked(bool checked)
     {
+        if (checked == _checked) 
+        { 
+            return; 
+        }
+
         _checked = checked;
         on_check_changed.emit(this);
 
@@ -196,6 +201,149 @@ namespace ui {
     }
 
     /////////////////////////////////////////////////////////////////
+
+    RadioGroupImpl::RadioGroupImpl(Group* group) : _group(group)
+    {
+    }
+
+    RadioGroupImpl::~RadioGroupImpl()
+    {
+    }
+
+    int RadioGroupImpl::addItem(const std::string& text) 
+    {
+        int index = itemCount();
+        auto ctrl = _group->createChild<CheckBox>(fmt::format("__item_{}__", index));
+        ctrl->setText(text);
+        ctrl->setData("__item_index__", index);
+        ctrl->on_check_changed.connect(this, &RadioGroupImpl::onItemSelect);
+        return index;
+    }
+
+    void RadioGroupImpl::removeItem(int index) 
+    {
+        for (auto& item : _group->children()) {
+            auto item_index = item->getData<int>("__item_index__");
+            if (item_index == index) {
+                _group->removeChild(item->name());
+                return;
+            }
+        }
+    }
+
+    size_t RadioGroupImpl::itemCount() 
+    {
+        return _group->children().size(); 
+    }
+
+    int RadioGroupImpl::getSelectIndex() 
+    {
+        for (auto& item : _group->children()) {
+            auto cb = dynamic_cast<CheckBox*>(item.get());
+            if (cb && cb->checked()) {
+                auto item_index = item->getData<int>("__item_index__");
+                return item_index;
+            }
+        }
+        return -1;
+    }
+
+    void RadioGroupImpl::setSelectItem(int index) 
+    {
+        for (auto& item : _group->children()) {
+            auto cb = dynamic_cast<CheckBox*>(item.get());
+            if (cb) {
+                if (cb->checked()) { 
+                    cb->setChecked(false); 
+                }
+
+                auto item_index = item->getData<int>("__item_index__");
+                if (item_index == index) {
+                    cb->setChecked(true);
+                }
+            }
+        }
+    }
+
+    void RadioGroupImpl::onItemSelect(CheckBox* cb) 
+    {
+        if (!cb || !cb->checked()) {
+            return;
+        }
+
+        auto select = cb->checked();
+        auto index = cb->getData<int>("__item_index__");
+
+        for (auto& item : _group->children()) {
+            auto cb = dynamic_cast<CheckBox*>(item.get());
+            if (cb) {
+                auto item_index = item->getData<int>("__item_index__");
+                if (item_index != index) {
+                    cb->setChecked(false);
+                }
+            }
+        }
+
+        on_radio_select.emit(index);
+    }
+
+    /////////////////////////////////////////////////////////////////
+
+    RadioHLayGroup::RadioHLayGroup(const std::string& name, Widget* parent) : HorizonalLayout(name, parent)
+    {
+        _radioGroup = std::make_unique<RadioGroupImpl>(this);
+        _radioGroup->on_radio_select.connect([this](int v) { on_radio_select.emit(v); });
+    }
+
+    int RadioHLayGroup::addItem(const std::string& text)
+    {
+        return _radioGroup->addItem(text);
+    }
+
+    void RadioHLayGroup::removeItem(int index)
+    {
+        _radioGroup->removeItem(index);
+    }
+
+    int RadioHLayGroup::getSelectIndex()
+    {
+        return _radioGroup->getSelectIndex();
+    }
+
+    void RadioHLayGroup::setSelectItem(int index)
+    {
+        return _radioGroup->setSelectItem(index);
+    }
+
+    /////////////////////////////////////////////////////////////////
+
+    RadioVLayGroup::RadioVLayGroup(const std::string& name, Widget* parent) : VerticalLayout(name, parent)
+    {
+        _radioGroup = std::make_unique<RadioGroupImpl>(this);
+        _radioGroup->on_radio_select.connect([this](int v) { on_radio_select.emit(v); });
+    }
+
+    int RadioVLayGroup::addItem(const std::string& text)
+    {
+        return _radioGroup->addItem(text);
+    }
+
+    void RadioVLayGroup::removeItem(int index)
+    {
+        _radioGroup->removeItem(index);
+    }
+
+    int RadioVLayGroup::getSelectIndex()
+    {
+        return _radioGroup->getSelectIndex();
+    }
+
+    void RadioVLayGroup::setSelectItem(int index)
+    {
+        return _radioGroup->setSelectItem(index);
+    }
+
+    /////////////////////////////////////////////////////////////////
     ProgressBar::ProgressBar(const std::string& name, Widget* parent)
         : Group(name, parent)
     {
@@ -243,6 +391,17 @@ namespace ui {
     {
     }
 
+    void SliderBlock::onMouseLeftDown(const Vec2& pos)
+    {
+        if (!parent()) return;
+
+        auto parent_wgt = dynamic_cast<SliderBar*>(parent());
+        if (parent_wgt)
+        {
+            parent_wgt->onMouseLeftDown(pos);
+        }
+    }
+
     void SliderBlock::onMouseLeftDrag(const Vec2& pos, const Vec2& offset) 
     {
         if(!parent()) return;
@@ -257,24 +416,15 @@ namespace ui {
     SliderBar::SliderBar(const std::string& name, Widget* parent) 
         : Group(name, parent)
     {
+        _slider = createChild<SliderBlock>("_slider_");
+
         setHandleEvent(true);
+
         setBgColor(Color::PaleBlue);
+
         setSize(DefaultSize);
 
-        Vec2 sliderSize;
-        if(_direction == Coordinate::Horizonal)
-        {
-            sliderSize.x = DefaultSize.y;
-            sliderSize.y = DefaultSize.y;
-        }
-        else 
-        {
-            sliderSize.x = DefaultSize.x;
-            sliderSize.y = DefaultSize.x;
-        }
-
-        _slider = createChild<SliderBlock>("_slider_");
-        _slider->setSize(sliderSize);
+        adjustSliderSize();
 
         setValue(0);
     }
@@ -285,34 +435,95 @@ namespace ui {
         setValue(_value);
     }
 
+    void SliderBar::rawSetMaxValue(float value)
+    {
+        _maxValue = _maxValue == 0 ? 100 : _maxValue;
+        _maxValue = std::max(_maxValue, _value);
+
+        rawSetValue(_value);
+    }
+
     void SliderBar::setDirection(Coordinate dir) 
     { 
         _direction = dir; 
+
         setValue(_value);
+
+        adjustSliderSize();
+    }
+
+    void SliderBar::setSize(const Vec2& sz)
+    {
+        Group::setSize(sz);
+        adjustSliderSize();
+    }
+
+    void SliderBar::rawSetSize(const Vec2& sz)
+    {
+        Group::rawSetSize(sz);
+        adjustSliderSize();
+    }
+
+    void SliderBar::rawSetValue(float value)
+    {
+        _value = std::clamp(value, 0.0f, _maxValue);
     }
 
     void SliderBar::setValue(float value) 
     { 
-        _value = value;
-        _maxValue = _maxValue==0 ? 100 : _maxValue;
-        _maxValue = std::max(_maxValue, _value);
+        rawSetValue(value);
 
+        auto sliderPos = _slider->pos();
+        float progress = std::clamp(_value / _maxValue, 0.0f, 1.0f);
+
+        if (_direction == Coordinate::Horizonal)
+        {
+            sliderPos.x = progress * (size().x - _slider->size().x);
+            sliderPos.y = (size().y - _slider->size().y) / 2.0f;
+        }
+        else
+        {
+            sliderPos.x = (size().x - _slider->size().x) / 2.0f;
+            sliderPos.y = progress * (size().y - _slider->size().y);
+        }
+
+        _slider->setPos(sliderPos);
+
+        on_value_changed.emit(this);
+    }
+
+    void SliderBar::adjustSliderSize()
+    {
         float progress = std::clamp(_value/_maxValue, 0.0f, 1.0f);
 
-        auto pos = _slider->pos();
+        auto sliderPos = _slider->pos();
+        Vec2 sliderSize;
+
         if(_direction == Coordinate::Horizonal)
         {
-            pos.x = progress * (size().x - _slider->size().x);
-            pos.y = (size().y - _slider->size().y) / 2.0f;
+            sliderSize.x = size().y * 2;
+            sliderSize.y = size().y;
+
+            sliderPos.x = progress * (size().x - sliderSize.x);
+            sliderPos.y = (size().y - sliderSize.y) / 2.0f;
         }
         else 
         {
-            pos.x = (size().x - _slider->size().x) / 2.0f;
-            pos.y = progress * (size().y - _slider->size().y);
+            sliderSize.x = size().x;
+            sliderSize.y = size().x * 2;
+
+            sliderPos.x = (size().x - sliderSize.x) / 2.0f;
+            sliderPos.y = progress * (size().y - sliderSize.y);
         }
 
-        _slider->setPos(pos);
-        on_value_changed.emit(this);
+        _slider->setPos(sliderPos);
+        _slider->setSize(sliderSize);
+    }
+
+    void SliderBar::onMouseLeftDown(const Vec2& pos)
+    {
+        _beginValue = _value;
+        _beginPos = pos;
     }
 
     void SliderBar::onSliderBlockDrag(const Vec2& pos, const Vec2& offset)
@@ -320,9 +531,29 @@ namespace ui {
         _maxValue = _maxValue==0 ? 100 : _maxValue;
         _maxValue = std::max(_maxValue, _value);
 
-        float delta = (_direction==Coordinate::Horizonal) ? offset.x/size().x : offset.y/size().y;
-        float progress = std::clamp(delta + _value/_maxValue, 0.0f, 1.0f);
+        Vec2 totalOffset = pos - _beginPos;
+        auto realSize = size() - _slider->size();
 
-        setValue(progress * _maxValue);
+        float poffset = (_direction == Coordinate::Horizonal) ? totalOffset.x / realSize.x : totalOffset.y / realSize.y;
+        float value = _beginValue + poffset * _maxValue;
+
+        setValue(value);
+    }
+
+
+    // ------------------------------------------------------------------------------------------
+
+    ListBox::ListBox(const std::string& name, Widget* parent) : ExpandGroup(name, parent)
+    {
+    }
+
+    ListBox::~ListBox()
+    {
+
+    }
+
+    Widget* ListBox::addItem(const std::string& name, int pos_index)
+    {
+        return nullptr;
     }
 }

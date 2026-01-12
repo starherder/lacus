@@ -13,6 +13,16 @@ Widget::~Widget()
 {
 }
 
+void Widget::setPos(const Vec2& sz)
+{
+    rawSetPos(sz);
+
+    if (_parent)
+    {
+        _parent->onChildPosChanged(this);
+    }
+}
+
 void Widget::setSize(const Vec2& sz) 
 { 
     rawSetSize(sz);
@@ -25,12 +35,17 @@ void Widget::setSize(const Vec2& sz)
 
 void Widget::setVisible(bool visible) 
 {
-     _visible = visible; 
-    
-     if(_parent)
-     {
+    rawSetVisible(visible);
+
+    if(_parent)
+    {
         _parent->onChildVisibleChanged(this);
-     }
+    }
+}
+
+void Widget::rawSetVisible(bool visible)
+{
+    _visible = visible;
 }
 
 void Widget::setData(const std::string& key, const utility::Var& value)
@@ -64,7 +79,7 @@ Vec2 Widget::getRealPos() const
         return _pos;
     }
 
-    return _pos + _parent->getRealPos();
+    return _pos + _parent->getRealPos() + _parent->getContentPos();
 }
 
 void Widget::update(float delta)
