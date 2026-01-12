@@ -163,11 +163,14 @@ namespace samples {
 			{
 				std::string btnname = fmt::format("btn_{}", i);
 				auto item = exgroup->createChild<ui::Button>(btnname);
-				item->setPos({5, i*(25 + 5) + 5});
-				item->setSize({300, 25});	
+				item->setPos({rand()%500, rand()%500});
+				item->setSize({100, 60});	
 				item->setText(btnname);
 				item->setData("index", i);
-				item->on_click.connect(this, &FormDemo::onClickListButton);
+				item->on_click.connect([](ui::Button* btn) {
+					int index = btn->getData<int>("index");
+					spdlog::info("click: index = {}", index);
+				});
 			}
 		}
 
@@ -178,19 +181,27 @@ namespace samples {
 			radioHGroup->addItem("alpha");
 			radioHGroup->addItem("belta");
 			radioHGroup->addItem("gama");
-			radioHGroup->on_radio_select.connect([](int index) {
+			radioHGroup->on_item_select.connect([](int index) {
 				spdlog::info("radio horizonal group: index: {} selected", index);
 			});
 
 			auto radioVGroup = root()->createChild<ui::RadioVLayGroup>("radio_vlay_group");
 			radioVGroup->setPos({ 1050, 550 });
-			radioVGroup->setSize({ 300, 200 });
+			radioVGroup->setSize({ 300, 180 });
 			radioVGroup->addItem("alpha");
 			radioVGroup->addItem("belta");
 			radioVGroup->addItem("gama");
-			radioVGroup->on_radio_select.connect([](int index) {
+			radioVGroup->on_item_select.connect([](int index) {
 				spdlog::info("radio vertical group: index: {} selected", index);
 			});
+
+			auto listbox = root()->createChild<ui::ListBox>("list_box");
+			listbox->setPos({1050, 750});
+			listbox->setSize({300, 180});
+			listbox->on_item_select.connect([this](int index) { on_list_select.emit(index); });
+			for(int i=0; i<20; i++) {
+				listbox->addItem(fmt::format("item_{}", i));
+			}
 		}
 	}
 
@@ -221,7 +232,6 @@ namespace samples {
 		spdlog::info("on slide ({}) changed to {}/{}", bar->name(), bar->value(), bar->maxValue());
 
 		float ratio = bar->value() / bar->maxValue();
-
 		auto group = (ui::Group*)bar->parent();
 
 		auto pbar1 = group->getChild<ui::ProgressBar>("pbar_1");
@@ -243,7 +253,6 @@ namespace samples {
 
 		spdlog::info("on check ({}) changed to {}", cbox->name(), cbox->checked());
 	}
-
 
 	void FormDemo::onClickListButton(ui::Button* btn)
 	{

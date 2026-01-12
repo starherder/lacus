@@ -113,6 +113,19 @@ namespace ui {
         ajustScrollbar();
     }
 
+    std::list<Widget::SharedPtr> ExpandGroup::items() const
+    {
+        std::list<Widget::SharedPtr> result;
+
+        for (auto& ctrl : children()) {
+            if (ctrl->name() != "__h_slider__" && ctrl->name() != "__v_slider__") {
+                result.push_back(ctrl);
+            }
+        }
+
+        return result;
+    }
+
     void ExpandGroup::update(float delta)
     {
     }
@@ -229,6 +242,16 @@ namespace ui {
             {
                 contentRB.y = ctrl->pos().y + ctrl->size().y;
             }
+        }
+
+        if (_horizonSlider && _horizonSlider->visible()) 
+        {
+            contentRB.x += _horizonSlider->size().x;
+        }
+
+        if (_verticalSlider && _verticalSlider->visible())
+        {
+            contentRB.y += _verticalSlider->size().y;
         }
 
         _contentSize = contentRB;

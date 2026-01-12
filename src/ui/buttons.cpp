@@ -217,23 +217,38 @@ namespace ui {
         ctrl->setText(text);
         ctrl->setData("__item_index__", index);
         ctrl->on_check_changed.connect(this, &RadioGroupImpl::onItemSelect);
+
+        _items.push_back(ctrl);
         return index;
     }
 
     void RadioGroupImpl::removeItem(int index) 
     {
+        Widget* widget = nullptr;
+
         for (auto& item : _group->children()) {
             auto item_index = item->getData<int>("__item_index__");
             if (item_index == index) {
+                widget = item.get();
                 _group->removeChild(item->name());
-                return;
+                break;
+            }
+        }
+
+        if (widget) 
+        {
+            for (auto it = _items.begin(); it != _items.end(); it++) {
+                if (widget == *it) {
+                    _items.erase(it);
+                    break;
+                }
             }
         }
     }
 
     size_t RadioGroupImpl::itemCount() 
     {
-        return _group->children().size(); 
+        return _items.size(); 
     }
 
     int RadioGroupImpl::getSelectIndex() 
@@ -284,7 +299,7 @@ namespace ui {
             }
         }
 
-        on_radio_select.emit(index);
+        on_item_select.emit(index);
     }
 
     /////////////////////////////////////////////////////////////////
@@ -292,7 +307,7 @@ namespace ui {
     RadioHLayGroup::RadioHLayGroup(const std::string& name, Widget* parent) : HorizonalLayout(name, parent)
     {
         _radioGroup = std::make_unique<RadioGroupImpl>(this);
-        _radioGroup->on_radio_select.connect([this](int v) { on_radio_select.emit(v); });
+        _radioGroup->on_item_select.connect([this](int v) { on_item_select.emit(v); });
     }
 
     int RadioHLayGroup::addItem(const std::string& text)
@@ -320,7 +335,7 @@ namespace ui {
     RadioVLayGroup::RadioVLayGroup(const std::string& name, Widget* parent) : VerticalLayout(name, parent)
     {
         _radioGroup = std::make_unique<RadioGroupImpl>(this);
-        _radioGroup->on_radio_select.connect([this](int v) { on_radio_select.emit(v); });
+        _radioGroup->on_item_select.connect([this](int v) { on_item_select.emit(v); });
     }
 
     int RadioVLayGroup::addItem(const std::string& text)
@@ -420,7 +435,7 @@ namespace ui {
 
         setHandleEvent(true);
 
-        setBgColor(Color::PaleBlue);
+        setBgColor(Color::Pale);
 
         setSize(DefaultSize);
 
@@ -545,15 +560,65 @@ namespace ui {
 
     ListBox::ListBox(const std::string& name, Widget* parent) : ExpandGroup(name, parent)
     {
+        _radioGroup = std::make_unique<RadioGroupImpl>(this);
+        _radioGroup->on_item_select.connect([this](int v) { on_item_select.emit(v); });
     }
 
     ListBox::~ListBox()
     {
-
     }
 
-    Widget* ListBox::addItem(const std::string& name, int pos_index)
+    void ListBox::setItemHeight(float height)
     {
-        return nullptr;
+        _itemHeight = height;
+        
+        const auto& items = _radioGroup->items();
+        for (auto& item : items) 
+        {
+            auto& sz = item->size();
+            item->setSize({sz.x, height});
+        }
     }
+
+    size_t ListBox::itemCount()
+    {
+        return _radioGroup->itemCount();
+    }
+
+    int ListBox::addItem(const std::string& text)
+    {
+        auto index = _radioGroup->addItem(text);
+        auto name = fmt::format("__item_{}__", index);
+        auto ctrl = getChild<CheckBox>(name);
+        if (ctrl) 
+        {
+            ctrl->setSize({size().x, _itemHeight});
+            ctrl->setPos({ 0, _itemHeight * index });
+        }
+        return index;
+    }
+
+    void ListBox::removeItem(int index)
+    {
+        _radioGroup->removeItem(index);
+
+        auto& items = _radioGroup->items();
+        for (auto& item : items) {
+            if (item) {
+                item->setSize({ size().x, _itemHeight });
+                item->setPos({ 0, _itemHeight * _radioGroup->itemCount() });
+            }
+        }
+    }
+
+    int ListBox::getSelectIndex()
+    {
+        return _radioGroup->getSelectIndex();
+    }
+
+    void ListBox::setSelectItem(int index)
+    {
+        return _radioGroup->setSelectItem(index);
+    }
+
 }

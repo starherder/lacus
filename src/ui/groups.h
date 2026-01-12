@@ -29,7 +29,7 @@ public:
 
     void removeChild(const std::string& name);
 
-    const auto& children() const { return _children; }
+    const std::list<SharedPtr>& children() const { return _children; }
 
 protected:    
     Vec2 getContentPos() const override { return Vec2{ 0.0f, 0.0f }; }
@@ -58,6 +58,8 @@ public:
 
     void update(float delta) override;
     void draw() override;
+
+    std::list<SharedPtr> items() const;
 
 private:
     Vec2 getContentPos() const override { return _contentPos; }

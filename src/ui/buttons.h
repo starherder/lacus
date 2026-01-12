@@ -118,7 +118,7 @@ private:
 class RadioGroupImpl : public utility::sigslot::SlotHandler
 {
 public:
-    signal<int> on_radio_select;
+    signal<int> on_item_select;
 
 public:
     RadioGroupImpl() = delete;
@@ -135,17 +135,21 @@ public:
     int getSelectIndex();
     void setSelectItem(int index);
 
+    const auto& items() { return _items; }
+
 private:
     void onItemSelect(CheckBox* cb);
 
 private:
     Group* _group = nullptr;
+
+    std::list<CheckBox*> _items;
 };
 
 class RadioHLayGroup : public HorizonalLayout
 {
 public:
-    signal<int> on_radio_select;
+    signal<int> on_item_select;
 
 public:
     RadioHLayGroup() = delete;
@@ -167,7 +171,7 @@ private:
 class RadioVLayGroup : public VerticalLayout
 {
 public:
-    signal<int> on_radio_select;
+    signal<int> on_item_select;
 
 public:
     RadioVLayGroup() = delete;
@@ -282,17 +286,27 @@ private:
 class ListBox : public ExpandGroup
 {
 public:
+    signal<int> on_item_select;
+
+public:
     ListBox() = delete;
     ListBox(const std::string& name, Widget* parent = nullptr);
     ~ListBox();
 
-public:
-    Widget* addItem(const std::string& name, int pos_index = -1);
+    int addItem(const std::string& text);
+    void removeItem(int index);
 
-    size_t rows() { return _items.size(); }
+    size_t itemCount();
+
+    int getSelectIndex();
+    void setSelectItem(int index);
+
+    void setItemHeight(float height);
 
 private:
-    std::list<CheckBox*> _items;
+    float _itemHeight = 25;
+
+    class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
 };
 
 }
