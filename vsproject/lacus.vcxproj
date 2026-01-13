@@ -215,9 +215,10 @@
     <ClCompile Include="..\src\tilemap\map_layer.cpp" />
     <ClCompile Include="..\src\tilemap\map_tilset.cpp" />
     <ClCompile Include="..\src\tilemap\tile_map.cpp" />
-    <ClCompile Include="..\src\ui\buttons.cpp" />
+    <ClCompile Include="..\src\ui\base_widgets.cpp" />
     <ClCompile Include="..\src\ui\form.cpp" />
-    <ClCompile Include="..\src\ui\groups.cpp" />
+    <ClCompile Include="..\src\ui\game_widgets.cpp" />
+    <ClCompile Include="..\src\ui\group_widgets.cpp" />
     <ClCompile Include="..\src\ui\gui_manager.cpp" />
     <ClCompile Include="..\src\ui\ui_utils.cpp" />
     <ClCompile Include="..\src\ui\widget.cpp" />
@@ -307,9 +308,10 @@
     <ClInclude Include="..\src\tilemap\map_tilset.h" />
     <ClInclude Include="..\src\tilemap\map_utils.h" />
     <ClInclude Include="..\src\tilemap\tile_map.h" />
-    <ClInclude Include="..\src\ui\buttons.h" />
+    <ClInclude Include="..\src\ui\base_widgets.h" />
     <ClInclude Include="..\src\ui\form.h" />
-    <ClInclude Include="..\src\ui\groups.h" />
+    <ClInclude Include="..\src\ui\game_widgets.h" />
+    <ClInclude Include="..\src\ui\group_widgets.h" />
     <ClInclude Include="..\src\ui\gui_manager.h" />
     <ClInclude Include="..\src\ui\ui.h" />
     <ClInclude Include="..\src\ui\ui_utils.h" />

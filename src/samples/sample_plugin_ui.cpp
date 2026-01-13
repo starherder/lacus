@@ -2,8 +2,69 @@
 
 #include "engine/application.h"
 #include "engine/color.h"
+#include "ui/game_widgets.h"
 
 namespace samples {
+
+
+	FormCards::FormCards(const std::string& name) : Form(name)
+	{
+		setPos({ 100, 100 });
+		setSize({ 1500, 1000 });
+
+		// create child
+		auto bgGroup = root();
+		bgGroup->setBgColor({ 0, 128, 0, 200});
+
+		{
+			auto group = bgGroup->createChild<ui::CardGroup>("test_group");
+			group->setSize({ 350, 350 });
+			group->setPos({ 20, 20 });
+			group->setBgColor({ 128, 128, 0, 200 });
+
+			for (int i = 0; i < 5; i++) {
+				auto label = group->createChild<ui::Group>(fmt::format("lbl_{}", i));
+				label->setSize({80, 80});
+				label->setBgColor({i*10, 255-i*10, i*5});
+				label->setPos({i*80, i*80});
+			}
+		}
+
+		{
+			auto group = bgGroup->createChild<ui::CardGroup>("card_group");
+			group->setSize({ size().x, 350 });
+			group->setPos({ 0, size().y - group->size().y });
+			group->setBgColor({ 0, 128, 0, 200 });
+
+			group->addCard("test0");
+			group->addCard("test1");
+			group->addCard("test2");
+			group->addCard("test3");
+			group->addCard("test4");
+			group->addCard("test5");
+			group->addCard("test6");
+			group->addCard("test7");
+			group->addCard("test8");
+			group->addCard("test9");
+		}
+	}
+
+	FormCards::~FormCards()
+	{
+
+	}
+
+	void FormCards::onUpdate(float delta)
+	{
+
+	}
+
+	void FormCards::onDraw()
+	{
+
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -203,6 +264,24 @@ namespace samples {
 				listbox->addItem(fmt::format("item_{}", i));
 			}
 		}
+
+		{
+			auto btn = root()->createChild<ui::Button>("btn_show_cards");
+			btn->setSize({150, 50});
+			btn->setPos({200, 80});
+			btn->setText("cards");
+			btn->on_click.connect([](ui::Button* btn) {
+				bool visible = btn->getData<bool>("cards_show");
+				if (!visible) {
+					ui::GuiManager::inst().showForm<FormCards>("form_cars");
+				}
+				else {
+					ui::GuiManager::inst().closeForm("form_cars");
+				}
+
+				btn->setData("cards_show", !visible);
+			});
+		}
 	}
 
 	FormDemo::~FormDemo()
@@ -260,10 +339,7 @@ namespace samples {
 		on_list_select.emit(index);
 	}
 
-
-
-
-    /////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
 
 
     void SamplePluginUI::onInit() 

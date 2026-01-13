@@ -76,8 +76,8 @@ private:
     void onMouseLeftDrag(const Vec2& pos, const Vec2& offset) override;
     void onMouseWheel(const Vec2& pos, float dir) override;
 
-    void ajustContent();
-    void ajustScrollbar();
+    void adjustContent();
+    void adjustScrollbar();
 
 private:
     const int slider_bar_size = 25;
@@ -107,7 +107,7 @@ public:
     void setSpacing(float spacing) { _spacing = spacing; }
 
 protected:
-    virtual void ajustLayout();
+    virtual void adjustLayout();
 
     void onChildAdded(Widget* child) override;
     void onChildRemoved(Widget* child) override;
@@ -121,6 +121,8 @@ protected:
     float _spacing = 10; 
 };
 
+using HLayout = HorizonalLayout;
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 class VerticalLayout : public HorizonalLayout
@@ -133,8 +135,10 @@ public:
     void update(float delta) override;
 
 private:
-    void ajustLayout() override;
+    void adjustLayout() override;
 };
+
+using VLayout = VerticalLayout;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

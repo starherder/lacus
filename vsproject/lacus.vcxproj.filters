@@ -166,13 +166,13 @@
     <ClCompile Include="..\src\engine\event.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ui\buttons.cpp">
+    <ClCompile Include="..\src\ui\base_widgets.cpp">
       <Filter>gui</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ui\form.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ui\groups.cpp">
+    <ClCompile Include="..\src\ui\group_widgets.cpp">
       <Filter>gui</Filter>
     </ClCompile>
     <ClCompile Include="..\src\ui\gui_manager.cpp">
@@ -294,6 +294,9 @@
     </ClCompile>
     <ClCompile Include="..\src\game\ecs\system_utils.cpp">
       <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ui\game_widgets.cpp">
+      <Filter>gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -441,13 +444,13 @@
     <ClInclude Include="..\src\engine\event.h">
       <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ui\buttons.h">
+    <ClInclude Include="..\src\ui\base_widgets.h">
       <Filter>gui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ui\form.h">
       <Filter>gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ui\groups.h">
+    <ClInclude Include="..\src\ui\group_widgets.h">
       <Filter>gui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ui\gui_manager.h">
@@ -596,6 +599,9 @@
     </ClInclude>
     <ClInclude Include="..\src\game\behavior\bev_patrol_npc.h">
       <Filter>game\behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\game_widgets.h">
+      <Filter>gui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

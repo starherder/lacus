@@ -51,6 +51,7 @@ public:
 
 private:
     void unload(IdType id);
+
     Texture* load(IdType id, const std::string_view& filepath);
     Texture* get(IdType id, const std::string_view& filepath="");
 

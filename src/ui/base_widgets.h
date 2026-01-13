@@ -2,7 +2,7 @@
 
 #include "ui_utils.h"
 #include "widget.h"
-#include "groups.h"
+#include "group_widgets.h"
 
 namespace ui {
 
@@ -51,6 +51,21 @@ private:
     int _fontSize = 20;
     Font* _font = nullptr;
 };
+
+///////////////////////////////////////////////////////////////////////
+
+// multi-line label
+
+class TextBox : public Label
+{
+public:
+    TextBox() = delete;
+    TextBox(const std::string& name, Widget* parent = nullptr);
+    ~TextBox();
+
+    void draw() override;
+};
+
 
 ///////////////////////////////////////////////////////////////////////
 

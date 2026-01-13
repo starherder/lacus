@@ -1,4 +1,4 @@
-﻿#include "buttons.h"
+﻿#include "base_widgets.h"
 #include "gui_manager.h"
 #include "magic_enum/magic_enum.h"
 #include "ui_utils.h"
@@ -65,13 +65,28 @@ namespace ui {
         renderer.drawText(_text, _font, realPos, state.text_color);
     }
 
+    //////////////////////////////////////////////////////////////////////
+
+    TextBox::TextBox(const std::string& name, Widget* parent) : Label(name, parent)
+    {
+    }
+
+    TextBox::~TextBox()
+    {
+
+    }
+
+    void TextBox::draw()
+    {
+        Label::draw();
+    }
 
     //////////////////////////////////////////////////////////////////////
 
     Button::Button(const std::string& name, Widget* parent) : Label(name, parent)
     {
-        _handleEvent = true;
         setState(WidgetState::Normal);
+        setNoEvent(false);
 
         _status[WidgetState::Normal] = WigetUtils::normalStatus;
         _status[WidgetState::Hover] = WigetUtils::hoveredStatus;
@@ -404,6 +419,7 @@ namespace ui {
 
     SliderBlock::SliderBlock(const std::string& name, Widget* parent) : Button(name, parent)
     {
+        setDragable(true);
     }
 
     void SliderBlock::onMouseLeftDown(const Vec2& pos)
@@ -433,7 +449,7 @@ namespace ui {
     {
         _slider = createChild<SliderBlock>("_slider_");
 
-        setHandleEvent(true);
+        setDragable(true);
 
         setBgColor(Color::Pale);
 

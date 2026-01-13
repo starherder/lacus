@@ -82,6 +82,13 @@ namespace samples {
                 auto tex_sz = tex->size();
                 renderer.drawTexture(tex, {0.0f, 0.0f, tex_sz.x, tex_sz.y }, {50.0f, 400.0f, tex_sz.x/2,tex_sz.y/2} );
             }
+
+            auto svgTex = textureMgr.get("textures/UI/tiger.svg"_hs);
+            if (svgTex)
+            {
+                auto tex_sz = svgTex->size();
+                renderer.drawTexture(svgTex, { 0.0f, 0.0f, tex_sz.x, tex_sz.y }, { 400.0f, 300.0f, tex_sz.x/2, tex_sz.y/2 });
+            }
         }
     }
 

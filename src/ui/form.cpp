@@ -1,7 +1,7 @@
 ﻿#include "form.h"
 #include "gui_manager.h"
-
-#include "groups.h"
+#include "base_widgets.h"
+#include "group_widgets.h"
 
 namespace ui {
 
@@ -17,20 +17,26 @@ Form::~Form()
 
 Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
 {
-    for(auto& ptr : group->children() )
+    auto& children = group->children();
+
+    for(auto it=children.rbegin(); it!=children.rend(); it++)
     {
+        auto& ptr = *it;
         if(ptr && ptr->isPosInMe(pos))
         {
             if(ptr->isGroup())
             {
                 auto widget = getWidgetInGroup((Group*)ptr.get(), pos);
-                if(widget) 
+                if(widget && !widget->noEvent()) 
                 {
                     return widget;
                 }
             }
 
-            return ptr.get();
+            if (!ptr->noEvent()) 
+            {
+                return ptr.get();
+            }
         }
     }
     return nullptr;
@@ -155,7 +161,7 @@ void Form::onMouseRightUp(const Vec2& pos)
 void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
     auto widget = _hoverWidget;
-    if(widget && widget->handleEvent())
+    if(widget && widget->dragable())
     {
         widget->setFocused(true);
         widget->onMouseLeftDrag(pos, offset);

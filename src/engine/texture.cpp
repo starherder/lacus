@@ -3,9 +3,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
-#include <memory>
 #include <spdlog/spdlog.h>
-
 
 namespace engine {
 
@@ -52,8 +50,8 @@ namespace engine {
             spdlog::error("texture {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
-        
-        auto texture = IMG_LoadTexture(_renderer.getSdlRenderer(), path.string().c_str());
+
+        SDL_Texture* texture = IMG_LoadTexture(_renderer.getSdlRenderer(), path.string().c_str());
         if (!texture) {
             spdlog::error("Failed to load texture {}", path.string());
             return nullptr;

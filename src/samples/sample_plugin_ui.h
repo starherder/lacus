@@ -33,6 +33,16 @@ namespace samples {
     };
 
 
+    class FormCards : public ui::Form
+    {
+    public:
+        FormCards() = delete;
+        FormCards(const std::string& name);
+        virtual ~FormCards();
+
+        void onUpdate(float delta) override;
+        void onDraw() override;
+    };
 
 
     class SamplePluginUI final : public engine::Plugin, public utility::sigslot::SlotHandler

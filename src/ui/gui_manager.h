@@ -17,6 +17,7 @@ public:
     void draw();
 
     auto& renderer() { return _app->renderer(); }
+    auto& painter() { return _app->painter(); }
     auto& resourceManager() { return _app->resourceManager(); }
     auto& audioPlayer() { return _app->audioPlayer(); }
     auto& fontManager() { return _app->resourceManager().fontManager(); }

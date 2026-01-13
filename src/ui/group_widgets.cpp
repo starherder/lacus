@@ -1,7 +1,8 @@
-﻿#include "groups.h"
+﻿#include "group_widgets.h"
+#include "base_widgets.h"
+
 #include "gui_manager.h"
 #include "widget.h"
-#include "buttons.h"
 
 namespace ui {
 
@@ -84,7 +85,9 @@ namespace ui {
         _contentPos = {0, 0};
         _contentSize = size();
 
-        setHandleEvent(true);
+        setDragable(true);
+
+        setNoEvent(false);
 
         _horizonSlider = createChild<ui::SliderBar>("__h_slider__");
         _horizonSlider->setDirection(ui::Coordinate::Horizonal);
@@ -94,7 +97,7 @@ namespace ui {
         _verticalSlider->setDirection(ui::Coordinate::Vertical);
         _verticalSlider->on_value_changed.connect(this, &ExpandGroup::onVerticalSlide);
 
-        ajustScrollbar();
+        adjustScrollbar();
     }
 
     ExpandGroup::~ExpandGroup()
@@ -105,14 +108,14 @@ namespace ui {
     {
         _contentPos.x = -slider->value();
 
-        ajustScrollbar();
+        adjustScrollbar();
     }
 
     void ExpandGroup::onVerticalSlide(SliderBar* slider)
     {
         _contentPos.y = -slider->value();
 
-        ajustScrollbar();
+        adjustScrollbar();
     }
 
     std::list<Widget::SharedPtr> ExpandGroup::items() const
@@ -182,22 +185,22 @@ namespace ui {
 
     void ExpandGroup::onChildAdded(Widget* child)
     {
-        ajustContent();
+        adjustContent();
     }
 
     void ExpandGroup::onChildRemoved(Widget* child)
     {
-        ajustContent();
+        adjustContent();
     }
 
     void ExpandGroup::onChildPosChanged(Widget* child)
     {
-        ajustContent();
+        adjustContent();
     }
 
     void ExpandGroup::onChildSizeChanged(Widget* child)
     {
-        ajustContent();
+        adjustContent();
     }
 
     void ExpandGroup::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
@@ -224,7 +227,7 @@ namespace ui {
         }
     }
 
-    void ExpandGroup::ajustScrollbar()
+    void ExpandGroup::adjustScrollbar()
     {
         if (_horizonSlider)
         {
@@ -247,7 +250,7 @@ namespace ui {
         }
     }
 
-    void ExpandGroup::ajustContent()
+    void ExpandGroup::adjustContent()
     {
         _contentSize = { 0, 0 };
 
@@ -310,7 +313,7 @@ namespace ui {
             _verticalSlider->rawSetVisible(_contentSize.y > size().y);
         }
 
-        ajustScrollbar();
+        adjustScrollbar();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -324,7 +327,7 @@ namespace ui {
     {
     }
 
-    void HorizonalLayout::ajustLayout()
+    void HorizonalLayout::adjustLayout()
     {
         float width_used = _padding.x * 2;
 
@@ -386,28 +389,28 @@ namespace ui {
     void HorizonalLayout::onChildAdded(Widget* child) 
     {
         child->setScaleInGroup(true);
-        ajustLayout();
+        adjustLayout();
     }
 
     void HorizonalLayout::onChildRemoved(Widget* child) 
     {
-        ajustLayout();
+        adjustLayout();
     }
 
     void HorizonalLayout::onChildPosChanged(Widget* child)
     {
-        ajustLayout();
+        adjustLayout();
     }
 
     void HorizonalLayout::onChildSizeChanged(Widget* child) 
     {
         child->setScaleInGroup(false);
-        ajustLayout();
+        adjustLayout();
     }
 
     void HorizonalLayout::onChildVisibleChanged(Widget* child) 
     {
-        ajustLayout();
+        adjustLayout();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -423,7 +426,7 @@ namespace ui {
     {
     }
     
-    void VerticalLayout::ajustLayout()
+    void VerticalLayout::adjustLayout()
     {
         float height_used = _padding.y * 2;
 

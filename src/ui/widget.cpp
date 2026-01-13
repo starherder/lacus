@@ -91,6 +91,9 @@ void Widget::draw()
     auto relPos = getRealPos();
     auto& state = status();
     auto& renderer = GuiManager::inst().renderer();
+    auto& painter = GuiManager::inst().painter();
+
+    Rect bksize = {relPos.x, relPos.y, _size.x, _size.y};
 
     if(state.texture)
     {
@@ -99,21 +102,19 @@ void Widget::draw()
             renderer.setDrawColor(state.ground_color);
         }
 
-        renderer.drawTexture(state.texture, state.tex_rect, {relPos.x, relPos.y, _size.x, _size.y});
+        renderer.drawTexture(state.texture, state.tex_rect, bksize);
     }
     else
     {
         if(state.ground_color.isValid())
         {
-            renderer.setDrawColor(state.ground_color);
-            renderer.drawFillRect({relPos.x, relPos.y, _size.x, _size.y});
+            painter.fillRect(state.ground_color, bksize, _borderRound);
         }
     }
             
     if(state.border_color.isValid())
     {
-        renderer.setDrawColor(state.border_color);
-        renderer.drawRect({relPos.x, relPos.y, _size.x, _size.y});
+        painter.drawRect(state.border_color, bksize, _borderRound, _borderSize);
     }
 }
 

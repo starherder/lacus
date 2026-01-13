@@ -31,8 +31,11 @@ public:
     virtual void setVisible(bool visible);
     virtual void rawSetVisible(bool visible);
 
-    auto& handleEvent() const { return _handleEvent; }
-    void setHandleEvent(bool handle) { _handleEvent = handle;}
+    auto& dragable() const { return _dragable; }
+    void setDragable(bool drag) { _dragable = drag; }
+
+    auto& noEvent() const { return _noEvent; }
+    void setNoEvent(bool noEvent) { _noEvent = noEvent; }
 
     auto focused() const { return _focused; }
     void setFocused(bool focus) { _focused = focus; }
@@ -45,6 +48,12 @@ public:
 
     const Color& borderColor() { return status().border_color; }
     void setBorderColor(const Color& c) { status().border_color = c; }
+
+    float borderRound() { return _borderRound; }
+    void setBorderRound(float round) { _borderRound = round; }
+
+    float borderSize() { return _borderSize; }
+    void setBorderSize(float sz) { _borderSize = sz; }
 
     virtual bool isGroup() const { return false; }
     bool isPosInMe(const Vec2& pos);
@@ -91,8 +100,12 @@ protected:
 
     bool _visible = true;
     bool _focused = false;
-    bool _handleEvent = false;
+    bool _dragable= false;
+    bool _noEvent = true;
     bool _scaleInGroup = true;
+
+    float _borderSize = 1.0f;
+    float _borderRound = 0.0f;
 
     Vec2 _pos = {0, 0};
     Vec2 _size = {100, 30};
