@@ -42,6 +42,35 @@ Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
     return nullptr;
 }
 
+Widget* Form::getWidgetInGroup(Group* group, const std::string& name)
+{
+    auto& children = group->children();
+
+    for (auto it = children.rbegin(); it != children.rend(); it++)
+    {
+        auto& ptr = *it;
+        if (!ptr) 
+        {
+            continue;
+        }
+        
+        if (ptr->name() == name) 
+        {
+            return ptr.get();
+        }
+
+        if (ptr->isGroup())
+        {
+            auto widget = getWidgetInGroup((Group*)ptr.get(), name);
+            if (widget) 
+            {
+                return widget;
+            }
+        }
+    }
+    return nullptr;
+}
+
 Widget* Form::getWidgetAtPos(const Vec2& pos)
 {
     auto widget = getWidgetInGroup(_rootGroup.get(), pos);

@@ -47,11 +47,31 @@ namespace samples {
 			group->addCard("test8");
 			group->addCard("test9");
 		}
+
+
+		auto cbox = root()->createChild<ui::CheckBox>("cbox_overlap");
+		cbox->setSize({ 100, 50 });
+		cbox->setPos({ 1400, 0 });
+		cbox->setText("overlap");
+		cbox->on_check_changed.connect([](ui::CheckBox* cb) {
+			auto form = ui::GuiManager::inst().getForm<FormCards>("form_cars");
+			if (form) {
+				form->setCardOverlap(cb->checked());
+			}
+		});
 	}
 
 	FormCards::~FormCards()
 	{
 
+	}
+
+	void FormCards::setCardOverlap(bool overlap)
+	{
+		auto group = getWidget<ui::CardGroup>("card_group");
+		if (group) {
+			group->setOverlap(overlap);
+		}
 	}
 
 	void FormCards::onUpdate(float delta)
@@ -281,6 +301,7 @@ namespace samples {
 
 				btn->setData("cards_show", !visible);
 			});
+
 		}
 	}
 

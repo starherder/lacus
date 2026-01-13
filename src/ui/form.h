@@ -18,7 +18,15 @@ public:
     virtual ~Form();
 
     Group* root() { return _rootGroup.get(); }
+
     Widget* getWidgetAtPos(const Vec2& pos);
+
+    template<typename WidgetType>
+    WidgetType* getWidget(const std::string& name)
+    {
+        auto widget = getWidgetInGroup(_rootGroup.get(), name);
+        return dynamic_cast<WidgetType*>(widget);
+    }
 
     virtual void update(float delta);
     virtual void draw();
@@ -57,6 +65,7 @@ public:
 
 private:
     Widget* getWidgetInGroup(Group* group, const Vec2& pos);
+    Widget* getWidgetInGroup(Group* group, const std::string& name);
 
 private:
     std::string _name;

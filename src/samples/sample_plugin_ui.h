@@ -40,6 +40,8 @@ namespace samples {
         FormCards(const std::string& name);
         virtual ~FormCards();
 
+        void setCardOverlap(bool overlap);
+
         void onUpdate(float delta) override;
         void onDraw() override;
     };

@@ -8,12 +8,14 @@ namespace ui
     class CardWidget : public Group
     {
     public:
-        signal<CardWidget*> on_select;
+        signal<CardWidget*, bool> on_select;
         signal<CardWidget*> on_drag;
 
     public:
         CardWidget(const std::string& name, Widget* parent = nullptr);
         ~CardWidget();
+
+        bool selected() { return _state == WidgetState::Selected; }
 
         void setTitle(const std::string& title) { _title->setText(title); }
         void setDesc(const std::string& desc) { _desc->setText(desc); }
@@ -57,7 +59,7 @@ namespace ui
 
 
 
-	class CardGroup : public Group
+	class CardGroup : public Group, public utility::sigslot::SlotHandler
 	{
     public:
         CardGroup(const std::string& name, Widget* parent = nullptr);
@@ -73,12 +75,16 @@ namespace ui
 
         void setOverlap(bool enable);
 
+        const Vec2& padding() { return _padding; }
+
     private:
         void adjustChildren();
 
         void overlapChildren();
 
         void tileChildren();
+
+        void onChildSelect(CardWidget* card, bool selected);
 
     private:
         ui::Coordinate _coord = ui::Coordinate::Horizonal;

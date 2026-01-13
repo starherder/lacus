@@ -33,7 +33,8 @@ namespace ui
         setNoEvent(false);
 
         auto bgVLay = createChild<VLayout>("_bg_vlay_");
-        bgVLay->setSize(DefaultSize);
+        bgVLay->setSize(DefaultSize - Vec2{4,4});
+        bgVLay->setPos({ 2,2 });
 
         auto headHLay = bgVLay->createChild<HLayout>("_hlay_head_");
         _info = headHLay->createChild<Button>("_info_");
@@ -69,37 +70,57 @@ namespace ui
 
     void CardWidget::onMouseEnter(const Vec2& mpos)
     {
-        setState(WidgetState::Hover);
+        on_select.emit(this, false);
 
-        setPos(pos() + Vec2{0, -20});
+        setState(WidgetState::Hover);
+        
+        auto wpos = pos();
+        wpos.y = -20;
+        setPos(wpos);
     }
 
     void CardWidget::onMouseLeave(const Vec2& mpos)
     {
         setState(WidgetState::Normal);
 
-        setPos(pos() + Vec2{ 0, 20 });
+        auto group = parent();
+        auto cardgroup = dynamic_cast<CardGroup*>(group);
+        if (!cardgroup) 
+        {
+            return;
+        }
+
+        auto wpos = pos();
+        wpos.y = cardgroup->padding().y;
+        setPos(wpos);
     }
 
     void CardWidget::onMouseLeftClick(const Vec2& mpos)
     {
-        on_select.emit(this);
-        setState(WidgetState::Selected);
+        if (_state != WidgetState::Selected)
+        {
+            on_select.emit(this, true);
+            setState(WidgetState::Selected);
+        }
     }
 
     void CardWidget::onMouseLeftDrag(const Vec2& mpos, const Vec2& offset)
     {
         on_drag.emit(this);
+
+        auto wpos = pos();
+        wpos.y += offset.y;
+        setPos(wpos);
     }
 
     void CardWidget::onMouseLeftDown(const Vec2& mpos)
     {
-        setState(WidgetState::Pressed);
+        //setState(WidgetState::Pressed);
     }
 
     void CardWidget::onMouseLeftUp(const Vec2& mpos)
     {
-        setState(WidgetState::Normal);
+        //setState(WidgetState::Normal);
     }
 
     WidgetStatus& CardWidget::status()
@@ -119,7 +140,6 @@ namespace ui
     {
     }
 
-
     void CardGroup::setOverlap(bool enable)
     {
         _overlap = enable;
@@ -138,7 +158,9 @@ namespace ui
 
         auto desc = fmt::format("this is test card-{}", index);
         widget->setDesc(desc);
-        
+     
+        widget->on_select.connect(this, &CardGroup::onChildSelect);
+
         adjustChildren();
         return widget;
     }
@@ -166,10 +188,12 @@ namespace ui
         Group::draw();
     }
 
+    void CardGroup::onChildSelect(CardWidget* card, bool selected)
+    {
+    }
+
     void CardGroup::adjustChildren()
     {
-        //setClipChildren(!_overlap);
-
         if (_overlap) 
         {
             overlapChildren();
@@ -193,7 +217,7 @@ namespace ui
             float over = float(total - size().x) / children().size();
 
             auto pos = _padding;
-            for (auto& card : children()) 
+            for (auto& card : children())
             {
                 card->setPos(pos);
                 pos.x += card->size().x - over;
