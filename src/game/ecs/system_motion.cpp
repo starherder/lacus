@@ -114,13 +114,26 @@ namespace game
 
         const auto& curPos = transform.position;
         const auto& nextGrid = *motion.path_iterator;
+        const auto& curGrid = _context.currentScene().getGridFromPos(curPos);
         const auto& nextPos = _context.currentScene().getGridCenterPos(nextGrid);
+
+        std::string mode = _context.gameConfig().motion.walk;
+
+        auto curtype = _context.currentScene().mapInfo().getTileProperty<int>(curGrid.x, curGrid.y, "walktype");
+        auto nexttype = _context.currentScene().mapInfo().getTileProperty<int>(nextGrid.x, nextGrid.y, "walktype");
+        if(curtype && nexttype)
+        {
+            if(curtype == (int)tilemap::WalkType::Swim && nexttype == (int)tilemap::WalkType::Swim)
+            {
+                mode = _context.gameConfig().motion.swim;
+            }
+        }
 
         int ticks = (glm::distance(curPos, nextPos) / motion.speed) * 1000;
         motion.tween = tweeny::from(curPos.x, curPos.y)
             .to(nextPos.x, nextPos.y)
             .during(ticks)
-            .via(motion.tween_mode.c_str())
+            .via(mode.c_str())
             .onStep([&transform, entid, this](auto& t, float x, float y)
                 {
                     checkEntityGrid(entid, transform.position, Vec2{x, y});

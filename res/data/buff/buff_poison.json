@@ -5,9 +5,9 @@
 
   "duration": 5000,
 
-  "period": 1000,
+  "period": 300,
 
-  "func": "hp-20",
+  "func": "hp-10",
 
   "event": "",
 

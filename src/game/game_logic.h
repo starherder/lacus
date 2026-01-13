@@ -3,6 +3,7 @@
 #include "engine/application.h"
 
 #include "scene/game_scene.h"
+#include "game/game_config.h"
 
 
 namespace game {
@@ -32,6 +33,9 @@ private:
     std::unique_ptr<GameScene> _scene = nullptr;
     
     GameContext _gameContext;
+
+    GameConfig _gameConfig;
+
 
     engine::Application& _app;
 };

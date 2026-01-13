@@ -14,7 +14,7 @@ namespace samples {
 
 		// create child
 		auto group = root();
-		group->setBgColor({ 125, 255, 125, 200 });
+		group->setBgColor({ 0, 100, 100, 200 });
 
 		{// ---------------------- base ----------------------
 			auto bar = group->createChild<ui::Label>("head_bar");

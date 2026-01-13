@@ -92,7 +92,6 @@ namespace game
 
         Vec2i targetGrid;
 
-        std::string tween_mode = "linear";
         tweeny::tween<float, float> tween;
 
         std::vector<Vec2i> path;

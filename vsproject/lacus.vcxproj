@@ -129,6 +129,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\ext;..\src;..\ext\SDL3\include;..\ext\spdlog\include;..\ext\tmxlite\include;..\ext\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +138,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL-uclibc.lib;SDL3-image-static.lib;SDL3-mixer-static.lib;SDL3-ttf-static.lib;SDL3-static.lib;SDL3-gfx-static.lib;spdlogd.lib;libtmxlite-static.lib;winmm.lib;setupapi.lib;imm32.lib;version.lib;Rpcrt4.lib;Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\ext\spdlog\libs\Release;..\ext\SDL3\libs\Release;..\ext\tmxlite\libs\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -180,6 +183,7 @@
     <ClCompile Include="..\src\game\ecs\system_render.cpp" />
     <ClCompile Include="..\src\game\ecs\system_selection.cpp" />
     <ClCompile Include="..\src\game\ecs\system_utils.cpp" />
+    <ClCompile Include="..\src\game\game_config.cpp" />
     <ClCompile Include="..\src\game\game_logic.cpp" />
     <ClCompile Include="..\src\game\scene\object_factory.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
@@ -268,6 +272,7 @@
     <ClInclude Include="..\src\game\ecs\system_render.h" />
     <ClInclude Include="..\src\game\ecs\system_selection.h" />
     <ClInclude Include="..\src\game\ecs\system_utils.h" />
+    <ClInclude Include="..\src\game\game_config.h" />
     <ClInclude Include="..\src\game\game_logic.h" />
     <ClInclude Include="..\src\game\scene\object_factory.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />

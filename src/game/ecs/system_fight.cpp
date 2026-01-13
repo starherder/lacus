@@ -221,15 +221,21 @@ namespace game
 
         auto& ft = _context.registry().get<CompFightText>(word);
 
-        // TODO: config it.
-        ft.font = _context.fontMgr().get(HashString("fonts/msyh.ttf"), 15);
-        ft.color = (hp > 0) ? Color::Green : Color::Red;
+        auto& fontname = _context.gameConfig().float_text.font_name;
+        auto& fontsize = _context.gameConfig().float_text.font_size;
+        auto& colorinc = _context.gameConfig().float_text.color_inc_hp;
+        auto& colordec = _context.gameConfig().float_text.color_dec_hp;
+        auto& tweenMode = _context.gameConfig().float_text.tween_mode;
+        auto& floatticks = _context.gameConfig().float_text.float_ticks;
+
+        ft.font = _context.fontMgr().get(HashString(fontname.c_str()), fontsize);
+        ft.color = (hp > 0) ? colorinc : colordec;
 
         ft.text = fmt::format("HP{}{}", hp > 0 ? "+" : "", (int)hp);
         ft.tween = tweeny::from(curY, 255.0f)
             .to(dstY, 0.0f)
-            .via("cubicIn")
-            .during(1000)
+            .via(tweenMode)
+            .during(floatticks)
             .onStep([this, word](auto& t, float y, float a) {
             if (t.isFinished()) {
                 _context.registry().emplace<CompDestroy>(word);

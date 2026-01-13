@@ -280,7 +280,6 @@ namespace game
 			auto& motionJs = json["motion"];
 			
 			CompMotion motion;
-			motion.tween_mode = motionJs.value("tween", "");
 			motion.speed = motionJs.value("speed", 0.0f);
 			_context->registry().emplace<CompMotion>(role, motion);
 		}

@@ -280,17 +280,20 @@
     <ClCompile Include="..\src\game\ecs\system_fight.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\behavior\bev_patrol_npc.cpp">
-      <Filter>imform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\ecs\system_buff.cpp">
-      <Filter>imform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\ecs\system_utils.cpp">
-      <Filter>imform</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\samples\sample_plugin_ui.cpp">
       <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\behavior\bev_patrol_npc.cpp">
+      <Filter>game\behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\game_config.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_buff.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_utils.cpp">
+      <Filter>game\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -579,17 +582,20 @@
     <ClInclude Include="..\src\game\ecs\system_fight.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\behavior\bev_patrol_npc.h">
-      <Filter>game</Filter>
+    <ClInclude Include="..\src\samples\sample_plugin_ui.h">
+      <Filter>samples</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\ecs\system_buff.h">
+    <ClInclude Include="..\src\game\game_config.h">
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_utils.h">
-      <Filter>game</Filter>
+      <Filter>game\ecs</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\samples\sample_plugin_ui.h">
-      <Filter>samples</Filter>
+    <ClInclude Include="..\src\game\ecs\system_buff.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\behavior\bev_patrol_npc.h">
+      <Filter>game\behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

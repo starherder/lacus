@@ -14,14 +14,23 @@ GameLogicPlugin::GameLogicPlugin(engine::Application& app)
     _scene = std::make_unique<GameScene>(_gameContext);
     
     _gameContext.setCurrentScene(_scene.get());
+
+    _gameContext.setGameConfig(&_gameConfig);
 }
 
 void GameLogicPlugin::onInit() 
 {
     ui::GuiManager::inst().init(&_app);
 
+    auto gamecfg = application()->resPath() / "game_config.json";
+    bool res = _gameConfig.load(gamecfg);
+    if (!res) {
+        spdlog::error("load game config: {} failed.", gamecfg.string());
+        return;
+    }
+
     auto btreePath = application()->resPath() / "data/bevtree/";
-    bool res = bevtree::BevTreeManager::inst().load(btreePath);
+    res = bevtree::BevTreeManager::inst().load(btreePath);
     if (!res) {
         spdlog::error("load bevtree config: {} failed.", btreePath.string());
         return;

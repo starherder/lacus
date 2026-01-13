@@ -19,8 +19,8 @@ namespace tilemap {
         bool load(const engine::fs::path& mapFile);
         bool unload();
 
-        const Vec2i& mapSize() { return _mapSize; }
-        const Vec2i& tileSize() { return _tileSize; }
+        const Vec2i& mapSize() const { return _mapSize; }
+        const Vec2i& tileSize() const { return _tileSize; }
 
         void bake(engine::ResourceManager& resourceMgr);
 
@@ -34,16 +34,16 @@ namespace tilemap {
         TileLayer* getDecorateLayer();
 
         template<typename T>
-        std::optional<T> getObjectProperty(int objectId, const std::string& name);
+        std::optional<T> getObjectProperty(int objectId, const std::string& name) const;
 
         template<typename T>
-        std::optional<T> getTileProperty(int x, int y, const std::string& name);
+        std::optional<T> getTileProperty(int x, int y, const std::string& name) const;
 
         template<typename T>
-        std::optional<T> getTileProperty(int tileGid, const std::string& name);
+        std::optional<T> getTileProperty(int tileGid, const std::string& name) const;
 
         template<typename T>
-        std::optional<T> getLayerProperty(int id, const std::string& name);
+        std::optional<T> getLayerProperty(int id, const std::string& name) const;
 
     private:
         bool load_mapdata(const json& json);
@@ -51,25 +51,26 @@ namespace tilemap {
         bool load_layers(const json& json);
         
         bool load_tilesets(const json& json);
+
         bool load_one_tileset(const fs::path& filepath, int firstgid);
 
         void bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& layer);
         void bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& layer);
         void bakeObjectLayer(engine::ResourceManager& resourceMgr, ObjectLayer& layer);
 
-        TileSet* getTilesetOfTile(int tileGid);
+        TileSet* getTilesetOfTile(int tileGid) const;
 
-        MapTile* getInfoOfTile(int tileGid);
+        MapTile* getInfoOfTile(int tileGid) const;
 
-        MapLayer* getLayer(int id);
+        MapLayer* getLayer(int id) const;
 
-        int getGidOfTile(int layerId, int x, int y);
-
-        template<typename T>
-        std::optional<T> getObjectProperty(int layerId, int objectId, const std::string& name);
+        int getGidOfTile(int layerId, int x, int y) const;
 
         template<typename T>
-        std::optional<T> getTileProperty(int layerId, int x, int y, const std::string& name);
+        std::optional<T> getObjectProperty(int layerId, int objectId, const std::string& name) const;
+
+        template<typename T>
+        std::optional<T> getTileProperty(int layerId, int x, int y, const std::string& name) const;
 
     private:
         fs::path _resPath;
@@ -103,19 +104,19 @@ namespace tilemap {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    std::optional<T> TileMap::getObjectProperty(int objectId, const std::string& name)
+    std::optional<T> TileMap::getObjectProperty(int objectId, const std::string& name) const
     {
         return getObjectProperty<T>((int)LayerId::Object, objectId, name);
     }
 
     template<typename T>
-    std::optional<T> TileMap::getTileProperty(int x, int y, const std::string& name)
+    std::optional<T> TileMap::getTileProperty(int x, int y, const std::string& name) const
     {
         return getTileProperty<T>((int)LayerId::TileMap, x, y, name);
     }
 
     template<typename T>
-    std::optional<T> TileMap::getTileProperty(int tileGid, const std::string& name)
+    std::optional<T> TileMap::getTileProperty(int tileGid, const std::string& name) const
     {
         auto maptile = getInfoOfTile(tileGid);
         if(!maptile) {
@@ -126,19 +127,19 @@ namespace tilemap {
     }
 
     template<typename T>
-    std::optional<T> TileMap::getTileProperty(int layerId, int x, int y, const std::string& name) {
+    std::optional<T> TileMap::getTileProperty(int layerId, int x, int y, const std::string& name)  const {
 
         int gid = getGidOfTile(layerId, x, y);
         if(gid < 0)
         {
-            return {false, T{}};
+            return std::nullopt;
         }
 
         return getTileProperty<T>(gid, name);
     }
 
     template<typename T>
-    std::optional<T> TileMap::getLayerProperty(int id, const std::string& name)
+    std::optional<T> TileMap::getLayerProperty(int id, const std::string& name) const
     {
         auto layer = getLayer(id);
         if(!layer) {
@@ -149,7 +150,7 @@ namespace tilemap {
     }
 
     template<typename T>
-    std::optional<T> TileMap::getObjectProperty(int layerId, int objectId, const std::string& name)
+    std::optional<T> TileMap::getObjectProperty(int layerId, int objectId, const std::string& name) const
     {
         auto layer = getLayer(layerId);
         if(!layer || layer->type != MapLayerType::ObjectLayer) {

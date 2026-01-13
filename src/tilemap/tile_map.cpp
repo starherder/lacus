@@ -103,7 +103,7 @@ void TileMap::draw(engine::Renderer& renderer, const engine::Camera& camera)
 }
 
 
-TileSet* TileMap::getTilesetOfTile(int tileGid)
+TileSet* TileMap::getTilesetOfTile(int tileGid) const
 {
     for(auto& [firstgid, tileset] : _tilesets)
     {
@@ -115,7 +115,7 @@ TileSet* TileMap::getTilesetOfTile(int tileGid)
     return nullptr;
 }
 
-MapTile* TileMap::getInfoOfTile(int tileGid)
+MapTile* TileMap::getInfoOfTile(int tileGid) const
 {
     auto tileset = getTilesetOfTile(tileGid);
     if(!tileset)
@@ -134,7 +134,7 @@ MapTile* TileMap::getInfoOfTile(int tileGid)
     return nullptr;
 }
 
-int TileMap::getGidOfTile(int layerId, int x, int y)
+int TileMap::getGidOfTile(int layerId, int x, int y) const
 {
     const auto idx = y * _mapSize.x + x;
 
@@ -160,11 +160,12 @@ int TileMap::getGidOfTile(int layerId, int x, int y)
     return tileGid;
 }
 
-MapLayer* TileMap::getLayer(int id)
+MapLayer* TileMap::getLayer(int id) const
 {
-    if(_layers.find(id) != _layers.end())
+    auto it = _layers.find(id);
+    if( it != _layers.end())
     {
-        return _layers[id].get();
+        return it->second.get();
     }
     return nullptr;
 }

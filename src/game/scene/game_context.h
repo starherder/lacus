@@ -4,6 +4,7 @@
 #include "bevtree/bevtree.h"
 #include "ui/gui_manager.h"
 #include "a_star/a_star.hpp"
+#include "game/game_config.h"
 
 namespace game {
 
@@ -51,6 +52,9 @@ namespace game {
 		GameScene& currentScene() { return *_currentScene;  }
 		void setCurrentScene(GameScene* scene) { _currentScene = scene; }
 
+		GameConfig& gameConfig() { return *_gameConfig; }
+		void setGameConfig(GameConfig* config) { _gameConfig = config; }
+
 		ObjectFactory& objectFactory();
 
 		entt::registry& registry();
@@ -68,6 +72,8 @@ namespace game {
 		Application& _application;
 
 		GameScene* _currentScene = nullptr;
+
+		GameConfig* _gameConfig = nullptr;
 
 		PathFinder _pathFinder;
 

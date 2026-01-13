@@ -60,7 +60,10 @@ namespace game {
         void onStart() override;
         void onStop() override;
 
+        const tilemap::TileMap& mapInfo() { return _tileMap; }
+
         GameCamera& camera() { return _camera; }
+
         entt::registry& registry() { return _registry;  }
 
         entt::entity getActor(const std::string& name);
@@ -91,6 +94,7 @@ namespace game {
 
     private:
         void showAllGui();
+
         void closeAllGui();
 
         void initEscSystem();

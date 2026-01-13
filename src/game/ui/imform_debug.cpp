@@ -23,6 +23,7 @@ void ImFormDebug::init(GameContext* context)
     _context = context;
 
     _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick);
+    _context->eventDispatcher().onMouseRightClicked.connect(this, &ImFormDebug::onMouseRightClick);
 
 
     auto& particles = particle::ParticleManager::inst().GetAllParticleConfigs();
@@ -70,11 +71,6 @@ void ImFormDebug::draw()
         ImGui::SameLine();
         if (ImGui::RadioButton("select##input", _debugMode == DebugMode::Select)) {
             _debugMode = DebugMode::Select;
-        }
-
-        ImGui::SameLine();
-        if (ImGui::RadioButton("moveto##input", _debugMode == DebugMode::MoveToGrid)) {
-            _debugMode = DebugMode::MoveToGrid;
         }
 
         if (ImGui::RadioButton("put_obj##input", _debugMode == DebugMode::PutObject)) {
@@ -145,10 +141,6 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     {
         _selectEntity = _context->currentScene().selectObjectAtPos(scenePos);
     }break;
-    case DebugMode::MoveToGrid:
-    {
-        moveSelectActor(scenePos);
-    }break;
     case DebugMode::PutObject:
     {
         _context->currentScene().createObject(_selectCfgId, scenePos);
@@ -160,6 +152,15 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     default:
     {
     }break;
+    }
+}
+
+void ImFormDebug::onMouseRightClick(const Vec2& pos)
+{
+    if(_debugMode == DebugMode::Select && _context->registry().valid(_selectEntity))
+    {
+        auto scenePos = _context->currentScene().camera().screenToWorld(pos);
+        moveSelectActor(scenePos);
     }
 }
 
