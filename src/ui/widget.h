@@ -21,11 +21,11 @@ public:
 
     const Vec2& pos()  const { return _pos; }
     virtual void setPos(const Vec2& pos);
-    virtual void rawSetPos(const Vec2& pos) { _pos = pos; }
+    virtual void rawSetPos(const Vec2& pos);
 
     auto& size() const { return _size; }
     virtual void setSize(const Vec2& sz);
-    virtual void rawSetSize(const Vec2& sz) { _size = sz; }
+    virtual void rawSetSize(const Vec2& sz);
     
     auto& visible() const { return _visible; }
     virtual void setVisible(bool visible);
@@ -88,6 +88,10 @@ public:
     virtual void onChildSizeChanged(Widget* child) {}
     virtual void onChildPosChanged(Widget* child) {}
     virtual void onChildVisibleChanged(Widget* child) {}
+
+    virtual void onPosChanged(const Vec2& oldPos, const Vec2& newPos) {}
+    virtual void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) {}
+    virtual void onVisibleChanged(bool oldVisual, bool newVisual) {}
 
 protected:
 

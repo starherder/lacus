@@ -9,6 +9,7 @@ namespace ui {
 
 	Group::Group(const std::string& name, Widget* parent) : Widget(name, parent)
     {
+        adjustClipRect();
     }
 
     Group::~Group()
@@ -36,7 +37,7 @@ namespace ui {
 
         if(_clipChildren)
         {
-            renderer.setClipRect({realPos, _size});
+            renderer.setClipRect(_clipRect);
         }
 
         Widget::draw();
@@ -60,7 +61,33 @@ namespace ui {
             return;
         }
     }
-    
+
+    void Group::bringTop(Widget* child)
+    {
+        for (auto it = _children.begin(); it != _children.end(); it++)
+        {
+            auto ptr = *it;
+            if (ptr.get() == child) {
+                _children.erase(it);
+                _children.push_back(ptr);
+                return;
+            }
+        }
+    }
+
+    void Group::bringBottom(Widget* child)
+    {
+        for (auto it = _children.begin(); it != _children.end(); it++)
+        {
+            auto ptr = *it;
+            if (ptr.get() == child) {
+                _children.erase(it);
+                _children.push_front(ptr);
+                return;
+            }
+        }
+    }
+
     void Group::onChildAdded(Widget* child)
     {
     }
@@ -75,6 +102,34 @@ namespace ui {
 
     void Group::onChildVisibleChanged(Widget* child) 
     {
+    }
+
+    void Group::onPosChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        adjustClipRect();
+    }
+    
+    void Group::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        adjustClipRect();
+    }
+
+    void Group::onVisibleChanged(bool oldVisual, bool newVisual)
+    {
+    }
+
+    void Group::adjustClipRect()
+    {
+        auto parentGroup = dynamic_cast<Group*>(parent());
+        if (parentGroup)
+        {
+            auto& renderer = GuiManager::inst().renderer();
+            _clipRect = renderer.intersectRect(parentGroup->clipRect(), Rect{ pos(), size() });
+        }
+        else
+        {
+            _clipRect = Rect{ pos(), size() };
+        }
     }
 
 
@@ -123,7 +178,7 @@ namespace ui {
         std::list<Widget::SharedPtr> result;
 
         for (auto& ctrl : children()) {
-            if (ctrl->name() != "__h_slider__" && ctrl->name() != "__v_slider__") {
+            if(ctrl.get() != _verticalSlider && ctrl.get() != _horizonSlider) {
                 result.push_back(ctrl);
             }
         }
@@ -154,29 +209,20 @@ namespace ui {
         Widget::draw();
 
         Rect paintRect{ realPos + Vec2{1,1}, _size - Vec2{2,2} };
-        auto hslider = getChild<Widget>("__h_slider__");
-        if (hslider && hslider->visible())
+        if (_horizonSlider->visible())
         {
-            hslider->draw();
-            paintRect.h -= hslider->size().y;
+            paintRect.h -= _horizonSlider->size().y;
         }
 
-        auto vslider = getChild<Widget>("__v_slider__");
-        if (vslider && vslider->visible())
+        if (_verticalSlider->visible())
         {
-            vslider->draw();
-            paintRect.w -= vslider->size().x;
+            paintRect.w -= _verticalSlider->size().x;
         }
 
         renderer.setClipRect(paintRect);
 
         for (auto& ptr : children())
         {
-            if (ptr->name() == "__h_slider__" || ptr->name() == "__v_slider__")
-            {
-                continue;
-            }
-
             ptr->draw();
         }
 
@@ -185,6 +231,10 @@ namespace ui {
 
     void ExpandGroup::onChildAdded(Widget* child)
     {
+        bringTop(_verticalSlider);
+
+        bringTop(_horizonSlider);
+     
         adjustContent();
     }
 

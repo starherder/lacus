@@ -4,6 +4,7 @@
 #include "text_render.h"
 #include "texture.h"
 #include "font.h"
+#include "SDL3/SDL_rect.h"
 
 #include <memory>
 
@@ -49,7 +50,22 @@ bool Renderer::init(SDL_Window* window) {
     return true;
 }
 
-// 裁剪区域
+
+Rect Renderer::intersectRect(const Rect& lval, const Rect& rval)
+{
+    SDL_Rect result;
+    SDL_Rect lrect = lval;
+    SDL_Rect rrect = rval;
+    if (SDL_GetRectIntersection(&lrect, &rrect, &result))
+    {
+        return result;
+    }
+    else
+    {
+        return { 0,0,0,0 };
+    }
+}
+
 bool Renderer::setClipRect(const Rect& rect) const {
     SDL_Rect r = rect;
     return SDL_SetRenderClipRect(_renderer, &r);

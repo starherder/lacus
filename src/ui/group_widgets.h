@@ -20,6 +20,7 @@ public:
 
     bool clipChildren() const { return _clipChildren; }
     void setClipChildren(bool clip) { _clipChildren = clip; }
+    const Rect& clipRect() { return _clipRect; }
 
     template<typename WidgetType>
     WidgetType* createChild(const std::string& name);
@@ -28,6 +29,9 @@ public:
     WidgetType* getChild(const std::string& name);
 
     void removeChild(const std::string& name);
+
+    void bringTop(Widget* child);
+    void bringBottom(Widget* child);
 
     const std::list<SharedPtr>& children() const { return _children; }
 
@@ -40,10 +44,17 @@ protected:
     void onChildSizeChanged(Widget* child) override;
     void onChildVisibleChanged(Widget* child) override;
 
+    void onPosChanged(const Vec2& oldPos, const Vec2& newPos) override;
+    void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+    void onVisibleChanged(bool oldVisual, bool newVisual) override;
+
+    void adjustClipRect();
+
 private:
     std::list<SharedPtr> _children;
 
     bool _clipChildren = true;
+    Rect _clipRect;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

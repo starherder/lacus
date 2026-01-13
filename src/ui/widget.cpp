@@ -13,9 +13,9 @@ Widget::~Widget()
 {
 }
 
-void Widget::setPos(const Vec2& sz)
+void Widget::setPos(const Vec2& pt)
 {
-    rawSetPos(sz);
+    rawSetPos(pt);
 
     if (_parent)
     {
@@ -23,9 +23,20 @@ void Widget::setPos(const Vec2& sz)
     }
 }
 
+void Widget::rawSetPos(const Vec2& pt)
+{
+    Vec2 oldPos = _pos;
+
+    _pos = pt;
+
+    onPosChanged(oldPos, pt);
+}
+
 void Widget::setSize(const Vec2& sz) 
 { 
+
     rawSetSize(sz);
+
 
     if(_parent)
     {
@@ -33,9 +44,20 @@ void Widget::setSize(const Vec2& sz)
     }
 }
 
-void Widget::setVisible(bool visible) 
+void Widget::rawSetSize(const Vec2& sz)
 {
-    rawSetVisible(visible);
+    Vec2 oldSz = _size;
+
+    _size = sz;
+
+    onSizeChanged(oldSz, sz);
+}
+
+void Widget::setVisible(bool vis) 
+{
+
+    rawSetVisible(vis);
+
 
     if(_parent)
     {
@@ -43,9 +65,13 @@ void Widget::setVisible(bool visible)
     }
 }
 
-void Widget::rawSetVisible(bool visible)
+void Widget::rawSetVisible(bool vis)
 {
-    _visible = visible;
+    bool oldVis = _visible;
+
+    _visible = vis;
+
+    onVisibleChanged(oldVis, vis);
 }
 
 void Widget::setData(const std::string& key, const utility::Var& value)
