@@ -50,22 +50,6 @@ bool Renderer::init(SDL_Window* window) {
     return true;
 }
 
-
-Rect Renderer::intersectRect(const Rect& lval, const Rect& rval)
-{
-    SDL_Rect result;
-    SDL_Rect lrect = lval;
-    SDL_Rect rrect = rval;
-    if (SDL_GetRectIntersection(&lrect, &rrect, &result))
-    {
-        return result;
-    }
-    else
-    {
-        return { 0,0,0,0 };
-    }
-}
-
 bool Renderer::setClipRect(const Rect& rect) const {
     SDL_Rect r = rect;
     return SDL_SetRenderClipRect(_renderer, &r);

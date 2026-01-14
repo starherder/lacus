@@ -31,8 +31,6 @@ public:
     Rect getClipRect() const;
     bool setClipRect(const Rect& rect) const;
     
-    Rect intersectRect(const Rect& lval, const Rect& rval);
-
     bool setRenderScale(const Vec2& scale) const;
     Vec2 getRenderScale() const; 
     

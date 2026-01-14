@@ -34,9 +34,7 @@ void Widget::rawSetPos(const Vec2& pt)
 
 void Widget::setSize(const Vec2& sz) 
 { 
-
     rawSetSize(sz);
-
 
     if(_parent)
     {
@@ -55,9 +53,7 @@ void Widget::rawSetSize(const Vec2& sz)
 
 void Widget::setVisible(bool vis) 
 {
-
     rawSetVisible(vis);
-
 
     if(_parent)
     {
@@ -81,7 +77,7 @@ void Widget::setData(const std::string& key, const utility::Var& value)
 
 bool Widget::isPosInMe(const Vec2& pos)
 {
-    auto realPos = getRealPos();
+    auto realPos = getAbsPos();
     return _visible && pos.x >= realPos.x && pos.x <= realPos.x+_size.x
                     && pos.y >= realPos.y && pos.y <= realPos.y+_size.y;
 }
@@ -99,13 +95,29 @@ void Widget::setTexture(Texture* tex, const Rect& uv)
     status().tex_rect = Rect{uv.x*sz.x, uv.y*sz.y, uv.w*sz.x, uv.h*sz.y};
 }
 
-Vec2 Widget::getRealPos() const
+Vec2 Widget::getAbsPos() const
 {
     if(!_parent) { 
         return _pos;
     }
 
-    return _pos + _parent->getRealPos() + _parent->getContentPos();
+    return _pos + _parent->getAbsPos() + _parent->getContentPos();
+}
+
+Rect Widget::getAbsRect() const
+{
+    return {getAbsPos(), _size};
+}
+
+Rect Widget::getClipRect() const
+{
+    auto parentWidget = parent();
+    if (!parentWidget)
+    {
+        return getAbsRect();
+    }
+
+    return parentWidget->getClipRect().intersect(getAbsRect());
 }
 
 void Widget::update(float delta)
@@ -114,7 +126,7 @@ void Widget::update(float delta)
 
 void Widget::draw()
 {
-    auto relPos = getRealPos();
+    auto relPos = getAbsPos();
     auto& state = status();
     auto& renderer = GuiManager::inst().renderer();
     auto& painter = GuiManager::inst().painter();

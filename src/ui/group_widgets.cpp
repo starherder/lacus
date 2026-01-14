@@ -9,7 +9,6 @@ namespace ui {
 
 	Group::Group(const std::string& name, Widget* parent) : Widget(name, parent)
     {
-        adjustClipRect();
     }
 
     Group::~Group()
@@ -31,13 +30,12 @@ namespace ui {
             return;
         }
 
-        auto realPos = getRealPos();
+        auto realPos = getAbsPos();
         auto& renderer = GuiManager::inst().renderer();
-        auto oldClipRect = renderer.getClipRect();
 
         if(_clipChildren)
         {
-            renderer.setClipRect(_clipRect);
+            renderer.setClipRect(getClipRect());
         }
 
         Widget::draw();
@@ -47,7 +45,10 @@ namespace ui {
             ptr->draw();
         }
 
-        renderer.setClipRect(oldClipRect);
+        if (parent()) 
+        {
+            renderer.setClipRect(parent()->getClipRect());
+        }
     } 
 
     void Group::removeChild(const std::string& name)
@@ -106,30 +107,14 @@ namespace ui {
 
     void Group::onPosChanged(const Vec2& oldPos, const Vec2& newPos)
     {
-        adjustClipRect();
     }
     
     void Group::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
     {
-        adjustClipRect();
     }
 
     void Group::onVisibleChanged(bool oldVisual, bool newVisual)
     {
-    }
-
-    void Group::adjustClipRect()
-    {
-        auto parentGroup = dynamic_cast<Group*>(parent());
-        if (parentGroup)
-        {
-            auto& renderer = GuiManager::inst().renderer();
-            _clipRect = renderer.intersectRect(parentGroup->clipRect(), Rect{ pos(), size() });
-        }
-        else
-        {
-            _clipRect = Rect{ pos(), size() };
-        }
     }
 
 
@@ -171,62 +156,6 @@ namespace ui {
         _contentPos.y = -slider->value();
 
         adjustScrollbar();
-    }
-
-    std::list<Widget::SharedPtr> ExpandGroup::items() const
-    {
-        std::list<Widget::SharedPtr> result;
-
-        for (auto& ctrl : children()) {
-            if(ctrl.get() != _verticalSlider && ctrl.get() != _horizonSlider) {
-                result.push_back(ctrl);
-            }
-        }
-
-        return result;
-    }
-
-    void ExpandGroup::update(float delta)
-    {
-    }
-
-    void ExpandGroup::draw()
-    {
-        if (!visible())
-        {
-            return;
-        }
-
-        auto realPos = getRealPos();
-        auto& renderer = GuiManager::inst().renderer();
-
-        auto oldClipRect = renderer.getClipRect();
-        if (clipChildren())
-        {
-            renderer.setClipRect({ realPos, _size });
-        }
-
-        Widget::draw();
-
-        Rect paintRect{ realPos + Vec2{1,1}, _size - Vec2{2,2} };
-        if (_horizonSlider->visible())
-        {
-            paintRect.h -= _horizonSlider->size().y;
-        }
-
-        if (_verticalSlider->visible())
-        {
-            paintRect.w -= _verticalSlider->size().x;
-        }
-
-        renderer.setClipRect(paintRect);
-
-        for (auto& ptr : children())
-        {
-            ptr->draw();
-        }
-
-        renderer.setClipRect(oldClipRect);
     }
 
     void ExpandGroup::onChildAdded(Widget* child)

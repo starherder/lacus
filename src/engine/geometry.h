@@ -41,7 +41,12 @@ public:
 
     Vec2 pos() const;
     Vec2 size() const;
+
     bool contains(const Vec2& point) const;
+    bool contains(const Rect& rect) const;
+    
+    Rect intersect(const Rect& other) const;
+    bool isIntersect(const Rect& other) const;
 
     operator SDL_FRect() const;
     operator SDL_Rect() const;

@@ -20,7 +20,6 @@ public:
 
     bool clipChildren() const { return _clipChildren; }
     void setClipChildren(bool clip) { _clipChildren = clip; }
-    const Rect& clipRect() { return _clipRect; }
 
     template<typename WidgetType>
     WidgetType* createChild(const std::string& name);
@@ -48,13 +47,10 @@ protected:
     void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
     void onVisibleChanged(bool oldVisual, bool newVisual) override;
 
-    void adjustClipRect();
-
 private:
     std::list<SharedPtr> _children;
 
     bool _clipChildren = true;
-    Rect _clipRect;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -66,11 +62,6 @@ public:
     ExpandGroup() = delete;
     ExpandGroup(const std::string& name, Widget* parent = nullptr);
     ~ExpandGroup();
-
-    void update(float delta) override;
-    void draw() override;
-
-    std::list<SharedPtr> items() const;
 
 private:
     Vec2 getContentPos() const override { return _contentPos; }

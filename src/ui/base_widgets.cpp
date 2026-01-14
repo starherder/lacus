@@ -40,7 +40,7 @@ namespace ui {
 
         auto& renderer = GuiManager::inst().renderer();
         auto textSize = renderer.getTextSize(_text, _font);
-        auto realPos = getRealPos();
+        auto realPos = getAbsPos();
 
         if(_textAlign == Align::Left)
         {

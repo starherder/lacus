@@ -67,7 +67,11 @@ public:
     T getData(const std::string& key) const;
     void setData(const std::string& key, const utility::Var& value);
 
-    Vec2 getRealPos() const;
+    Vec2 getAbsPos() const;
+
+    Rect getAbsRect() const;
+
+    Rect getClipRect() const;
 
 public:
     virtual void onMouseEnter(const Vec2& pos) {}
