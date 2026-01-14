@@ -1,11 +1,30 @@
 ﻿#pragma once
 
 #include "engine/application.h"
-
+#include "imform/imform.h"
 
 namespace samples {
 
     using namespace engine;
+
+    class ImGuiFormDraw : public imgui::ImForm
+    {
+    public:
+        ImGuiFormDraw() = delete;
+        ImGuiFormDraw(engine::Application* app) : _application(app) {}
+        ~ImGuiFormDraw() = default;
+
+    protected:
+        void onInit() override;
+
+        void draw() override;
+
+    private:
+        engine::Application* _application = nullptr;
+    };
+
+
+
 
     class SamplePluginDraw final : public engine::Plugin 
     {
@@ -41,6 +60,8 @@ namespace samples {
         void drawTexture();
 
         void drawText();
+
+        void drawImGuiCmds();
 
         void paint();
 

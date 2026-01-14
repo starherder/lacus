@@ -3,7 +3,33 @@
 #include "engine/application.h"
 #include "engine/color.h"
 
+#include "imform/imform_manager.h"
+
 namespace samples {
+
+    void ImGuiFormDraw::onInit()
+    {
+    }
+
+    void ImGuiFormDraw::draw()
+    {
+        ImGuiIO& io = ImGui::GetIO();
+
+        ImGui::Begin("aaaaaa");
+
+        ImVec2 pos = ImGui::GetWindowPos();
+
+        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetWindowDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255),10, ImDrawFlags_RoundCornersAll, 10);
+
+        ImGui::GetWindowDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+        ImGui::GetWindowDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+        ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+
+        ImGui::End();
+    }
 
     void SamplePluginDraw::onInit() 
     {
@@ -19,10 +45,12 @@ namespace samples {
 
     void SamplePluginDraw::onEnable()
     {
+        imgui::ImFormManager::inst().showForm<ImGuiFormDraw>("form_draw", application());
     }
 
     void SamplePluginDraw::onDisable()
     {
+        imgui::ImFormManager::inst().closeForm("form_draw");
     }
 
     void SamplePluginDraw::onUpdate() 
@@ -42,6 +70,8 @@ namespace samples {
         paint();
 
         gfx_paint();
+
+        drawImGuiCmds();
     }
 
     void SamplePluginDraw::onClose() 
@@ -122,6 +152,10 @@ namespace samples {
                 renderer.drawText("就是这个feel，倍er爽~", font, {650, 200}, {255, 200, 0, 255});
             }
         }
+    }
+
+    void SamplePluginDraw::drawImGuiCmds()
+    {
     }
 
     void SamplePluginDraw::paint()
