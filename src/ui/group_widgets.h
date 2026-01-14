@@ -21,6 +21,8 @@ public:
     bool clipChildren() const { return _clipChildren; }
     void setClipChildren(bool clip) { _clipChildren = clip; }
 
+    Rect getClipRect() const;
+
     template<typename WidgetType>
     WidgetType* createChild(const std::string& name);
 

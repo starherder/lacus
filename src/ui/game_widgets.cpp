@@ -34,20 +34,24 @@ namespace ui
 
         setCanDragOut(true);
 
-        auto bgVLay = createChild<VLayout>("_bg_vlay_");
-        bgVLay->setSize(DefaultSize - Vec2{4,4});
-        bgVLay->setPos({ 2,2 });
+        _info = createChild<Button>("_info_");
+        _info->setSize({30, 30});
+        _info->setPos({200, 10});
 
-        auto headHLay = bgVLay->createChild<HLayout>("_hlay_head_");
-        _info = headHLay->createChild<Button>("_info_");
+        _title = createChild<Label>("_title_");
+        _title->setPos({20, 50});
+        _title->setSize({140, 50});
+        _title->setFont("fonts/msyh.ttf", 25);
+        _title->setTextAlign(Align::Left);
+        _title->setTextColor(Color::Dark);
 
-        auto titleHLay = bgVLay->createChild<HLayout>("_hlay_title_");
-        _title = titleHLay->createChild<Label>("_title_");
+        _level = createChild<Label>("_level_");
+        _level->setPos({170, 50});
+        _level->setSize({60, 50});
 
-        _level = titleHLay->createChild<Label>("_level_");
-        _level->setSize({100, 50});
-
-        _desc = bgVLay->createChild<TextBox>("_desc_");
+        _desc = createChild<TextBox>("_desc_");
+        _desc->setPos({20, 110});
+        _desc->setSize({210, 180});
     }
 
     CardWidget::~CardWidget()

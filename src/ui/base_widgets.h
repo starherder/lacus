@@ -48,7 +48,7 @@ private:
     Align _textAlign = Align::Center;
 
     std::string _fontName;
-    int _fontSize = 20;
+    int _fontSize = 16;
     Font* _font = nullptr;
 };
 

@@ -3,6 +3,7 @@
 
 namespace ui {
 
+#define USE_GFX_PAINTER
 
 Widget::Widget(const std::string& name, Widget* parent) 
     : _name(name), _parent(parent)
@@ -109,16 +110,6 @@ Rect Widget::getAbsRect() const
     return {getAbsPos(), _size};
 }
 
-Rect Widget::getClipRect() const
-{
-    auto parentWidget = parent();
-    if (!parentWidget)
-    {
-        return getAbsRect();
-    }
-
-    return parentWidget->getClipRect().intersect(getAbsRect());
-}
 
 void Widget::update(float delta)
 {
@@ -135,24 +126,38 @@ void Widget::draw()
 
     if(state.texture)
     {
+#ifdef USE_GFX_PAINTER
+        auto& gfxPainter = GuiManager::inst().gfxPainter();
+        gfxPainter.drawTexture(state.texture, state.tex_rect, bksize);
+#else
         if (state.ground_color.isValid()) 
         {
             renderer.setDrawColor(state.ground_color);
         }
-
         renderer.drawTexture(state.texture, state.tex_rect, bksize);
+#endif
     }
     else
     {
         if(state.ground_color.isValid())
         {
+#ifdef USE_GFX_PAINTER
+            auto& gfxPainter = GuiManager::inst().gfxPainter();
+            gfxPainter.fillRect(state.ground_color, bksize, _borderRound);
+#else
             painter.fillRect(state.ground_color, bksize, _borderRound);
+#endif
         }
     }
             
     if(state.border_color.isValid())
     {
+#ifdef USE_GFX_PAINTER
+        auto& gfxPainter = GuiManager::inst().gfxPainter();
+        gfxPainter.drawRect(state.border_color, bksize, _borderRound);
+#else
         painter.drawRect(state.border_color, bksize, _borderRound, _borderSize);
+#endif
     }
 }
 

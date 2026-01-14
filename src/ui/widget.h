@@ -75,8 +75,6 @@ public:
 
     Rect getAbsRect() const;
 
-    Rect getClipRect() const;
-
 public:
     virtual void onMouseEnter(const Vec2& pos) {}
     virtual void onMouseLeave(const Vec2& pos) {}

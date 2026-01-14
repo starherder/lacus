@@ -31,6 +31,11 @@ namespace samples {
 		}
 
 		{
+			auto card = bgGroup->createChild<ui::CardWidget>("test_card");
+			card->setPos({400, 50});
+		}
+
+		{
 			auto group = bgGroup->createChild<ui::CardGroup>("card_group");
 			group->setSize({ size().x, 350 });
 			group->setPos({ 0, size().y - group->size().y });

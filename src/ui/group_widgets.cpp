@@ -45,9 +45,10 @@ namespace ui {
             ptr->draw();
         }
 
-        if (parent()) 
+        auto parentGroup = dynamic_cast<Group*>(parent());
+        if (parentGroup && parentGroup->clipChildren())
         {
-            renderer.setClipRect(parent()->getClipRect());
+            renderer.setClipRect(parentGroup->getClipRect());
         }
     } 
     
@@ -124,6 +125,23 @@ namespace ui {
                 return;
             }
         }
+    }
+
+    Rect Group::getClipRect() const
+    {
+        auto parentWidget = parent();
+        auto parentGroup = dynamic_cast<Group*>(parentWidget);
+        if (!parentGroup)
+        {
+            return getAbsRect();
+        }
+
+        if (clipChildren())
+        {
+            return parentGroup->getClipRect().intersect(getAbsRect());
+        }
+
+        return parentGroup->getClipRect();
     }
 
     WidgetPtr Group::moveOut(Widget* child)

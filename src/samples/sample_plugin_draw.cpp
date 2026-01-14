@@ -52,15 +52,27 @@ namespace samples {
     void SamplePluginDraw::drawShape()
     {
         auto& renderer = application()->renderer();
-        
+        auto& painter = application()->painter();
+        auto& gfxPainter = application()->gfx_painter();
+
         renderer.setDrawColor({0, 0, 255, 255});
         renderer.drawRect({ 100, 100, 200, 100 });
-
         renderer.setDrawColor({255, 255, 0, 255});
         renderer.drawFillRect({400, 100, 150, 150});
 
         renderer.setDrawColor({255, 155, 0, 255});
         renderer.drawDebugText({10,10}, "Hello,world!");
+
+        // ----------------------------------------------------
+
+        renderer.setDrawColor(Color::Red);
+        renderer.drawRect({1700, 50, 200, 100});
+        
+        painter.drawRect(Color::Blue, { 1700, 160, 200, 100 }, 10);
+        painter.drawRect(Color::Green, { 1700, 270, 200, 100 }, 10, 10);
+        
+        gfxPainter.drawRect(Color::Pink, {1700, 380, 200, 100 }, 10);
+        gfxPainter.drawRect(Color::Pink, { 1910, 50, 200, 100 }, 10);
     }
 
     void SamplePluginDraw::initGeometry()

@@ -163,13 +163,11 @@ namespace engine
 		}
 	}
 
-	void GFXPainter::drawTexture(Texture* pTexture, const Rect& uv, const Rect& dst)
+	void GFXPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst)
 	{
 		fail_return(pTexture);
 
-		auto size = pTexture->size();
-		Rect srcrect = { uv.x * size.x, uv.y * size.y, uv.w * size.x, uv.h * size.y };
-		_application.renderer().drawTexture(pTexture, srcrect, dst);
+		_application.renderer().drawTexture(pTexture, src, dst);
 
 	}
 
