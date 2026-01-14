@@ -32,7 +32,7 @@ namespace samples {
 
 
 
-
+        // ------------------------------------------------------------
 
 
         pos = ImVec2{ 1900, 200 };
@@ -45,6 +45,20 @@ namespace samples {
         ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
         ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
         ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+
+        // ------------------------------------------------------------
+
+
+        pos = ImVec2{ 1400, 600 };
+
+        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetForegroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
+
+        ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+        ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+        ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
 
     }
 
