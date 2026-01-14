@@ -44,8 +44,11 @@ public:
 
 	auto& logicDispatcher() { return _logicDispatcher;  }
 
+	const Vec2& mousePos() { return _mousePos; }
+
 private:
 	entt::dispatcher _logicDispatcher;
+	Vec2 _mousePos;
 };
 
 }

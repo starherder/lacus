@@ -33,7 +33,7 @@ namespace ui {
         auto realPos = getAbsPos();
         auto& renderer = GuiManager::inst().renderer();
 
-        if(_clipChildren)
+        if(clipChildren())
         {
             renderer.setClipRect(getClipRect());
         }
@@ -50,6 +50,41 @@ namespace ui {
             renderer.setClipRect(parent()->getClipRect());
         }
     } 
+    
+    void Group::addWidget(WidgetPtr widget, int index)
+    {
+        bool addOK = false;
+        if (index == -1) 
+        {
+            _children.push_back(widget);
+            addOK = true;
+        }
+        else
+        {
+            if (index >= 0 && index < _children.size())
+            {
+                int curindex = 0;
+                for (auto it = _children.begin(); it != _children.end(); it++)
+                {
+                    if (curindex == index) 
+                    {
+                        _children.insert(it, widget);
+                    
+                        addOK = true;
+                        break;
+                    }
+
+                    curindex++;
+                }
+            }
+        }
+
+        if (addOK) 
+        {
+            widget->setParent(this);
+            onChildAdded(widget.get());
+        }
+    }
 
     void Group::removeChild(const std::string& name)
     {
@@ -68,7 +103,8 @@ namespace ui {
         for (auto it = _children.begin(); it != _children.end(); it++)
         {
             auto ptr = *it;
-            if (ptr.get() == child) {
+            if (ptr.get() == child) 
+            {
                 _children.erase(it);
                 _children.push_back(ptr);
                 return;
@@ -81,12 +117,30 @@ namespace ui {
         for (auto it = _children.begin(); it != _children.end(); it++)
         {
             auto ptr = *it;
-            if (ptr.get() == child) {
+            if (ptr.get() == child) 
+            {
                 _children.erase(it);
                 _children.push_front(ptr);
                 return;
             }
         }
+    }
+
+    WidgetPtr Group::moveOut(Widget* child)
+    {
+        for (auto it = _children.begin(); it != _children.end(); it++)
+        {
+            auto ptr = *it;
+            if (ptr.get() == child) 
+            {
+                _children.erase(it);
+
+                ptr->setParent(nullptr);
+                return ptr;
+            }
+        }
+
+        return nullptr;
     }
 
     void Group::onChildAdded(Widget* child)

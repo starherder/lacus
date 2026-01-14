@@ -23,16 +23,19 @@ public:
     virtual void setPos(const Vec2& pos);
     virtual void rawSetPos(const Vec2& pos);
 
-    auto& size() const { return _size; }
+    const auto& size() const { return _size; }
     virtual void setSize(const Vec2& sz);
     virtual void rawSetSize(const Vec2& sz);
     
-    auto& visible() const { return _visible; }
+    auto visible() const { return _visible; }
     virtual void setVisible(bool visible);
     virtual void rawSetVisible(bool visible);
 
-    auto& dragable() const { return _dragable; }
+    auto dragable() const { return _dragable; }
     void setDragable(bool drag) { _dragable = drag; }
+
+    auto canDragOut() const { return _canDragOut; }
+    void setCanDragOut(bool d) { _canDragOut = d; }
 
     auto& noEvent() const { return _noEvent; }
     void setNoEvent(bool noEvent) { _noEvent = noEvent; }
@@ -62,6 +65,7 @@ public:
     void setScaleInGroup(bool scale) { _scaleInGroup = scale; }
 
     Widget* parent() const { return _parent; }
+    void setParent(Widget* widget) { _parent = widget; }
 
     template<typename T>
     T getData(const std::string& key) const;
@@ -111,6 +115,7 @@ protected:
     bool _dragable= false;
     bool _noEvent = true;
     bool _scaleInGroup = true;
+    bool _canDragOut = false;
 
     float _borderSize = 1.0f;
     float _borderRound = 0.0f;
@@ -123,6 +128,7 @@ protected:
     WidgetStatus _normalStatus = WigetUtils::normalStatus;
 };
 
+using WidgetPtr = Widget::SharedPtr;
 
 template<typename T>
 T Widget::getData(const std::string& key) const

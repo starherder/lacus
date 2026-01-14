@@ -1,4 +1,7 @@
 ﻿#include "gui_manager.h"
+#include "widget.h"
+#include "base_widgets.h"
+#include "group_widgets.h"
 
 namespace ui {
 
@@ -30,6 +33,12 @@ namespace ui {
             {
                 form->update(delta);
             }
+
+            if (_draggingData && _draggingData->widget) 
+            {
+                auto pos = _app->eventDispatcher().mousePos() + _draggingData->offset;
+                _draggingData->widget->setPos(pos);
+            }
         }
 
         void GuiManager::draw()
@@ -37,6 +46,11 @@ namespace ui {
             for(auto& form : _forms)
             {
                 form->draw();
+            }
+
+            if (_draggingData && _draggingData->widget)
+            {
+                _draggingData->widget->draw();
             }
         }
         
@@ -150,6 +164,11 @@ namespace ui {
 
                 slot_context().setBreak(true);
             }
+
+            if (_draggingData)
+            {
+                drop();
+            }
         }
 
         void GuiManager::onMouseRightDown(const Vec2& pos)
@@ -176,13 +195,26 @@ namespace ui {
 
         void GuiManager::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
         {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible() && form->focused())
+            if (_draggingData)
             {
-                form->onMouseLeftDrag(pos, offset);
-
-                slot_context().setBreak(true);
+                return;
             }
+
+            auto form = getFormAtPos(pos);
+            if (!form || !form->visible() || !form->focused()) 
+            {
+                return;
+            }
+
+            auto widget = form->hoverWidget();
+            if (widget && widget->canDragOut())
+            {
+                drag(widget);
+                return;
+            }
+
+            form->onMouseLeftDrag(pos, offset);
+            slot_context().setBreak(true);
         }
 
         void GuiManager::onMouseWheel(const Vec2& pos, float dir)
@@ -205,5 +237,50 @@ namespace ui {
 
                 slot_context().setBreak(true);
             }
+        }
+
+        void GuiManager::drag(Widget* widget)
+        {
+            if (!widget)
+            {
+                return;
+            }
+
+            auto parentGroup = dynamic_cast<Group*>(widget->parent());
+            if (!parentGroup)
+            {
+                return;
+            }
+
+            auto wpos = widget->getAbsPos();
+            auto mpos = _app->eventDispatcher().mousePos();
+
+            _draggingData = std::make_shared<DraggingData>();
+            _draggingData->widget= parentGroup->moveOut(widget);
+            _draggingData->source = parentGroup;
+            _draggingData->offset= wpos - mpos;
+
+            on_drag_start.emit(widget);
+        }
+
+        GuiManager::DraggingPtr GuiManager::fetchDraggingData()
+        {
+            if (_draggingData) 
+            {
+                DraggingPtr ptr = _draggingData;
+                _draggingData = nullptr;
+
+                return ptr;
+            }
+
+            return nullptr;
+        }
+
+        void GuiManager::drop()
+        {
+            auto pos = _app->eventDispatcher().mousePos();
+            auto widget = getWidgetAtPos(pos);
+            
+            on_drop.emit(widget, pos);
         }
 }

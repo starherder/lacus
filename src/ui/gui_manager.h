@@ -5,10 +5,29 @@
 #include "form.h"
 
 namespace ui {
-    
+
+class Widget;
+using WidgetPtr = std::shared_ptr<Widget>;
+
+
+
 class GuiManager : public utility::ISingleton<GuiManager>,
                     public sigslot::SlotHandler
 {
+public:
+    struct DraggingData 
+    {
+        WidgetPtr widget = nullptr;
+        Widget* source = nullptr;
+        Vec2 offset;
+    };
+
+    using DraggingPtr = std::shared_ptr<DraggingData>;
+
+public:
+    sigslot::Signal<Widget*> on_drag_start;
+    sigslot::Signal<Widget*, const Vec2&> on_drop;
+
 public:
     void init(engine::Application* app);
 
@@ -24,7 +43,8 @@ public:
     auto& textureManager() { return _app->resourceManager().textureManager(); }
     auto& eventDispatcher() { return _app->eventDispatcher(); }
     auto& frameTicker() { return _app->frameTicker(); }
-        
+
+    // --------------  form manager ---------------- 
     template<typename FormType, typename... Args>
     FormType* showForm(const std::string& name, const Args&... args);
         
@@ -32,6 +52,10 @@ public:
     FormType* getForm(const std::string& name);
 
     void closeForm(const std::string& name);
+    // ----------------------------------------------
+
+    // --------------  drag and drop ---------------- 
+    DraggingPtr fetchDraggingData();
 
 private:
     void onKeyDown(KeyCode key);
@@ -55,12 +79,17 @@ private:
 
     void moveFormTop(const std::string& formName);
 
+    void drag(Widget* widget);
+    void drop();
+
 private:
     engine::Application* _app;
 
     Widget* _hoverWidget = nullptr;
 
-    std::list<Form::SharedPtr> _forms;
+    DraggingPtr _draggingData = nullptr;
+
+    std::list<FormPtr> _forms;
 };
 
 

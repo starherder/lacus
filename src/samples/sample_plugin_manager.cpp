@@ -43,11 +43,12 @@ namespace samples {
     	ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
 
 		auto& frameTicker = _application->frameTicker();
+        auto& mousePos = _application->eventDispatcher().mousePos();
 
 		static bool open = true;
 		if (ImGui::Begin("Example: Simple overlay", &open, window_flags))
 		{
-			ImGui::Text("render: ");
+			ImGui::Text("mouse: %d, %d", (int)mousePos.x, (int)mousePos.y);
 			ImGui::Separator();
 			
 			ImGui::Text("fps: %d", 	 frameTicker.fps());

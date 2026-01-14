@@ -11,6 +11,9 @@ namespace ui
         signal<CardWidget*, bool> on_select;
         signal<CardWidget*> on_drag;
 
+        signal<CardWidget*> on_mouse_enter;
+        signal<CardWidget*> on_mouse_leave;
+
     public:
         CardWidget(const std::string& name, Widget* parent = nullptr);
         ~CardWidget();
@@ -84,7 +87,17 @@ namespace ui
 
         void tileChildren();
 
+        void onChildAdded(Widget* child) override;
+
+        void onChildRemoved(Widget* child) override;
+
         void onChildSelect(CardWidget* card, bool selected);
+        
+        void onChildDrag(CardWidget* card);
+
+        void onChildMouseEnter(CardWidget* card);
+
+        void onChildMouseLeave(CardWidget* card);
 
     private:
         ui::Coordinate _coord = ui::Coordinate::Horizonal;
@@ -93,7 +106,7 @@ namespace ui
 
         float _space = 10.0f;
 
-        bool _overlap = true;
+        bool _overlap = false;
 	};
 
 

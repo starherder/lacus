@@ -17,7 +17,7 @@ namespace samples {
 		bgGroup->setBgColor({ 0, 128, 0, 200});
 
 		{
-			auto group = bgGroup->createChild<ui::CardGroup>("test_group");
+			auto group = bgGroup->createChild<ui::Group>("test_group");
 			group->setSize({ 350, 350 });
 			group->setPos({ 20, 20 });
 			group->setBgColor({ 128, 128, 0, 200 });
@@ -48,30 +48,49 @@ namespace samples {
 			group->addCard("test9");
 		}
 
-
 		auto cbox = root()->createChild<ui::CheckBox>("cbox_overlap");
 		cbox->setSize({ 100, 50 });
 		cbox->setPos({ 1400, 0 });
 		cbox->setText("overlap");
-		cbox->on_check_changed.connect([](ui::CheckBox* cb) {
-			auto form = ui::GuiManager::inst().getForm<FormCards>("form_cars");
-			if (form) {
-				form->setCardOverlap(cb->checked());
-			}
-		});
+		cbox->on_check_changed.connect(this, &FormCards::onCardOverlapChanged);
+
+		ui::GuiManager::inst().on_drop.connect(this, &FormCards::onDropCard);
 	}
 
 	FormCards::~FormCards()
 	{
-
 	}
 
-	void FormCards::setCardOverlap(bool overlap)
+	void FormCards::onCardOverlapChanged(ui::CheckBox* cb)
 	{
 		auto group = getWidget<ui::CardGroup>("card_group");
 		if (group) {
-			group->setOverlap(overlap);
+			group->setOverlap(cb->checked());
 		}
+	}
+
+	void FormCards::onDropCard(ui::Widget* widget, const Vec2& pos)
+	{
+		auto dragging = ui::GuiManager::inst().fetchDraggingData();
+		if (!dragging) return;
+
+		auto cardWidget = dragging->widget;
+		auto sourceGroup = dynamic_cast<ui::CardGroup*>(dragging->source);
+		if (!cardWidget || !sourceGroup)
+		{
+			spdlog::error("dragging card widget is invalid.");
+			return;
+		}
+
+		spdlog::info("drop card ({}) at widget ({}), at pos ({},{})",
+			cardWidget->name(), widget?widget->name():"none", pos.x, pos.y);
+
+		if (sourceGroup) 
+		{
+			int index = cardWidget->getData<int>("index");
+			sourceGroup->addWidget(cardWidget, index);
+		}
+
 	}
 
 	void FormCards::onUpdate(float delta)

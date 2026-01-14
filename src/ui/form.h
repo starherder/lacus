@@ -49,6 +49,8 @@ public:
     virtual void onUpdate(float delta) {}
     virtual void onDraw() {}
 
+    Widget* hoverWidget() { return _hoverWidget; }
+
 public:
     void onMouseLeftClick(const Vec2& pos);
     void onMouseRightClick(const Vec2& pos);
@@ -79,5 +81,7 @@ private:
     std::unique_ptr<Group> _rootGroup = nullptr;
     Widget* _hoverWidget = nullptr;
 };
+
+using FormPtr = Form::SharedPtr;
 
 }

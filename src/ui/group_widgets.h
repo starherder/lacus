@@ -27,12 +27,16 @@ public:
     template<typename WidgetType>
     WidgetType* getChild(const std::string& name);
 
+    void addWidget(WidgetPtr widget, int index=-1);
+
     void removeChild(const std::string& name);
 
     void bringTop(Widget* child);
     void bringBottom(Widget* child);
 
-    const std::list<SharedPtr>& children() const { return _children; }
+    WidgetPtr moveOut(Widget* child);
+
+    const std::list<WidgetPtr>& children() const { return _children; }
 
 protected:    
     Vec2 getContentPos() const override { return Vec2{ 0.0f, 0.0f }; }
@@ -48,7 +52,7 @@ protected:
     void onVisibleChanged(bool oldVisual, bool newVisual) override;
 
 private:
-    std::list<SharedPtr> _children;
+    std::list<WidgetPtr> _children;
 
     bool _clipChildren = true;
 };

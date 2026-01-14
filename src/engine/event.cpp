@@ -46,6 +46,8 @@ void EventDispatcher::run()
 		}break;
 		case SDL_EVENT_MOUSE_MOTION:
 		{
+			_mousePos = { e.motion.x, e.motion.y };
+
 			onMouseMotion.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
 			if(e.button.button == SDL_BUTTON_LEFT) {
 				onMouseLeftDrag.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});

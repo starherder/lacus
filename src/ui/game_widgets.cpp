@@ -32,6 +32,8 @@ namespace ui
 
         setNoEvent(false);
 
+        setCanDragOut(true);
+
         auto bgVLay = createChild<VLayout>("_bg_vlay_");
         bgVLay->setSize(DefaultSize - Vec2{4,4});
         bgVLay->setPos({ 2,2 });
@@ -46,7 +48,6 @@ namespace ui
         _level->setSize({100, 50});
 
         _desc = bgVLay->createChild<TextBox>("_desc_");
-        
     }
 
     CardWidget::~CardWidget()
@@ -70,29 +71,16 @@ namespace ui
 
     void CardWidget::onMouseEnter(const Vec2& mpos)
     {
-        on_select.emit(this, false);
+        on_mouse_enter.emit(this);
 
         setState(WidgetState::Hover);
-        
-        auto wpos = pos();
-        wpos.y = -20;
-        setPos(wpos);
     }
 
     void CardWidget::onMouseLeave(const Vec2& mpos)
     {
+        on_mouse_leave.emit(this);
+
         setState(WidgetState::Normal);
-
-        auto group = parent();
-        auto cardgroup = dynamic_cast<CardGroup*>(group);
-        if (!cardgroup) 
-        {
-            return;
-        }
-
-        auto wpos = pos();
-        wpos.y = cardgroup->padding().y;
-        setPos(wpos);
     }
 
     void CardWidget::onMouseLeftClick(const Vec2& mpos)
@@ -107,20 +95,14 @@ namespace ui
     void CardWidget::onMouseLeftDrag(const Vec2& mpos, const Vec2& offset)
     {
         on_drag.emit(this);
-
-        auto wpos = pos();
-        wpos.y += offset.y;
-        setPos(wpos);
     }
 
     void CardWidget::onMouseLeftDown(const Vec2& mpos)
     {
-        //setState(WidgetState::Pressed);
     }
 
     void CardWidget::onMouseLeftUp(const Vec2& mpos)
     {
-        //setState(WidgetState::Normal);
     }
 
     WidgetStatus& CardWidget::status()
@@ -134,6 +116,7 @@ namespace ui
 
     CardGroup::CardGroup(const std::string& name, Widget* parent) : Group(name, parent)
     {
+        setClipChildren(false);
     }
 
     CardGroup::~CardGroup()
@@ -149,7 +132,7 @@ namespace ui
     
     CardWidget* CardGroup::addCard(const std::string& cfg)
     {
-        int index = children().size();
+        int index = (int)children().size();
         auto name = fmt::format("_card_{}_", index);
 
         auto widget = createChild<CardWidget>(name);
@@ -158,8 +141,13 @@ namespace ui
 
         auto desc = fmt::format("this is test card-{}", index);
         widget->setDesc(desc);
+
+        widget->setData("index", index);
      
+        widget->on_drag.connect(this, &CardGroup::onChildDrag);
         widget->on_select.connect(this, &CardGroup::onChildSelect);
+        widget->on_mouse_enter.connect(this, &CardGroup::onChildMouseEnter);
+        widget->on_mouse_leave.connect(this, &CardGroup::onChildMouseLeave);
 
         adjustChildren();
         return widget;
@@ -190,6 +178,24 @@ namespace ui
 
     void CardGroup::onChildSelect(CardWidget* card, bool selected)
     {
+    }
+
+    void CardGroup::onChildDrag(CardWidget* card)
+    {
+    }
+
+    void CardGroup::onChildMouseEnter(CardWidget* card)
+    {
+        auto wpos = card->pos();
+        wpos.y = -20;
+        card->setPos(wpos);
+    }
+    
+    void CardGroup::onChildMouseLeave(CardWidget* card)
+    {
+        auto wpos = card->pos();
+        wpos.y = padding().y;
+        card->setPos(wpos);
     }
 
     void CardGroup::adjustChildren()
@@ -253,5 +259,15 @@ namespace ui
             card->setPos({x, y});
             index++;
         }
+    }
+
+    void CardGroup::onChildAdded(Widget* child)
+    {
+        adjustChildren();
+    }
+
+    void CardGroup::onChildRemoved(Widget* child)
+    {
+        adjustChildren();
     }
 }

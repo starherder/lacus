@@ -40,10 +40,14 @@ namespace samples {
         FormCards(const std::string& name);
         virtual ~FormCards();
 
-        void setCardOverlap(bool overlap);
-
         void onUpdate(float delta) override;
         void onDraw() override;
+
+    private:
+
+        void onCardOverlapChanged(ui::CheckBox* cb);
+
+        void onDropCard(ui::Widget* widget, const Vec2& pos);
     };
 
 
