@@ -29,6 +29,23 @@ namespace samples {
         ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
 
         ImGui::End();
+
+
+
+
+
+
+        pos = ImVec2{ 1900, 200 };
+
+        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetBackgroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
+
+        ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+        ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+        ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+
     }
 
     void SamplePluginDraw::onInit() 
@@ -156,6 +173,18 @@ namespace samples {
 
     void SamplePluginDraw::drawImGuiCmds()
     {
+        // plugin.draw 和 imgui.draw不同步，先绘制plugin.draw，后imgui才设置环境并绘制清理，所以这里不能用，等着修改一下
+
+        //ImVec2 pos = {1900, 200};
+        //
+        //ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+        //ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+        //ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        //ImGui::GetBackgroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
+        //
+        //ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+        //ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+        //ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
     }
 
     void SamplePluginDraw::paint()

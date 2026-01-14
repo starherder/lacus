@@ -50,6 +50,8 @@ mkdir build & cd build & cmake ..
 - json配置的特效系统，可配置的tween动画、粒子、alpha、色彩、大小、位置、帧动画等的组合特效
 - 简易技能系统，表现+伤害，表现层引入tweeny，伤害公式计算使用lua配置
 - render支持的功能不多，painter表现有错误（圆角矩形），gfxpainter性能不高（批次太高）、支持的功能也少（矩形线宽没有），试着能不能把imgui中的渲染模块拆出来用
+- 考察了nanovg、nanogui、nangui-sdl、imgui等库，
+- 发现imgui可以在窗口之外绘制几何图形，而且也支持材质的显示，能满足所有需求，可以用来作为渲染引擎，并且支持SDL3和SDL3_GPU，并且跨平台，便于以后优化扩展，试试它吧！
 
 ## 日志
 
