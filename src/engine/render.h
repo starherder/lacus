@@ -34,6 +34,9 @@ public:
     bool setRenderScale(const Vec2& scale) const;
     Vec2 getRenderScale() const; 
     
+    const Color& getClearColor();
+    void setClearColor(const Color& c);
+
     bool setDrawColor(const Color& color) const;
 
     Color getDrawColor() const;
@@ -104,6 +107,8 @@ private:
     bool initTextRenderer();
 
 private:
+    Color _clearColor;
+
     SDL_Renderer* _renderer = nullptr;
     
     std::unique_ptr<TextRenderer> _textRenderer = nullptr;

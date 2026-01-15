@@ -5,6 +5,8 @@
 #include "bevtree/bevtree.h"
 #include "utility/translator.h"
 
+#include "samples/sample_plugin_ui.h"
+
 namespace game {
 
 
@@ -85,7 +87,6 @@ void GameLogicPlugin::onInit()
         return;
     }
 
-    //ui::GuiManager::inst().showForm<ui::FormDemo>("form_demo");
 }
 
 void GameLogicPlugin::onUpdate()
@@ -114,10 +115,13 @@ void GameLogicPlugin::onClose()
 void GameLogicPlugin::onEnable()
 {
     _scene->onStart();
+
+    ui::GuiManager::inst().showForm<samples::FormDemo>("form_demo");
 }
 
 void GameLogicPlugin::onDisable()
 {
+    ui::GuiManager::inst().closeForm("form_demo");
     _scene->onStop();
 }
 

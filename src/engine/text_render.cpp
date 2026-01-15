@@ -46,7 +46,7 @@ namespace engine {
             return {0,0};
         }
 
-        auto ttf = font->_font;
+        auto ttf = font->ttfFont;
         if(!ttf) {
             return {0,0};
         }
@@ -71,7 +71,7 @@ namespace engine {
             return false;
         }
 
-        auto ttf = font->_font;
+        auto ttf = font->ttfFont;
         if(!ttf) {
             return false;
         }

@@ -7,19 +7,26 @@
 namespace engine {
 
 
-     Font::Font(IdType id, int size, TTF_Font* font)
+     Font::Font(IdType _id, int _size)
      {
-        _id = id;
-        _size = size;
-        _font = font;
+        id = _id;
+        size = _size;
      }
 
      Font::~Font()
      {
-        if (_font) 
+        if (ttfFont)
         {
-            TTF_CloseFont(_font);
+            TTF_CloseFont(ttfFont);
         }
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+        if (imFont)
+        {
+            auto imFonts = ImGui::GetIO().Fonts;
+            imFonts->RemoveFont(imFont);
+        }
+#endif
      }
 
 
@@ -56,14 +63,29 @@ namespace engine {
             return nullptr;
         }
         
-        auto font = TTF_OpenFont(path.string().c_str(), (float)size);
-        if (!font) {
+        auto ttfFont = TTF_OpenFont(path.string().c_str(), (float)size);
+        if (!ttfFont) {
             spdlog::error("Failed to load Font {}: {}", path.string(), SDL_GetError());
             return nullptr;
         }
 
-        auto [iter, res] = _Fonts.insert({std::pair{id, size}, std::make_unique<Font>(id, size, font)});
-        return res ? iter->second.get() : nullptr;
+        auto pFont = std::make_shared<Font>(id, size);
+        pFont->ttfFont = ttfFont;
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+
+        auto& io = ImGui::GetIO();
+        auto imFonts = ImGui::GetIO().Fonts;
+        auto imfont = imFonts->AddFontFromFileTTF(path.string().c_str(), size, nullptr, imFonts->GetGlyphRangesChineseFull());
+        if (!imfont)
+        {
+            spdlog::error("load font {} failed. use default.", path.string());
+        }
+
+        pFont->imFont = imfont;
+#endif
+        _Fonts.insert({ std::pair{id, size}, pFont });
+        return pFont.get();
     }
     
     Font* FontManager::load(const HashString& str, int size)

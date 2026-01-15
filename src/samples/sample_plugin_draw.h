@@ -61,7 +61,7 @@ namespace samples {
 
         void drawText();
 
-        void drawImGuiCmds();
+        void im_paint();
 
         void paint();
 

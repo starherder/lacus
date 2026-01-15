@@ -3,7 +3,6 @@
 
 namespace ui {
 
-#define USE_GFX_PAINTER
 
 Widget::Widget(const std::string& name, Widget* parent) 
     : _name(name), _parent(parent)
@@ -126,9 +125,14 @@ void Widget::draw()
 
     if(state.texture)
     {
-#ifdef USE_GFX_PAINTER
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+        auto& imPainter = GuiManager::inst().imPainter();
+        imPainter.drawTexture(state.texture, state.tex_rect, bksize);
+
+#elif defined USE_GFX_PAINTER
         auto& gfxPainter = GuiManager::inst().gfxPainter();
         gfxPainter.drawTexture(state.texture, state.tex_rect, bksize);
+
 #else
         if (state.ground_color.isValid()) 
         {
@@ -141,9 +145,14 @@ void Widget::draw()
     {
         if(state.ground_color.isValid())
         {
-#ifdef USE_GFX_PAINTER
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+            auto& imPainter = GuiManager::inst().imPainter();
+            imPainter.fillRect(state.ground_color, bksize, _borderRound);
+
+#elif defined USE_GFX_PAINTER
             auto& gfxPainter = GuiManager::inst().gfxPainter();
             gfxPainter.fillRect(state.ground_color, bksize, _borderRound);
+
 #else
             painter.fillRect(state.ground_color, bksize, _borderRound);
 #endif
@@ -152,9 +161,14 @@ void Widget::draw()
             
     if(state.border_color.isValid())
     {
-#ifdef USE_GFX_PAINTER
+#ifdef  USE_IMGUI_AS_RENDER_ENGINE
+        auto& imPainter = GuiManager::inst().imPainter();
+        imPainter.drawRect(state.border_color, bksize, _borderRound);
+
+#elif defined USE_GFX_PAINTER
         auto& gfxPainter = GuiManager::inst().gfxPainter();
         gfxPainter.drawRect(state.border_color, bksize, _borderRound);
+
 #else
         painter.drawRect(state.border_color, bksize, _borderRound, _borderSize);
 #endif

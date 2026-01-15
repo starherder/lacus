@@ -15,51 +15,52 @@ namespace samples {
     {
         ImGuiIO& io = ImGui::GetIO();
 
-        ImGui::Begin("aaaaaa");
+        ImGui::Begin("drawlist");
 
         ImVec2 pos = ImGui::GetWindowPos();
 
+        // 注意ImGUI中的ImU32格式的颜色顺序是ABGR，见ImGui::ColorConvertFloat4ToU32
+
         ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
         ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 150, 240, 255), 10);
+        //ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, 0x0000FFFF, 10); // ABGR,  A==0, 绘制不出来
         ImGui::GetWindowDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255),10, ImDrawFlags_RoundCornersAll, 10);
 
         ImGui::GetWindowDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
         ImGui::GetWindowDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
         ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+        ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 240, 150, 255 }, 20);
 
         ImGui::End();
 
-
-
         // ------------------------------------------------------------
-
 
         pos = ImVec2{ 1900, 200 };
 
         ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
         ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 150, 240, 255), 10);
         ImGui::GetBackgroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
 
         ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
         ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
         ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+        ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 140, 250, 255 }, 20);
 
         // ------------------------------------------------------------
-
 
         pos = ImVec2{ 1400, 600 };
 
         ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
         ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
+        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 250, 255), 10);
         ImGui::GetForegroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
 
         ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
         ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
         ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
-
+        ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 140, 250, 255 }, 20);
     }
 
     void SamplePluginDraw::onInit() 
@@ -102,7 +103,7 @@ namespace samples {
 
         gfx_paint();
 
-        drawImGuiCmds();
+        im_paint();
     }
 
     void SamplePluginDraw::onClose() 
@@ -180,25 +181,42 @@ namespace samples {
             auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 20);
             if(font)
             {
-                renderer.drawText("就是这个feel，倍er爽~", font, {650, 200}, {255, 200, 0, 255});
+                renderer.drawText("就是这个feel，倍er爽~", font, {650, 150}, {255, 200, 0, 255});
             }
+        }
+        {
+            auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 30);
+            auto& imPainter = application()->im_painter();
+            imPainter.drawText("这就是 ImFont 字体，Can you See?", font, { 650, 200 }, Color::Pink);
         }
     }
 
-    void SamplePluginDraw::drawImGuiCmds()
+    void SamplePluginDraw::im_paint()
     {
-        // plugin.draw 和 imgui.draw不同步，先绘制plugin.draw，后imgui才设置环境并绘制清理，所以这里不能用，等着修改一下
+        auto& painter = application()->im_painter();
+        application()->renderer().setClearColor(Color::White);
 
-        //ImVec2 pos = {1900, 200};
-        //
-        //ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
-        //ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        //ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 150, 255), 10);
-        //ImGui::GetBackgroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
-        //
-        //ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
-        //ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
-        //ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+        Vec2 pos = {600, 300};
+
+        painter.drawCircle(Color::Red, pos + Vec2{ 150, 0 }, 50, 30, 6);
+        painter.drawCircle(Color::Green, pos + Vec2{ 260, 0 }, 50, 30, 6);
+        painter.drawCircle(Color::Blue, pos + Vec2{ 370, 0 }, 50, 30, 6);
+
+        painter.fillCircle(Color::Yellow, pos + Vec2{ 150, 100 }, 50, 20);
+        painter.fillCircle(Color::Cyan, pos + Vec2{ 260, 100 }, 50, 20);
+        painter.fillCircle(Color::Magenta, pos + Vec2{ 370, 100 }, 50, 20);
+
+        painter.drawLine(Color::PaleRed, pos + Vec2{ 330, 150 }, pos + Vec2{ 350, 600 }, 8);
+
+        std::vector<Vec2> points{ pos+Vec2{100,150}, pos+Vec2{150,240,},pos+Vec2{200,150},pos+Vec2{300, 240} };
+        painter.drawLines(Color::PaleRed, points.data(), points.size(), true, 2.0f);
+
+        painter.drawRect(Color::LightBlue, Rect{ pos + Vec2{100, 250}, Vec2{200,100} });
+        painter.drawRect(Color::LightBlue, Rect{ pos + Vec2{100, 360}, Vec2{200,100} }, 10, 10);
+        painter.fillRect(Color::Red, Rect{ pos + Vec2{100, 480}, Vec2{200,100} }, 10);
+
+        painter.drawTriangle(Color::DarkRed, pos + Vec2{ 100, 610 }, pos + Vec2{ 100, 650 }, pos + Vec2{ 200,610 }, 3.0f);
+        painter.fillTriangle(Color::DarkRed, pos + Vec2{ 210, 610 }, pos + Vec2{ 310, 610 }, pos + Vec2{ 210,750 });
     }
 
     void SamplePluginDraw::paint()

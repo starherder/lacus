@@ -59,10 +59,14 @@ namespace ui {
             for(auto it=_forms.begin(); it!=_forms.end(); it++)
             {
                 auto ptr = *it;
-                ptr->onClose();
+                if (ptr->name() == name)
+                {
+                    ptr->onClose();
 
-                _forms.erase(it);
-                return;
+                    _forms.erase(it);
+
+                    return;
+                }
             }
         }
 

@@ -24,28 +24,32 @@ struct FontKeyHash {
 
 
 // 字体
-class Font {
-    friend class TextRenderer;
-
+class Font 
+{
 public:
     Font() = delete;
-    Font(const Font& other) = default;
-    Font(IdType id, int size, TTF_Font* font);
+    Font(Font&& other) = delete;
+    Font(const Font& other) = delete;
+
+    Font(IdType id, int size);
     ~Font();
 
-    int size() { return _size; }
+    IdType id = 0;
 
-private:
-    TTF_Font* _font = nullptr;
-    IdType _id;
-    int _size;
+    int size = 0;
+
+    TTF_Font* ttfFont = nullptr;
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+    ImFont* imFont = nullptr;
+#endif
 };
 
 
 // 字体管理器
 class FontManager final : public IResManager
 {
-    using FontPtr = std::unique_ptr<Font>;
+    using FontPtr = std::shared_ptr<Font>;
     using FontMap = std::unordered_map<FontKey, FontPtr, FontKeyHash>;
 
 public:

@@ -112,7 +112,7 @@ namespace samples {
 
 
 
-	FormDemo::FormDemo(const std::string& name, SamplePluginUI* plugin) : Form(name), _plugin(plugin)
+	FormDemo::FormDemo(const std::string& name) : Form(name)
 	{
 		setPos({ 100, 100 });
 		setSize({ 1500, 1000 });
@@ -401,7 +401,7 @@ namespace samples {
 
     void SamplePluginUI::onEnable()
     {
-		auto form = ui::GuiManager::inst().showForm<FormDemo>("form_demo", this);
+		auto form = ui::GuiManager::inst().showForm<FormDemo>("form_sample_demo");
 		form->on_list_select.connect(this, &SamplePluginUI::onSelectBackGroud);
 
 		auto tex = _application.resourceManager().textureManager().get("textures/battle_of_tiles/etc.png"_hs);

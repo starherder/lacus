@@ -2,6 +2,8 @@
 
 #include "ui_utils.h"
 
+//#define USE_GFX_PAINTER
+
 namespace ui {
 
 class Widget 

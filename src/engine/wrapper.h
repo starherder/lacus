@@ -26,6 +26,13 @@
 
 using namespace entt::literals;
 
+#define USE_IMGUI_AS_RENDER_ENGINE
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_sdl3.h"
+#include "imgui/backends/imgui_impl_sdlrenderer3.h"
+#endif
 
 namespace engine {
 

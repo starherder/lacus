@@ -62,7 +62,12 @@ namespace ui {
         }
 
         auto& state = status();
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+        GuiManager::inst().imPainter().drawText(_text, _font, realPos, state.text_color);
+#else
         renderer.drawText(_text, _font, realPos, state.text_color);
+#endif
     }
 
     //////////////////////////////////////////////////////////////////////

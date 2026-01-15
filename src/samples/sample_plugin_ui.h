@@ -15,7 +15,7 @@ namespace samples {
 
     public:
         FormDemo() = delete;
-        FormDemo(const std::string& name, class SamplePluginUI* plugin);
+        FormDemo(const std::string& name);
         virtual ~FormDemo();
 
         void onUpdate(float delta) override;
@@ -27,9 +27,6 @@ namespace samples {
         void onProgressChanged(ui::ProgressBar* pbar);
         void onCheckChanged(ui::CheckBox* cbox);
         void onClickListButton(ui::Button* btn);
-
-    private:
-        class SamplePluginUI* _plugin = nullptr;
     };
 
 

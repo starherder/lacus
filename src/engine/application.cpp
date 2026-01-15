@@ -9,6 +9,7 @@ Application::Application()
     _renderer = std::make_unique<Renderer>();
     _painter = std::make_unique<Painter>(*this);
     _gfx_painter = std::make_unique<GFXPainter>(*this);
+    _im_painter = std::make_unique<ImPainter>(*this);
     _window = std::make_unique<Window>();
     _resourceMgr = std::make_unique<ResourceManager>(*this);
     _audioPlayer = std::make_unique<AudioPlayer>();
@@ -179,6 +180,8 @@ bool Application::initRenderer()
         return false;
     }
 
+    im_painter().init();
+
     spdlog::info("renderer created.");
     return true;
 }
@@ -230,6 +233,8 @@ bool Application::close()
     
     spdlog::info("---------------- engine closed ----------------");
 
+    im_painter().quit();
+
     SDL_Quit();
     return true;
 }
@@ -248,15 +253,21 @@ bool Application::preFrame()
 
     _renderer->setClipRect({Vec2{0,0}, _window->getSize()});
 
-    _renderer->setDrawColor(Color::DarkCyan);
+    _renderer->setDrawColor(_renderer->getClearColor());
 
     _renderer->clear();
-    
+
+    im_painter().preFrame();
+
+    _renderer->setDrawColor(_renderer->getClearColor());
+
     return true;
 }
 
 bool Application::postFrame() 
 {
+    im_painter().postFrame();
+
     _renderer->present();
 
     return true;

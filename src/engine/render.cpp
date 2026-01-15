@@ -75,6 +75,16 @@ Vec2 Renderer::getRenderScale() const {
     return scale;
 }
 
+const Color& Renderer::getClearColor()
+{
+    return _clearColor;
+}
+
+void Renderer::setClearColor(const Color& c)
+{
+    _clearColor = c;
+}
+
 bool Renderer::setDrawColor(const Color& color) const {
     return SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
 }
