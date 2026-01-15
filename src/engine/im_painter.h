@@ -26,7 +26,7 @@ namespace engine
 		void preFrame();
 		void postFrame();
 
-		// ImU32表示颜色时，顺序是AGBR
+		// ImU32琛ㄧず棰滆壊鏃讹紝椤哄簭鏄疉GBR
 		ImColor toImColor(const Color& color);
 
 		void setClearColor(const Color& color);
@@ -46,7 +46,8 @@ namespace engine
 		void drawLine(const Color& color, const Vec2& beginPos, const Vec2& endPos, float thickness = 1);
 		void drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f);
 
-		void drawTexture(Texture* pTexture, const Rect& uv, const Rect& dst);
+		void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White);
+		void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White);
 
 		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 });
 

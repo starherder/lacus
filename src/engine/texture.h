@@ -5,26 +5,30 @@
 
 struct SDL_Texture;
 
-namespace engine {
+namespace engine 
+{
 
 class Renderer;
 
 
 // 材质
-class Texture {
-    friend class Renderer;
-
+class Texture 
+{
 public:
     Texture() = delete;
-    Texture(const Texture& other) = default;
+    Texture(Texture&& other) = delete;
+    Texture(const Texture& other) = delete;
     Texture(SDL_Texture* texture);
     ~Texture();
 
-    const Vec2f& size() const { return _size; }
+    const Vec2& size() const { return _size; }
+
+    SDL_Texture* texture() const { return _texture; }
 
 private:
     SDL_Texture* _texture = nullptr;
-    Vec2f _size;
+
+    Vec2 _size;
 };
 
 

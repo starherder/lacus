@@ -127,7 +127,7 @@ void Widget::draw()
     {
 #ifdef USE_IMGUI_AS_RENDER_ENGINE
         auto& imPainter = GuiManager::inst().imPainter();
-        imPainter.drawTexture(state.texture, state.tex_rect, bksize);
+        imPainter.drawTexture(state.texture, state.tex_rect, bksize, _borderRound);
 
 #elif defined USE_GFX_PAINTER
         auto& gfxPainter = GuiManager::inst().gfxPainter();

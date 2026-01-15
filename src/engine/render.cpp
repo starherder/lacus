@@ -159,7 +159,7 @@ bool Renderer::drawFillRects(const Rect* rects, int count) const {
 bool Renderer::drawTexture(Texture* texture, const Rect& src, const Rect& dst) const {
     SDL_FRect srcrect = src;
     SDL_FRect dstrect = dst;
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderTexture(_renderer, tex, &srcrect, &dstrect);
 }
 
@@ -172,34 +172,34 @@ bool Renderer::drawTextureRotated(Texture* texture, const Rect& src, const Rect&
     SDL_FRect srcrect = src;
     SDL_FRect dstrect = dst;
     SDL_FPoint fcenter = {center.x, center.y};
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderTextureRotated(_renderer, tex, &srcrect, &dstrect, angle, &fcenter, flip);
 }
 
 bool Renderer::drawTextureAffine(Texture *texture, const Rect* srcrect, const Vec2* origin,
                                                      const Vec2* right, const Vec2* down) const
 {
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderTextureAffine(_renderer, tex, (SDL_FRect*)srcrect, (SDL_FPoint*)origin, (SDL_FPoint*)right, (SDL_FPoint*)down);
 }
 
 bool Renderer::drawTextureTiled(Texture* texture, const Rect* srcrect, float scale, const Rect* dstrect) const {
 
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderTextureTiled(_renderer, tex, (SDL_FRect*)srcrect, scale, (SDL_FRect*)dstrect);
 }
 
 bool Renderer::drawTexture9Grid(Texture* texture, const Rect* srcrect, 
                                  float left_width, float right_width, float top_height, float bottom_height, 
                                  float scale, const Rect* dstrect) const {
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderTexture9Grid(_renderer, tex, (SDL_FRect*)srcrect, 
     left_width, right_width, top_height, bottom_height, scale, (SDL_FRect*)dstrect);
 }
 
 bool Renderer::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
                              const int* indices, int num_indices) const {
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderGeometry(_renderer, tex, vertices, num_vertices, indices, num_indices);
 }
 
@@ -209,7 +209,7 @@ bool Renderer::drawGeometryRaw(Texture* texture,
                                 const float* uv, int uv_stride,
                                 int num_vertices, const void* indices, int num_indices, int size_indices) const {
     auto sdlfcolor = (SDL_FColor)color;
-    SDL_Texture* tex = texture ? texture->_texture : nullptr;
+    SDL_Texture* tex = texture ? texture->texture() : nullptr;
     return SDL_RenderGeometryRaw(_renderer, tex, xy, xy_stride, &sdlfcolor, color_stride, uv, uv_stride, 
                                 num_vertices, indices, num_indices, size_indices);
 }

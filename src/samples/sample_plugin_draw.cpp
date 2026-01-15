@@ -184,11 +184,6 @@ namespace samples {
                 renderer.drawText("就是这个feel，倍er爽~", font, {650, 150}, {255, 200, 0, 255});
             }
         }
-        {
-            auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 30);
-            auto& imPainter = application()->im_painter();
-            imPainter.drawText("这就是 ImFont 字体，Can you See?", font, { 650, 200 }, Color::Pink);
-        }
     }
 
     void SamplePluginDraw::im_paint()
@@ -217,6 +212,23 @@ namespace samples {
 
         painter.drawTriangle(Color::DarkRed, pos + Vec2{ 100, 610 }, pos + Vec2{ 100, 650 }, pos + Vec2{ 200,610 }, 3.0f);
         painter.fillTriangle(Color::DarkRed, pos + Vec2{ 210, 610 }, pos + Vec2{ 310, 610 }, pos + Vec2{ 210,750 });
+
+        {
+            auto& resourceMgr = application()->resourceManager();
+            auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 30);
+            auto& imPainter = application()->im_painter();
+            imPainter.drawText("这就是 ImFont 字体，Can you See?", font, pos+Vec2{ 100, -150 }, Color::Pink);
+
+            auto tiger = resourceMgr.textureManager().get("textures/UI/tiger.svg"_hs);
+            Rect src = Rect{ Vec2{0.0f, 0.0f }, tiger->size() };
+            Rect dst = Rect{ pos + Vec2{0, 700}, tiger->size() / 3.0f };
+            imPainter.drawTexture(tiger, src, dst);
+
+            src = Rect{ 83.0f, 163.0f, 74.0f, 74.0f };
+            dst = Rect{ pos + Vec2{200, 750}, Vec2{148, 147} };
+            auto etc = resourceMgr.textureManager().get("textures/battle_of_tiles/etc.png"_hs);
+            imPainter.drawTexture(etc, src, dst, 20.0f, Color::Green);
+        }
     }
 
     void SamplePluginDraw::paint()

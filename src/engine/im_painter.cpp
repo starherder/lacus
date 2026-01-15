@@ -124,9 +124,51 @@ namespace engine
 #endif
 	}
 
-	void ImPainter::drawTexture(Texture* pTexture, const Rect& uv, const Rect& dst)
+	void ImPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)
 	{
-		//ImGui::GetBackgroundDrawList()->AddImageQuad
+		assert(pTexture);
+
+		Vec2 srcSize = pTexture->size();
+		Rect uv = { src.pos()/srcSize, src.size()/srcSize };
+
+		Vec2 lt = dst.pos();
+		Vec2 rb = dst.pos() + dst.size();
+
+		ImVec2 dst_min = { lt.x, lt.y };
+		ImVec2 dst_max = { rb.x, rb.y };
+
+		lt = uv.pos();
+		rb = uv.pos() + uv.size();
+
+		ImVec2 uv_min = { lt.x, lt.y };
+		ImVec2 uv_max = { rb.x, rb.y };
+
+		ImGui::GetBackgroundDrawList()->AddImageRounded(
+			(void*)pTexture->texture(),
+			dst_min, dst_max, uv_min, uv_max,
+			toImColor(color), round, ImDrawFlags_RoundCornersAll);
+	}
+
+	void ImPainter::drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round, const Color& color)
+	{
+		assert(pTexture);
+
+		Vec2 lt = dst.pos();
+		Vec2 rb = dst.pos() + dst.size();
+
+		ImVec2 dst_min = {lt.x, lt.y};
+		ImVec2 dst_max = {rb.x, rb.y};
+
+		lt = uv.pos();
+		rb = uv.pos() + uv.size();
+
+		ImVec2 uv_min = { lt.x, lt.y };
+		ImVec2 uv_max = { rb.x, rb.y };
+
+		ImGui::GetBackgroundDrawList()->AddImageRounded(
+			(void*)pTexture->texture(), 
+			dst_min, dst_max, uv_min, uv_max, 
+			toImColor(color), round, ImDrawFlags_RoundCornersAll);
 	}
 
 	void ImPainter::drawCircle(const Color& color, const Vec2& center, float radius, int segments, float thickness)
