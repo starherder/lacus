@@ -51,6 +51,8 @@ namespace engine
 
 		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 });
 
+		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, const int* indices, int num_indices, const Vec2& pos = {0,0}, float scale=1.0f);
+
 	private:
 		void initDefaultFont(const std::string& fontName, int fontSize);
 

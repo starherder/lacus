@@ -34,6 +34,7 @@ namespace game {
 
 		Window& window() { return _application.window(); }
 		Renderer& renderer() { return _application.renderer(); }
+		ImPainter& imPainter() { return _application.im_painter(); }
 		AudioPlayer& audioPlayer() { return _application.audioPlayer(); }
 
 		ResourceManager& resourceMgr() { return _application.resourceManager(); }

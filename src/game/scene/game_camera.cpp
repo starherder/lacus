@@ -27,7 +27,7 @@ namespace game
 
     void GameCamera::onKeyDown(KeyCode keyCode)
     {
-        spdlog::info("GameCamera::onKeyDown, keyCode = {}", (int)keyCode);
+        //spdlog::info("GameCamera::onKeyDown, keyCode = {}", (int)keyCode);
 
         switch (keyCode)
         {
@@ -116,7 +116,7 @@ namespace game
 
     void GameCamera::stopCamera()
     {
-        spdlog::info("stop camera.");
+        //spdlog::info("stop camera.");
         _vec = { 0, 0 };
     }
 

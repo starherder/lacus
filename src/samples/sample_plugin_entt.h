@@ -40,6 +40,9 @@ namespace samples {
 
         void onEntityDrawSystem();
 
+        void drawTest();
+        void initDrawTest();
+
     private:
         entt::registry _registry;
         entt::dispatcher _dispatcher;
@@ -53,5 +56,16 @@ namespace samples {
         std::unique_ptr<engine::Camera> _camera = nullptr;
 
         engine::Texture* _texture = nullptr;
+
+
+        struct VertexData
+        {
+            std::vector<Vertex> world_vertices;
+            std::vector<int> world_indices;
+        } _vertexData;
+
+        std::vector<Vertex> _vdata;
+        std::vector<int> _idata;
+
     };
 }

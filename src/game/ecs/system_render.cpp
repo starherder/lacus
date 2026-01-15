@@ -54,8 +54,13 @@ void RenderSystem::drawSkyEffect()
     for (auto ent : ent_view)
     {
         auto& skyEffect = _context.registry().get<CompSkyEffect>(ent);
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE        
+        _context.imPainter().fillRect(skyEffect.color, { {0,0}, sz });
+#else
         _context.renderer().setDrawColor(skyEffect.color);
         _context.renderer().drawFillRect({ {0,0}, sz });
+#endif
         return;
     }
 }
@@ -70,14 +75,22 @@ void RenderSystem::drawFightText()
 
         auto pos = _context.camera().projectPoint(compTrans.position);
 
-        //_context.renderer().setDrawColor(compFt.color);
+#ifdef USE_IMGUI_AS_RENDER_ENGINE        
+        _context.imPainter().drawText(compFt.text, compFt.font, pos, compFt.color);
+#else
         _context.renderer().drawText(compFt.text, compFt.font, pos, compFt.color);
+#endif
     }
 }
 
 void RenderSystem::drawObjects()
 {
+#ifdef USE_IMGUI_AS_RENDER_ENGINE   
+    ImPainter& painter = _context.imPainter();
+#else
     Painter& painter = _context.painter();
+#endif
+
     GameCamera& camera = _context.camera();
 
     // draw objects
@@ -169,7 +182,12 @@ void RenderSystem::drawParticles()
 
 void RenderSystem::drawMotionDebug()
 {
-    Renderer& renderer = _context.renderer();
+#ifdef USE_IMGUI_AS_RENDER_ENGINE   
+    ImPainter& painter = _context.imPainter();
+#else
+    Painter& painter = _context.painter();
+#endif
+
     GameCamera& camera = _context.camera();
 
     auto ent_view = _context.registry().view<CompTransform, CompMotion>();
@@ -180,20 +198,18 @@ void RenderSystem::drawMotionDebug()
    
         if (motion.state == MotionState::Moving && motion.path.size() > 0)
         {
-            renderer.setDrawColor(Color::Red);
             auto lstPos = camera.projectPoint(transform.position);
 
             for (auto it = motion.path_iterator; it != motion.path.rend(); ++it)
             {
                 auto grid_center = _context.currentScene().getGridCenterPos(*it);
                 auto grid_pos = camera.projectPoint(grid_center);
-
-                renderer.drawLine(lstPos, grid_pos);
+                painter.drawLine(Color::Red, lstPos, grid_pos);
 
                 auto rect = Rect{ grid_center - Vec2{10,10}, Vec2{20,20} };
                 rect = camera.projectRect(rect);
+                painter.drawRect(Color::Red, rect);
 
-                renderer.drawRect(rect);
                 lstPos = grid_pos;
             }
         }
@@ -207,6 +223,14 @@ void RenderSystem::drawSceneDebug()
         return;
     }
 
+    auto& renderer = _context.renderer();
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE   
+    ImPainter& painter = _context.imPainter();
+#else
+    Painter& painter = _context.painter();
+#endif
+
     // -------------- show collision info ------------------
     auto& _collisionDebugRects = _context.currentScene().getCollisionDebugRects();
 
@@ -216,7 +240,6 @@ void RenderSystem::drawSceneDebug()
     rects.insert(rects.begin(), _collisionDebugRects.begin(), _collisionDebugRects.end());
     _context.camera().projectRects(rects.data(), (int)rects.size());
 
-    auto& renderer = _context.renderer();
     renderer.setDrawColor(Color{ 255, 0, 0, 100 });
     renderer.drawFillRects(rects.data(), (int)rects.size());
 

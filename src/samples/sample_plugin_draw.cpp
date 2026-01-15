@@ -189,7 +189,7 @@ namespace samples {
     void SamplePluginDraw::im_paint()
     {
         auto& painter = application()->im_painter();
-        application()->renderer().setClearColor(Color::White);
+        //application()->renderer().setClearColor(Color::White);
 
         Vec2 pos = {600, 300};
 

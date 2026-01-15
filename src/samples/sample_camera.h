@@ -13,7 +13,15 @@ public:
     SampleCamera() = default;
     ~SampleCamera() = default;
     SampleCamera(const Vec2& pos, const Vec2& size) 
-        : Camera(pos, size) {}
+        : Camera(pos, size) {
+    
+    }
+
+    bool isShiftKeyDown()
+    {
+        const bool* state = SDL_GetKeyboardState(nullptr);
+        return state[(int)SDL_SCANCODE_LSHIFT] || state[(int)SDL_SCANCODE_RSHIFT];
+    }
 
     void onUpdate(float delta) override
     {
@@ -28,15 +36,20 @@ public:
     void moveCamera(const Vec2& dir)
     {
         auto pos = getPos();
-        spdlog::info("move camera ({}, {}), pos = ({}, {})", dir.x, dir.y, pos.x, pos.y);
+        //spdlog::info("move camera ({}, {}), pos = ({}, {})", dir.x, dir.y, pos.x, pos.y);
 
         _vec = dir;
         _vec *= _speed;
+
+        if (isShiftKeyDown())
+        {
+            _vec *= 3;
+        }
     }
 
     void stopCamera()
     {
-        spdlog::info("stop camera.");
+        //spdlog::info("stop camera.");
         _vec = {0, 0};
     }
 
