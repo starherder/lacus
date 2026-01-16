@@ -1,23 +1,21 @@
 ﻿#pragma once
 
-#include "ui/ui.h"
+#include "game/ui/form_logic_base.h"
 
 namespace game 
 {
     using namespace ui;
 
-    class FormScenes : public ui::Form
+    class FormScenes : public FormLogicBase
     {
     public:
-        FormScenes() = delete;
-        FormScenes(const std::string& name);
+        FormScenes(const std::string& name) = delete;
+        FormScenes(const std::string& name, GameContext& context);
         ~FormScenes();
 
     private:
         void onUpdate(float delta) override;
 
-    private:
-        void onCloseClick(Button* btn);
-
+        void onSelectScene(ui::Button* btn);
     };
 }

@@ -288,9 +288,11 @@
     <ClInclude Include="..\src\game\scene\game_scene.h" />
     <ClInclude Include="..\src\game\ui\form_entry.h" />
     <ClInclude Include="..\src\game\ui\form_loading.h" />
+    <ClInclude Include="..\src\game\ui\form_logic_base.h" />
     <ClInclude Include="..\src\game\ui\form_main.h" />
     <ClInclude Include="..\src\game\ui\form_scenes.h" />
     <ClInclude Include="..\src\game\ui\imform_debug.h" />
+    <ClInclude Include="..\src\game\ui\ui_logic_events.h" />
     <ClInclude Include="..\src\imform\imform.h" />
     <ClInclude Include="..\src\imform\imform_demo.h" />
     <ClInclude Include="..\src\imform\imform_manager.h" />

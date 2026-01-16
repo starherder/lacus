@@ -16,15 +16,6 @@ namespace game
 		GameLogic(GameContext& context);
 		~GameLogic();
 
-		void loadResource();
-
-		void showLoadingForm(bool visible);
-
-		void startFirstScene();
-
-		bool switchScene(const std::string& sceneName);
-
-
 		void init();
 		void shut();
 		void start();
@@ -33,12 +24,24 @@ namespace game
 		void update(float delta);
 		void draw();
 
+		void loadResource();
+
+		void startFirstScene();
+
+		bool switchScene(const std::string& sceneName);
+
 	private:
 		void onSceneLoadProgress(float progress);
+
 		void onStartNewGame();
 		void onResumeGame();
 		void onConfigGame();
 		void onExitGame();
+
+		void showLoadingForm(bool visible);
+		void showMainForm(bool visible);
+
+		void onUICustomEvent(int eventId, const utility::VarList& varlist);
 
 	private:
 

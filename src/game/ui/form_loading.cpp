@@ -4,7 +4,7 @@
 namespace game
 {
 
-    FormLoading::FormLoading(const std::string& name) : Form(name)
+    FormLoading::FormLoading(const std::string& name, GameContext& context) : FormLogicBase(name, context)
     {
         root()->setBgColor(Color::DarkCyan);
 

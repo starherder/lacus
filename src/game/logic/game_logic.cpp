@@ -12,6 +12,10 @@
 #include "game/ui/form_scenes.h"
 
 
+#include "game/ui/ui_logic_events.h"
+
+
+
 namespace game
 {
 	GameLogic::GameLogic(GameContext& context):_gameContext(context)
@@ -22,6 +26,8 @@ namespace game
 		_gameContext.setCurrentScene(_scene.get());
 
 		_gameContext.setGameConfig(&_gameConfig);
+
+        ui::GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
 	}
 
 	GameLogic::~GameLogic()
@@ -108,7 +114,7 @@ namespace game
 
     void GameLogic::start()
     {
-        auto formEntry = ui::GuiManager::inst().showForm<FormEntry>("form_entry");
+        auto formEntry = ui::GuiManager::inst().showForm<FormEntry>("form_entry", _gameContext);
         formEntry->on_start_game.connect(this, &GameLogic::onStartNewGame);
         formEntry->on_resume_game.connect(this, &GameLogic::onResumeGame);
         formEntry->on_config_game.connect(this, &GameLogic::onConfigGame);
@@ -145,7 +151,7 @@ namespace game
     {
         showLoadingForm(true);
 
-        auto mapFile = _gameContext.resPath() / "scenes/level_test/test_map.tmj";
+        auto mapFile = _gameContext.resPath() / "scenes/test/level_test/test_map.tmj";
         auto res = _scene->load(mapFile);
         if (!res) {
             spdlog::error("load level test: {} failed.", mapFile.string());
@@ -157,6 +163,8 @@ namespace game
 
     bool GameLogic::switchScene(const std::string& sceneName)
     {
+        showMainForm(false);
+
         showLoadingForm(true);
 
         _scene->unload();
@@ -167,11 +175,24 @@ namespace game
         return true;
     }
 
+    void GameLogic::showMainForm(bool visible)
+    {
+        if (visible)
+        {
+            ui::GuiManager::inst().showForm<FormMain>("form_main", _gameContext);
+        }
+        else
+        {
+
+            ui::GuiManager::inst().closeForm("form_main");
+        }
+    }
+
     void GameLogic::showLoadingForm(bool visible)
     {
         if (visible)
         {
-            ui::GuiManager::inst().showForm<FormLoading>("form_loging");
+            ui::GuiManager::inst().showForm<FormLoading>("form_loging", _gameContext);
         }
         else
         {
@@ -185,6 +206,8 @@ namespace game
         if (progress >= 1.0f)
         {
             showLoadingForm(false);
+
+            showMainForm(true);
         }
         else
         {
@@ -195,5 +218,17 @@ namespace game
             }
         }
     }
+
+    void GameLogic::onUICustomEvent(int eventId, const utility::VarList& varlist)
+    {
+        if (eventId == Event_SelectScene)
+        {
+            int index = varlist[0];
+            std::string name = varlist[1];
+
+            switchScene(name);
+        }
+    }
+
 
 }

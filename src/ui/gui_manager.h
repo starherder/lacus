@@ -2,6 +2,8 @@
 
 #include "engine/Application.h"
 #include "utility/i_singleton.h"
+#include "utility/dynamic_var.h"
+
 #include "form.h"
 
 namespace ui {
@@ -12,7 +14,7 @@ using WidgetPtr = std::shared_ptr<Widget>;
 
 
 class GuiManager : public utility::ISingleton<GuiManager>,
-                    public sigslot::SlotHandler
+                    public signals::SlotHandler
 {
 public:
     struct DraggingData 
@@ -25,8 +27,10 @@ public:
     using DraggingPtr = std::shared_ptr<DraggingData>;
 
 public:
-    sigslot::Signal<Widget*> on_drag_start;
-    sigslot::Signal<Widget*, const Vec2&> on_drop;
+    signals::Signal<Widget*> on_drag_start;
+    signals::Signal<Widget*, const Vec2&> on_drop;
+
+    signals::Signal<int, const utility::VarList&> on_custom_event;
 
 public:
     void init(engine::Application* app);
@@ -47,18 +51,17 @@ public:
     auto& eventDispatcher() { return _app->eventDispatcher(); }
     auto& frameTicker() { return _app->frameTicker(); }
 
-    // --------------  form manager ---------------- 
     template<typename FormType, typename... Args>
-    FormType* showForm(const std::string& name, const Args&... args);
+    FormType* showForm(const std::string& name, Args&... args);
         
     template<typename FormType>
     FormType* getForm(const std::string& name);
 
     void closeForm(const std::string& name);
-    // ----------------------------------------------
 
-    // --------------  drag and drop ---------------- 
     DraggingPtr fetchDraggingData();
+
+    void emitCustomEvent(int eventId, const utility::VarList& varlist);
 
 private:
     void onKeyDown(KeyCode key);
@@ -100,8 +103,10 @@ private:
 };
 
 
+// ---------------------------------------------------------------------------
+
 template<typename FormType, typename... Args>
-FormType* GuiManager::showForm(const std::string& name, const Args&... args)
+FormType* GuiManager::showForm(const std::string& name, Args&... args)
 {
     auto pform = getForm<FormType>(name);
     if(pform)

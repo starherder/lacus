@@ -1,11 +1,12 @@
 ﻿#pragma once
 
-#include "ui/ui.h"
+#include "game/ui/form_logic_base.h"
 
-namespace game {
+namespace game 
+{
     using namespace ui;
 
-    class FormEntry : public ui::Form
+    class FormEntry : public FormLogicBase
     {
     public:
         signals::Signal<> on_start_game;
@@ -14,8 +15,8 @@ namespace game {
         signals::Signal<> on_exit_game;
 
     public:
-        FormEntry() = delete;
-        FormEntry(const std::string& name);
+        FormEntry(const std::string& name) = delete;
+        FormEntry(const std::string& name, GameContext& context);
         ~FormEntry();
 
     private:

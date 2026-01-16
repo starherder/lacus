@@ -11,7 +11,7 @@ namespace samples {
     void SamplePluginTileMap::onInit()
     {
         _tmxMapDemo = std::make_unique<tmx::TmxMapLoader>(*application());
-        _tmxMapDemo->load("scenes/rougelike/sample.tmx");
+        _tmxMapDemo->load("scenes/test/rougelike/sample.tmx");
         _tmxMapDemo->setPos({ 50, 50 });
     }
 

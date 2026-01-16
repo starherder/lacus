@@ -4,7 +4,7 @@
 namespace game 
 {
 
-FormEntry::FormEntry(const std::string& name) : Form(name)
+FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
 	setMaximize(true);
 

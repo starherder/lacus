@@ -1,16 +1,15 @@
 ﻿#pragma once
 
-#include "ui/ui.h"
+#include "game/ui/form_logic_base.h"
 
 namespace game 
 {
-    using namespace ui;
 
-    class FormLoading : public ui::Form
+    class FormLoading : public FormLogicBase
     {
     public:
-        FormLoading() = delete;
-        FormLoading(const std::string& name);
+        FormLoading(const std::string& name) = delete;
+        FormLoading(const std::string& name, GameContext& context);
         ~FormLoading();
 
         void setProgress(float progress);

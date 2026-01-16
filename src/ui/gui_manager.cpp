@@ -300,4 +300,9 @@ namespace ui {
             
             on_drop.emit(widget, pos);
         }
+
+        void GuiManager::emitCustomEvent(int eventId, const utility::VarList& varlist)
+        {
+            on_custom_event.emit(eventId, varlist);
+        }
 }

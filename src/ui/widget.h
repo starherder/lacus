@@ -133,7 +133,7 @@ using WidgetPtr = Widget::SharedPtr;
 template<typename T>
 T Widget::getData(const std::string& key) const
 {
-    return (T)_properties[key];
+    return _properties[key].convert<T>();
 }
 ///////////////////////////////////////////////////////////////////////////////
 

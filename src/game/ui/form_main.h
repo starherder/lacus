@@ -1,18 +1,20 @@
 ﻿#pragma once
 
-#include "ui/ui.h"
+#include "game/ui/form_logic_base.h"
 
 namespace game {
     using namespace ui;
 
-    class FormMain : public ui::Form
+    class FormMain : public FormLogicBase
     {
     public:
-        FormMain() = delete;
-        FormMain(const std::string& name);
+        FormMain(const std::string& name, GameContext& context);
         ~FormMain();
 
     private:
         void onUpdate(float delta) override;
+
+    private:
+        ui::Button* _btnScenes = nullptr;
     };
 }

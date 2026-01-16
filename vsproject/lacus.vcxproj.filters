@@ -639,6 +639,12 @@
     <ClInclude Include="..\src\game\ui\form_scenes.h">
       <Filter>game\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_logic_base.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\ui_logic_events.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md">
