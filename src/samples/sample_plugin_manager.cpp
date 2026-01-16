@@ -12,7 +12,7 @@
 #include "sample_plugin_particle.h"
 #include "sample_plugin_ui.h"
 
-#include "game/game_logic.h"
+#include "game/game_plugin.h"
 
 namespace samples {
 
@@ -155,7 +155,7 @@ namespace samples {
         static bool game_trigger = false;
         if (ImGui::MenuItem("game", nullptr, &game_trigger))
         {
-            SamplePluginManager::inst().setPluginEnable("game_logic_plugin", game_trigger);
+            SamplePluginManager::inst().setPluginEnable("game_plugin", game_trigger);
         }
     }
 
@@ -167,8 +167,6 @@ namespace samples {
 
     void SamplePluginMain::onInit()
     {
-        spdlog::info("SamplePluginMain::onInit");
-    
         auto window = _app.window().getSdlWindow();
         auto renderer = _app.renderer().getSdlRenderer();
 
@@ -216,39 +214,40 @@ namespace samples {
 
         engine::Plugin* plugin = nullptr;
         plugin = addRootPlugin<SamplePluginMain>(app);
+        plugin->setEnable(true);
         
         plugin = addNormalPlugin<SamplePluginDraw>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginImgui>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginAudio>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginEntt>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginTweeny>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginAstar>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginTileMap>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginBevTree>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginParticle>();
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
         plugin = addNormalPlugin<SamplePluginUI>(app);
-        plugin->setEnable(false);
+        //plugin->setEnable(false);
 
-        plugin = addNormalPlugin<game::GameLogicPlugin>(app);
-        plugin->setEnable(false);
+        plugin = addNormalPlugin<game::GamePlugin>(app);
+        //plugin->setEnable(false);
 
     }
 

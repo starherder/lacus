@@ -24,8 +24,6 @@ namespace engine {
         _initialized = true;
 
         onInit();
-
-        setEnable(_enabled);
     }
 
     void Plugin::update()

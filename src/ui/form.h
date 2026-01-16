@@ -28,8 +28,8 @@ public:
         return dynamic_cast<WidgetType*>(widget);
     }
 
-    virtual void update(float delta);
-    virtual void draw();
+    void update(float delta);
+    void draw();
 
     void show();
     void hide();
@@ -51,6 +51,9 @@ public:
 
     Widget* hoverWidget() { return _hoverWidget; }
 
+    void setMaximize(bool v) { _maximized = v; }
+    bool isMaximize() { return _maximized; }
+
 public:
     void onMouseLeftClick(const Vec2& pos);
     void onMouseRightClick(const Vec2& pos);
@@ -71,6 +74,8 @@ private:
 
 private:
     std::string _name;
+
+    bool _maximized = false;
     bool _visible = true;
     bool _focused = false;
     bool _dragMovable = true;

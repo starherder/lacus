@@ -33,9 +33,6 @@ namespace tmx {
         // Tmxlite内部使用tmx文件所在位置为当前路径，所以要设置一下
         fs::current_path(mapPath);
 
-        spdlog::info("resPath = {}, mapFilePath = {}, mapPath = {}, maprelatePath = {}", 
-            resPath.string(), mapFilePath.string(), mapPath.string(), mapRelatePath.string());
-
         tmx::Map map;
         if (!map.load(mapFileName.string()))
         {

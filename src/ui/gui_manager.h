@@ -30,10 +30,11 @@ public:
 
 public:
     void init(engine::Application* app);
-
     void update(float delta);
-
     void draw();
+
+    auto windowSize() { return _app->window().getSize(); }
+    auto windowPos() { return _app->window().getPosition(); }
 
     auto& renderer() { return _app->renderer(); }
     auto& painter() { return _app->painter(); }
@@ -84,6 +85,8 @@ private:
     void drag(Widget* widget);
     void drop();
 
+    void closePendingForms();
+
 private:
     engine::Application* _app;
 
@@ -92,6 +95,8 @@ private:
     DraggingPtr _draggingData = nullptr;
 
     std::list<FormPtr> _forms;
+
+    std::set<std::string> _pendingNames;
 };
 
 

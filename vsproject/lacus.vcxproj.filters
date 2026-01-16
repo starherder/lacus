@@ -55,6 +55,12 @@
     <Filter Include="game\effect">
       <UniqueIdentifier>{0a8618d8-4809-4f75-b39d-3cdf53bc2245}</UniqueIdentifier>
     </Filter>
+    <Filter Include="doc">
+      <UniqueIdentifier>{e90b59af-dc41-439b-9808-1c3ef203557f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game\logic">
+      <UniqueIdentifier>{17b0f7f6-ce89-4b74-bd12-255589e3ee82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -99,7 +105,7 @@
     <ClCompile Include="..\src\engine\window.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\game_logic.cpp">
+    <ClCompile Include="..\src\game\game_plugin.cpp">
       <Filter>game</Filter>
     </ClCompile>
     <ClCompile Include="..\src\game\scene\game_scene.cpp">
@@ -301,6 +307,18 @@
     <ClCompile Include="..\src\engine\im_painter.cpp">
       <Filter>engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\logic\game_logic.cpp">
+      <Filter>game\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_entry.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_loading.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_scenes.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -348,7 +366,7 @@
     <ClInclude Include="..\src\engine\wrapper.h">
       <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\game_logic.h">
+    <ClInclude Include="..\src\game\game_plugin.h">
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\scene\game_scene.h">
@@ -609,5 +627,22 @@
     <ClInclude Include="..\src\engine\im_painter.h">
       <Filter>engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\logic\game_logic.h">
+      <Filter>game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_entry.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_loading.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_scenes.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\doc\dev_doc.md">
+      <Filter>doc</Filter>
+    </None>
   </ItemGroup>
 </Project>

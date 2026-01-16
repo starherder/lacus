@@ -83,9 +83,14 @@ Widget* Form::getWidgetAtPos(const Vec2& pos)
 
 void Form::update(float delta)
 {
+    if (isMaximize())
+    {
+        _pos = { 0, 0 };
+        _size = ui::GuiManager::inst().windowSize();
+    }
+
     _rootGroup->setPos(_pos);
     _rootGroup->setSize(_size);
-
     _rootGroup->update(delta);
 
     onUpdate(delta);

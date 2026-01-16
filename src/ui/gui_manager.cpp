@@ -29,6 +29,8 @@ namespace ui {
 
         void GuiManager::update(float delta)
         {
+            closePendingForms();
+
             for(auto& form : _forms)
             {
                 form->update(delta);
@@ -53,21 +55,32 @@ namespace ui {
                 _draggingData->widget->draw();
             }
         }
+
+        void GuiManager::closePendingForms()
+        {
+            for (auto it = _forms.begin(); it != _forms.end(); )
+            {
+                auto ptr = *it;
+                if (ptr)
+                {
+                    auto iter = _pendingNames.find(ptr->name());
+                    if (iter != _pendingNames.end())
+                    {
+                        ptr->onClose();
+                        it = _forms.erase(it);
+                        continue;
+                    }
+                }
+
+                it++;
+            }
+
+            _pendingNames.clear();
+        }
         
         void GuiManager::closeForm(const std::string& name)
         {
-            for(auto it=_forms.begin(); it!=_forms.end(); it++)
-            {
-                auto ptr = *it;
-                if (ptr->name() == name)
-                {
-                    ptr->onClose();
-
-                    _forms.erase(it);
-
-                    return;
-                }
-            }
+            _pendingNames.insert(name);
         }
 
         Form* GuiManager::getFormAtPos(const Vec2& pos)

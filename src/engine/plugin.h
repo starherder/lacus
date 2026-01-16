@@ -57,13 +57,13 @@ public:
 
     bool initialized() const { return _initialized; }
 
-    Application* application() {  return _application; }\
+    Application* application() {  return _application; }
 
 private:
     Application* _application = nullptr;
 
     bool _initialized = false;
-    bool _enabled = true;
+    bool _enabled = false;
 };
 
 }

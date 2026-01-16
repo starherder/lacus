@@ -75,19 +75,31 @@ Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
 
 bool GameScene::load(const engine::fs::path& mapPath)
 {
+    on_load_progress.emit(0.0f);
+
     auto res = _tileMap.load(mapPath);
     if(!res)
     {
         return false;
     }
 
+    on_load_progress(0.5f);
+
     _camera.init(&application());
+
+    on_load_progress(0.6f);
 
     _tileMap.bake(application().resourceManager());
 
+    on_load_progress(0.7f);
+
     initPathFind();
 
+    on_load_progress(0.8f);
+
     loadObjects();
+
+    on_load_progress(1.0f);
 
     return true;
 }
@@ -141,8 +153,6 @@ void GameScene::onStop()
 
 void GameScene::showAllGui()
 {
-    //ui::GuiManager::inst().showForm<FormMain>("form_main");
-
     auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
     if(form_debug) 
     {
@@ -157,7 +167,6 @@ void GameScene::setDebugInfo(bool show)
 
 void GameScene::closeAllGui()
 {
-    ui::GuiManager::inst().closeForm("form_main");
     imgui::ImFormManager::inst().closeForm("ImFormDebug");
 }   
 

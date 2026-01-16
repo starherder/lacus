@@ -5,7 +5,7 @@
 
 namespace ui {
 
-    const float Label::DefaultFontSize = 20.0f;
+    const int Label::DefaultFontSize = 20;
     const std::string Label::DefaultFontName = "fonts/msyh.ttf";
 
     Label::Label(const std::string& name, Widget* parent)

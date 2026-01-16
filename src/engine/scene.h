@@ -3,7 +3,11 @@
 #include "application.h"
 namespace engine 
 {
-    class Scene {
+    class Scene 
+    {
+    public:
+        signals::Signal<float> on_load_progress;
+
     public:
         Scene() = delete;
         Scene(Scene&&) = delete;
@@ -14,8 +18,7 @@ namespace engine
 
         void update();
         void draw();
-        void drawUI();
-
+        
         virtual bool load(const engine::fs::path& filePath) = 0;
         virtual bool unload() = 0;
 

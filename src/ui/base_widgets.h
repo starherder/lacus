@@ -39,7 +39,7 @@ private:
     void adjust();
 
 private:
-    static const float DefaultFontSize;
+    static const int DefaultFontSize;
     static const std::string DefaultFontName;
 
     std::string _text;

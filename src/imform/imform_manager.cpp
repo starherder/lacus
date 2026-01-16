@@ -79,8 +79,6 @@ namespace imgui
 
 	void ImFormManager::init(struct SDL_Window* window, struct SDL_Renderer* renderer)
 	{
-		spdlog::info("ImFormManager::init");;
-
         _window = window;  
         _renderer = renderer;
 		assert(_renderer);

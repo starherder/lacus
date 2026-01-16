@@ -13,7 +13,6 @@ namespace game {
         ~FormMain();
 
     private:
-        void onTestClick(Button* btn);
-        void onRunClick(Button* btn);
+        void onUpdate(float delta) override;
     };
 }

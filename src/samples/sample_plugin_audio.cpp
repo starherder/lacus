@@ -70,8 +70,6 @@ namespace samples {
 
     void SamplePluginAudio::onInit()  
     {
-        spdlog::info("Init sample plugin audio");
-    
     }
 
     void SamplePluginAudio::onInstall()  

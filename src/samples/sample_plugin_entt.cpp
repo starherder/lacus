@@ -28,8 +28,6 @@ struct ComDisplay
 
 void SamplePluginEntt::onInit()  
 {
-    spdlog::info("Init sample plugin scene");
-
     auto& window = application()->window();
     _camera = std::make_unique<SampleCamera>(Vec2{0, 0}, Vec2{window.getSize()});
 
@@ -158,8 +156,6 @@ void SamplePluginEntt::initEntities()
             _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 3);
         }
     }
-
-    spdlog::info("create entity : count {}, vertex.size = {}", _xcount * _ycount, _vertexData.world_vertices.size());
 }
 
 void SamplePluginEntt::initDrawTest()
