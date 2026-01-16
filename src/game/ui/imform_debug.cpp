@@ -4,6 +4,8 @@
 #include "game/scene/game_context.h"
 #include "game/ecs/comp_fight.h"
 
+#include "ui/gui_manager.h"
+#include "game/ui/ui_logic_events.h"
 
 
 
@@ -25,7 +27,6 @@ void ImFormDebug::init(GameContext* context)
     _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick);
     _context->eventDispatcher().onMouseRightClicked.connect(this, &ImFormDebug::onMouseRightClick);
 
-
     auto& particles = particle::ParticleManager::inst().GetAllParticleConfigs();
     for (auto& [name, file] : particles) {
         _particleNames.push_back(name.c_str());
@@ -40,6 +41,14 @@ void ImFormDebug::draw()
         ImGui::Text("entt::entities: %lu", ent_num);
 
         ImGui::Separator();
+
+        static bool show_mainform = true;
+        if (ImGui::Checkbox("mainform##debug", &show_mainform))
+        {
+            ui::GuiManager::inst().emitCustomEvent(Event_ToggleMainForm, { show_mainform });
+        }
+
+        ImGui::SameLine();
 
         static bool show_debug = false;
         if(ImGui::Checkbox("show debug", &show_debug))

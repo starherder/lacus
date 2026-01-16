@@ -228,6 +228,10 @@ namespace game
 
             switchScene(name);
         }
+        else if (eventId == Event_ToggleMainForm)
+        {
+            showMainForm(varlist[0]);
+        }
     }
 
 

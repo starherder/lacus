@@ -63,7 +63,7 @@
                 {
                  "height":0,
                  "id":1,
-                 "name":"npc_0",
+                 "name":"npc_1",
                  "point":true,
                  "properties":[
                         {
@@ -94,6 +94,18 @@
                  "width":0,
                  "x":300,
                  "y":200
+                }, 
+                {
+                 "height":0,
+                 "id":79,
+                 "name":"npc_1",
+                 "point":true,
+                 "rotation":0,
+                 "type":"patrol_npc",
+                 "visible":true,
+                 "width":0,
+                 "x":445.454545454545,
+                 "y":266.666666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -143,7 +155,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":79,
+ "nextobjectid":80,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

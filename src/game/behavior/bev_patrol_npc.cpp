@@ -46,8 +46,15 @@ namespace game {
 		auto pPatrolCom = _context->registry().try_get<CompNpcPatrol>(_actor);
 		if(pPatrolCom)
 		{
+			int LoopCount = 0;
 			while(true) 
 			{
+				if (LoopCount++ > 20)
+				{
+					spdlog::warn("BevNode_FindPatrolPos: loop time > {}, break;", LoopCount);
+					break;
+				}
+
 				float angle = utility::random(-3.14f, 3.14f);
 				float dist = utility::random(pPatrolCom->patrol_radius/2.0f, pPatrolCom->patrol_radius);
 

@@ -75,6 +75,8 @@ Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
 
 bool GameScene::load(const engine::fs::path& mapPath)
 {
+    _camera.setPos({0, 0});
+
     on_load_progress.emit(0.0f);
 
     auto res = _tileMap.load(mapPath);
@@ -204,13 +206,7 @@ void GameScene::loadObjects()
 
 void GameScene::unloadObjects()
 {
-    auto old_objs = _context.registry().storage<entt::entity>().size();
-
     _context.registry().clear();
-
-    auto cur_objs = _context.registry().storage<entt::entity>().size();
-
-    spdlog::warn("unloadObjects: old_num={}, cur_num={}", old_objs, cur_objs);
 
     _gridObjects.clear();
 

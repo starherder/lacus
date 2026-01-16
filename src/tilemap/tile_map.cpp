@@ -87,6 +87,11 @@ bool TileMap::load(const engine::fs::path& filepath)
 
 bool TileMap::unload()
 {
+    _layers.clear();
+    _tilesets.clear();
+    _drawCalls.clear();
+    _collisionPoints.clear();
+
     return true;
 }
 

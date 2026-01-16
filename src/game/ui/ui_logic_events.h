@@ -3,15 +3,10 @@
 
 namespace game
 {
-	struct EventSelectScene
-	{
-		int index = 0;
-	};
-
 	enum CustomEventId
 	{
 		Event_SelectScene,
-
+		Event_ToggleMainForm,
 
 		Event_Max,
 	};
