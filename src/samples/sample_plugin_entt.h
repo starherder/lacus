@@ -4,12 +4,32 @@
 #include "sample_camera.h"
 
 #include "entt/entt.hpp"
+#include "imform/imform.h"
 
 namespace engine {
     class Texture;
 }
 
 namespace samples {
+
+    class ImFormEntt : public imgui::ImForm
+    {
+    public:
+        ImFormEntt() = delete;
+        ImFormEntt(engine::Application* app, class SamplePluginEntt* plugin)
+            : _application(app), _plugin(plugin) {}
+        ~ImFormEntt() = default;
+
+    protected:
+        void onInit() override;
+
+        void draw() override;
+
+    private:
+        engine::Application* _application = nullptr;
+        class SamplePluginEntt* _plugin = nullptr;
+    };
+
 
     class SamplePluginEntt final : public engine::Plugin 
     {
@@ -34,36 +54,22 @@ namespace samples {
         void onDraw() override;
 
         void onClose() override;
-    
+
+        void enableEntt(bool enable);
+
+        auto& registry() { return _registry; }
+
     private:
         void initEntities();
 
         void onEntityDrawSystem();
 
-        void drawTest();
-        void initDrawTest();
-
     private:
         entt::registry _registry;
         entt::dispatcher _dispatcher;
 
-        static const int _xcount = 100;
-        static const int _ycount = 100;
-        
-        static const int _gridw = 50;
-        static const int _gridh = 50;
+        bool _enttEnable = false;
 
         std::unique_ptr<engine::Camera> _camera = nullptr;
-
-        engine::Texture* _texture = nullptr;
-
-
-        struct VertexData
-        {
-            std::vector<Vertex> world_vertices;
-            std::vector<int> world_indices;
-        } _vertexData;
-
-        std::vector<Vertex> _vdata;
     };
 }

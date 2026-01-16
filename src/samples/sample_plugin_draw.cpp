@@ -17,6 +17,12 @@ namespace samples {
 
         ImGui::Begin("drawlist");
 
+        static bool visible = false;
+        if (ImGui::Checkbox("draw graph", &visible))
+        {
+            _plugin->setImDraw(visible);
+        }
+
         ImVec2 pos = ImGui::GetWindowPos();
 
         // 注意ImGUI中的ImU32格式的颜色顺序是ABGR，见ImGui::ColorConvertFloat4ToU32
@@ -65,6 +71,7 @@ namespace samples {
 
     void SamplePluginDraw::onInit() 
     {
+        initGeometry();
     }
 
     void SamplePluginDraw::onInstall() 
@@ -77,7 +84,7 @@ namespace samples {
 
     void SamplePluginDraw::onEnable()
     {
-        imgui::ImFormManager::inst().showForm<ImGuiFormDraw>("form_draw", application());
+        imgui::ImFormManager::inst().showForm<ImGuiFormDraw>("form_draw", application(), this);
     }
 
     void SamplePluginDraw::onDisable()
@@ -91,13 +98,13 @@ namespace samples {
 
     void SamplePluginDraw::onDraw() 
     {
+        drawGeometry();
+
         drawTexture();
 
         drawShape();
 
         drawText();
-
-        drawGeometry();
 
         paint();
 
@@ -139,10 +146,59 @@ namespace samples {
 
     void SamplePluginDraw::initGeometry()
     {
+        std::string imagename = "textures/UI/frame.png";
+        _texture = application()->resourceManager().textureManager().load(HashString{ imagename.c_str() });
+        if (!_texture)
+        {
+            spdlog::error("load texture {} failed", imagename);
+            return;
+        }
+
+        int _xcount = 30, _ycount = 30;
+        float _gridw = 50.0f, _gridh = 50.0f;
+
+        for (int x = 0; x < _xcount; x++)
+        {
+            for (int y = 0; y < _ycount; y++)
+            {
+                auto pos = Vec2f{ x * _gridw, y * _gridh };
+                auto size = Vec2f{ _gridw, _gridh };
+
+                auto color = Color{ HSVColor{(float)(x % 360), 1.0f, 1.0f, 1.0f } };
+
+                Vertex v1{ {pos.x, pos.y},                   color, {0.0f,      0.0f} };
+                Vertex v2{ {pos.x + size.x, pos.y},          color, {0.333333f, 0.0f} };
+                Vertex v3{ {pos.x + size.x, pos.y + size.y}, color, {0.333333f, 1.0f} };
+                Vertex v4{ {pos.x, pos.y + size.y},          color, {0.0f,      1.0f} };
+
+                _vertexData.vertices.push_back(v1);
+                _vertexData.vertices.push_back(v2);
+                _vertexData.vertices.push_back(v3);
+                _vertexData.vertices.push_back(v4);
+
+                _vertexData.indices.push_back((x * _xcount + y) * 4 + 0);
+                _vertexData.indices.push_back((x * _xcount + y) * 4 + 1);
+                _vertexData.indices.push_back((x * _xcount + y) * 4 + 2);
+                _vertexData.indices.push_back((x * _xcount + y) * 4 + 0);
+                _vertexData.indices.push_back((x * _xcount + y) * 4 + 2);
+                _vertexData.indices.push_back((x * _xcount + y) * 4 + 3);
+            }
+        }
     }
 
     void SamplePluginDraw::drawGeometry()
     {
+        if (!_im_draw)
+        {
+            return;
+        }
+
+        std::string imagename = "textures/UI/frame.png";
+        auto texture = application()->resourceManager().textureManager().get(HashString{ imagename.c_str() });
+
+        auto& imPainter = application()->im_painter();
+        imPainter.drawGeometry(texture, _vertexData.vertices.data(), _vertexData.vertices.size(), 
+                                        _vertexData.indices.data(), _vertexData.indices.size());
     }
 
     void SamplePluginDraw::drawTexture()
@@ -188,6 +244,11 @@ namespace samples {
 
     void SamplePluginDraw::im_paint()
     {
+        if (!_im_draw)
+        {
+            return;
+        }
+
         auto& painter = application()->im_painter();
         //application()->renderer().setClearColor(Color::White);
 

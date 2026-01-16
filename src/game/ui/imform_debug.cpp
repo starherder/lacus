@@ -36,6 +36,11 @@ void ImFormDebug::draw()
 {
     ImGui::Begin("debug");
     {
+        auto ent_num = _context->registry().storage<entt::entity>().size();
+        ImGui::Text("entt::entities: %lu", ent_num);
+
+        ImGui::Separator();
+
         static bool show_debug = false;
         if(ImGui::Checkbox("show debug", &show_debug))
         {

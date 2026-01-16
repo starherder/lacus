@@ -6,18 +6,46 @@
 
 #include <entt/entt.hpp>
 
+#include "imform/imform_manager.h"
+
 
 namespace samples {
 
 using namespace engine;
 
 
+
+void ImFormEntt::onInit()
+{
+}
+
+void ImFormEntt::draw()
+{
+    ImGui::Begin("entt");
+
+    auto num = _plugin->registry().storage<entt::entity>().size();
+    ImGui::Text("entt::entities num = %lu", num);
+
+    ImGui::Separator();
+
+    ImGui::Dummy({ 20, 20 });
+
+    static bool visible = false;
+    if (ImGui::Checkbox("draw", &visible))
+    {
+        _plugin->enableEntt(visible);
+    }
+
+    ImGui::End();
+}
+
+
 struct ComTransform 
 {
-    Vec2i pos = {0, 0};
-    Vec2i size = {100, 100};
+    Vec2 pos = {0, 0};
+    Vec2 size = {100, 100};
 
-    Vec2f scale = {1, 1};
+    Vec2 scale = {1, 1};
     float rotate = 0.0f;
 };
 
@@ -26,6 +54,20 @@ struct ComDisplay
     FColor color;
 };
 
+
+
+void SamplePluginEntt::enableEntt(bool enable)
+{
+    if (enable)
+    {
+        initEntities();
+    }
+    else
+    {
+        _registry.clear();
+    }
+}
+
 void SamplePluginEntt::onInit()  
 {
     auto& window = application()->window();
@@ -33,58 +75,11 @@ void SamplePluginEntt::onInit()
 
     auto& eventDispatcher = application()->eventDispatcher();
     eventDispatcher.onSdlEvent.connect([this](const Event& e){ _camera->handleEvent(e); });
-    
-    initEntities();
-
-    initDrawTest();
 }
 
 
-struct TestDataMgr {
-
-    void add(IdType id, const std::string& value) {
-        _values[id] = value;
-    }
-    
-    void add(const HashString& str, const std::string& value) {
-
-        spdlog::info("add: str = {}, value = {}", str.data(), value);
-
-        add(str.value(), value);
-    }
-
-    const std::string& get(IdType id) {
-        return _values[id];
-    }
-
-    const std::string& get(const HashString& str) {
-        return get(str.value());
-    }
-
-    void output() {
-        spdlog::info("----------------------------------");
-        for(auto& item : _values)
-        {
-            spdlog::info("{} = {}", item.first, item.second);
-        }
-        spdlog::info("----------------------------------");
-    }
-
-    std::map<IdType, std::string> _values;
-};
-
 void SamplePluginEntt::onInstall()  
 {
-    //TestDataMgr mgr;
-    //mgr.add("kitty", "i am a cat");
-    //mgr.add("bark"_hs, "i am a dog");
-    //mgr.add("pony"_hs, "i am a horse");
-    //
-    //spdlog::info("kitty = {}", mgr.get("kitty"));
-    //spdlog::info("bark = {}", mgr.get("bark"_hs));
-    //spdlog::info("pony = {}", mgr.get("pony"_hs));
-
-    //mgr.output();
 }
 
 void SamplePluginEntt::onUninstall()  
@@ -93,10 +88,12 @@ void SamplePluginEntt::onUninstall()
 
 void SamplePluginEntt::onEnable()
 {
+    imgui::ImFormManager::inst().showForm<ImFormEntt>("form_entt", application(), this);
 }
 
 void SamplePluginEntt::onDisable()
 {
+    imgui::ImFormManager::inst().closeForm("form_entt");
 }
 
 void SamplePluginEntt::onUpdate()  
@@ -110,8 +107,6 @@ void SamplePluginEntt::onUpdate()
 void SamplePluginEntt::onDraw()  
 {
     onEntityDrawSystem();
-    
-    drawTest();
 }
 
 void SamplePluginEntt::onClose()  
@@ -121,91 +116,38 @@ void SamplePluginEntt::onClose()
 
 void SamplePluginEntt::initEntities()
 {
-    std::string imagename = "textures/UI/frame.png";
-    _texture = application()->resourceManager().textureManager().load(HashString{imagename.c_str()});
-    if(!_texture)
-    {
-        spdlog::error("load texture {} failed", imagename);
-        return;
-    }
+    int xcount = 100, ycount = 100;
+    float xsize = 30.0f, ysize = 30.0f;
 
-    for (int x = 0; x < _xcount; x++)
+    for (int x = 0; x < xcount; x++)
     {
-        for (int y = 0; y < _ycount; y++)
+        for (int y = 0; y < ycount; y++)
         {
-            auto pos = Vec2f{ x * _gridw, y * _gridh };
-            auto size = Vec2f{ _gridw, _gridh };
+            auto ent = _registry.create();
+            ComTransform trans;
+            trans.size = {xsize, ysize};
+            trans.pos = {x*xsize, y*ysize};
+            _registry.emplace<ComTransform>(ent, trans);
 
             auto color = Color{ HSVColor{(float)(x % 360), 1.0f, 1.0f, 1.0f } };
-
-            Vertex v1{ {pos.x, pos.y},                   color, {0.0f,      0.0f} };
-            Vertex v2{ {pos.x + size.x, pos.y},          color, {0.333333f, 0.0f} };
-            Vertex v3{ {pos.x + size.x, pos.y + size.y}, color, {0.333333f, 1.0f} };
-            Vertex v4{ {pos.x, pos.y + size.y},          color, {0.0f,      1.0f} };
-
-            _vertexData.world_vertices.push_back(v1);
-            _vertexData.world_vertices.push_back(v2);
-            _vertexData.world_vertices.push_back(v3);
-            _vertexData.world_vertices.push_back(v4);
-            
-            _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 0);
-            _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 1);
-            _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 2);
-            _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 0);
-            _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 2);
-            _vertexData.world_indices.push_back((x * _xcount + y) * 4 + 3);
+            ComDisplay disp{ color };
+            _registry.emplace<ComDisplay>(ent, disp);
         }
     }
-}
-
-void SamplePluginEntt::initDrawTest()
-{
-    Color color = Color::Green;
-    Vec2  size = {50, 50};
-
-    for (int x = 0; x < 3; x++)
-    {
-        for (int y = 0; y < 3; y++)
-        {
-            Vec2 pos{x*50, y*50};
-
-            Vertex v1{ {pos.x, pos.y},                   color, {0.0f,      0.0f} };
-            Vertex v2{ {pos.x + size.x, pos.y},          color, {0.333333f, 0.0f} };
-            Vertex v3{ {pos.x + size.x, pos.y + size.y}, color, {0.333333f, 1.0f} };
-            Vertex v4{ {pos.x, pos.y + size.y},          color, {0.0f,      1.0f} };
-
-            _vdata.push_back(v1);
-            _vdata.push_back(v2);
-            _vdata.push_back(v3);
-            _vdata.push_back(v1);
-            _vdata.push_back(v3);
-            _vdata.push_back(v4);
-        }
-    }
-}
-
-void SamplePluginEntt::drawTest()
-{
-    auto& imPainter = application()->im_painter();
-    imPainter.drawGeometry(_texture,_vdata.data(), _vdata.size(),nullptr, 0, Vec2{400, 300} - _camera->getPos());
 }
 
 void SamplePluginEntt::onEntityDrawSystem()
 {
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
     auto& imPainter = application()->im_painter();
-    
-    imPainter.drawGeometry(_texture, 
-                            _vertexData.world_vertices.data(), _vertexData.world_vertices.size(),
-                            _vertexData.world_indices.data(), _vertexData.world_indices.size(),
-                            -_camera->getPos());
-#else
 
-    auto& render = application()->renderer();
-    render.drawGeometry(_texture, _vertexData.world_vertices.data(), _vertexData.world_vertices.size(),
-        _vertexData.world_indices.data(), _vertexData.world_indices.size());
+    auto views = _registry.view<ComTransform, ComDisplay>();
+    for (auto& ent : views)
+    {
+        auto& trans = views.get<ComTransform>(ent);
+        auto& disp = views.get<ComDisplay>(ent);
 
-#endif
+        imPainter.drawRect(disp.color, { trans.pos-_camera->getPos(), trans.size}, 10.0f);
+    }
 }
 
 }

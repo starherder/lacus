@@ -108,6 +108,8 @@ private:
 template<typename FormType, typename... Args>
 FormType* GuiManager::showForm(const std::string& name, Args&... args)
 {
+    _pendingNames.erase(name);
+
     auto pform = getForm<FormType>(name);
     if(pform)
     {

@@ -103,8 +103,9 @@ namespace game {
 
         void loadObjects();
 
-        void onRoleCrossGrid(const RoleCrossGrid& e);
+        void unloadObjects();
 
+        void onRoleCrossGrid(const RoleCrossGrid& e);
 
     private:
         tilemap::TileMap _tileMap;

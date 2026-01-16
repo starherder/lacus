@@ -112,6 +112,8 @@ bool GameScene::unload()
         return false;
     }
 
+    unloadObjects();
+
     return true;
 }
 
@@ -198,6 +200,25 @@ void GameScene::loadObjects()
             createObject(obj);
         }
     }
+}
+
+void GameScene::unloadObjects()
+{
+    auto old_objs = _context.registry().storage<entt::entity>().size();
+
+    _context.registry().clear();
+
+    auto cur_objs = _context.registry().storage<entt::entity>().size();
+
+    spdlog::warn("unloadObjects: old_num={}, cur_num={}", old_objs, cur_objs);
+
+    _gridObjects.clear();
+
+    _nameIdMap.clear();
+
+    _collisionDebugRects.clear();
+
+    _tileMap.unload();
 }
 
 entt::entity GameScene::selectObjectAtPos(const Vec2& pos)

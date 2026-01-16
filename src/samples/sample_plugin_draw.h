@@ -11,7 +11,8 @@ namespace samples {
     {
     public:
         ImGuiFormDraw() = delete;
-        ImGuiFormDraw(engine::Application* app) : _application(app) {}
+        ImGuiFormDraw(engine::Application* app, class SamplePluginDraw* plugin) 
+            : _application(app), _plugin(plugin) {}
         ~ImGuiFormDraw() = default;
 
     protected:
@@ -21,6 +22,7 @@ namespace samples {
 
     private:
         engine::Application* _application = nullptr;
+        class SamplePluginDraw* _plugin = nullptr;
     };
 
 
@@ -50,6 +52,8 @@ namespace samples {
 
         void onClose() override ;
 
+        void setImDraw(bool visible) { _im_draw = visible; }
+
     private:
         void drawShape();
 
@@ -68,7 +72,14 @@ namespace samples {
         void gfx_paint();
 
     private:
-        std::vector<engine::Vertex> _vertices;
         engine::Texture* _texture = nullptr;
+
+        bool _im_draw = false;
+
+        struct VertexData {
+            std::vector<Vertex> vertices;
+            std::vector<int> indices;
+        } _vertexData;
+
     };
 }
