@@ -111,10 +111,9 @@ void SamplePluginEntt::onUpdate()
 
 void SamplePluginEntt::onDraw()  
 {
-    drawTest();
-
     onEntityDrawSystem();
     
+    drawTest();
 }
 
 void SamplePluginEntt::onClose()  
@@ -165,9 +164,6 @@ void SamplePluginEntt::initEntities()
 
 void SamplePluginEntt::initDrawTest()
 {
-    _vdata.clear();
-    _idata.clear();
-
     Color color = Color::Green;
     Vec2  size = {50, 50};
 
@@ -185,14 +181,9 @@ void SamplePluginEntt::initDrawTest()
             _vdata.push_back(v1);
             _vdata.push_back(v2);
             _vdata.push_back(v3);
+            _vdata.push_back(v1);
+            _vdata.push_back(v3);
             _vdata.push_back(v4);
-            
-            _idata.push_back((x * 3 + y) * 4 + 0);
-            _idata.push_back((x * 3 + y) * 4 + 1);
-            _idata.push_back((x * 3 + y) * 4 + 2);
-            _idata.push_back((x * 3 + y) * 4 + 0);
-            _idata.push_back((x * 3 + y) * 4 + 2);
-            _idata.push_back((x * 3 + y) * 4 + 3);
         }
     }
 }
@@ -200,55 +191,24 @@ void SamplePluginEntt::initDrawTest()
 void SamplePluginEntt::drawTest()
 {
     auto& imPainter = application()->im_painter();
-    //imPainter.drawTextureUV(_texture, { 0.0f, 0.0f, 0.33333f, 1.0f }, { 100,100,100,100 });
-
-    Color color = Color::Green;
-    Vec2  size = { 50, 50 };
-
-    for (int x = 0; x < 3; x++)
-    {
-        for (int y = 0; y < 3; y++)
-        {
-            Vec2 pos{ x * 50, y * 50 };
-
-            Vertex v1{ {pos.x, pos.y},                   color, {0.0f,      0.0f} };
-            Vertex v2{ {pos.x + size.x, pos.y},          color, {0.333333f, 0.0f} };
-            Vertex v3{ {pos.x + size.x, pos.y + size.y}, color, {0.333333f, 1.0f} };
-            Vertex v4{ {pos.x, pos.y + size.y},          color, {0.0f,      1.0f} };
-
-            _vdata.push_back(v1);
-            _vdata.push_back(v2);
-            _vdata.push_back(v3);
-            _vdata.push_back(v4);
-
-            _idata.push_back((x * 3 + y) * 4 + 0);
-            _idata.push_back((x * 3 + y) * 4 + 1);
-            _idata.push_back((x * 3 + y) * 4 + 2);
-            _idata.push_back((x * 3 + y) * 4 + 0);
-            _idata.push_back((x * 3 + y) * 4 + 2);
-            _idata.push_back((x * 3 + y) * 4 + 3);
-        }
-    }
-
-    imPainter.drawGeometry(_texture,
-        _vdata.data(), _vdata.size(),
-        _idata.data(), _idata.size(), {100, 300});
-    
+    imPainter.drawGeometry(_texture,_vdata.data(), _vdata.size(),nullptr, 0, Vec2{400, 300} - _camera->getPos());
 }
 
 void SamplePluginEntt::onEntityDrawSystem()
 {
-    auto& render = application()->renderer();
-    render.drawGeometry(_texture, _vertexData.world_vertices.data(), _vertexData.world_vertices.size(),
-        _vertexData.world_indices.data(), _vertexData.world_indices.size());
-
-#if 0
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
     auto& imPainter = application()->im_painter();
     
     imPainter.drawGeometry(_texture, 
                             _vertexData.world_vertices.data(), _vertexData.world_vertices.size(),
                             _vertexData.world_indices.data(), _vertexData.world_indices.size(),
                             -_camera->getPos());
+#else
+
+    auto& render = application()->renderer();
+    render.drawGeometry(_texture, _vertexData.world_vertices.data(), _vertexData.world_vertices.size(),
+        _vertexData.world_indices.data(), _vertexData.world_indices.size());
+
 #endif
 }
 

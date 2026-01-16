@@ -113,12 +113,12 @@ namespace engine
 		ImGui::GetBackgroundDrawList()->AddPolyline((ImVec2*)points, point_count, toImColor(color), flag, thickness);
 	}
 
-	void ImPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color)
+	void ImPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_width)
 	{
 		assert(font);
 
 #ifdef USE_IMGUI_AS_RENDER_ENGINE		
-		ImGui::GetBackgroundDrawList()->AddText(font->imFont, font->size, {pos.x, pos.y}, toImColor(color), text.c_str());
+		ImGui::GetBackgroundDrawList()->AddText(font->imFont, font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
 #else
 		ImGui::GetBackgroundDrawList()->AddText({ pos.x, pos.y }, toImColor(color), text.c_str());
 #endif
@@ -200,7 +200,7 @@ namespace engine
 		}
 	}
 
-#if 0
+#if 1
 	void ImPainter::drawGeometry(Texture* texture, const Vertex* vertices, int vertices_count, const int* indices, int indices_count, const Vec2& pos, float scale)
 	{
 		bool has_indices = (indices != nullptr && indices_count > 0);
@@ -217,8 +217,8 @@ namespace engine
 
 		for (int i = 0; i < vertices_count; i++)
 		{
-			auto pt = ImVec2(pos.x + vertices[i].position.x * scale, pos.y + vertices[i].position.y * scale);
-			auto uv = ImVec2(vertices[i].tex_coord.x, vertices[i].tex_coord.y);
+			auto pt = ImVec2{ pos.x + vertices[i].position.x * scale, pos.y + vertices[i].position.y * scale };
+			auto uv = ImVec2{ vertices[i].tex_coord.x, vertices[i].tex_coord.y };
 			auto cl = ImColor{ vertices[i].color.r, vertices[i].color.g, vertices[i].color.b, vertices[i].color.a };
 
 			if (has_indices)
@@ -296,9 +296,6 @@ namespace engine
 		draw_list->_VtxWritePtr += vertices_count;
 		draw_list->_IdxWritePtr += indices_count;
 		draw_list->_VtxCurrentIdx += vertices_count;
-
-		// 7. 添加一个绘制命令，指定使用的纹理
-		//draw_list->AddDrawCmd();
 
 		if (texture)
 		{

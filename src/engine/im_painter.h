@@ -49,7 +49,7 @@ namespace engine
 		void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White);
 		void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White);
 
-		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 });
+		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 }, float wrap_line = 0.0f);
 
 		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, const int* indices, int num_indices, const Vec2& pos = {0,0}, float scale=1.0f);
 

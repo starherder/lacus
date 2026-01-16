@@ -65,7 +65,5 @@ namespace samples {
         } _vertexData;
 
         std::vector<Vertex> _vdata;
-        std::vector<int> _idata;
-
     };
 }

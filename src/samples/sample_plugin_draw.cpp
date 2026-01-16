@@ -217,7 +217,9 @@ namespace samples {
             auto& resourceMgr = application()->resourceManager();
             auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 30);
             auto& imPainter = application()->im_painter();
-            imPainter.drawText("这就是 ImFont 字体，Can you See?", font, pos+Vec2{ 100, -150 }, Color::Pink);
+            imPainter.drawText("这就是 ImFont 字体，Can you See?", font, pos + Vec2{ 100, -50 }, Color::Pink);
+            imPainter.drawText("Where is the sages of passed? 后不见来者, The sky and earth forever last, 独怆然而涕下。",
+                                font, pos + Vec2{ 100, 0 }, Color::DarkCyan, 250.0f);
 
             auto tiger = resourceMgr.textureManager().get("textures/UI/tiger.svg"_hs);
             Rect src = Rect{ Vec2{0.0f, 0.0f }, tiger->size() };
