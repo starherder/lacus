@@ -179,7 +179,7 @@ namespace AStar
             }
         }
 
-        void clearCollisions() {
+        void clear() {
             walls.clear();
         }
 

@@ -11,7 +11,7 @@ namespace game
 
 	class ObjectFactory  : public utility::ISingleton<ObjectFactory>
 	{
-		using ConfigJsonMap = std::map<std::string, std::shared_ptr<nlohmann::json>>;
+		using ConfigJsonMap = std::map<std::string, JsonPtr>;
 
 	public:
 		ObjectFactory() = default;
@@ -24,9 +24,7 @@ namespace game
 		bool loadSkills(GameContext& context, const fs::path& skilldif);
 		bool loadBuffs(GameContext& context, const fs::path& buffdir);
 
-		entt::entity createObject(const std::string& cfgid);
-
-		entt::entity createRole(const std::string& cfgid);
+		entt::entity createActor(const std::string& cfgid);
 
 		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
 		entt::entity createBuff(entt::entity owner, const std::string& cfgid);
@@ -43,11 +41,16 @@ namespace game
 		const auto& getAllObjectCfgIds() { return _objectCfgIds; }
 		const auto& getAllSkillCfgIds() { return _skillCfgIds; }
 
+		const Properties& getObjectCfgProperties(const std::string& cfgid);
+
 	private:
 		bool loadRoleCfg(const fs::path& rolescfg);
-
 		bool loadSkillCfg(const fs::path& skillcfg);
 		bool loadBuffCfg(const fs::path& skillcfg);
+
+		entt::entity createObject(const nJson& value);
+		entt::entity createRole(const nJson& json);
+		entt::entity createSpawner(const nJson& json);
 
 		std::optional<utility::Var> jsonToVar(const nlohmann::json& value);
 

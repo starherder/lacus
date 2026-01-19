@@ -44,7 +44,7 @@ namespace samples {
 
         void onCardOverlapChanged(ui::CheckBox* cb);
 
-        void onDropCard(ui::Widget* widget, const Vec2& pos);
+        void onDropCard(ui::GuiManager::DraggingPtr dragging);
     };
 
 

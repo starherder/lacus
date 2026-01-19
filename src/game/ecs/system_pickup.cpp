@@ -61,7 +61,7 @@ namespace game
                                         if (t.isFinished()) {
                                             spdlog::info("pickable object {} tween finish", nameComp.cfg_id);
                                             
-                                            _context.registry().emplace<CompDestroy>(obj);
+                                            _context.registry().emplace_or_replace<CompDestroy>(obj);
 
                                             _context.dispatcher().trigger<RolePickItemFinish>(RolePickItemFinish{ role, obj });
                                         }

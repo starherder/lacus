@@ -24,22 +24,30 @@ void EventDispatcher::run()
 
 		switch(e.type)
 		{
+		case SDL_EVENT_WINDOW_RESIZED:
+		{
+			onWindowResized({e.window.data1, e.window.data2});
+		}break;
 		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		{
-			if (e.button.button == SDL_BUTTON_LEFT) {
+			if (e.button.button == SDL_BUTTON_LEFT) 
+			{
 				onMouseLeftDown({ e.button.x, e.button.y });
 			}
-			if (e.button.button == SDL_BUTTON_RIGHT) {
+			if (e.button.button == SDL_BUTTON_RIGHT) 
+			{
 				onMouseRightDown({ e.button.x, e.button.y });
 			}
 		}break;
 		case SDL_EVENT_MOUSE_BUTTON_UP:
 		{
-			if (e.button.button == SDL_BUTTON_LEFT) {
+			if (e.button.button == SDL_BUTTON_LEFT) 
+			{
 				onMouseLeftUp({e.button.x, e.button.y});
 				onMouseLeftClicked.emit({e.button.x, e.button.y});
 			}
-			if (e.button.button == SDL_BUTTON_RIGHT) {
+			if (e.button.button == SDL_BUTTON_RIGHT) 
+			{
 				onMouseRightUp({ e.button.x, e.button.y });
 				onMouseRightClicked.emit({e.button.x, e.button.y});
 			}
@@ -49,10 +57,12 @@ void EventDispatcher::run()
 			_mousePos = { e.motion.x, e.motion.y };
 
 			onMouseMotion.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
-			if(e.button.button == SDL_BUTTON_LEFT) {
+			if(e.button.button == SDL_BUTTON_LEFT) 
+			{
 				onMouseLeftDrag.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
 			}
-			if (e.button.button == SDL_BUTTON_RIGHT) {
+			if (e.button.button == SDL_BUTTON_RIGHT) 
+			{
 				onMouseRightDrag.emit({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
 			}
 		}break;

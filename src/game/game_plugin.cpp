@@ -12,6 +12,7 @@ GamePlugin::GamePlugin(engine::Application& app)
 void GamePlugin::onInit() 
 {
     ui::GuiManager::inst().init(&_app);
+
     _gameLogic = std::make_unique<GameLogic>(_gameContext);
     _gameLogic->init();
 }

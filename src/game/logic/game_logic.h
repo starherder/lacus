@@ -2,12 +2,19 @@
 
 #include "game/scene/game_context.h"
 
+#include "game/ecs/comm_comp.h"
+#include "game/ecs/comm_system.h"
+#include "game/ecs/comm_event.h"
+
 
 namespace game
 {
 
 	class GameLogic : public signals::SlotHandler
 	{
+	public:
+		using EcsSystemMap = std::multimap<EcsPriority, std::shared_ptr<EcsSystem>>;
+
 	public:
 		GameLogic() = delete;
 		GameLogic(const GameLogic&) = delete;
@@ -43,11 +50,15 @@ namespace game
 
 		void onUICustomEvent(int eventId, const utility::VarList& varlist);
 
+		void initEscSystem();
+
 	private:
 
 		std::unique_ptr<GameScene> _scene = nullptr;
 
 		GameContext& _gameContext;
+
+		EcsSystemMap _ecsSystems;
 
 		GameConfig _gameConfig;
 	};

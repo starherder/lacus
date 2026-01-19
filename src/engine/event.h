@@ -9,6 +9,8 @@ namespace engine
 class EventDispatcher
 {
 public:
+	signals::Signal<const Vec2&> onWindowResized;
+
 	signals::Signal<const Vec2&> onMouseLeftDown;
 	signals::Signal<const Vec2&> onMouseLeftUp;
 

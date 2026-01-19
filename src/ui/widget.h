@@ -33,14 +33,14 @@ public:
     virtual void setVisible(bool visible);
     virtual void rawSetVisible(bool visible);
 
-    auto dragable() const { return _dragable; }
-    void setDragable(bool drag) { _dragable = drag; }
+    auto movable() const { return _movable; }
+    void setMovable(bool drag) { _movable = drag; }
 
     auto canDragOut() const { return _canDragOut; }
     void setCanDragOut(bool d) { _canDragOut = d; }
 
-    auto& noEvent() const { return _noEvent; }
-    void setNoEvent(bool noEvent) { _noEvent = noEvent; }
+    auto& acceptEvent() const { return _acceptEvent; }
+    void setAcceptEvent(bool noEvent) { _acceptEvent = noEvent; }
 
     auto focused() const { return _focused; }
     void setFocused(bool focus) { _focused = focus; }
@@ -74,7 +74,6 @@ public:
     void setData(const std::string& key, const utility::Var& value);
 
     Vec2 getAbsPos() const;
-
     Rect getAbsRect() const;
 
 public:
@@ -112,8 +111,8 @@ protected:
 
     bool _visible = true;
     bool _focused = false;
-    bool _dragable= false;
-    bool _noEvent = true;
+    bool _movable = false;
+    bool _acceptEvent = false;
     bool _scaleInGroup = true;
     bool _canDragOut = false;
 

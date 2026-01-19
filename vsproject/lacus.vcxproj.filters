@@ -319,6 +319,9 @@
     <ClCompile Include="..\src\game\ui\form_scenes.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_spawner.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -644,6 +647,9 @@
     </ClInclude>
     <ClInclude Include="..\src\game\ui\ui_logic_events.h">
       <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_spawner.h">
+      <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

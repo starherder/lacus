@@ -1,11 +1,8 @@
 {
 	"id": "item_0",
 	"name" : "text_item_name_0",
-
-	"common" : {
-		"type" : "item",
-		"desc" : "text_item_0_desc"
-	},
+	"type" : "item",
+	"desc" : "text_item_0_desc",	
 
 	"display": {
 		"size": "32,32",

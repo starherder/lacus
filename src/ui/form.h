@@ -39,34 +39,42 @@ public:
     bool focused() { return _focused; }
 
     const Vec2& pos()  const { return _pos; }
-    void setPos(const Vec2& pos) { _pos = pos; }
+    void setPos(const Vec2& pos);
 
     auto& size() const { return _size; }
-    void setSize(const Vec2& sz) { _size = sz; }
+    void setSize(const Vec2& sz);
+
+    const Rect& getRect() const;
+    void setRect(const Rect& rect);
 
     virtual void onShow(bool visible) {}
     virtual void onClose() {}
     virtual void onUpdate(float delta) {}
     virtual void onDraw() {}
 
+    virtual void onPosChanged() {}
+    virtual void onSizeChanged() {}
+
     Widget* hoverWidget() { return _hoverWidget; }
 
-    void setMaximize(bool v) { _maximized = v; }
+    void setMaximize(bool v);
     bool isMaximize() { return _maximized; }
 
 public:
-    void onMouseLeftClick(const Vec2& pos);
-    void onMouseRightClick(const Vec2& pos);
+    virtual void onMouseLeftClick(const Vec2& pos);
+    virtual void onMouseRightClick(const Vec2& pos);
 
-    void onMouseLeftDown(const Vec2& pos);
-    void onMouseLeftUp(const Vec2& pos);
+    virtual void onMouseLeftDown(const Vec2& pos);
+    virtual void onMouseLeftUp(const Vec2& pos);
 
-    void onMouseRightDown(const Vec2& pos);
-    void onMouseRightUp(const Vec2& pos);
+    virtual void onMouseRightDown(const Vec2& pos);
+    virtual void onMouseRightUp(const Vec2& pos);
 
-    void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
-    void onMouseWheel(const Vec2& pos, float dir);
-    void onMouseMotion(const Vec2& pos, const Vec2& offset);
+    virtual void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
+    virtual void onMouseWheel(const Vec2& pos, float dir);
+    virtual void onMouseMotion(const Vec2& pos, const Vec2& offset);
+
+    virtual void onWindowResized(const Vec2& size);
 
 private:
     Widget* getWidgetInGroup(Group* group, const Vec2& pos);
@@ -80,8 +88,8 @@ private:
     bool _focused = false;
     bool _dragMovable = true;
 
-    Vec2 _pos;
-    Vec2 _size;
+    Vec2 _pos = {0, 0};
+    Vec2 _size = {400, 300};
 
     std::unique_ptr<Group> _rootGroup = nullptr;
     Widget* _hoverWidget = nullptr;

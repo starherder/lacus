@@ -30,6 +30,8 @@ namespace game
 
         void onUpdate(float delta) override;
 
+        void onSizeChanged() override;
+
     private:
         ui::Label* _lblTitle = nullptr;
         ui::Button* _btnStart = nullptr;

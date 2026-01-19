@@ -180,7 +180,7 @@ namespace game
         auto pdead = _context.registry().try_get<CompDead>(target);
         if(targetFight.hp <= 0.0f && pdead == nullptr) 
         {
-            _context.registry().emplace<CompDead>(target);    
+            _context.registry().emplace_or_replace<CompDead>(target, CompDead{0});
         }
 
         _context.dispatcher().trigger(RolHpAlter{ target, hp });
@@ -238,7 +238,7 @@ namespace game
             .during(floatticks)
             .onStep([this, word](auto& t, float y, float a) {
             if (t.isFinished()) {
-                _context.registry().emplace<CompDestroy>(word);
+                _context.registry().emplace_or_replace<CompDestroy>(word);
                 return true;
             }
 

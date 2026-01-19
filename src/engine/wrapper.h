@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <entt/entt.hpp>
+#include <nlohmann/json_fwd.hpp>
 #include <utility/signalslot.h>
 #include <utility/random.h>
 #include <utility/i_singleton.h>
@@ -35,6 +36,9 @@ using namespace entt::literals;
 #endif
 
 namespace engine {
+
+using nJson = nlohmann::json; 
+using JsonPtr = std::shared_ptr<nlohmann::json>;
 
 namespace signals = utility::sigslot;
 

@@ -3,16 +3,6 @@
 #include "../ui/form_main.h"
 #include "../ui/imform_debug.h"
 
-#include "game/ecs/system_motion.h"
-#include "game/ecs/system_render.h"
-#include "game/ecs/system_bevtree.h"
-#include "game/ecs/system_skill.h"
-#include "game/ecs/system_pickup.h"
-#include "game/ecs/system_dead.h"
-#include "game/ecs/system_selection.h"
-#include "game/ecs/system_fight.h"
-#include "game/ecs/system_buff.h"
-
 #include "glm/glm.hpp"
 
 namespace game {
@@ -21,30 +11,19 @@ namespace game {
 GameScene::GameScene(GameContext& context)
     : engine::Scene(context.applicaton()), _context(context)
 {
+    _camera.init(&application());
+
     _camera.setPos(Vec2{0, 0});
+
     _camera.setSize(Vec2{_context.window().getSize()});
 
-    initEscSystem();
+    _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
 }
 
 GameScene::~GameScene()
 {
 }
 
-void GameScene::initEscSystem()
-{
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<MotionSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<RenderSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SkillSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_context) });
-    _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_context) });
-
-    _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
-}
 
 Vec2 GameScene::mapSize()
 {
@@ -87,10 +66,6 @@ bool GameScene::load(const engine::fs::path& mapPath)
 
     on_load_progress(0.5f);
 
-    _camera.init(&application());
-
-    on_load_progress(0.6f);
-
     _tileMap.bake(application().resourceManager());
 
     on_load_progress(0.7f);
@@ -122,11 +97,6 @@ bool GameScene::unload()
 void GameScene::onUpdate(float deltaTime)
 {
     _camera.update(deltaTime);
-
-    for (auto& [prio, sys] : _ecsSystems) 
-    {
-        sys->update(deltaTime);
-    }
 }
 
 void GameScene::onDraw() 
@@ -134,11 +104,6 @@ void GameScene::onDraw()
     auto& renderer = application().renderer();
 
     _tileMap.draw(renderer, _camera);
-
-    for (auto& [prio, sys] : _ecsSystems)
-    {
-        sys->draw();
-    }
 }
 
 void GameScene::onStart()
@@ -177,6 +142,8 @@ void GameScene::closeAllGui()
 void GameScene::initPathFind()
 {
     auto& pathFinder = _context.pathFinder();
+    pathFinder.clear();
+
     pathFinder.setWorldSize(_tileMap.mapSize());
     pathFinder.setHeuristic(AStar::Heuristic::euclidean);
     pathFinder.setDiagonalMovement(false);
@@ -199,7 +166,7 @@ void GameScene::loadObjects()
     auto layer = _tileMap.getObjectLayer();
     if (layer) {
         for (auto& [id, obj] : layer->objects) {
-            createObject(obj);
+            createMapActor(obj);
         }
     }
 }
@@ -209,8 +176,6 @@ void GameScene::unloadObjects()
     _context.registry().clear();
 
     _gridObjects.clear();
-
-    _nameIdMap.clear();
 
     _collisionDebugRects.clear();
 
@@ -247,17 +212,17 @@ entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
     return entt::null;
 }
 
-bool GameScene::createObject(const MapObject& obj)
+entt::entity GameScene::createMapActor(const MapObject& obj)
 {
-    return createObject(obj.name, obj.pos);
+    return createActor(obj.name, obj.pos);
 }
 
-bool GameScene::createObject(const std::string& cfgid, const Vec2& pos)
+entt::entity GameScene::createActor(const std::string& cfgid, const Vec2& pos)
 {
-    auto ent = ObjectFactory::inst().createRole(cfgid);
+    auto ent = ObjectFactory::inst().createActor(cfgid);
     if(ent==entt::null) 
     {
-        return false;
+        return ent;
     }
 
     auto* trans = _context.registry().try_get<CompTransform>(ent);
@@ -283,19 +248,7 @@ bool GameScene::createObject(const std::string& cfgid, const Vec2& pos)
     addObjectToGrid(ent, grid);
 
     spdlog::info("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
-
-    return true;
-}
-
-entt::entity GameScene::getActor(const std::string& name)
-{
-    auto it = _nameIdMap.find(name);
-    if (it != _nameIdMap.end())
-    {
-        return it->second;
-    }
-
-    return entt::null;
+    return ent;
 }
 
 void GameScene::destroyActor(entt::entity id)
@@ -306,15 +259,6 @@ void GameScene::destroyActor(entt::entity id)
         return;
     }
     _registry.destroy(id);
-}
-
-void GameScene::destroyActor(const std::string& name)
-{
-    auto id = getActor(name);
-    if (id != entt::null)
-    {
-        destroyActor(id);
-    }
 }
 
 void GameScene::destroyAllActor()

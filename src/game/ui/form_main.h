@@ -2,6 +2,8 @@
 
 #include "game/ui/form_logic_base.h"
 
+#include "ui/game_widgets.h"
+
 namespace game {
     using namespace ui;
 
@@ -14,7 +16,12 @@ namespace game {
     private:
         void onUpdate(float delta) override;
 
+        void onDropCard(ui::GuiManager::DraggingPtr ptr);
+
+        void onSizeChanged() override;
+
     private:
         ui::Button* _btnScenes = nullptr;
+        ui::CardGroup* _cardGroup = nullptr;
     };
 }

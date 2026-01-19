@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\ext;..\src;..\ext\SDL3\include;..\ext\spdlog\include;..\ext\tmxlite\include;..\ext\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>..\ext;..\src;..\ext\SDL3\include;..\ext\spdlog\include;..\ext\tmxlite\include;..\ext\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -183,6 +184,7 @@
     <ClCompile Include="..\src\game\ecs\system_pickup.cpp" />
     <ClCompile Include="..\src\game\ecs\system_render.cpp" />
     <ClCompile Include="..\src\game\ecs\system_selection.cpp" />
+    <ClCompile Include="..\src\game\ecs\system_spawner.cpp" />
     <ClCompile Include="..\src\game\ecs\system_utils.cpp" />
     <ClCompile Include="..\src\game\game_config.cpp" />
     <ClCompile Include="..\src\game\game_plugin.cpp" />
@@ -278,6 +280,7 @@
     <ClInclude Include="..\src\game\ecs\system_pickup.h" />
     <ClInclude Include="..\src\game\ecs\system_render.h" />
     <ClInclude Include="..\src\game\ecs\system_selection.h" />
+    <ClInclude Include="..\src\game\ecs\system_spawner.h" />
     <ClInclude Include="..\src\game\ecs\system_utils.h" />
     <ClInclude Include="..\src\game\game_config.h" />
     <ClInclude Include="..\src\game\game_plugin.h" />

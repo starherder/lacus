@@ -9,10 +9,49 @@ namespace ui {
 Form::Form(const std::string& name) : _name(name)
 {
     _rootGroup = std::make_unique<Group>("group_main");
+
+    root()->setMovable(true);
+    root()->setAcceptEvent(true);
 }
 
 Form::~Form()
 {
+}
+
+void Form::setMaximize(bool v)
+{ 
+    _maximized = v; 
+
+    if (isMaximize())
+    {
+        setPos({ 0, 0 });
+        setSize(ui::GuiManager::inst().windowSize());
+    }
+}
+
+void Form::setPos(const Vec2& pos)
+{ 
+    _pos = pos; 
+    onPosChanged(); 
+}
+
+void Form::setSize(const Vec2& sz)
+{ 
+    _size = sz; 
+    onSizeChanged(); 
+}
+
+const Rect& Form::getRect() const
+{ 
+    static Rect rect; 
+    rect = Rect{ _pos, _size }; 
+    return rect; 
+}
+
+void Form::setRect(const Rect& rect) 
+{ 
+    setPos(rect.pos()); 
+    setSize(rect.size()); 
 }
 
 Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
@@ -27,13 +66,13 @@ Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
             if(ptr->isGroup())
             {
                 auto widget = getWidgetInGroup((Group*)ptr.get(), pos);
-                if(widget && !widget->noEvent()) 
+                if(widget && widget->acceptEvent())
                 {
                     return widget;
                 }
             }
 
-            if (!ptr->noEvent()) 
+            if (ptr->acceptEvent()) 
             {
                 return ptr.get();
             }
@@ -83,12 +122,6 @@ Widget* Form::getWidgetAtPos(const Vec2& pos)
 
 void Form::update(float delta)
 {
-    if (isMaximize())
-    {
-        _pos = { 0, 0 };
-        _size = ui::GuiManager::inst().windowSize();
-    }
-
     _rootGroup->setPos(_pos);
     _rootGroup->setSize(_size);
     _rootGroup->update(delta);
@@ -127,33 +160,37 @@ void Form::hide()
     onShow(false);
 }
 
+void Form::onWindowResized(const Vec2& size)
+{
+    if (isMaximize())
+    {
+        setPos({ 0, 0 });
+        setSize(ui::GuiManager::inst().windowSize());
+    }
+}
+
 void Form::onMouseLeftClick(const Vec2& pos)
 {
     auto widget = _hoverWidget; 
-    if (widget)
+    if(widget && widget->focused() && widget->acceptEvent())
     {
-        if(widget->focused())
-        {
-            widget->onMouseLeftClick(pos);
-        }
-        //_focused = false;
+        widget->onMouseLeftClick(pos);
     }
 }
 
 void Form::onMouseRightClick(const Vec2& pos)
 {
     auto widget = _hoverWidget;
-    if (widget)
+    if (widget && widget->focused() && widget->acceptEvent())
     {
         widget->onMouseRightClick(pos);
-        //_focused = false;
     }
 }
 
 void Form::onMouseLeftDown(const Vec2& pos)
 {
     auto widget = _hoverWidget;
-    if (widget)
+    if (widget && widget->acceptEvent())
     {
         widget->setFocused(true);
         widget->onMouseLeftDown(pos);
@@ -164,17 +201,16 @@ void Form::onMouseLeftDown(const Vec2& pos)
 void Form::onMouseLeftUp(const Vec2& pos)
 {
     auto widget = _hoverWidget;
-    if (widget)
+    if (widget && widget->acceptEvent())
     {
         widget->onMouseLeftUp(pos);
-        //_focused = false;
     }
 }
 
 void Form::onMouseRightDown(const Vec2& pos)
 {
     auto widget = _hoverWidget;
-    if (widget && widget->focused())
+    if (widget && widget->focused() && widget->acceptEvent())
     {
         widget->setFocused(true);
         widget->onMouseRightDown(pos);
@@ -188,14 +224,18 @@ void Form::onMouseRightUp(const Vec2& pos)
     if (widget && widget->focused())
     {
         widget->onMouseRightUp(pos);
-        //_focused = false;
     }
 }
 
 void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
     auto widget = _hoverWidget;
-    if(widget && widget->dragable())
+    if(!widget) 
+    {
+        return;
+    }
+
+    if(!widget->movable())
     {
         widget->setFocused(true);
         widget->onMouseLeftDrag(pos, offset);
@@ -212,7 +252,7 @@ void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 void Form::onMouseWheel(const Vec2& pos, float dir)
 {
     auto widget = _hoverWidget;
-    if (widget)
+    if (widget && widget->acceptEvent())
     {
         widget->setFocused(true);
         widget->onMouseWheel(pos, dir);
@@ -221,8 +261,9 @@ void Form::onMouseWheel(const Vec2& pos, float dir)
 
 void Form::onMouseMotion(const Vec2& pos, const Vec2& offset)
 {
-    if(!Rect{_pos, _size}.contains(pos))
+    if(!getRect().contains(pos))
     {
+        _hoverWidget = nullptr;
         return;
     }
 
@@ -237,7 +278,7 @@ void Form::onMouseMotion(const Vec2& pos, const Vec2& offset)
         _hoverWidget->onMouseLeave(pos);
     }
 
-    if(widget)
+    if(widget && widget->acceptEvent())
     {
         widget->onMouseEnter(pos);
     }

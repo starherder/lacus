@@ -26,6 +26,7 @@ namespace game
     enum class ObjectType {
         Item,
         Npc,
+        Spawner,
 
         Other,
     };
@@ -45,12 +46,9 @@ namespace game
     };
 
     struct CompComm {
-        
         ObjectType type;
-
         std::string desc;
-
-        CampSide comp = CampSide::Gangster;
+        CampSide side;
     };
 
     enum class CoordMode {
@@ -172,25 +170,44 @@ namespace game
         tweeny::tween<int> tween;
     };
 
+    struct CompSpawner
+    {
+        CampSide side;
 
-    inline  ObjectType getNpcType(const std::string& npctype) 
+        std::string npc;
+        float radius = 100.0f;
+        int interval = 1000;
+        int min_count = 1; // spawn immediately when npc_count < min_count
+        int max_count = 3; // stop spawn where npc_count >= max_count
+
+        int64_t cur_tick = 0;
+        std::set<entt::entity> npc_set;
+    };
+    
+    struct CompSpawnMe
+    {
+        entt::entity who_spawn_me;
+    };
+
+
+    inline ObjectType getNpcType(const std::string& npctype) 
     {
         if (npctype == "item") return ObjectType::Item;
         if (npctype == "npc") return ObjectType::Npc;
+        if (npctype == "spawner") return ObjectType::Spawner;
         if (npctype == "other") return ObjectType::Other;
 
-        spdlog::error("getNpcType: ({}) NOT support", npctype);
         return ObjectType::Other;
     };
 
-    inline CampSide getCompSide(const std::string& side)
+    inline CampSide getCampSide(const std::string& side)
     {
         if (side == "official") return CampSide::Officer;
         if (side == "foreign") return CampSide::Foreign;
         if (side == "rebel") return CampSide::Rebel;
         if (side == "gangster") return CampSide::Gangster;
-        spdlog::error("camp ({}) NOT support", side);
-        return CampSide::Gangster;
+
+        return CampSide::Officer;
     };
 
 

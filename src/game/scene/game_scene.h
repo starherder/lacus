@@ -4,9 +4,6 @@
 
 #include "game/scene/game_context.h"
 #include "game/scene/object_factory.h"
-
-#include "game/ecs/comm_comp.h"
-#include "game/ecs/comm_system.h"
 #include "game/ecs/comm_event.h"
 
 #include "game_camera.h"
@@ -30,7 +27,6 @@ namespace game {
         using EntitySet = std::set<entt::entity>;
         using GridEntityMap = std::map<Vec2i, EntitySet, Vec2Compare>;
         using NameEntityMap = std::unordered_map<std::string, entt::entity>;
-        using EcsSystemMap = std::multimap<EcsPriority, std::shared_ptr<EcsSystem>>;
         using MapObject = tilemap::MapObject;
 
     public:
@@ -63,19 +59,15 @@ namespace game {
         const tilemap::TileMap& mapInfo() { return _tileMap; }
 
         GameCamera& camera() { return _camera; }
-
         entt::registry& registry() { return _registry;  }
 
-        entt::entity getActor(const std::string& name);
+        entt::entity createMapActor(const MapObject& obj);
+        entt::entity createActor(const std::string& cfgid, const Vec2& pos);
 
         void destroyActor(entt::entity id);
-        void destroyActor(const std::string& name);
         void destroyAllActor();
 
         entt::entity selectObjectAtPos(const Vec2& pos);
-
-        bool createObject(const MapObject& obj);
-        bool createObject(const std::string& cfgid, const Vec2& pos);
 
         void addObjectToGrid(entt::entity ent, const Vec2i& grid);
         void removeObjectFromGrid(entt::entity ent, const Vec2i& grid);
@@ -97,8 +89,6 @@ namespace game {
 
         void closeAllGui();
 
-        void initEscSystem();
-
         void initPathFind();
 
         void loadObjects();
@@ -115,10 +105,6 @@ namespace game {
         entt::registry _registry;
 
         GameCamera _camera;
-
-        NameEntityMap _nameIdMap;
-
-        EcsSystemMap _ecsSystems;
 
         GridEntityMap _gridObjects;
 

@@ -23,6 +23,8 @@ namespace game
 			int float_ticks = 1000;
 		} float_text;
 
+		int dying_ticks = 1000;
+
 		bool load(const fs::path& filepath);
 		
 	private:

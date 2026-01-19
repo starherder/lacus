@@ -63,6 +63,17 @@ namespace ui {
     
     void Group::addWidget(WidgetPtr widget, int index)
     {
+        if(!widget)
+        {
+            spdlog::error("Group::addWidget widiget==nullptr.");
+            return;
+        }
+
+        if(index < 0 || index >= _children.size())
+        {
+            index = -1;
+        }
+
         bool addOK = false;
         if (index == -1) 
         {
@@ -87,12 +98,17 @@ namespace ui {
                     curindex++;
                 }
             }
+
         }
 
         if (addOK) 
         {
             widget->setParent(this);
             onChildAdded(widget.get());
+        }
+        else
+        {
+            spdlog::error("add widget ({}) to index {} failed. child_count = {}", widget->name(), index, _children.size());
         }
     }
 
@@ -206,9 +222,9 @@ namespace ui {
         _contentPos = {0, 0};
         _contentSize = size();
 
-        setDragable(true);
+        setMovable(true);
 
-        setNoEvent(false);
+        setAcceptEvent(true);
 
         _horizonSlider = createChild<ui::SliderBar>("__h_slider__");
         _horizonSlider->setDirection(ui::Coordinate::Horizonal);

@@ -157,7 +157,8 @@ namespace game
 		return true;
 	}
 
-	entt::entity ObjectFactory::createObject(const std::string& cfgid)
+
+	entt::entity ObjectFactory::createActor(const std::string& cfgid)
 	{
 		if (!_context)
 		{
@@ -173,24 +174,46 @@ namespace game
 		}
 
 		auto& json = *jsonptr;
+
+		auto type = getNpcType(json.value("type", ""));
+		switch(type)
+		{
+			case ObjectType::Item:
+			{
+				return createObject(json);
+			}break;
+			case ObjectType::Npc:
+			{
+				return createRole(json);
+			
+			}break;
+			case ObjectType::Spawner:
+			{
+				return createSpawner(json);
+			}break;
+			default:
+			break;
+		}
+
+		return entt::null;
+	}
+
+	entt::entity ObjectFactory::createObject(const nJson& json)
+	{
 		auto object = _context->registry().create();
 
-		auto name = Trans(json.value("name", ""));
+		std::string cfgid = json.value("id", "");
+		std::string name = Trans(json.value("name", ""));
 		_context->registry().emplace<CompNameId>(object, object, name, cfgid);
+
+		CompComm comm;
+		comm.type = getNpcType(json.value("type", ""));
+		comm.desc = Trans(json.value("desc", ""));
+		comm.side = getCampSide(json.value("side", ""));
+		_context->registry().emplace<CompComm>(object, comm);
 
 		CompTransform comtrans;
 		_context->registry().emplace<CompTransform>(object, comtrans);
-
-		if (json.contains("common"))
-		{
-			auto& cmmJs = json["common"];
-
-			CompComm comm;
-			comm.type = getNpcType(cmmJs.value("type", ""));
-			comm.desc = Trans(cmmJs.value("desc", ""));
-
-			_context->registry().emplace<CompComm>(object, comm);
-		}
 
 		if (json.contains("display"))
 		{
@@ -232,29 +255,43 @@ namespace game
 		return object;
 	}
 
-	entt::entity ObjectFactory::createRole(const std::string& cfgid)
-	{
-		auto role = createObject(cfgid);
-		if(role == entt::null) {
-			return role;
-		}
 
-		auto jsonptr = _jsonObjectCfgs[cfgid];
-		if (!jsonptr)
+	entt::entity ObjectFactory::createSpawner(const nJson& json)
+	{
+		auto object = createObject(json);
+		if (_context->registry().valid(object) == false) 
 		{
-			spdlog::error("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
-		auto& comm = _context->registry().get<CompComm>(role);
+		if (!json.contains("spawner"))
+		{
+			return entt::null;
+		}
 
-		auto& json = *jsonptr;
+		auto& spawnerJs = json["spawner"];
+
+		CompSpawner spawner;
+		spawner.side = getCampSide(spawnerJs.value("side", ""));
+		spawner.radius = spawnerJs.value("radius", 100.0f);
+		spawner.interval = spawnerJs.value("interval", 1000);
+		spawner.npc = spawnerJs.value("npc", "");
+		spawner.min_count = spawnerJs.value("min_count", 1);
+		spawner.max_count = spawnerJs.value("max_count", 10);
+		_context->registry().emplace<CompSpawner>(object, spawner);
+
+		return object;
+	}
+
+	entt::entity ObjectFactory::createRole(const nJson& json)
+	{
+		auto role = createObject(json);
+		if(role == entt::null) {
+			return role;
+		}
+		
 		if (json.contains("common"))
 		{
-			auto& cmmJs = json["common"];
-
-			comm.comp = getCompSide(cmmJs.value("camp", "gangster"));
-
 			if (json.contains("patrol"))
 			{
 				auto& patrolJs = json["patrol"];
@@ -339,7 +376,6 @@ namespace game
 			for (auto& sk : skillsJs)
 			{
 				auto skillid = sk.get<std::string>();
-
 				auto skill = createSkill(role, skillid);
 
 				compSkills.skills.push_back(skill);
@@ -651,4 +687,26 @@ namespace game
 		return std::nullopt;
 	}
 
+	const Properties& ObjectFactory::getObjectCfgProperties(const std::string& cfgid)
+	{
+		static Properties props;
+		props.clear();
+
+		auto jsonptr = _jsonObjectCfgs[cfgid];
+		if (!jsonptr)
+		{
+			spdlog::error("getObjectCfgProperties: object ({}) cfg NOT found.", cfgid);
+			return props;
+		}
+
+		auto& json = *jsonptr;
+
+		props["cfgid"] = json.value("id", "");
+		props["name"] = Trans(json.value("name", ""));
+		props["desc"] = Trans(json.value("desc", ""));
+		props["type"] = (int)getNpcType(json.value("type", ""));
+		props["side"] = (int)getCampSide(json.value("side", ""));
+
+		return props;
+	}
 }

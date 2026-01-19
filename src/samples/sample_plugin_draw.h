@@ -54,27 +54,39 @@ namespace samples {
 
         void setImDraw(bool visible) { _im_draw = visible; }
 
+        void setSdlDraw(bool visible) { _sdl_draw = visible; }
+
+        void setGfxDraw(bool visible) { _gfx_draw = visible; }
+
+        void setPaintDraw(bool visible) { _paint_draw = visible; }
+
     private:
         void drawShape();
-
-        void initGeometry();
-
-        void drawGeometry();
 
         void drawTexture();
 
         void drawText();
 
-        void im_paint();
-
         void paint();
 
         void gfx_paint();
+
+        void im_paint();
+
+        void initGeometry();
+
+        void drawGeometry();
 
     private:
         engine::Texture* _texture = nullptr;
 
         bool _im_draw = false;
+
+        bool _paint_draw = false;
+
+        bool _gfx_draw = false;
+
+        bool _sdl_draw = false;
 
         struct VertexData {
             std::vector<Vertex> vertices;

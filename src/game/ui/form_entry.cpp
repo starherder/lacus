@@ -6,8 +6,6 @@ namespace game
 
 FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-	setMaximize(true);
-
 	root()->setBgColor(Color::Light);
 
 	_lblTitle = root()->createChild<Label>("title");
@@ -37,6 +35,9 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 	_btnExit->setText("exit");
 	_btnExit->setSize({ 200, 50 });
 	_btnExit->on_click.connect([this](ui::Button* btn) { onExit(btn); });
+
+	setMaximize(true);
+
 }
 
 FormEntry::~FormEntry()
@@ -45,25 +46,6 @@ FormEntry::~FormEntry()
 
 void FormEntry::onUpdate(float delta)
 {
-	auto x = size().x / 2 - _lblTitle->size().x /2;
-	auto y = size().y / 2 - 160;
-	_lblTitle->setPos({x, y});
-
-	x = size().x / 2 - _btnStart->size().x / 2;
-	y = _lblTitle->pos().y + _lblTitle->size().y + 50;
-	_btnStart->setPos({x, y});
-
-	x = size().x / 2 - _btnResume->size().x / 2;
-	y = _btnStart->pos().y + _btnStart->size().y + 20;
-	_btnResume->setPos({ x, y });
-
-	x = size().x / 2 - _btnConfig->size().x / 2;
-	y = _btnResume->pos().y + _btnResume->size().y + 20;
-	_btnConfig->setPos({ x, y });
-
-	x = size().x / 2 - _btnExit->size().x / 2;
-	y = _btnConfig->pos().y + _btnConfig->size().y + 20;
-	_btnExit->setPos({ x, y });
 }
 
 void FormEntry::onStart(Button* btn)
@@ -86,5 +68,29 @@ void FormEntry::onExit(Button* btn)
 	on_exit_game.emit();
 }
 
+void FormEntry::onSizeChanged()
+{
+	spdlog::info("FormEntry::onWindowResized");
+
+	auto x = size().x / 2 - _lblTitle->size().x / 2;
+	auto y = size().y / 2 - 160;
+	_lblTitle->setPos({ x, y });
+
+	x = size().x / 2 - _btnStart->size().x / 2;
+	y = _lblTitle->pos().y + _lblTitle->size().y + 50;
+	_btnStart->setPos({ x, y });
+
+	x = size().x / 2 - _btnResume->size().x / 2;
+	y = _btnStart->pos().y + _btnStart->size().y + 20;
+	_btnResume->setPos({ x, y });
+
+	x = size().x / 2 - _btnConfig->size().x / 2;
+	y = _btnResume->pos().y + _btnResume->size().y + 20;
+	_btnConfig->setPos({ x, y });
+
+	x = size().x / 2 - _btnExit->size().x / 2;
+	y = _btnConfig->pos().y + _btnConfig->size().y + 20;
+	_btnExit->setPos({ x, y });
+}
 
 }

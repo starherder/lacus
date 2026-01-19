@@ -28,9 +28,9 @@ namespace ui
 
         setSize(DefaultSize);
 
-        setDragable(true);
+        setMovable(true);
 
-        setNoEvent(false);
+        setAcceptEvent(true);
 
         setCanDragOut(true);
 
@@ -134,18 +134,21 @@ namespace ui
         adjustChildren();
     }
     
-    CardWidget* CardGroup::addCard(const std::string& cfg)
+    CardWidget* CardGroup::addCard(const Properties& props)
     {
-        int index = (int)children().size();
-        auto name = fmt::format("_card_{}_", index);
+        auto cfgid = props["cfgid"].convert<std::string>();
+        auto name = props["name"].convert<std::string>();
+        auto desc = props["desc"].convert<std::string>();
 
+        auto lvopt = props.get<int>("level");
+        int level = lvopt ? lvopt.value() : 0;
+
+        int index = (int)children().size();
         auto widget = createChild<CardWidget>(name);
         widget->setTitle(name);
-        widget->setLevel(index*10);
-
-        auto desc = fmt::format("this is test card-{}", index);
+        widget->setLevel(level);
         widget->setDesc(desc);
-
+        widget->setData("cfgid", cfgid);
         widget->setData("index", index);
      
         widget->on_drag.connect(this, &CardGroup::onChildDrag);
@@ -182,6 +185,10 @@ namespace ui
 
     void CardGroup::onChildSelect(CardWidget* card, bool selected)
     {
+        if(selected)
+        {
+            adjustChildren();
+        }
     }
 
     void CardGroup::onChildDrag(CardWidget* card)
@@ -227,9 +234,16 @@ namespace ui
             float over = float(total - size().x) / children().size();
 
             auto pos = _padding;
-            for (auto& card : children())
+            for (auto& widget : children())
             {
+                auto card = dynamic_cast<CardWidget*>(widget.get());
+                if(!card)
+                {
+                    continue;
+                }
+
                 card->setPos(pos);
+
                 pos.x += card->size().x - over;
             }
         }

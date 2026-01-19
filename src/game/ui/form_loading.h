@@ -17,6 +17,8 @@ namespace game
     private:
         void onUpdate(float delta) override;
 
+        void onSizeChanged() override;
+
     private:
         ui::ProgressBar* _progressBar = nullptr;
 

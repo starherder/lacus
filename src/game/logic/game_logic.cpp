@@ -10,10 +10,18 @@
 #include "game/ui/form_entry.h"
 #include "game/ui/form_main.h"
 #include "game/ui/form_scenes.h"
-
-
 #include "game/ui/ui_logic_events.h"
 
+#include "game/ecs/system_motion.h"
+#include "game/ecs/system_render.h"
+#include "game/ecs/system_bevtree.h"
+#include "game/ecs/system_skill.h"
+#include "game/ecs/system_pickup.h"
+#include "game/ecs/system_dead.h"
+#include "game/ecs/system_selection.h"
+#include "game/ecs/system_fight.h"
+#include "game/ecs/system_buff.h"
+#include "game/ecs/system_spawner.h"
 
 
 namespace game
@@ -28,11 +36,28 @@ namespace game
 		_gameContext.setGameConfig(&_gameConfig);
 
         ui::GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
+
+        initEscSystem();
 	}
 
 	GameLogic::~GameLogic()
 	{
 	}
+
+    void GameLogic::initEscSystem()
+    {
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<MotionSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<RenderSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SkillSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SpawnerSystem>(_gameContext) });
+    }
 
 	void GameLogic::loadResource()
 	{
@@ -105,11 +130,21 @@ namespace game
     void GameLogic::update(float delta)
     {
         _scene->onUpdate(delta);
+
+        for (auto& [prio, sys] : _ecsSystems)
+        {
+            sys->update(delta);
+        }
     }
 
     void GameLogic::draw()
     {
         _scene->onDraw();
+
+        for (auto& [prio, sys] : _ecsSystems)
+        {
+            sys->draw();
+        }
     }
 
     void GameLogic::start()

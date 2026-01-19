@@ -16,6 +16,11 @@ namespace game
     private:
         void onUpdate(float delta) override;
 
+        void onSizeChanged() override;
+
         void onSelectScene(ui::Button* btn);
+
+    private:
+        ui::Button* _btnClose = nullptr;
     };
 }

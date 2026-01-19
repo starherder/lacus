@@ -361,14 +361,17 @@ namespace game {
 				auto dis = compSkill.distance;
 				auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
 				for (auto& [dis, target] : objects) {
-					if (target == _actor) continue;
+					if (_context->registry().valid(target) == false || target == _actor) { 
+						continue; 
+					}
 
 					auto pdead = _context->registry().try_get<CompDead>(target);
-					if(pdead) continue;
+					if (pdead) { 
+						continue; 
+					}
 
 					auto& compComm = _context->registry().get<CompComm>(target);
 					if (compComm.type == ObjectType::Npc) {
-
 						_context->dispatcher().trigger(CastSkillToObject{ _actor, target, skill_id });
 						return Status::Success;
 					}

@@ -41,16 +41,15 @@ namespace samples {
 			group->setPos({ 0, size().y - group->size().y });
 			group->setBgColor({ 0, 128, 0, 200 });
 
-			group->addCard("test0");
-			group->addCard("test1");
-			group->addCard("test2");
-			group->addCard("test3");
-			group->addCard("test4");
-			group->addCard("test5");
-			group->addCard("test6");
-			group->addCard("test7");
-			group->addCard("test8");
-			group->addCard("test9");
+			for(int i=0; i<10; i++)
+			{
+				ui::Properties props;
+				props["cfgid"] = std::format("cfg-{}", i);
+				props["name"] = std::format("role-{}", i);
+				props["desc"] = std::format("desc-{}", i);
+				props["level"] = i;
+				group->addCard(props);
+			}
 		}
 
 		auto cbox = root()->createChild<ui::CheckBox>("cbox_overlap");
@@ -74,13 +73,13 @@ namespace samples {
 		}
 	}
 
-	void FormCards::onDropCard(ui::Widget* widget, const Vec2& pos)
+	void FormCards::onDropCard(ui::GuiManager::DraggingPtr dragging)
 	{
-		auto dragging = ui::GuiManager::inst().fetchDraggingData();
-		if (!dragging) return;
-
 		auto cardWidget = dragging->widget;
-		auto sourceGroup = dynamic_cast<ui::CardGroup*>(dragging->source);
+		auto dstWidget = dragging->dst_group;
+		auto pos = dragging->drop_screen_pos;
+
+		auto sourceGroup = dynamic_cast<ui::CardGroup*>(dragging->src_group);
 		if (!cardWidget || !sourceGroup)
 		{
 			spdlog::error("dragging card widget is invalid.");
@@ -88,14 +87,13 @@ namespace samples {
 		}
 
 		spdlog::info("drop card ({}) at widget ({}), at pos ({},{})",
-			cardWidget->name(), widget?widget->name():"none", pos.x, pos.y);
+			cardWidget->name(), dstWidget ? dstWidget->name():"none", pos.x, pos.y);
 
 		if (sourceGroup) 
 		{
 			int index = cardWidget->getData<int>("index");
 			sourceGroup->addWidget(cardWidget, index);
 		}
-
 	}
 
 	void FormCards::onUpdate(float delta)

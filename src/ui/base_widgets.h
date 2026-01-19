@@ -12,6 +12,10 @@ namespace ui {
 class Label : public Widget
 {
 public:
+    static const int DefaultFontSize;
+    static const std::string DefaultFontName;
+
+public:
     Label() = delete;
     Label(const std::string& name, Widget* parent = nullptr);
     ~Label() = default;
@@ -32,6 +36,7 @@ public:
     void setTextAlign(Align align) { _textAlign = align; }
 
     void setFont(const std::string& name, int size);
+    Font* font() { return _font; }
 
     void draw() override;
 
@@ -39,9 +44,6 @@ private:
     void adjust();
 
 private:
-    static const int DefaultFontSize;
-    static const std::string DefaultFontName;
-
     std::string _text;
 
     Vec2 _textPadding = {0, 0};
@@ -56,7 +58,7 @@ private:
 
 // multi-line label
 
-class TextBox : public Label
+class TextBox : public Widget
 {
 public:
     TextBox() = delete;
@@ -64,6 +66,27 @@ public:
     ~TextBox();
 
     void draw() override;
+
+    void setFont(const std::string& name, int size);
+    Font* font() { return _font; }
+
+    const auto& text() { return _text; }
+    void setText(const std::string& text) { _text = text; }
+
+    const auto& textColor() { return _text_color; }
+    void setTextColor(const Color& color) { _text_color = color; }
+
+protected:
+    void adjust();
+
+protected:
+    std::string _text;
+    Color _text_color = Color::Black;
+
+    std::string _fontName;
+    int _fontSize = Label::DefaultFontSize;
+
+    Font* _font = nullptr;
 };
 
 

@@ -52,7 +52,7 @@ namespace game
 
         GameContext* _context = nullptr;
 
-        DebugMode _debugMode = DebugMode::Null;
+        DebugMode _debugMode = DebugMode::Select;
 
         bool _showSkyWindow = false;
         bool _showCameraWindow = false;

@@ -24,6 +24,11 @@ namespace ui
         void setDesc(const std::string& desc) { _desc->setText(desc); }
         void setLevel(int level) { _level->setText(std::to_string(level)); }
 
+        auto getCfgid() { return getData<std::string>("cfgid"); }
+        auto getTitle() { return _title->text(); }
+        auto getDesc() { return _desc->text(); }
+        auto getLevel() { return std::stoi(_level->text()); }
+
         virtual void update(float delta);
         virtual void draw();
 
@@ -68,7 +73,7 @@ namespace ui
         CardGroup(const std::string& name, Widget* parent = nullptr);
         ~CardGroup();
 
-        CardWidget* addCard(const std::string& cfg);
+        CardWidget* addCard(const Properties& props);
 
         void removeCard(CardWidget*);
 

@@ -20,15 +20,18 @@ public:
     struct DraggingData 
     {
         WidgetPtr widget = nullptr;
-        Widget* source = nullptr;
-        Vec2 offset;
+        Widget* src_group = nullptr;
+        Widget* dst_group = nullptr;
+
+        Vec2 drop_screen_pos;
+
+        Vec2 _offset;
     };
 
     using DraggingPtr = std::shared_ptr<DraggingData>;
 
 public:
-    signals::Signal<Widget*> on_drag_start;
-    signals::Signal<Widget*, const Vec2&> on_drop;
+    signals::Signal<DraggingPtr> on_drop;
 
     signals::Signal<int, const utility::VarList&> on_custom_event;
 
@@ -59,11 +62,11 @@ public:
 
     void closeForm(const std::string& name);
 
-    DraggingPtr fetchDraggingData();
-
     void emitCustomEvent(int eventId, const utility::VarList& varlist);
 
 private:
+    void onWindowResized(const Vec2& size);
+
     void onKeyDown(KeyCode key);
     void onKeyUp(KeyCode key);
 
@@ -83,12 +86,14 @@ private:
     Form* getFormAtPos(const Vec2& pos);
     Widget* getWidgetAtPos(const Vec2& pos);
 
-    void moveFormTop(const std::string& formName);
+    void moveToTop(const std::string& formName);
 
     void drag(Widget* widget);
     void drop();
 
     void closePendingForms();
+
+    void checkEventBreak(Form* form);
 
 private:
     engine::Application* _app;

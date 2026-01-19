@@ -7,6 +7,7 @@ namespace game
     FormLoading::FormLoading(const std::string& name, GameContext& context) : FormLogicBase(name, context)
     {
         root()->setBgColor(Color::DarkCyan);
+        root()->setAcceptEvent(true);
 
         _progressBar = root()->createChild<ui::ProgressBar>("progress_loading");
         setProgress(0.0f);
@@ -29,6 +30,10 @@ namespace game
     }
 
     void FormLoading::onUpdate(float delta)
+    {
+    }
+
+    void FormLoading::onSizeChanged()
     {
         if (_progressBar)
         {

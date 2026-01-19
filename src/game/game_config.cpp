@@ -16,6 +16,8 @@ namespace game
 		}
 
 		auto& json = _jsonConfig.getJson();
+		dying_ticks = json.value("dying_ticks", 1000);
+
 		if(json.contains("motion"))
 		{
 			auto& motionJs = json["motion"];

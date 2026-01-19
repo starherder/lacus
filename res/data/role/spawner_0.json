@@ -1,0 +1,24 @@
+{
+	"id": "npc_spawner_0",
+	"name": "text_spawner_name_0",
+	"desc": "text_spawner_desc_0",
+	"type": "spawner",
+
+	"spawner": {
+		"npc": "npc_0",
+		"radius": 1000,
+		"interval": 1000,
+		"min_count": 1,
+		"max_count": 5
+	},
+
+	"display": {
+		"comment": "this is for debug show.",
+		"size": "50,50",
+		"groud_color": "#00000000",
+		"border_color": "#5555FFFF",
+		"font_color": "#555555FF",
+		"font_file": "fonts/msyh.ttf",
+		"font_size": 18
+	}
+}

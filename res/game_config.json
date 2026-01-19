@@ -11,7 +11,9 @@
 		"color_dec_hp": "#FF0000FF",
 		"tween_mode": "cubicIn",
 		"float_ticks": 1000
-	}
+	},
+
+	"dying_ticks" :  3000
 
 
 }

@@ -254,7 +254,7 @@ namespace game
 			}
 
 			if (t.isFinished()) {
-				_context.registry().emplace<CompDestroy>(object);
+				_context.registry().emplace_or_replace<CompDestroy>(object);
 				return true;
 			}
 

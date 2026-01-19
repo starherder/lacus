@@ -72,8 +72,9 @@ namespace ui {
 
     //////////////////////////////////////////////////////////////////////
 
-    TextBox::TextBox(const std::string& name, Widget* parent) : Label(name, parent)
+    TextBox::TextBox(const std::string& name, Widget* parent) : Widget(name, parent)
     {
+        adjust();
     }
 
     TextBox::~TextBox()
@@ -81,9 +82,37 @@ namespace ui {
 
     }
 
+    void TextBox::setFont(const std::string& name, int size)
+    {
+        _fontName = name;
+        _fontSize = size;
+        adjust();
+    }
+
+    void TextBox::adjust()
+    {
+        if (_fontSize <= 0) {
+            _fontSize = Label::DefaultFontSize;
+        }
+
+        if (_fontName.empty()) {
+            _fontName = Label::DefaultFontName;
+        }
+
+        _font = GuiManager::inst().fontManager().get(HashString(_fontName.c_str()), _fontSize);
+    }
+
     void TextBox::draw()
     {
-        Label::draw();
+        auto& renderer = GuiManager::inst().renderer();
+        auto textSize = renderer.getTextSize(text(), _font);
+        auto realPos = getAbsPos();
+
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+        GuiManager::inst().imPainter().drawText(text(), _font, realPos, _text_color, size().x);
+#else
+        renderer.drawText(_text, _font, realPos, state.text_color);
+#endif
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -91,7 +120,7 @@ namespace ui {
     Button::Button(const std::string& name, Widget* parent) : Label(name, parent)
     {
         setState(WidgetState::Normal);
-        setNoEvent(false);
+        setAcceptEvent(true);
 
         _status[WidgetState::Normal] = WigetUtils::normalStatus;
         _status[WidgetState::Hover] = WigetUtils::hoveredStatus;
@@ -232,14 +261,14 @@ namespace ui {
 
     int RadioGroupImpl::addItem(const std::string& text) 
     {
-        int index = itemCount();
+        auto index = itemCount();
         auto ctrl = _group->createChild<CheckBox>(fmt::format("__item_{}__", index));
         ctrl->setText(text);
         ctrl->setData("__item_index__", index);
         ctrl->on_check_changed.connect(this, &RadioGroupImpl::onItemSelect);
 
         _items.push_back(ctrl);
-        return index;
+        return (int)index;
     }
 
     void RadioGroupImpl::removeItem(int index) 
@@ -424,7 +453,7 @@ namespace ui {
 
     SliderBlock::SliderBlock(const std::string& name, Widget* parent) : Button(name, parent)
     {
-        setDragable(true);
+        setMovable(true);
     }
 
     void SliderBlock::onMouseLeftDown(const Vec2& pos)
@@ -454,7 +483,7 @@ namespace ui {
     {
         _slider = createChild<SliderBlock>("_slider_");
 
-        setDragable(true);
+        setMovable(true);
 
         setBgColor(Color::Pale);
 

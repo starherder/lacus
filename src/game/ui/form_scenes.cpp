@@ -7,17 +7,15 @@ namespace game
 
 FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-    setMaximize(true);
+    root()->setBgColor({ 0,100,0, 200 });
+    root()->setMovable(false);
+    root()->setAcceptEvent(true);
 
-    root()->setBgColor({ 0,100,0, 50 });
-
-    root()->setDragable(false);
-
-    auto btnClose = root()->createChild<ui::Button>("btn_close");
-    btnClose->setPos({ size().x - 150, 50 });
-    btnClose->setSize({ 100, 50 });
-    btnClose->setText("close");
-    btnClose->on_click.connect([](ui::Button* btn) {
+    _btnClose = root()->createChild<ui::Button>("btn_close");
+    _btnClose->setPos({ size().x - 150, 50 });
+    _btnClose->setSize({ 100, 50 });
+    _btnClose->setText("close");
+    _btnClose->on_click.connect([](ui::Button* btn) {
         ui::GuiManager::inst().closeForm("form_scenes");
     });
 
@@ -37,6 +35,8 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
         btn->on_click.connect(this, &FormScenes::onSelectScene);
         index++;
     }
+
+    setMaximize(true);
 }
 
 FormScenes::~FormScenes()
@@ -45,7 +45,12 @@ FormScenes::~FormScenes()
 
 void FormScenes::onUpdate(float delta)
 {
+}
 
+void FormScenes::onSizeChanged()
+{
+    _btnClose->setPos({ size().x - 150, 50 });
+    _btnClose->setSize({ 100, 50 });
 }
 
 void FormScenes::onSelectScene(ui::Button* btn)

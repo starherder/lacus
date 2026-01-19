@@ -116,7 +116,7 @@ void ImFormDebug::draw()
             roleExecSkill();
         }
 
-        drawSelectEntityProps();
+        //drawSelectEntityProps();
 
         ImVec2 winpos = ImGui::GetWindowPos();
         ImVec2 winsize = ImGui::GetWindowSize();
@@ -157,7 +157,7 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     }break;
     case DebugMode::PutObject:
     {
-        _context->currentScene().createObject(_selectCfgId, scenePos);
+        _context->currentScene().createActor(_selectCfgId, scenePos);
     }break;
     case DebugMode::Null:
     {
@@ -192,8 +192,11 @@ void ImFormDebug::moveSelectActor(const Vec2& pos)
         bevComp->bevtree->stop();
     }
 
-    auto gridPos = _context->currentScene().getGridFromPos(pos);
-    _context->dispatcher().trigger(MoveToGrid{_selectEntity, gridPos, true});
+    if(_context->registry().try_get<CompMotion>(_selectEntity))
+    {
+        auto gridPos = _context->currentScene().getGridFromPos(pos);
+        _context->dispatcher().trigger(MoveToGrid{_selectEntity, gridPos, true});
+    }
 }
 
 void ImFormDebug::drawSelectEntityProps()
@@ -278,8 +281,8 @@ void ImFormDebug::roleExecSkill()
                 auto pdead = _context->registry().try_get<CompDead>(target);
                 if (pdead) continue;
 
-                auto& compComm = _context->registry().get<CompComm>(target);
-                if (compComm.type == ObjectType::Npc) {
+                auto pCompComm = _context->registry().try_get<CompComm>(target);
+                if (pCompComm && pCompComm->type == ObjectType::Npc) {
 
                     _context->dispatcher().trigger(CastSkillToObject{_selectEntity, target, skill_id });
                     return;

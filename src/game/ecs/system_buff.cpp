@@ -28,7 +28,7 @@ namespace game
 			{
 				spdlog::info("buff({}) owner({}) NOT valid, remove buff({}).", 
 							(uint32_t)buff.owner, (uint32_t)ent, buff.cfgid);
-				_context.registry().emplace<CompDestroy>(ent);
+				_context.registry().emplace_or_replace<CompDestroy>(ent);
 				continue;
 			}
 		
@@ -80,6 +80,10 @@ namespace game
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 		buffComm.onUpdate = [this, e, buff](int64_t ticks) {
+			if (!_context.registry().valid(buff))
+			{
+				return;
+			}
 
 			auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 			if(buffComm.duration > 0 )
@@ -88,7 +92,7 @@ namespace game
 				if(buffComm.during_ticks > buffComm.duration)
 				{
 					spdlog::info("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
-					_context.registry().emplace<CompDestroy>(buff);
+					_context.registry().emplace_or_replace<CompDestroy>(buff);
 					return;
 				}
 			}
@@ -144,7 +148,7 @@ namespace game
 		// 改造 FightSystem::onRoleUnderAttack，发消息过去处理伤害
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
-		spdlog::info("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
+		//spdlog::info("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
 
 		AddFuncsToTarget func;
 		func.source = entt::null;

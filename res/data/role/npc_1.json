@@ -1,12 +1,9 @@
 {
   "id": "npc_1",
   "name": "text_npc_name_1",
+  "type": "npc",
+  "desc": "text_npc_desc_1",
 
-  "common": {
-    "type": "npc",
-    "camp": "official",
-    "desc": "text_npc_1_desc"
-  },
 
   "motion": {
     "tween": "cubicIn",
@@ -35,12 +32,12 @@
     "# texture": "textures/icon/sry1.png",
     "# tex_rect": "0,0,0.25,0.5",
     "font_file": "fonts/msyh.ttf",
-    "font_size": 12
+    "font_size": 18
   },
 
   "base_prop": {
-    "desc" : "str:力量,cst:体质,dex:敏捷,met:心智",
-    "roll" : 10,
+    "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
+    "roll": 10,
     "str": 20,
     "cst": 20,
     "dex": 20,

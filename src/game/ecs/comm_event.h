@@ -4,7 +4,12 @@
 #include "game/ecs/comp_fight.h"
 
 
-namespace game {
+namespace game 
+{
+	struct RoleDead {
+		entt::entity actor;
+	};
+
 	struct RolePropAlter {
 		entt::entity actor;
 		bool reset_hp = false;

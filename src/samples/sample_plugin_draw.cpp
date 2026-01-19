@@ -17,10 +17,34 @@ namespace samples {
 
         ImGui::Begin("drawlist");
 
-        static bool visible = false;
-        if (ImGui::Checkbox("draw graph", &visible))
+        static bool im_visible = false;
+        if (ImGui::Checkbox("im_paint", &im_visible))
         {
-            _plugin->setImDraw(visible);
+            _plugin->setImDraw(im_visible);
+        }
+
+        ImGui::SameLine();
+
+        static bool sdl_visible = false;
+        if (ImGui::Checkbox("sdl_paint", &sdl_visible))
+        {
+            _plugin->setSdlDraw(sdl_visible);
+        }
+
+        ImGui::SameLine();
+
+        static bool paint_visible = false;
+        if (ImGui::Checkbox("base_paint", &paint_visible))
+        {
+            _plugin->setPaintDraw(paint_visible);
+        }
+
+        ImGui::SameLine();
+
+        static bool gfx_visible = false;
+        if (ImGui::Checkbox("gfx_paint", &gfx_visible))
+        {
+            _plugin->setGfxDraw(gfx_visible);
         }
 
         ImVec2 pos = ImGui::GetWindowPos();
@@ -98,19 +122,31 @@ namespace samples {
 
     void SamplePluginDraw::onDraw() 
     {
-        drawGeometry();
+        if(_sdl_draw)
+        {
+            drawTexture();
 
-        drawTexture();
+            drawShape();
 
-        drawShape();
+            drawText();
+        }
 
-        drawText();
+        if(_paint_draw)
+        {
+            paint();
+        }
 
-        paint();
+        if(_gfx_draw)
+        {
+            gfx_paint();
+        }
 
-        gfx_paint();
+        if(_im_draw)
+        {
+            drawGeometry();
 
-        im_paint();
+            im_paint();
+        }
     }
 
     void SamplePluginDraw::onClose() 

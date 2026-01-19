@@ -25,6 +25,8 @@ namespace ui {
              _app->eventDispatcher().onMouseLeftDrag.connect(this, &GuiManager::onMouseLeftDrag, -1);
              _app->eventDispatcher().onMouseWheel.connect(this, &GuiManager::onMouseWheel, -1);
              _app->eventDispatcher().onMouseMotion.connect(this, &GuiManager::onMouseMotion, -1);
+
+             _app->eventDispatcher().onWindowResized.connect(this, &GuiManager::onWindowResized, -1);
         }
 
         void GuiManager::update(float delta)
@@ -38,7 +40,7 @@ namespace ui {
 
             if (_draggingData && _draggingData->widget) 
             {
-                auto pos = _app->eventDispatcher().mousePos() + _draggingData->offset;
+                auto pos = _app->eventDispatcher().mousePos() + _draggingData->_offset;
                 _draggingData->widget->setPos(pos);
             }
         }
@@ -112,7 +114,7 @@ namespace ui {
             return form->getWidgetAtPos(pos);
         }
 
-        void GuiManager::moveFormTop(const std::string& formName)
+        void GuiManager::moveToTop(const std::string& formName)
         {
             Form::SharedPtr form = nullptr;
             for(auto it=_forms.begin(); it!=_forms.end(); it++)
@@ -128,6 +130,14 @@ namespace ui {
             _forms.push_back(form);
         }
 
+        void GuiManager::onWindowResized(const Vec2& size)
+        {
+            for(auto& form : _forms)
+            {
+                form->onWindowResized(size);
+            }
+        }
+
         void GuiManager::onKeyDown(KeyCode key)
         {
         }
@@ -141,10 +151,11 @@ namespace ui {
             auto form = getFormAtPos(pos);
             if(form && form->visible())
             {
-                moveFormTop(form->name());
+                moveToTop(form->name());
+
                 form->onMouseLeftClick(pos);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
         }
 
@@ -153,10 +164,10 @@ namespace ui {
             auto form = getFormAtPos(pos);
             if(form && form->visible())
             {
-                moveFormTop(form->name());
+                moveToTop(form->name());
                 form->onMouseRightClick(pos);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
         }
 
@@ -165,10 +176,10 @@ namespace ui {
             auto form = getFormAtPos(pos);
             if (form && form->visible())
             {
-                moveFormTop(form->name());
+                moveToTop(form->name());
                 form->onMouseLeftDown(pos);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
         }
 
@@ -179,7 +190,7 @@ namespace ui {
             {
                 form->onMouseLeftUp(pos);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
 
             if (_draggingData)
@@ -195,7 +206,7 @@ namespace ui {
             {
                 form->onMouseRightDown(pos);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
         }
 
@@ -206,7 +217,7 @@ namespace ui {
             {
                 form->onMouseRightUp(pos);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
         }
 
@@ -214,24 +225,30 @@ namespace ui {
         {
             if (_draggingData)
             {
+                slot_context().setBreak(true);
                 return;
             }
 
             auto form = getFormAtPos(pos);
-            if (!form || !form->visible() || !form->focused()) 
+            if (!form || !form->visible()) 
             {
                 return;
             }
+
+            //spdlog::info("GuiManager::onMouseLeftDrag");
 
             auto widget = form->hoverWidget();
             if (widget && widget->canDragOut())
             {
                 drag(widget);
+
+                slot_context().setBreak(true);
                 return;
             }
 
             form->onMouseLeftDrag(pos, offset);
-            slot_context().setBreak(true);
+
+            checkEventBreak(form);
         }
 
         void GuiManager::onMouseWheel(const Vec2& pos, float dir)
@@ -241,7 +258,7 @@ namespace ui {
             {
                 form->onMouseWheel(pos, dir);
 
-                slot_context().setBreak(true);
+                checkEventBreak(form);
             }
         }
 
@@ -251,7 +268,18 @@ namespace ui {
             if(form && form->visible())
             {
                 form->onMouseMotion(pos, offset);
+                
+                checkEventBreak(form);
+            }
+        }
 
+        void GuiManager::checkEventBreak(Form* form)
+        {
+            assert(form);
+
+            auto widget = form->hoverWidget();
+            if (widget && widget->acceptEvent())
+            {
                 slot_context().setBreak(true);
             }
         }
@@ -274,23 +302,10 @@ namespace ui {
 
             _draggingData = std::make_shared<DraggingData>();
             _draggingData->widget= parentGroup->moveOut(widget);
-            _draggingData->source = parentGroup;
-            _draggingData->offset= wpos - mpos;
+            _draggingData->src_group = parentGroup;
+            _draggingData->_offset= wpos - mpos;
 
-            on_drag_start.emit(widget);
-        }
-
-        GuiManager::DraggingPtr GuiManager::fetchDraggingData()
-        {
-            if (_draggingData) 
-            {
-                DraggingPtr ptr = _draggingData;
-                _draggingData = nullptr;
-
-                return ptr;
-            }
-
-            return nullptr;
+            spdlog::info("GuiManager::drag: start.");
         }
 
         void GuiManager::drop()
@@ -298,7 +313,14 @@ namespace ui {
             auto pos = _app->eventDispatcher().mousePos();
             auto widget = getWidgetAtPos(pos);
             
-            on_drop.emit(widget, pos);
+            _draggingData->dst_group = widget;
+            _draggingData->drop_screen_pos = pos;
+
+            on_drop.emit(_draggingData);
+
+            _draggingData = nullptr;
+
+            spdlog::info("GuiManager::drop: finish.");
         }
 
         void GuiManager::emitCustomEvent(int eventId, const utility::VarList& varlist)

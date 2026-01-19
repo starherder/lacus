@@ -1,12 +1,8 @@
 {
   "id": "npc_0",
   "name": "text_npc_name_0",
-
-  "common": {
-    "type": "npc",
-    "camp": "gangster",
-    "desc": "text_npc_0_desc"
-  },
+  "type": "npc",
+  "desc": "text_npc_desc_0",
 
   "motion": {
     "tween": "linear",
@@ -40,7 +36,7 @@
     "# texture": "textures/icon/sry1.png",
     "# tex_rect": "0,0,0.25,0.5",
     "font_file": "fonts/msyh.ttf",
-    "font_size": 12
+    "font_size": 18
   },
 
   "base_prop": {
