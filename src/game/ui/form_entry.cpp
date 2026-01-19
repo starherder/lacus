@@ -1,5 +1,5 @@
 ﻿#include "form_entry.h"
-
+#include "form_config.h"
 
 namespace game 
 {
@@ -9,7 +9,7 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 	root()->setBgColor(Color::Light);
 
 	_lblTitle = root()->createChild<Label>("title");
-	_lblTitle->setFont("fonts/VonwaonBitmap-16px.ttf", 40);
+	_lblTitle->setFont("fonts/Vonwaon.ttf", 40);
 	_lblTitle->setBgColor(Color::Light);
 	_lblTitle->setBorderColor(Color::Light);
 	_lblTitle->setTextColor(Color::DarkGreen);
@@ -60,7 +60,8 @@ void FormEntry::onResume(Button* btn)
 
 void FormEntry::onConfig(Button* btn)
 {
-	on_config_game.emit();
+	//on_config_game.emit();
+	GuiManager::inst().showForm<FormConfig>("from_config", _context);
 }
 
 void FormEntry::onExit(Button* btn)

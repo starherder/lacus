@@ -21,7 +21,7 @@ namespace game {
     private:
         void onRoleDead(const RoleDead& e);
 
-        void spawnActor(entt::entity spawner, const std::string& cfgid, const Vec2& pos, float radius);
+        void spawnActor(entt::entity spawner, const CompSpawner& compSpawner, const CompTransform& trans);
     };
 }
 

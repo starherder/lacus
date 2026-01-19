@@ -67,7 +67,18 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     }
 
     auto cfgid = card->getCfgid();
-    _context.currentScene().createActor(cfgid, pos);
+    auto ent = _context.currentScene().createActor(cfgid, pos);
+    if (!_context.registry().valid(ent))
+    {
+        spdlog::error("FormMain::onDropCard: create actor ({}) failed", cfgid);
+        return;
+    }
+
+    auto pComm = _context.registry().try_get<CompComm>(ent);
+    if (pComm)
+    {
+        pComm->side = CampSide::Gangster;
+    }
 
     int index = card->getData<int>("index");
     cardGroup->addWidget(ptr->widget, index);

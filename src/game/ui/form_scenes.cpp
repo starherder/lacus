@@ -15,9 +15,7 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
     _btnClose->setPos({ size().x - 150, 50 });
     _btnClose->setSize({ 100, 50 });
     _btnClose->setText("close");
-    _btnClose->on_click.connect([](ui::Button* btn) {
-        ui::GuiManager::inst().closeForm("form_scenes");
-    });
+    _btnClose->on_click.connect([this](ui::Button* btn){ close(); });
 
     int index = 0;
 

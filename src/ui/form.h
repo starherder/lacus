@@ -7,7 +7,7 @@ namespace ui {
 class Widget;
 class Group;
 
-class Form : public sigslot::SlotHandler
+class Form : public signals::SlotHandler
 {
 public:
     using SharedPtr = std::shared_ptr<Form>;
@@ -33,6 +33,7 @@ public:
 
     void show();
     void hide();
+    void close();
 
     auto& name() { return _name; }
     bool visible() { return _visible; }

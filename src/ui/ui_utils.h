@@ -3,9 +3,10 @@
 #include <memory>
 #include "engine/application.h"
 #include "utility/dynamic_struct.h"
+#include "tinyxml2/tinyxml2.h"
 
-
-namespace ui {
+namespace ui 
+{
 
 using namespace engine;
 
@@ -14,7 +15,7 @@ using signal = utility::sigslot::Signal<_ArgTypes...>;
 
 using Properties = utility::DynamicStruct<std::string>;
 
-namespace sigslot = utility::sigslot;
+using XmlNode = tinyxml2::XMLElement;
 
 struct WidgetStatus {
     Color ground_color;

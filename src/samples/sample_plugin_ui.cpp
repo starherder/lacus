@@ -6,6 +6,116 @@
 
 namespace samples {
 
+	FormLayout::FormLayout(const std::string& name) : Form(name)
+	{
+		setPos({ 100, 100 });
+		setSize({ 1000, 600 });
+
+		root()->setBgColor({0, 60, 60, 200});
+		root()->setMaxChildren(true);
+
+		auto vlay_bg = root()->createChild<ui::VLayout>("vlay_bg");
+		vlay_bg->setBgColor(Color::Pale);
+		vlay_bg->setSpacing(10);
+		
+		{
+			auto hlay_title = vlay_bg->createChild<ui::HLayout>("hlay_title");
+			hlay_title->setBgColor(Color::LightBlue);
+			hlay_title->setSize({ 0, 50 });
+			hlay_title->setBorderRound(5.0f);
+			hlay_title->setSpacing(5);
+
+			hlay_title->createChild<ui::Widget>("wdget_blank");
+
+			auto btn_resize = hlay_title->createChild<ui::Button>("btn_resize");
+			btn_resize->setText("[ ]");
+			btn_resize->setSize({ 50, 0 });
+			btn_resize->setBorderRound(3.0f);
+			btn_resize->on_click.connect([this](ui::Button* btn) { 
+				setMaximize(!isMaximize()); 
+				if (!isMaximize()) { setSize({1000, 600}); }
+			});
+
+			auto btn_close = hlay_title->createChild<ui::Button>("btn_close");
+			btn_close->setText("X");
+			btn_close->setSize({ 50, 0 });
+			btn_close->setBorderRound(3.0f);
+			btn_close->on_click.connect([this](ui::Button* btn) { close(); });
+		}
+
+		{
+			auto hlay_head = vlay_bg->createChild<ui::HLayout>("hlay_head");
+			hlay_head->setBgColor(Color::LightRed);
+			hlay_head->setBorderRound(10.0f);
+			//hlay_head->setSize({ 0, 250 });
+
+			auto btn_1 = hlay_head->createChild<ui::Button>("btn_1");
+			btn_1->setText("btn 1");
+			btn_1->setSize({250, 0});
+			btn_1->setBorderRound(5.0f);
+
+			auto blank = hlay_head->createChild<ui::Widget>("widget_1");
+
+			auto btn_2 = hlay_head->createChild<ui::Button>("btn_2");
+			btn_2->setText("btn 2");
+			btn_2->setSize({ 150, 0 });
+			btn_2->setBorderRound(5.0f);
+		}
+
+		{
+			auto hlay_body = vlay_bg->createChild<ui::HLayout>("hlay_body");
+			hlay_body->setBgColor(Color::LightGreen);
+			hlay_body->setBorderRound(10.0f);
+
+			auto vlay = hlay_body->createChild<ui::VLayout>("vlay_1");
+			vlay->setSize({150, 0});
+
+			auto btn1 = vlay->createChild<ui::Button>("btn_1");
+			btn1->setText("welcome");
+
+			auto btn2 = vlay->createChild<ui::Button>("btn_2");
+			btn2->setText("my");
+
+			auto btn3 = vlay->createChild<ui::Button>("btn_3");
+			btn3->setText("friend");
+
+			auto exgroup = hlay_body->createChild<ui::ExpandGroup>("exgroup");
+			for (int i = 0; i < 15; i++)
+			{
+				auto btn = exgroup->createChild<ui::Button>(fmt::format("btn-{}", i));
+				btn->setSize({100, 50});
+				btn->setText(fmt::format("{}", i));
+				btn->setPos({20+200*(i/3), 20+100*(i%3)});
+			}
+
+		}
+	}
+
+	FormLayout::~FormLayout()
+	{
+	}
+
+	void FormLayout::onUpdate(float delta)
+	{
+
+	}
+
+	void FormLayout::onDraw()
+	{
+
+	}
+
+	void FormLayout::onPosChanged()
+	{
+
+	}
+
+	void FormLayout::onSizeChanged()
+	{
+
+	}
+	/////////////////////////////////////////////////////////////////////////////////
+
 
 	FormCards::FormCards(const std::string& name) : Form(name)
 	{
@@ -14,7 +124,7 @@ namespace samples {
 
 		// create child
 		auto bgGroup = root();
-		bgGroup->setBgColor({ 0, 128, 0, 200});
+		bgGroup->setBgColor({ 0, 60, 0, 200});
 
 		{
 			auto group = bgGroup->createChild<ui::Group>("test_group");
@@ -160,7 +270,7 @@ namespace samples {
 			lbl_txt->setPos({ 50, 250 });
 			lbl_txt->setSize({ 300, 50 });
 			lbl_txt->setBgColor({ 125, 255, 125, 125 });
-			lbl_txt->setFont("fonts/VonwaonBitmap-16px.ttf", 30);
+			lbl_txt->setFont("fonts/Vonwaon.ttf", 30);
 			lbl_txt->setTextColor({ 0,255,0,255 });
 			lbl_txt->setText("hello,world");
 			//lbl_txt->setTextPadding({50, 10});
@@ -323,6 +433,24 @@ namespace samples {
 
 				btn->setData("cards_show", !visible);
 			});
+		}
+
+		{
+			auto btn = root()->createChild<ui::Button>("btn_show_layout");
+			btn->setSize({ 150, 50 });
+			btn->setPos({ 380, 80 });
+			btn->setText("layout");
+			btn->on_click.connect([](ui::Button* btn) {
+				bool visible = btn->getData<bool>("layout_show");
+				if (!visible) {
+					ui::GuiManager::inst().showForm<FormLayout>("form_layout");
+				}
+				else {
+					ui::GuiManager::inst().closeForm("form_layout");
+				}
+
+				btn->setData("layout_show", !visible);
+			});
 
 		}
 	}
@@ -351,8 +479,6 @@ namespace samples {
 
 	void FormDemo::onSlideValueChanged(ui::SliderBar* bar)
 	{
-		spdlog::info("on slide ({}) changed to {}/{}", bar->name(), bar->value(), bar->maxValue());
-
 		float ratio = bar->value() / bar->maxValue();
 		auto group = (ui::Group*)bar->parent();
 

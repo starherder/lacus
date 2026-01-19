@@ -15,6 +15,12 @@ Widget::~Widget()
 
 void Widget::setPos(const Vec2& pt)
 {
+    auto oldPos = pos();
+    if (pt == oldPos)
+    {
+        return;
+    }
+
     rawSetPos(pt);
 
     if (_parent)
@@ -34,6 +40,12 @@ void Widget::rawSetPos(const Vec2& pt)
 
 void Widget::setSize(const Vec2& sz) 
 { 
+    auto oldSize = size();
+    if (sz == oldSize)
+    {
+        return;
+    }
+
     rawSetSize(sz);
 
     if(_parent)

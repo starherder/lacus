@@ -53,7 +53,6 @@ namespace game
 		void initEscSystem();
 
 	private:
-
 		std::unique_ptr<GameScene> _scene = nullptr;
 
 		GameContext& _gameContext;

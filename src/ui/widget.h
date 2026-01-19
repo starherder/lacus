@@ -132,7 +132,13 @@ using WidgetPtr = Widget::SharedPtr;
 template<typename T>
 T Widget::getData(const std::string& key) const
 {
-    return _properties[key].convert<T>();
+    auto it = _properties.find(key);
+    if (it == _properties.end()) 
+    {
+        return T{};
+    }
+
+    return it->second.convert<T>();
 }
 ///////////////////////////////////////////////////////////////////////////////
 

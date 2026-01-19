@@ -263,7 +263,7 @@ namespace samples {
         auto& renderer = application()->renderer();
         auto& resourceMgr = application()->resourceManager();
         {
-            auto font = resourceMgr.fontManager().get("fonts/VonwaonBitmap-16px.ttf"_hs, 30);
+            auto font = resourceMgr.fontManager().get("fonts/Vonwaon.ttf"_hs, 30);
             if(font)
             {
                 renderer.drawText("WTF! 妙~", font, {650, 100}, {255, 100, 0, 255});
@@ -381,7 +381,7 @@ namespace samples {
         Vec2 pos = {100, 650};
 
         auto text = exp.isAntiAlaised() ? "anti-aliaised" : "";
-        auto font = application()->resourceManager().fontManager().get("fonts/VonwaonBitmap-16px.ttf"_hs, 20);
+        auto font = application()->resourceManager().fontManager().get("fonts/Vonwaon.ttf"_hs, 20);
         exp.drawText(text, font, pos + Vec2{200, -20}, Color::Green);
 
         exp.drawPixel(Color::Red, pos);

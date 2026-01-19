@@ -136,7 +136,7 @@ public:
     CheckBox(const std::string& name, Widget* parent = nullptr);
 
     bool checked() const { return _checked; }
-    void setChecked(bool checked);
+    virtual void setChecked(bool checked);
 
 private:
     void onMouseEnter(const Vec2& pos) override;
@@ -147,8 +147,26 @@ private:
     void onMouseLeftDown(const Vec2& pos) override;
     void onMouseLeftUp(const Vec2& pos) override;
 
-private:
+protected:
     bool _checked = false;
+};
+
+class RadioBox : public CheckBox
+{
+public:
+    signal<RadioBox*> on_selected;
+
+public:
+    RadioBox() = delete;
+    ~RadioBox() = default;
+    RadioBox(const std::string& name, Widget* parent = nullptr);
+
+    void setChecked(bool checked) override;
+
+private:
+    using CheckBox::on_check_changed;
+
+    void onMouseLeftClick(const Vec2& pos) override;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -176,12 +194,12 @@ public:
     const auto& items() { return _items; }
 
 private:
-    void onItemSelect(CheckBox* cb);
+    void onItemSelect(RadioBox* cb);
 
 private:
     Group* _group = nullptr;
 
-    std::list<CheckBox*> _items;
+    std::list<RadioBox*> _items;
 };
 
 class RadioHLayGroup : public HorizonalLayout

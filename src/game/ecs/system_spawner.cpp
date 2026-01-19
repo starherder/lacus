@@ -22,7 +22,7 @@ namespace game
             auto& spawner = views.get<CompSpawner>(ent);
             if(spawner.npc_set.size() < spawner.min_count)
             {
-                spawnActor(ent, spawner.npc, trans.position, spawner.radius);
+                spawnActor(ent, spawner, trans);
             }
             else if(spawner.npc_set.size() < spawner.max_count)
             {
@@ -30,7 +30,7 @@ namespace game
                 {
                     if (spawner.npc_set.size() < spawner.max_count)
                     {
-                        spawnActor(ent, spawner.npc, trans.position, spawner.radius);
+                        spawnActor(ent, spawner, trans);
                     }
                     spawner.cur_tick = 0;
                 }
@@ -57,13 +57,12 @@ namespace game
             {
                 pSpawn->npc_set.erase(e.actor);
             }
-
         }
     }
 
-    void SpawnerSystem::spawnActor(entt::entity spawner, const std::string& cfgid, const Vec2& pos, float radius)
+    void SpawnerSystem::spawnActor(entt::entity spawner, const CompSpawner& compSpawner, const CompTransform& compTrans)
     {
-        std::optional<Vec2> optSpawnPos = pos;
+        std::optional<Vec2> optSpawnPos = compTrans.position;
 
         int LoopCount = 0;
         while (true)
@@ -75,12 +74,12 @@ namespace game
             }
 
             float angle = utility::random(-3.14f, 3.14f);
-            float dist = utility::random(radius / 2.0f, radius);
+            float dist = utility::random(compSpawner.radius / 2.0f, compSpawner.radius);
 
             Vec2 offset = Vec2{ sin(angle), cos(angle) } *dist;
-            Vec2 dest = pos + offset;
+            Vec2 dest = compTrans.position + offset;
 
-            Vec2 srcGrid = _context.currentScene().getGridFromPos(pos);
+            Vec2 srcGrid = _context.currentScene().getGridFromPos(compTrans.position);
             Vec2 dstGrid = _context.currentScene().getGridFromPos(dest);
 
             auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
@@ -99,16 +98,23 @@ namespace game
 
         if (optSpawnPos)
         {
-            auto npc = _context.currentScene().createActor(cfgid, optSpawnPos.value());
+            auto npc = _context.currentScene().createActor(compSpawner.npc, optSpawnPos.value());
             if (_context.registry().valid(npc))
             {
-                _context.registry().emplace<CompSpawnMe>(npc, CompSpawnMe{ spawner });
+                auto compComm = _context.registry().try_get<CompComm>(npc);
+                if (compComm)
+                {
+                    compComm->side = compSpawner.side;
+                }
 
                 auto compSpawner = _context.registry().try_get<CompSpawner>(spawner);
                 if (compSpawner)
                 {
                     compSpawner->npc_set.insert(npc);
                 }
+
+                _context.registry().emplace<CompSpawnMe>(npc, CompSpawnMe{spawner});
+
             }
         }
     }

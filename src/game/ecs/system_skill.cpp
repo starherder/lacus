@@ -276,8 +276,8 @@ namespace game
 		auto objects = _context.currentScene().getObjectsInCircle(e.pos, range);
 		for (auto& [d,obj] : objects) 
 		{
-			auto& cmpComm = _context.registry().get<CompComm>(obj);
-			if (cmpComm.type == ObjectType::Npc)
+			auto pCmpComm = _context.registry().try_get<CompComm>(obj);
+			if (pCmpComm && pCmpComm->type == ObjectType::Npc)
 			{
 				_context.dispatcher().trigger(RoleOnAttack{ e.source, obj, e.skill });
 			}

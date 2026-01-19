@@ -49,6 +49,11 @@ public:
 
     bool debug_mode = false;
 
+    struct Sound {
+        float sound_volumn = 1.0f;
+        float music_volumn = 1.0f;
+    }sound;
+
 public:    
     SystemConfig() = default;
     ~SystemConfig() = default;

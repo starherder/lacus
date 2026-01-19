@@ -196,6 +196,9 @@ bool Application::initAudioPlayer()
         return false;
     }
 
+    _audioPlayer->setMusicVolume(_config.sound.music_volumn);
+    _audioPlayer->setSoundVolume(_config.sound.sound_volumn);
+
     spdlog::info("audio player created.");
     return true;
 }

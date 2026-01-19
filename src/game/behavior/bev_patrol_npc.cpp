@@ -349,6 +349,13 @@ namespace game {
 			return Status::Failure;
 		}
 
+		auto pNpcComm = _context->registry().try_get<CompComm>(_actor);
+		if (!pNpcComm)
+		{
+			spdlog::error("role {} No CompComm found.", (uint32_t)_actor);
+			return Status::Failure;
+		}
+
 		auto& skills = _context->registry().get<CompSkills>(_actor);
 		for (auto& skill_id : skills.skills)
 		{
@@ -360,18 +367,22 @@ namespace game {
 				// 需要目标，寻找目标
 				auto dis = compSkill.distance;
 				auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
-				for (auto& [dis, target] : objects) {
-					if (_context->registry().valid(target) == false || target == _actor) { 
+				for (auto& [dis, target] : objects) 
+				{
+					if (_context->registry().valid(target) == false || target == _actor) 
+					{ 
 						continue; 
 					}
 
 					auto pdead = _context->registry().try_get<CompDead>(target);
-					if (pdead) { 
+					if (pdead) 
+					{ 
 						continue; 
 					}
 
-					auto& compComm = _context->registry().get<CompComm>(target);
-					if (compComm.type == ObjectType::Npc) {
+					auto pCompComm = _context->registry().try_get<CompComm>(target);
+					if (pCompComm && pCompComm->type == ObjectType::Npc && pCompComm->side != pNpcComm->side) 
+					{
 						_context->dispatcher().trigger(CastSkillToObject{ _actor, target, skill_id });
 						return Status::Success;
 					}

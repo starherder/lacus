@@ -105,6 +105,13 @@ bool SystemConfig::load(const fs::path& filepath)
             return false;
         }
 
+        if (json.contains("sound"))
+        {
+            auto& soundJs = json["sound"];
+            sound.sound_volumn = soundJs.value("sound_volumn", 1.0f);
+            sound.music_volumn = soundJs.value("music_volumn", 1.0f);
+        }
+
         debug_mode = json.value("debug", false);
     }
     catch(const std::exception& e)

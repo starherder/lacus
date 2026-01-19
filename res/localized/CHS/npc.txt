@@ -12,8 +12,14 @@ text_npc_desc_3=可爱的一个小姑娘，外表美丽，内心善良。
 text_npc_desc_4=他自己都不知道自己是谁。
 text_npc_desc_5=村中恶霸，欺男霸女，人见狗嫌。
 
-text_spawner_name_0=张刷
-text_spawner_desc_0="产生张散的刷怪器"
+text_spawner_name_0=近
+text_spawner_desc_0="产生战士的刷怪器"
+
+text_spawner_name_1=射
+text_spawner_desc_1="产生射手的刷怪器"
+
+text_spawner_name_2=法
+text_spawner_desc_2="产生法师的刷怪器"
 
 text_item_name_0=金币
 text_item_name_1=药水

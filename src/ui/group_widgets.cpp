@@ -188,6 +188,10 @@ namespace ui {
 
     void Group::onChildAdded(Widget* child)
     {
+        if (child && maxChildren())
+        {
+            child->setSize(size());
+        }
     }
 
     void Group::onChildRemoved(Widget* child)
@@ -208,6 +212,13 @@ namespace ui {
     
     void Group::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
     {
+        if (maxChildren())
+        {
+            for (auto& child : children())
+            {
+                child->setSize(size());
+            }
+        }
     }
 
     void Group::onVisibleChanged(bool oldVisual, bool newVisual)
@@ -392,6 +403,13 @@ namespace ui {
         adjustScrollbar();
     }
 
+    void ExpandGroup::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        Group::onSizeChanged(oldPos, newPos);
+
+        adjustContent();
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
 	HorizonalLayout::HorizonalLayout(const std::string& name, Widget* parent )
@@ -406,6 +424,7 @@ namespace ui {
     void HorizonalLayout::adjustLayout()
     {
         float width_used = _padding.x * 2;
+        float scalable_height = size().y - _padding.y * 2;
 
         std::vector<Widget*> scalable_widgets;
 
@@ -415,6 +434,8 @@ namespace ui {
             {
                 continue;
             }
+
+            ptr->rawSetSize({ptr->size().x, scalable_height });
 
             if(ptr->scaleInGroup())
             {
@@ -435,7 +456,6 @@ namespace ui {
         width_used -= _spacing;
         
         float scalable_width = (size().x - width_used) / scalable_widgets.size();
-        float scalable_height = size().y - _padding.y * 2;
 
         width_used = _padding.x;
 
@@ -480,12 +500,23 @@ namespace ui {
 
     void HorizonalLayout::onChildSizeChanged(Widget* child) 
     {
-        child->setScaleInGroup(false);
+        if(child->size().x > 0)
+        {
+            child->setScaleInGroup(false);
+        }
+
         adjustLayout();
     }
 
     void HorizonalLayout::onChildVisibleChanged(Widget* child) 
     {
+        adjustLayout();
+    }
+
+    void HorizonalLayout::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        Group::onSizeChanged(oldPos, newPos);
+
         adjustLayout();
     }
 
@@ -505,6 +536,7 @@ namespace ui {
     void VerticalLayout::adjustLayout()
     {
         float height_used = _padding.y * 2;
+        float scalable_width = size().x - _padding.x * 2;
 
         std::vector<Widget*> scalable_widgets;
 
@@ -514,6 +546,8 @@ namespace ui {
             {
                 continue;
             }
+
+            ptr->rawSetSize({scalable_width, ptr->size().y});
 
             if(ptr->scaleInGroup())
             {
@@ -534,7 +568,6 @@ namespace ui {
         
         height_used -= _spacing;
         
-        float scalable_width = size().x - _padding.x * 2;
         float scalable_height = (size().y - height_used) / scalable_widgets.size();
 
         height_used = _padding.y;
@@ -562,5 +595,14 @@ namespace ui {
         }
     }
 
+    void VerticalLayout::onChildSizeChanged(Widget* child)
+    {
+        if (child->size().y > 0)
+        {
+            child->setScaleInGroup(false);
+        }
+
+        adjustLayout();
+    }
 
 }

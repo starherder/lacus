@@ -21,6 +21,9 @@ public:
     bool clipChildren() const { return _clipChildren; }
     void setClipChildren(bool clip) { _clipChildren = clip; }
 
+    bool maxChildren() { return _maxChildren; }
+    void setMaxChildren(bool maxChildren) { _maxChildren = maxChildren; }
+
     Rect getClipRect() const;
 
     template<typename WidgetType>
@@ -57,6 +60,7 @@ private:
     std::list<WidgetPtr> _children;
 
     bool _clipChildren = true;
+    bool _maxChildren = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +90,8 @@ private:
 
     void adjustContent();
     void adjustScrollbar();
+
+    void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
 
 private:
     const int slider_bar_size = 25;
@@ -117,6 +123,8 @@ public:
 protected:
     virtual void adjustLayout();
 
+    void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+
     void onChildAdded(Widget* child) override;
     void onChildRemoved(Widget* child) override;
 
@@ -144,6 +152,8 @@ public:
 
 private:
     void adjustLayout() override;
+
+    void onChildSizeChanged(Widget* child) override;
 };
 
 using VLayout = VerticalLayout;

@@ -58,7 +58,7 @@ namespace game
         _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
         _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SpawnerSystem>(_gameContext) });
     }
-
+    
 	void GameLogic::loadResource()
 	{
         auto gamecfg = _gameContext.resPath() / "game_config.json";

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<theme name="theme_normal">
+
+    <font name="font_default" file="fonts/msyh.ttf" size="14" />
+
+    <color name="none" value="#00000000" />
+    <color name="black" value="#000000FF" />
+    <color name="white" value="#FFFFFFFF" />
+    <color name="gray" value="#808080FF" />
+
+    <form name="form_" maximize="true" size="600,500" ground_color="#005555FF" border_color="#555555FF" border_size="3" />
+    <vlay name="vlay_" size="0,500" ground_color="none" border_color="#555555FF" border_size="1" />
+    <hlay name="hlay_" size="0,500" ground_color="none" border_color="#555555FF" border_size="1" />
+    <text name="text_" size="100,30" text_color="black" font="font_default" align="left" />
+    <label name="lbl_" size="100,30" ground_color="none" border_color="gray" border_size="1" text_color="black" font="font_default" align="left" />
+    <button font="font_default" align="left" >
+        <normal ground_color="none" border_color="gray" border_size="1" text_color="black" font="font_default" />
+        <hover ground_color="none" border_color="gray" border_size="1" text_color="black" font="font_default" />
+        <press ground_color="none" border_color="gray" border_size="1" text_color="black" font="font_default" />
+        <disable ground_color="none" border_color="gray" border_size="1" text_color="black" font="font_default" />
+    </button>
+</theme>

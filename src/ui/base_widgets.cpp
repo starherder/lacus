@@ -226,17 +226,7 @@ namespace ui {
 
     void CheckBox::onMouseLeftClick(const Vec2& pos)
     {
-        _checked = !_checked;
-        on_check_changed.emit(this);
-
-        if (_checked)
-        {
-            setState(WidgetState::SelectedHover);
-        }
-        else
-        {
-            setState(WidgetState::Hover);
-        }
+        setChecked(!checked());
     }
 
     void CheckBox::onMouseLeftDown(const Vec2& pos) 
@@ -247,6 +237,42 @@ namespace ui {
     void CheckBox::onMouseLeftUp(const Vec2& pos) 
     {
         //onMouseEnter(pos);
+    }
+
+
+    /////////////////////////////////////////////////////////////////
+
+
+    RadioBox::RadioBox(const std::string& name, Widget* parent) : CheckBox(name, parent)
+    {
+    }
+
+    void RadioBox::onMouseLeftClick(const Vec2& pos)
+    {
+        if (!checked())
+        {
+            setChecked(!checked());
+        }
+    }
+
+    void RadioBox::setChecked(bool checked)
+    {
+        if (checked == _checked)
+        {
+            return;
+        }
+
+        _checked = checked;
+        on_selected.emit(this);
+
+        if (_checked)
+        {
+            setState(WidgetState::Selected);
+        }
+        else
+        {
+            setState(WidgetState::Normal);
+        }
     }
 
     /////////////////////////////////////////////////////////////////
@@ -261,14 +287,14 @@ namespace ui {
 
     int RadioGroupImpl::addItem(const std::string& text) 
     {
-        auto index = itemCount();
-        auto ctrl = _group->createChild<CheckBox>(fmt::format("__item_{}__", index));
+        auto index = (int)itemCount();
+        auto ctrl = _group->createChild<RadioBox>(fmt::format("__radio_{}__", index));
         ctrl->setText(text);
         ctrl->setData("__item_index__", index);
-        ctrl->on_check_changed.connect(this, &RadioGroupImpl::onItemSelect);
+        ctrl->on_selected.connect(this, &RadioGroupImpl::onItemSelect);
 
         _items.push_back(ctrl);
-        return (int)index;
+        return index;
     }
 
     void RadioGroupImpl::removeItem(int index) 
@@ -329,7 +355,7 @@ namespace ui {
         }
     }
 
-    void RadioGroupImpl::onItemSelect(CheckBox* cb) 
+    void RadioGroupImpl::onItemSelect(RadioBox* cb) 
     {
         if (!cb || !cb->checked()) {
             return;
@@ -646,8 +672,8 @@ namespace ui {
     int ListBox::addItem(const std::string& text)
     {
         auto index = _radioGroup->addItem(text);
-        auto name = fmt::format("__item_{}__", index);
-        auto ctrl = getChild<CheckBox>(name);
+        auto name = fmt::format("__radio_{}__", index);
+        auto ctrl = getChild<RadioBox>(name);
         if (ctrl) 
         {
             ctrl->setSize({size().x, _itemHeight});

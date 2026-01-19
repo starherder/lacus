@@ -290,17 +290,14 @@ namespace game
 			return role;
 		}
 		
-		if (json.contains("common"))
+		if (json.contains("patrol"))
 		{
-			if (json.contains("patrol"))
-			{
-				auto& patrolJs = json["patrol"];
+			auto& patrolJs = json["patrol"];
 
-				CompNpcPatrol compPatrol;
-				compPatrol.patrol_radius = patrolJs.value("raduis", 0.0f);
+			CompNpcPatrol compPatrol;
+			compPatrol.patrol_radius = patrolJs.value("raduis", 0.0f);
 
-				_context->registry().emplace<CompNpcPatrol>(role, compPatrol);
-			}
+			_context->registry().emplace<CompNpcPatrol>(role, compPatrol);
 		}
 
 		if (json.contains("pick"))

@@ -10,7 +10,6 @@ Form::Form(const std::string& name) : _name(name)
 {
     _rootGroup = std::make_unique<Group>("group_main");
 
-    root()->setMovable(true);
     root()->setAcceptEvent(true);
 }
 
@@ -37,7 +36,9 @@ void Form::setPos(const Vec2& pos)
 
 void Form::setSize(const Vec2& sz)
 { 
-    _size = sz; 
+    _size = sz;
+    _rootGroup->setSize(_size);
+
     onSizeChanged(); 
 }
 
@@ -160,6 +161,11 @@ void Form::hide()
     onShow(false);
 }
 
+void Form::close()
+{
+    GuiManager::inst().closeForm(name());
+}
+
 void Form::onWindowResized(const Vec2& size)
 {
     if (isMaximize())
@@ -235,7 +241,7 @@ void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
         return;
     }
 
-    if(!widget->movable())
+    if(widget->movable())
     {
         widget->setFocused(true);
         widget->onMouseLeftDrag(pos, offset);
@@ -285,7 +291,6 @@ void Form::onMouseMotion(const Vec2& pos, const Vec2& offset)
 
     _hoverWidget = widget;
 }
-
 
 
 }

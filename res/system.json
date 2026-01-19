@@ -1,15 +1,22 @@
 {
-    "window" : {
-        "title" : "-Lacus-",
-        "width" : 1280,
-        "height" : 720,
-        "fps" : 120
-    },
-    "log" : {
-        "level" : 0,
-        "pattern" : "[%H:%M:%S.%e] [%^%l%$] %v"
-    },
-    "res" : {
-        "path" : "res"
-    }
+  "window": {
+    "title": "-Lacus-",
+    "width": 1280,
+    "height": 720,
+    "fps": 120
+  },
+
+  "log": {
+    "level": 0,
+    "pattern": "[%H:%M:%S.%e] [%^%l%$] %v"
+  },
+
+  "sound": {
+    "sound_volumn": 0.1,
+    "music_volumn" : 0.1
+  },
+
+  "res" : {
+    "path" : "res"
+  }
 }

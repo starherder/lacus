@@ -30,6 +30,22 @@ namespace samples {
     };
 
 
+    class FormLayout : public ui::Form
+    {
+    public:
+        FormLayout() = delete;
+        FormLayout(const std::string& name);
+        virtual ~FormLayout();
+
+        void onUpdate(float delta) override;
+        void onDraw() override;
+
+    private:
+        void onPosChanged() override;
+        void onSizeChanged() override;
+    };
+
+
     class FormCards : public ui::Form
     {
     public:
@@ -41,9 +57,7 @@ namespace samples {
         void onDraw() override;
 
     private:
-
         void onCardOverlapChanged(ui::CheckBox* cb);
-
         void onDropCard(ui::GuiManager::DraggingPtr dragging);
     };
 
@@ -52,7 +66,6 @@ namespace samples {
     {
     public:
         SamplePluginUI() = delete;
-
         SamplePluginUI(Application& app) : _application(app) {}
         ~SamplePluginUI() {};
 
