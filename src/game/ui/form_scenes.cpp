@@ -35,6 +35,7 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
     }
 
     setMaximize(true);
+    setDragMovable(false);
 }
 
 FormScenes::~FormScenes()

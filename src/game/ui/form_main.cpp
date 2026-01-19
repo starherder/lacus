@@ -37,6 +37,7 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     }
 
     setMaximize(true);
+    setDragMovable(false);
 }
 
 FormMain::~FormMain()

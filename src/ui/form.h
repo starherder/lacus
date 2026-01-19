@@ -48,6 +48,9 @@ public:
     const Rect& getRect() const;
     void setRect(const Rect& rect);
 
+    bool dragMovable() const { return _dragMovable; }
+    void setDragMovable(bool movable) { _dragMovable = movable; }
+
     virtual void onShow(bool visible) {}
     virtual void onClose() {}
     virtual void onUpdate(float delta) {}

@@ -37,7 +37,7 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 	_btnExit->on_click.connect([this](ui::Button* btn) { onExit(btn); });
 
 	setMaximize(true);
-
+	setDragMovable(false);
 }
 
 FormEntry::~FormEntry()

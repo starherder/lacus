@@ -13,6 +13,7 @@ namespace game
         setProgress(0.0f);
 
         setMaximize(true);
+        setDragMovable(false);
     }
 
     FormLoading::~FormLoading()
