@@ -5,6 +5,8 @@
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
 
+#include "game/ui/form_config.h"
+
 
 namespace game 
 {
@@ -18,11 +20,19 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     root()->setBgColor({ 0,0,0, 0 });
 
     _btnScenes = root()->createChild<ui::Button>("btn_scenes");
-    _btnScenes->setPos({size().x-150, 50});
+    _btnScenes->setPos({size().x - 260, 50});
     _btnScenes->setSize({100, 50});
     _btnScenes->setText("scenes");
     _btnScenes->on_click.connect([this](ui::Button* btn) {
         ui::GuiManager::inst().showForm<FormScenes>("form_scenes", _context);
+    });
+
+    _btnConfig = root()->createChild<ui::Button>("btn_config");
+    _btnConfig->setPos({ size().x - 150, 50 });
+    _btnConfig->setSize({ 100, 50 });
+    _btnConfig->setText("config");
+    _btnConfig->on_click.connect([this](ui::Button* btn) {
+        ui::GuiManager::inst().showForm<FormConfig>("form_config", _context);
     });
 
     _cardGroup = root()->createChild<CardGroup>("card_group");
@@ -87,7 +97,8 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
 
 void FormMain::onSizeChanged()
 {
-    _btnScenes->setPos({ size().x - 150, 50 });
+    _btnScenes->setPos({ size().x - 260, 50 });
+    _btnConfig->setPos({ size().x - 150, 50 });
 
     Vec2 cardGroupSZ = { size().x / 2, 200 };
     Vec2 cardGroupPos = { (size().x - cardGroupSZ.x) / 2, size().y - cardGroupSZ.y };

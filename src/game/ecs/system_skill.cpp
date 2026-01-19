@@ -182,7 +182,7 @@ namespace game
 			_context.audioPlayer().playSound(HashString(pcompAudio->audio_name.c_str()));
 		}
 
-		spdlog::info("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
+		//spdlog::info("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
 
 		if (skillComm.type == SkillType::Combat)
 		{
@@ -267,8 +267,8 @@ namespace game
 
 	void SkillSystem::onProjectileHitPos(const ProjectileHitPos& e)
 	{
-		spdlog::info("projectile: source({}) skill({}) hit ({},{})", 
-			(uint32_t)e.source, (uint32_t)e.skill, e.pos.x, e.pos.y);
+		//spdlog::info("projectile: source({}) skill({}) hit ({},{})", 
+		//	(uint32_t)e.source, (uint32_t)e.skill, e.pos.x, e.pos.y);
 
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		auto range = compAffect.range;

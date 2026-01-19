@@ -22,6 +22,8 @@ namespace game {
 
     private:
         ui::Button* _btnScenes = nullptr;
+        ui::Button* _btnConfig = nullptr;
+
         ui::CardGroup* _cardGroup = nullptr;
     };
 }

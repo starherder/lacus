@@ -7,6 +7,7 @@ namespace game
 FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
 	root()->setBgColor(Color::Light);
+	//root()->setMaxChildren(true);
 
 	_lblTitle = root()->createChild<Label>("title");
 	_lblTitle->setFont("fonts/Vonwaon.ttf", 40);

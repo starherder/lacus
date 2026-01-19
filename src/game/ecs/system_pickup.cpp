@@ -30,7 +30,7 @@ namespace game
     void PickupSystem::pickUp(entt::entity role, entt::entity obj, const Vec2i& grid)
     {
         auto& nameComp = _context.registry().get<CompNameId>(obj);
-        spdlog::info("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
+        //spdlog::info("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
 
         auto& transComp = _context.registry().get<CompTransform>(obj);
 

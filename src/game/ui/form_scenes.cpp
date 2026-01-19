@@ -18,7 +18,6 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
     _btnClose->on_click.connect([this](ui::Button* btn){ close(); });
 
     int index = 0;
-
     std::vector<std::string> btnSceneNames = {"scenes/demos/one.tmj", "scenes/demos/two.tmj", "scenes/demos/three.tmj"};
 
     std::vector<Vec2> btnScenesPos = { {300,600}, {500,100}, {900, 300} };

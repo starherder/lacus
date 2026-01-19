@@ -67,12 +67,12 @@ namespace particle
 		_name = name;
 		_emitter = std::make_unique<ParticleEmitter>();
 
-		spdlog::info("Particle({}) construct.", _name);
+		//spdlog::info("Particle({}) construct.", _name);
 	}
 
 	Particle::~Particle()
 	{
-		spdlog::info("Particle({}) destruct.", _name);
+		//spdlog::info("Particle({}) destruct.", _name);
 	}
 
 
@@ -460,7 +460,7 @@ namespace particle
 		if (pParticle)
 		{
 			const std::string& file = it->second;
-			spdlog::info("create particle OK, name={}, file={}", name, file);
+			//spdlog::info("create particle OK, name={}, file={}", name, file);
 
 			pParticle->Load(file);
 			pParticle->Stop();

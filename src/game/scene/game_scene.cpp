@@ -207,7 +207,7 @@ entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
         }
     }
 
-    spdlog::info("object (null) selected.");
+    //spdlog::info("object (null) selected.");
     _context.dispatcher().trigger(ObjectSelection{ entt::null });
     return entt::null;
 }
@@ -247,7 +247,7 @@ entt::entity GameScene::createActor(const std::string& cfgid, const Vec2& pos)
     auto grid = getGridFromPos(pos);
     addObjectToGrid(ent, grid);
 
-    spdlog::info("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
+    //spdlog::info("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
     return ent;
 }
 

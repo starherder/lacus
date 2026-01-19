@@ -18,7 +18,7 @@ namespace game
 		// destroy
 		for (auto& ent : pending)
 		{
-			spdlog::info("object: id {} destroy !", (uint32_t)ent);
+			//spdlog::info("object: id {} destroy !", (uint32_t)ent);
 			_context.registry().destroy(ent);
 		}
 

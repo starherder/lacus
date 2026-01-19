@@ -250,7 +250,7 @@ namespace game
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
-		spdlog::info("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
+		//spdlog::info("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
 		
 		return object;
 	}
@@ -548,7 +548,7 @@ namespace game
 			_context->registry().emplace<CompProjectileCfg>(skill, compParticle);
 		}
 
-		spdlog::info("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
+		//spdlog::info("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
 		return skill;
 	}
 
@@ -593,11 +593,11 @@ namespace game
 		auto res = createParticleOnObject(bullet, particle);
 		if (!res) 
 		{
-			spdlog::error("createProjectile: create particle failed.");
+			//spdlog::error("createProjectile: create particle failed.");
 		}
 
-		spdlog::info("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
-			(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );
+		//spdlog::info("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
+		//	(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );
 
 		return bullet;
 	}

@@ -188,7 +188,7 @@ namespace game
 
     void FightSystem::addBuf(entt::entity source, entt::entity target, const std::string& buf)
     {
-        spdlog::info("target({}) add buff {}", (uint32_t)target, buf);
+        //spdlog::info("target({}) add buff {}", (uint32_t)target, buf);
 
         AddBuffToObject buff;
         buff.source = source;
@@ -199,7 +199,7 @@ namespace game
 
     void FightSystem::removeBuf(entt::entity target, const std::string& buf)
     {
-        spdlog::info("target({}) remove buff {}", (uint32_t)target, buf);
+        //spdlog::info("target({}) remove buff {}", (uint32_t)target, buf);
 
         RemoveBuffFromObject buff;
         buff.target = target;
@@ -213,7 +213,7 @@ namespace game
         float curY = targetTrans.position.y;
         float dstY = targetTrans.position.y - 100;
 
-        spdlog::info("target({}) hp {}{}", (uint32_t)target, hp > 0 ? "+" : "", hp);
+        //spdlog::info("target({}) hp {}{}", (uint32_t)target, hp > 0 ? "+" : "", hp);
 
         auto word = _context.registry().create();
         _context.registry().emplace<CompTransform>(word, targetTrans);

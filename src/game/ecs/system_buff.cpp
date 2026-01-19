@@ -65,14 +65,14 @@ namespace game
 		auto buff = _context.objectFactory().createBuff(e.target, e.cfgid);
 		if(!_context.registry().valid(buff))
 		{
-			spdlog::error("add buff ({}) failed.", e.cfgid);
+			//spdlog::error("add buff ({}) failed.", e.cfgid);
 			return;
 		}
 
 		auto pbuffs = _context.registry().try_get<CompBuffs>(e.target);
 		if(!pbuffs)
 		{
-			spdlog::error("object ({}) can NOT hold buffs.", (uint32_t)e.target);
+			//spdlog::error("object ({}) can NOT hold buffs.", (uint32_t)e.target);
 			return;
 		}
 
@@ -91,7 +91,7 @@ namespace game
 				buffComm.during_ticks += ticks;
 				if(buffComm.during_ticks > buffComm.duration)
 				{
-					spdlog::info("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
+					//spdlog::info("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
 					_context.registry().emplace_or_replace<CompDestroy>(buff);
 					return;
 				}

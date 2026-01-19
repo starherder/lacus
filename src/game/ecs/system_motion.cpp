@@ -64,7 +64,7 @@ namespace game
         Vec2i srcGrid = _context.currentScene().getGridFromPos(srcPos);
         if(srcGrid == dstGrid)
         {
-            spdlog::warn("src_grid == dst_grid");
+            //spdlog::warn("src_grid == dst_grid");
             return false;
         }
 
