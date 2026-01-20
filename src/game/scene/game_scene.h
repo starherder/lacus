@@ -8,6 +8,8 @@
 
 #include "game_camera.h"
 
+#include <thread>
+#include <chrono>
 
 namespace game {
 
@@ -91,6 +93,9 @@ namespace game {
         void onRoleCrossGrid(const RoleCrossGrid& e);
         void onRoleDestroyed(const RoleDestroyed& e);
 
+        void loadInThread(const engine::fs::path& mapPath);
+        void unloadInThread();
+
     private:
         tilemap::TileMap _tileMap;
 
@@ -104,6 +109,8 @@ namespace game {
 
         // debug
         std::vector<Rect> _collisionDebugRects;
+
+        std::mutex _threadMutex;
     };
 
 

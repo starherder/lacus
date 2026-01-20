@@ -18,6 +18,8 @@ namespace engine
 
         void update();
         void draw();
+
+        bool ready() { return _ready; }
         
         virtual bool load(const engine::fs::path& filePath) = 0;
         virtual bool unload() = 0;
@@ -30,8 +32,10 @@ namespace engine
 
         auto& application() { return _app; }
         
-    private:
+    protected:
         Application& _app;
+
+        bool _ready = false;;
     };
 
 }

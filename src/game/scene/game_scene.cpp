@@ -19,8 +19,6 @@ GameScene::GameScene(GameContext& context)
 
     _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
     _context.dispatcher().sink<RoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
-
-    
 }
 
 GameScene::~GameScene()
@@ -57,53 +55,89 @@ Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
 
 bool GameScene::load(const engine::fs::path& mapPath)
 {
-    _camera.setPos({0, 0});
+    _camera.setPos({ 0, 0 });
+
+    std::thread loadthread([this, mapPath]() {
+        loadInThread(mapPath);
+    });
+
+    loadthread.detach();
+    return true;
+}
+
+bool GameScene::unload()
+{
+    _ready = false;
+
+    std::thread unloadthread([this]() {
+        unloadInThread();
+    });
+
+    unloadthread.detach();
+    return true;
+}
+
+void GameScene::loadInThread(const engine::fs::path& mapPath)
+{
+    std::lock_guard<std::mutex> lock(_threadMutex);
 
     on_load_progress.emit(0.0f);
 
     auto res = _tileMap.load(mapPath);
     if(!res)
     {
-        return false;
+        return;
     }
 
+    // TODO: remove this
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     on_load_progress(0.5f);
 
     _tileMap.bake(application().resourceManager());
 
+    // TODO: remove this
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     on_load_progress(0.7f);
 
     initPathFind();
 
+    // TODO: remove this
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     on_load_progress(0.8f);
 
     loadObjects();
 
+    // TODO: remove this
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     on_load_progress(1.0f);
 
-    return true;
+    _ready = true;
 }
 
-bool GameScene::unload()
+void GameScene::unloadInThread()
 {
+    std::lock_guard<std::mutex> lock(_threadMutex);
+
     auto res = _tileMap.unload();
     if(!res)
     {
-        return false;
+        return ;
     }
 
     unloadObjects();
-
-    return true;
 }
 
 void GameScene::onUpdate(float deltaTime)
 {
+    if (!_ready) return;
+
     _camera.update(deltaTime);
 }
 
 void GameScene::onDraw() 
 {
+    if (!_ready) return;
+
     auto& renderer = application().renderer();
 
     _tileMap.draw(renderer, _camera);

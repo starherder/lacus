@@ -129,6 +129,11 @@ namespace game
 
     void GameLogic::update(float delta)
     {
+        if (!_scene->ready())
+        {
+            return;
+        }
+
         _scene->onUpdate(delta);
 
         for (auto& [prio, sys] : _ecsSystems)
@@ -139,6 +144,11 @@ namespace game
 
     void GameLogic::draw()
     {
+        if (!_scene->ready())
+        {
+            return;
+        }
+
         _scene->onDraw();
 
         for (auto& [prio, sys] : _ecsSystems)
@@ -227,12 +237,12 @@ namespace game
     {
         if (visible)
         {
-            ui::GuiManager::inst().showForm<FormLoading>("form_loging", _gameContext);
+            ui::GuiManager::inst().showForm<FormLoading>("form_loading", _gameContext);
         }
         else
         {
 
-            ui::GuiManager::inst().closeForm("form_loging");
+            ui::GuiManager::inst().closeForm("form_loading");
         }
     }
 

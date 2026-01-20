@@ -21,6 +21,7 @@ namespace game
 
     private:
         ui::ProgressBar* _progressBar = nullptr;
+        ui::Label* _textTip = nullptr;
 
         float _progress = 0.0f;
     };
