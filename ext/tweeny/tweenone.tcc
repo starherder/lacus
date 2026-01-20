@@ -160,6 +160,9 @@ namespace tweeny {
         dt *= currentDirection;
         uint16_t lastPoint = currentPoint;
         seek(currentProgress + dt, true);
+        if(isFinished() && points.size() > 1) {
+            currentPoint = (uint16_t)points.size()-1;
+        }
         if (!suppress) {
             dispatch(onStepCallbacks);
             if(currentPoint != lastPoint) dispatch(onPointCallbacks);

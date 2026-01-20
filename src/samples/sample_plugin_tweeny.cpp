@@ -144,7 +144,7 @@ namespace samples {
 
     void SamplePluginTweeny::onEaseModeSelect(const char* ease, EaseMode mode, int duration)
     {
-        spdlog::info("ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
+        spdlog::info("start: ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
         
         _easeMode = mode;
 
@@ -164,18 +164,9 @@ namespace samples {
         uint16_t lstpoint = -1;
         _tween.onStep([this, &lstpoint] (auto& t, float x, float y) {
 
-            spdlog::info("t.process = {} t.point = {}/{}, timePoint = {}", 
-                t.progress(), t.point(), t.point_count(), t.currentTimePoint());
-            /*
-            if (t.point() != lstpoint) {
-                lstpoint = t.point();
-                _lights[lstpoint] = true;
-            }
-
-            if (t.isFinished()) {
-                _lights[t.point_count()-1] = true;
-            }*/
-
+            //spdlog::info("t.process = {} t.point = {}/{}, timePoint = {}", 
+            //    t.progress(), t.point(), t.point_count(), t.currentTimePoint());
+    
             _rolePos.x = x;
             _rolePos.y = y;
             return false;
@@ -184,7 +175,7 @@ namespace samples {
 
         _tween.onPoint([this](auto& t, float x, float y) {
             
-            spdlog::info("onPoint: current point = {}", t.point());
+            spdlog::info("onPoint: current point = {} progress = {}", t.point(), t.progress());
 
             _lights[t.point()] = true;
 

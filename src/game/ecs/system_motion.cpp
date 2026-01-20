@@ -119,14 +119,11 @@ namespace game
 
         std::string mode = _context.gameConfig().motion.walk;
 
-        auto curtype = _context.currentScene().mapInfo().getTileProperty<int>(curGrid.x, curGrid.y, "walktype");
-        auto nexttype = _context.currentScene().mapInfo().getTileProperty<int>(nextGrid.x, nextGrid.y, "walktype");
-        if(curtype && nexttype)
+        auto curtype = _context.currentScene().getGridWalkType(curGrid);
+        auto nexttype = _context.currentScene().getGridWalkType(nextGrid);
+        if(curtype == (int)tilemap::WalkType::Swim && nexttype == (int)tilemap::WalkType::Swim)
         {
-            if(curtype == (int)tilemap::WalkType::Swim && nexttype == (int)tilemap::WalkType::Swim)
-            {
-                mode = _context.gameConfig().motion.swim;
-            }
+            mode = _context.gameConfig().motion.swim;
         }
 
         int ticks = (glm::distance(curPos, nextPos) / motion.speed) * 1000;

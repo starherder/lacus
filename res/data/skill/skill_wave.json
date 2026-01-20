@@ -1,0 +1,38 @@
+{
+  "cfgid": "skill_wave",
+  "type": "projectile",
+  "name": "text_skill_wave",
+  "desc": "text_skill_wave_desc",
+
+  "distance": 300,
+  "cd_ticks": 1000,
+  "sound": "audio/battle_of_tiles/slime.wav",
+
+  "affect": {
+    "prev_ticks": 200,
+    "post_ticks": 200,
+
+    "func": "hp-",
+    "target": "role",
+    "range": 0,
+
+    "event": ""
+  },
+
+  "tween": {
+    "trans_type": "scale",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "traps": {
+    "desc": "type:point/dir/cross/around",
+    "type": "dir",
+    "range": "3",
+    "life": 1000,
+    "fade": "cubicIn",
+    "texture": "",
+    "color": "#FF0000FF"
+  }
+}

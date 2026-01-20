@@ -24,14 +24,17 @@ namespace game
         void skillApplyToTarget(const CastSkillToObject& e);
 
         void startProjectile(entt::entity source, entt::entity target, entt::entity skill);
+        
+        void startTraps(entt::entity srcid, entt::entity tarid, entt::entity skill);
+        
+        void startSprint(entt::entity srcid, entt::entity tarid, entt::entity skill);
 
-        tweeny::tween<float, float> makeSkillTween(const CastSkillToObject& e);
+        tweeny::tween<float, float> makeSkillSpellTween(const CastSkillToObject& e);
 
         void onCastSkillToObject(const CastSkillToObject& e);
 
         void onRoleUnderAttackEffect(const RoleOnAttack& e);
-        void onRoleUnderAttackHurt(const RoleOnAttack& e);
-        
+
         void onProjectileHitPos(const ProjectileHitPos& e);
 
         void onSkillEvent(const ExecSkillEvent& e);

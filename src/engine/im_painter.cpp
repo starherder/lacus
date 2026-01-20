@@ -116,7 +116,7 @@ namespace engine
 	void ImPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_width)
 	{
 		assert(font);
-		ImGui::GetBackgroundDrawList()->AddText(font->imFont, font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
+		ImGui::GetBackgroundDrawList()->AddText(font->imFont, (float)font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
 	}
 
 	void ImPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)
@@ -187,7 +187,7 @@ namespace engine
 
 		auto& io = ImGui::GetIO();
 		auto fonts = ImGui::GetIO().Fonts;
-		auto font = fonts->AddFontFromFileTTF(fontPath.string().c_str(), fontSize, nullptr, fonts->GetGlyphRangesChineseFull());
+		auto font = fonts->AddFontFromFileTTF(fontPath.string().c_str(), (float)fontSize, nullptr, fonts->GetGlyphRangesChineseFull());
 		if (!font)
 		{
 			spdlog::error("load font {} failed. use default.", fontPath.string());

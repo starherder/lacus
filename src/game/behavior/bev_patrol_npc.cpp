@@ -362,7 +362,7 @@ namespace game {
 			auto& compName = _context->registry().get<CompNameId>(skill_id);
 			auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);
 
-			if (compSkill.type == SkillType::Combat || compSkill.type == SkillType::Projectile)
+			if (compSkill.type != SkillType::Invalid)
 			{
 				// 需要目标，寻找目标
 				auto dis = compSkill.distance;

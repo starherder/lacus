@@ -148,8 +148,8 @@ namespace engine
 	void Painter::drawPath()
 	{
 		_application.renderer().drawGeometry(nullptr,
-			_geometryVertices.data(), _geometryVertices.size(),
-			_geometryIndices.data(), _geometryIndices.size());
+			_geometryVertices.data(), (int)_geometryVertices.size(),
+			_geometryIndices.data(), (int)_geometryIndices.size());
 
 		_vPaths.clear();
 		_geometryVertices.clear();
@@ -242,7 +242,7 @@ namespace engine
 	{
 		if (_vPaths.size() < 2) return;
 
-		int points_count = _vPaths.size();
+		int points_count = (int)_vPaths.size();
 		int count = (closed == false) ? points_count - 1 : points_count;
 
 		const bool thick_line = thickness > 1.0f;
@@ -421,7 +421,7 @@ namespace engine
 
 	void Painter::strokeConvexPolyFilled(const Color& color)
 	{
-		int points_count = _vPaths.size();
+		int points_count = (int)_vPaths.size();
 		int idx_count;
 		int vtx_count;
 

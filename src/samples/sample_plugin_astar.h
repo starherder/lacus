@@ -8,17 +8,6 @@
 namespace samples {
     using namespace engine;
 
-    // 随便的排序函数，顺序不重要
-    struct Vec2iComparator {
-        bool operator()(const Vec2i& lval, const Vec2i& rval) const {
-            if (lval.x == rval.x) {
-                return lval.y < rval.y;
-            } else {
-                return lval.x < rval.x;
-            }
-        }
-    };
-
 
     // 窗口
     class ImPathFindForm : public imgui::ImForm
@@ -85,7 +74,7 @@ namespace samples {
 
         std::vector<Vec2i> _path;
 
-        std::set<Vec2i, Vec2iComparator> _blocks;
+        std::set<Vec2i, Geometry::Vec2iComparator> _blocks;
     };
 
 

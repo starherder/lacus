@@ -4,14 +4,15 @@
 
 namespace game 
 {
+	CompSprint g_testSprint;
+
+
 	SkillSystem::SkillSystem(GameContext& context) : EcsSystem(context) 
 	{
 		_context.dispatcher().sink<CastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
 		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
-		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackHurt>(this);
 		_context.dispatcher().sink<ProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
 		_context.dispatcher().sink<ExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
-		
 	}
 	
 	SkillSystem::~SkillSystem() 
@@ -37,7 +38,7 @@ namespace game
 		for (auto& ent : views)
 		{
 			// 技能冷却
-			auto& skillComm = _context.registry().get<CompSkillComm>(ent);
+			auto& skillComm = views.get<CompSkillComm>(ent);
 			if (skillComm.state == SkillState::Cooling)
 			{
 				auto skillCD = _context.registry().try_get<CompSkillCD>(ent);
@@ -52,19 +53,30 @@ namespace game
 				}
 			}
 
-			// 技能特效
+			// 施法特效
 			if (skillComm.state == SkillState::Launching)
 			{
-				auto skillTween = _context.registry().try_get<CompSkillTween>(ent);
+				auto skillTween = _context.registry().try_get<CompSkillSpell>(ent);
 				if (skillTween)
 				{
 					skillTween->tween.step(deltaTicks);
 				}
 			}
 		}
+
+		// 冲刺
+		auto viewsSprint = _context.registry().view<CompSprint>();
+		for (auto& ent : viewsSprint)
+		{
+			auto& sprint = viewsSprint.get<CompSprint>(ent);
+			if (sprint.running) 
+			{
+				sprint.tween.step(deltaTicks);
+			}
+		}
 	}
 
-	tweeny::tween<float, float> SkillSystem::makeSkillTween(const CastSkillToObject& e)
+	tweeny::tween<float, float> SkillSystem::makeSkillSpellTween(const CastSkillToObject& e)
 	{
 		if (!_context.registry().valid(e.source))
 		{
@@ -73,7 +85,7 @@ namespace game
 
 		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
 		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
+		auto& skillTween = _context.registry().get<CompSkillSpell>(e.skill);
 		auto& transValue = skillTween.trans_value;
 
 		if(skillTween.trans_type == TweenTransform::Motion)
@@ -149,13 +161,11 @@ namespace game
 
 		skillComm.state = SkillState::Launching;
 
-		auto& skillTween = _context.registry().get<CompSkillTween>(e.skill);
-
-		skillTween.tween = makeSkillTween(e);
-
+		auto& skillTween = _context.registry().get<CompSkillSpell>(e.skill);
+		skillTween.tween = makeSkillSpellTween(e);
 		skillTween.tween.onPoint([e, this](auto& t, float x, float y) {
-				if (_context.registry().valid(e.source) == false) {
-					return false;
+				if (_context.registry().valid(e.source) == false || t.isFinished()) {
+					return true;
 				}
 
 				skillApplyToTarget(e);
@@ -192,11 +202,104 @@ namespace game
 		{
 			startProjectile(e.source, e.target, e.skill);
 		}
+		else if (skillComm.type == SkillType::Trap)
+		{
+			startTraps(e.source, e.target, e.skill);
+		}
+		else if (skillComm.type == SkillType::Sprint)
+		{
+			startSprint(e.source, e.target, e.skill);
+		}
 		else
 		{
 			auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
 			_context.dispatcher().trigger(ExecSkillEvent{e.source, e.skill, skillAffect.event});
 		}
+	}
+
+	void SkillSystem::startSprint(entt::entity srcid, entt::entity tarid, entt::entity skill)
+	{
+		auto pSprintComp = _context.registry().try_get<CompSprint>(skill);
+		if (!pSprintComp)
+		{
+			return;
+		}
+
+		auto& sprintComp = *pSprintComp;
+		assert(sprintComp.speed != 0.0f);
+
+		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
+		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
+
+		auto& srcPos = compSrcTrans.position;
+		auto dstPos = srcPos + SafeNormal(compDstTrans.position - srcPos) * sprintComp.dis;
+		auto during = (int)(1000 * glm::distance(dstPos, srcPos) / sprintComp.speed);
+
+		sprintComp.running = true;
+		sprintComp.tween = tweeny::from(srcPos.x, srcPos.y)
+								.to(dstPos.x, dstPos.y)
+								.via(sprintComp.tween_mode)
+								.during(during).onStep(
+									[this, srcid, skill](auto& t, float x, float y) {
+
+										auto pSrcSprint = _context.registry().try_get<CompSprint>(skill);
+										auto pSrcTrans = _context.registry().try_get<CompTransform>(srcid);
+										auto pSrcComm = _context.registry().try_get<CompComm>(srcid);
+										if (!pSrcSprint || !pSrcTrans || !pSrcComm) 
+										{
+											spdlog::error("srcid ({}) transform or comm component not exist.", (uint64_t)srcid);
+											return true;
+										}
+
+										if (t.isFinished()) {
+											pSrcSprint->running = false;
+											return true;
+										}
+
+										auto grid = _context.currentScene().getGridFromPos(Vec2{x, y});
+										if (_context.currentScene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision) 
+										{
+											pSrcSprint->running = false;
+											spdlog::error("next grid({}, {}) is collision.", grid.x, grid.y);
+											return true;
+										}
+
+										pSrcTrans->position = Vec2{x, y};
+
+										auto sprintComp = _context.registry().get<CompSprint>(skill);
+										auto it = sprintComp.passed_grids.find(grid);
+										if (it == sprintComp.passed_grids.end())
+										{
+											auto objects = _context.currentScene().getObjectsInGrid(grid);
+											for (auto& obj : objects)
+											{
+												auto pObjComm = _context.registry().try_get<CompComm>(obj);
+												if (pObjComm && pObjComm->type == ObjectType::Npc && pObjComm->side != pSrcComm->side)
+												{
+													_context.dispatcher().trigger(RoleOnAttack{ srcid, obj, skill });
+												}
+											}
+
+											sprintComp.passed_grids.insert(grid);
+										}
+
+										return false;
+									}
+								);
+	}
+
+	void SkillSystem::startTraps(entt::entity srcid, entt::entity tarid, entt::entity skill)
+	{
+		auto pTrapsComp = _context.registry().try_get<CompTraps>(skill);
+		if (!pTrapsComp)
+		{
+			return;
+		}
+
+		auto& trapsComp = *pTrapsComp;
+		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
+		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
+
 	}
 
 	void SkillSystem::startProjectile(entt::entity srcid, entt::entity tarid, entt::entity skill)
@@ -229,7 +332,9 @@ namespace game
 		compTrans.rotation = {0, 0};
 		compTrans.scale = { 1, 1 };
 
-		CompShoot compShoot;
+		_context.registry().emplace<CompShoot>(object);
+
+		auto& compShoot = _context.registry().get<CompShoot>(object);
 		compShoot.tween = tweeny::from(source.x, source.y)
 			.to(target.x, target.y)
 			.via(tweentype)
@@ -240,6 +345,10 @@ namespace game
 
 		// 生效，等200ms再销毁，立刻摧毁显得效果僵硬
 		compShoot.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
+			if (t.isFinished()) {
+				return true;
+			}
+
 			ProjectileHitPos e;
 			e.source = srcid;
 			e.skill = skill;
@@ -262,7 +371,6 @@ namespace game
 			compTrans.position = { x, y };
 			return false;
 		});
-		_context.registry().emplace<CompShoot>(object, compShoot);
 	}
 
 	void SkillSystem::onProjectileHitPos(const ProjectileHitPos& e)
@@ -317,8 +425,8 @@ namespace game
 		auto& targetNameComp = _context.registry().get<CompNameId>(e.target);
 		auto& skillNameComp = _context.registry().get<CompNameId>(e.skill);
 
-		spdlog::info("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
-			(uint32_t)targetNameComp.id, targetNameComp.cfg_id, targetNameComp.name, skillNameComp.cfg_id, skillNameComp.name);
+		//spdlog::info("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
+		//	(uint32_t)targetNameComp.id, targetNameComp.cfg_id, targetNameComp.name, skillNameComp.cfg_id, skillNameComp.name);
 
 		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
 		auto& dstTrans = _context.registry().get<CompTransform>(e.target);
@@ -361,16 +469,4 @@ namespace game
 			});
 	}
 
-	void SkillSystem::onRoleUnderAttackHurt(const RoleOnAttack& e)
-	{
-		if (!_context.registry().valid(e.target))
-		{
-			return;
-		}
-
-		auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-	
-
-		// "hp-100"
-	}
 }

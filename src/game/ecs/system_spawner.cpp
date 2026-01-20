@@ -88,8 +88,8 @@ namespace game
                 continue;
             }
 
-            auto walktypeOpt = _context.currentScene().mapInfo().getTileProperty<int>(dstGrid.x, dstGrid.y, "walktype");
-            if (walktypeOpt && walktypeOpt.value() != (int)tilemap::WalkType::Collision)
+            auto walktypeOpt = _context.currentScene().getGridWalkType(dstGrid);
+            if (walktypeOpt != (int)tilemap::WalkType::Collision)
             {
                 optSpawnPos = dest;
                 break;
@@ -114,7 +114,6 @@ namespace game
                 }
 
                 _context.registry().emplace<CompSpawnMe>(npc, CompSpawnMe{spawner});
-
             }
         }
     }

@@ -1,0 +1,35 @@
+{
+  "cfgid": "skill_sprint",
+  "type": "sprint",
+  "name": "text_skill_sprint",
+  "desc": "text_skill_sprint_desc",
+
+  "distance": 300,
+  "cd_ticks": 1000,
+  "sound": "audio/battle_of_tiles/slime.wav",
+
+  "affect": {
+    "prev_ticks": 200,
+    "post_ticks": 200,
+
+    "func": "hp-",
+    "target": "role",
+    "range": 0,
+
+    "event": ""
+  },
+
+  "tween": {
+    "trans_type": "scale",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "sprint": {
+    "dis": 300,
+    "speed": 2000,
+    "particle": "",
+    "tween_mode": "cubicIn"
+  }
+}

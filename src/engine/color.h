@@ -119,6 +119,8 @@ public:
 
     std::string toHexString() const;
     void fromHexString(const std::string& str);
+
+    static Color parseHexString(const std::string& str);
 };
 
 }

@@ -336,6 +336,13 @@ void Color::fromHSV(const HSVColor& hsv)
     b = static_cast<uint8_t>(std::clamp(bf * 255.0f, 0.0f, 255.0f));
 }
 
+Color Color::parseHexString(const std::string& str)
+{
+    Color c;
+    c.fromHexString(str);
+    return c;
+}
+
 void Color::fromHexString(const std::string& str)
 {
     if (str.empty() || str[0] != '#' || str.length() < 7) {

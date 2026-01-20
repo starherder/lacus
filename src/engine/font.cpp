@@ -76,7 +76,7 @@ namespace engine {
 
         auto& io = ImGui::GetIO();
         auto imFonts = ImGui::GetIO().Fonts;
-        auto imfont = imFonts->AddFontFromFileTTF(path.string().c_str(), size, nullptr, imFonts->GetGlyphRangesChineseFull());
+        auto imfont = imFonts->AddFontFromFileTTF(path.string().c_str(), (float)size, nullptr, imFonts->GetGlyphRangesChineseFull());
         if (!imfont)
         {
             spdlog::error("load font {} failed. use default.", path.string());

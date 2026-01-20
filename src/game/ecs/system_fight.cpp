@@ -67,7 +67,7 @@ namespace game
         // TODO: ¼ÆËã¹«Ê½ £¡£¡£¡£¡
 
         fight.hpm = base.cst * 10; // hp max
-        fight.hpr = 0.1; // hp increase ratio
+        fight.hpr = 0.1f; // hp increase ratio
         if (e.reset_hp) fight.hp = fight.hpm;
 
         fight.atk = base.cst / 3 + base.str; 

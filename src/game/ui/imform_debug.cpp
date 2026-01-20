@@ -270,20 +270,21 @@ void ImFormDebug::roleExecSkill()
         auto& compName = _context->registry().get<CompNameId>(skill_id);
         auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);
 
-        if (compSkill.type == SkillType::Combat || compSkill.type == SkillType::Projectile)
+        if (compSkill.type != SkillType::Invalid)
         {
             // 需要目标，寻找目标
             auto dis = compSkill.distance;
             auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
-            for (auto& [dis, target] : objects) {
+            for (auto& [dis, target] : objects) 
+            {
                 if (target == _selectEntity) continue;
 
                 auto pdead = _context->registry().try_get<CompDead>(target);
                 if (pdead) continue;
 
                 auto pCompComm = _context->registry().try_get<CompComm>(target);
-                if (pCompComm && pCompComm->type == ObjectType::Npc) {
-
+                if (pCompComm && pCompComm->type == ObjectType::Npc) 
+                {
                     _context->dispatcher().trigger(CastSkillToObject{_selectEntity, target, skill_id });
                     return;
                 }
@@ -293,7 +294,7 @@ void ImFormDebug::roleExecSkill()
         }
         else
         {
-            spdlog::info("skill ({}) need NO enmey.", compName.cfg_id);
+            spdlog::info("skill ({}) ha NO enmey.", compName.cfg_id);
 
             _context->dispatcher().trigger(CastSkillToObject{ _selectEntity, entt::null, skill_id });
         }

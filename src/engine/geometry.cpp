@@ -92,6 +92,39 @@ bool Rect::operator!=(const Rect& other) const {
 }
 
 
+std::vector<Vec2i> Geometry::bresenhamLine(const Vec2i src, const Vec2i& dst)
+{
+    std::vector<Vec2i> path;
+
+    int dx = std::abs(dst.x - src.x);
+    int dy = std::abs(dst.y - src.y);
+    int sx = (src.x < dst.x) ? 1 : -1; // X方向步进符号
+    int sy = (src.y < dst.y) ? 1 : -1; // Y方向步进符号
+    int err = dx - dy; // 决策参数p，初始化为dx-dy
+    
+    Vec2i pt = src;
+
+    while (true) 
+    {
+        path.push_back(pt); // 记录当前格子
+
+        if (pt == dst) break; // 到达终点
+        
+        int e2 = 2 * err;
+        if (e2 > -dy) { // 相当于p > 0，但符号处理不同
+            err -= dy;
+            pt.x += sx;
+        }
+        if (e2 < dx) {  // 相当于p < 0
+            err += dx;
+            pt.y += sy;
+        }
+    }
+
+    return path;
+}
+
+
 
 
 

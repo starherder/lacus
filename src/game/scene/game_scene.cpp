@@ -302,6 +302,20 @@ const GameScene::EntitySet& GameScene::getObjectsInGrid(const Vec2i& grid)
     return _gridObjects[grid]; 
 }
 
+int GameScene::getGridWalkType(const Vec2i& grid)
+{
+    if (grid.x < 0 || grid.x > _tileMap.mapSize().x 
+        || grid.y<0 || grid.y > _tileMap.mapSize().y)
+    {
+        return (int)tilemap::WalkType::Collision;
+    }
+
+    auto optType = mapInfo().getTileProperty<int>(grid.x, grid.y, "walktype");
+    if (!optType) return (int)tilemap::WalkType::Collision;
+
+    return optType.value();
+}
+
 const std::multimap<float, Vec2i>& GameScene::getGridsInCircle(const Vec2& center, float radius)
 {
     static std::multimap<float, Vec2i> grids;

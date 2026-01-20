@@ -138,7 +138,7 @@ void SamplePluginEntt::initEntities()
 
 void SamplePluginEntt::onEntityDrawSystem()
 {
-    auto& imPainter = application()->im_painter();
+    auto& painter = application()->painter();
 
     auto views = _registry.view<ComTransform, ComDisplay>();
     for (auto& ent : views)
@@ -146,7 +146,7 @@ void SamplePluginEntt::onEntityDrawSystem()
         auto& trans = views.get<ComTransform>(ent);
         auto& disp = views.get<ComDisplay>(ent);
 
-        imPainter.drawRect(disp.color, { trans.pos-_camera->getPos(), trans.size}, 10.0f);
+        painter.drawRect(disp.color, { trans.pos-_camera->getPos(), trans.size}, 10.0f);
     }
 }
 

@@ -14,18 +14,10 @@ namespace game {
     using namespace engine;
 
 
-    struct Vec2Compare{
-        bool operator () (const Vec2i& lval, const Vec2i rval) const {
-            if (lval.x == rval.x) return lval.y < rval.y;
-            return lval.x < rval.x;
-        }
-    };
-
-
     class GameScene : public engine::Scene, public signals::SlotHandler
     {
         using EntitySet = std::set<entt::entity>;
-        using GridEntityMap = std::map<Vec2i, EntitySet, Vec2Compare>;
+        using GridEntityMap = std::map<Vec2i, EntitySet, Geometry::Vec2iComparator>;
         using NameEntityMap = std::unordered_map<std::string, entt::entity>;
         using MapObject = tilemap::MapObject;
 
@@ -72,6 +64,8 @@ namespace game {
         void removeObjectFromGrid(entt::entity ent, const Vec2i& grid);
         const EntitySet& getObjectsInGrid(const Vec2i& grid);
 
+        int getGridWalkType(const Vec2i& grid);
+
         const std::multimap<float, Vec2i>& getGridsInCircle(const Vec2& center, float radius);
         const std::multimap<float, Vec2i>& getGridsInRing(const Vec2& center, float min_radius, float max_radius);
 
@@ -96,6 +90,7 @@ namespace game {
 
         void onRoleCrossGrid(const RoleCrossGrid& e);
         void onRoleDestroyed(const RoleDestroyed& e);
+
     private:
         tilemap::TileMap _tileMap;
 

@@ -81,9 +81,6 @@ private:
 
 private:
     std::unique_ptr<Renderer> _renderer = nullptr;
-    //std::unique_ptr<Painter> _painter = nullptr;
-    //std::unique_ptr<GfxPainter> _gfx_painter = nullptr;
-    //std::unique_ptr<ImPainter> _im_painter = nullptr;
 
     std::unique_ptr<IPainter> _ipainter;
 

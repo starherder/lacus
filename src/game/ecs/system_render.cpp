@@ -99,9 +99,10 @@ void RenderSystem::drawObjects()
         {
             auto total = _context.gameConfig().dying_ticks;
             auto half = total / 2.0f;
-            if (pdead->ticks > half && pdead->ticks < total)
+            if (pdead->ticks > half)
             {
                 alpha = (int)(256 * (1.0f - ((pdead->ticks - half) / half)));
+                alpha = std::clamp(alpha, 0, 255);
             }
         }
 

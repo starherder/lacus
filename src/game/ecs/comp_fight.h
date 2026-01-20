@@ -12,7 +12,10 @@ namespace game
 		Combat, // 近战(刀枪)
 		Projectile, // 远程抛射(弓箭、炮铳、火球术)
 		Remote, // 远程魔法（闪电,加Buff等）
+		Trap, // 陷阱（地刺、地火、陷阱等有生存周期，会造成伤害）
+		Sprint, // 冲刺，对一条线上敌人造成伤害
 		Other, // 其他（天黑、降雨等）
+		Invalid,
 	};
 
 	enum class SkillTarget 
@@ -20,6 +23,9 @@ namespace game
 		Role,
 		Pos,
 		Range,
+		Dir,
+		CrossMe,
+		AroundMe,
 		Other,
 	};
 
@@ -31,7 +37,7 @@ namespace game
 		Other,
 	};
 
-	struct CompSkillTween
+	struct CompSkillSpell
 	{
 		std::string prev_tween = "linear";
 		std::string post_tween = "linear";
@@ -70,6 +76,33 @@ namespace game
 		std::string tween;
 	};
 
+	struct CompTraps
+	{
+		SkillTarget target_type;
+		int range = 1;
+		int life = 1000;
+
+		std::string fade = "linear";
+		std::string texture;
+		Color color = Color::Red;
+
+		tweeny::tween<int> tween;
+	};
+
+	struct CompSprint
+	{
+		bool running = false;
+
+		float dis = 100.0f;
+		float speed = 200.0f;
+
+		std::string particle;
+		std::string tween_mode = "linear";
+
+		std::set<Vec2i, Geometry::Vec2iComparator> passed_grids;
+		tweeny::tween<float, float> tween;
+	};
+
 	struct CompSkillAffect
 	{
 		// 前摇时间
@@ -102,9 +135,6 @@ namespace game
 		Vec2 pos;
 	};
 	
-	struct CompTargetAll 
-	{
-	};
 
 	enum class SkillState {
 		Launching,
@@ -219,6 +249,8 @@ namespace game
 	{
 		if (type == "combat") return SkillType::Combat;
 		if (type == "projectile") return SkillType::Projectile;
+		if (type == "trap") return SkillType::Trap;
+		if (type == "sprint") return SkillType::Sprint;
 		if (type == "remote") return SkillType::Remote;
 		if (type == "other") return SkillType::Other;
 		spdlog::error("skill type ({}) NOT support", type);
@@ -230,6 +262,9 @@ namespace game
 		if (target == "role")  return SkillTarget::Role;
 		if (target == "pos") return SkillTarget::Pos;
 		if (target == "range") return SkillTarget::Range;
+		if (target == "dir") return SkillTarget::Dir;
+		if (target == "cross") return SkillTarget::CrossMe;
+		if (target == "around") return SkillTarget::AroundMe;
 		if (target == "other") return SkillTarget::Other;
 		spdlog::error("skill target ({}) NOT support", target);
 		return SkillTarget::Other;

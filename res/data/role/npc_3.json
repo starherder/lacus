@@ -1,0 +1,58 @@
+{
+  "id": "npc_3",
+  "name": "text_npc_name_3",
+  "type": "npc",
+  "desc": "text_npc_desc_3",
+
+  "motion": {
+    "tween": "linear",
+    "speed": 150
+  },
+
+  "under_attack": {
+    "during": 100,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "patrol": {
+    "raduis": 100
+  },
+
+  "selection": {
+    "border_color": "#FFFF00FF",
+    "border_size": 3.0
+  },
+
+  "behavior": {
+    "bevtree": "npc_patrol"
+  },
+
+  "display": {
+    "size": "64,64",
+    "groud_color": "#FFAAAAFF",
+    "border_color": "#555555FF",
+    "font_color": "#FF5555FF",
+    "# texture": "textures/icon/sry1.png",
+    "# tex_rect": "0,0,0.25,0.5",
+    "font_file": "fonts/msyh.ttf",
+    "font_size": 18
+  },
+
+  "base_prop": {
+    "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
+    "roll": 20,
+    "str": 30,
+    "cst": 3000,
+    "dex": 30,
+    "met": 30
+  },
+
+  "skills": [
+    "skill_sprint"
+  ],
+
+  "buffs": [],
+
+  "items": []
+}

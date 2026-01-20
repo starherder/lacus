@@ -529,12 +529,12 @@ namespace game
 		{
 			auto& tweenJs = json["tween"];
 
-			CompSkillTween compTween;
+			CompSkillSpell compTween;
 			compTween.trans_type = getTransType(tweenJs.value("trans_type", ""));
 			compTween.trans_value = tweenJs.value("trans_value", 10.0f);
 			compTween.prev_tween = tweenJs.value("prev_tween", "");
 			compTween.post_tween = tweenJs.value("post_tween", "");
-			_context->registry().emplace<CompSkillTween>(skill, compTween);
+			_context->registry().emplace<CompSkillSpell>(skill, compTween);
 		}
 
 		if (json.contains("projectile"))
@@ -548,6 +548,34 @@ namespace game
 			compParticle.particle = projectJs.value("particle", "");
 
 			_context->registry().emplace<CompProjectileCfg>(skill, compParticle);
+		}
+
+		if (json.contains("sprint"))
+		{
+			auto& sprintJs = json["sprint"];
+			
+			CompSprint sprint;
+			sprint.dis = sprintJs.value("dis", 100.0f);
+			sprint.speed = sprintJs.value("speed", 100.0f);
+			sprint.particle = sprintJs.value("particle", "");
+			sprint.tween_mode = sprintJs.value("tween_mode", "linear");
+
+			_context->registry().emplace<CompSprint>(skill, sprint);
+		}
+
+		if (json.contains("traps"))
+		{
+			auto& trapsJs = json["traps"];
+
+			CompTraps trap;
+			trap.target_type = getSkillTarget(trapsJs.value("type", ""));
+			trap.range = trapsJs.value("range", 1);
+			trap.life = trapsJs.value("life", 1000);
+			trap.fade = trapsJs.value("fade", "linear");
+			trap.texture = trapsJs.value("texture", "");
+			trap.color = Color::parseHexString(trapsJs.value("color", "#FF0000FF"));
+
+			_context->registry().emplace<CompTraps>(skill, trap);
 		}
 
 		//spdlog::info("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
