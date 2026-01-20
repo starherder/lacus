@@ -9,64 +9,51 @@
 
 namespace engine
 {
-	GFXPainter::GFXPainter(Application& app) : _application(app)
+	GfxPainter::GfxPainter(Application& app) : IPainter(app)
 	{
 	}
 
-	GFXPainter::~GFXPainter()
+	GfxPainter::~GfxPainter()
 	{
 	}
 
-	void GFXPainter::setClearColor(const Color& color)
+	void GfxPainter::init()
+	{
+	}
+
+	void GfxPainter::quit()
+	{
+	}
+
+	void GfxPainter::preFrame()
+	{
+	}
+
+	void GfxPainter::postFrame()
+	{
+	}
+
+	void GfxPainter::setClearColor(const Color& color)
 	{
 		_application.renderer().setDrawColor(color);
 	}
 
-	void GFXPainter::drawPixel(const Color& color, Vec2 pos)
+	void GfxPainter::pushClipRect(const Rect& rect)
 	{
-		auto sdlRenderer = _application.renderer().getSdlRenderer();
-		pixelRGBA(sdlRenderer, pos.x, pos.y, color.r, color.g, color.b, color.a);
+		_clipStack.push(rect);
+
+		_application.renderer().setClipRect(rect);
 	}
 
-	void GFXPainter::drawArc(const Color& color, const Vec2& pos, float radius, int start, int end)
+	void GfxPainter::popClipRect()
 	{
-		auto sdlRenderer = _application.renderer().getSdlRenderer();
-		arcRGBA(sdlRenderer, pos.x, pos.y, radius, start, end, color.r, color.g, color.b, color.a);
+		auto rect = _clipStack.top();
+		_application.renderer().setClipRect(rect);
+
+		_clipStack.pop();
 	}
 
-	void GFXPainter::drawPie(const Color& color, const Vec2& center, float radius, int startAngle, int endAngle)
-	{
-		auto sdlRenderer = _application.renderer().getSdlRenderer();
-		pieRGBA(sdlRenderer, center.x, center.y, radius, startAngle, endAngle, color.r, color.g, color.b, color.a);
-	}
-
-	void GFXPainter::fillPie(const Color& color, const Vec2& center, float radius, int startAngle, int endAngle)
-	{
-		auto sdlRenderer = _application.renderer().getSdlRenderer();
-		filledPieRGBA(sdlRenderer, center.x, center.y, radius, startAngle, endAngle, color.r, color.g, color.b, color.a);
-	}
-
-	// radius: horizonal & vertical radius
-	void GFXPainter::drawEllipse(const Color& color, const Vec2& center, const Vec2& radius)
-	{
-		auto sdlRenderer = _application.renderer().getSdlRenderer();
-		if (_antiAliased) 
-		{
-			aaellipseRGBA(sdlRenderer, center.x, center.y, radius.x, radius.y, color.r, color.g, color.b, color.a);
-		}
-		else
-		{
-			ellipseRGBA(sdlRenderer, center.x, center.y, radius.x, radius.y, color.r, color.g, color.b, color.a);
-		}
-	}
-
-	void GFXPainter::fillEllipse(const Color& color, const Vec2& center, const Vec2& radius)
-	{
-		auto sdlRenderer = _application.renderer().getSdlRenderer();	
-		filledEllipseRGBA(sdlRenderer, center.x, center.y, radius.x, radius.y, color.r, color.g, color.b, color.a);
-	}
-
-	void GFXPainter::fillRect(const Color& color, Rect rect, float round)
+	void GfxPainter::fillRect(const Color& color, const Rect& rect, float round)
 	{
 		auto cint = color.toUint32();
 
@@ -85,7 +72,7 @@ namespace engine
 		}
 	}
 
-	void GFXPainter::drawRect(const Color& color, Rect rect, float round)
+	void GfxPainter::drawRect(const Color& color, const Rect& rect, float round, float thickness)
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 
@@ -102,7 +89,7 @@ namespace engine
 		}
 	}
 
-	void GFXPainter::drawCircle(const Color& color, const Vec2& center, float radius)
+	void GfxPainter::drawCircle(const Color& color, const Vec2& center, float radius, int segment, float thickness)
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 
@@ -116,13 +103,13 @@ namespace engine
 		}
 	}
 
-	void GFXPainter::fillCircle(const Color& color, const Vec2& center, float radius)
+	void GfxPainter::fillCircle(const Color& color, const Vec2& center, float radius, int segment)
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 		filledCircleRGBA(sdlRenderer, center.x, center.y, radius, color.r, color.g, color.b, color.a);
 	}
 
-	void GFXPainter::drawTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3)
+	void GfxPainter::drawTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3, float thickness)
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 
@@ -136,13 +123,13 @@ namespace engine
 		}
 	}
 
-	void GFXPainter::fillTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3)
+	void GfxPainter::fillTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3)
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 		filledTrigonRGBA(sdlRenderer, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, color.r, color.g, color.b, color.a);
 	}
 
-	void GFXPainter::drawLine(const Color& color, Vec2 beginPos, Vec2 endPos, float lineWidth)
+	void GfxPainter::drawLine(const Color& color, const Vec2& beginPos, const Vec2& endPos, float lineWidth)
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 
@@ -163,36 +150,41 @@ namespace engine
 		}
 	}
 
-	void GFXPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst)
+	void GfxPainter::drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness)
+	{
+		// TODO: 
+	}
+
+	void GfxPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)
 	{
 		fail_return(pTexture);
 
 		_application.renderer().drawTexture(pTexture, src, dst);
-
 	}
 
-	void GFXPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color)
+	void GfxPainter::drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round, const Color& color)
+	{
+		fail_return(pTexture);
+
+		auto sz = pTexture->size();
+		Rect src = { uv.x * sz.x, uv.y * sz.y, uv.w * sz.x, uv.h * sz.y };
+		_application.renderer().drawTexture(pTexture, src, dst);
+	}
+
+	void GfxPainter::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
+								const int* indices, int num_indices, const Vec2& pos, float scale)
+	{
+		fail_return(texture);
+
+		_application.renderer().drawGeometry(texture, vertices, num_vertices, indices, num_indices);
+	}
+
+	void GfxPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_line)
 	{
 		_application.renderer().drawText(text, font, pos, color);
 	}
 
-	void GFXPainter::setClipRect(const Rect& rect)
-	{
-		if (rect == _clipRect)
-		{
-			return;
-		}
-
-		_clipRect = rect;
-		_application.renderer().setClipRect(rect);
-	}
-
-	Rect GFXPainter::getClipRect()
-	{
-		return _clipRect;
-	}
-
-	void GFXPainter::setAntiAlaised(bool anti_aliased)
+	void GfxPainter::setAntiAlaised(bool anti_aliased)
 	{
 		_antiAliased = anti_aliased;
 	}

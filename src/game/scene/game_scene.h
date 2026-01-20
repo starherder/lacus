@@ -65,7 +65,6 @@ namespace game {
         entt::entity createActor(const std::string& cfgid, const Vec2& pos);
 
         void destroyActor(entt::entity id);
-        void destroyAllActor();
 
         entt::entity selectObjectAtPos(const Vec2& pos);
 
@@ -96,7 +95,7 @@ namespace game {
         void unloadObjects();
 
         void onRoleCrossGrid(const RoleCrossGrid& e);
-
+        void onRoleDestroyed(const RoleDestroyed& e);
     private:
         tilemap::TileMap _tileMap;
 

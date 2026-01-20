@@ -45,11 +45,7 @@ public:
 
     Renderer& renderer() { return *_renderer; }
 
-    Painter& painter() { return *_painter; }
-
-    GFXPainter& gfx_painter() { return *_gfx_painter; }
-
-    ImPainter& im_painter() { return *_im_painter; }
+    IPainter& painter() { return *_ipainter; }
 
     Window& window() { return *_window; }
 
@@ -85,9 +81,11 @@ private:
 
 private:
     std::unique_ptr<Renderer> _renderer = nullptr;
-    std::unique_ptr<Painter> _painter = nullptr;
-    std::unique_ptr<GFXPainter> _gfx_painter = nullptr;
-    std::unique_ptr<ImPainter> _im_painter = nullptr;
+    //std::unique_ptr<Painter> _painter = nullptr;
+    //std::unique_ptr<GfxPainter> _gfx_painter = nullptr;
+    //std::unique_ptr<ImPainter> _im_painter = nullptr;
+
+    std::unique_ptr<IPainter> _ipainter;
 
     std::unique_ptr<Window> _window = nullptr;
 

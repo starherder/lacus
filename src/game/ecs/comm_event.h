@@ -10,6 +10,10 @@ namespace game
 		entt::entity actor;
 	};
 
+	struct RoleDestroyed {
+		entt::entity actor;
+	};
+
 	struct RolePropAlter {
 		entt::entity actor;
 		bool reset_hp = false;

@@ -18,6 +18,9 @@ GameScene::GameScene(GameContext& context)
     _camera.setSize(Vec2{_context.window().getSize()});
 
     _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
+    _context.dispatcher().sink<RoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
+
+    
 }
 
 GameScene::~GameScene()
@@ -258,12 +261,21 @@ void GameScene::destroyActor(entt::entity id)
         spdlog::warn("entity {} not exist.", (int32_t)id);
         return;
     }
-    _registry.destroy(id);
+
+    //_registry.destroy(id);
+    _registry.emplace_or_replace<CompDestroy>(id);
 }
 
-void GameScene::destroyAllActor()
+void GameScene::onRoleDestroyed(const RoleDestroyed& e)
 {
-    _registry.clear();
+    auto pTrans = _context.registry().try_get<CompTransform>(e.actor);
+    if(pTrans)
+    {
+        auto grid = getGridFromPos(pTrans->position);
+
+        auto& objset = _gridObjects[grid];
+        objset.erase(e.actor);
+    }
 }
 
 void GameScene::onRoleCrossGrid(const RoleCrossGrid& e)

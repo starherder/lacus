@@ -137,16 +137,13 @@ void Form::draw()
         return;
     }
 
-    auto& renderer = GuiManager::inst().renderer();
-    auto oldClipRect = renderer.getClipRect();
-
-    renderer.setClipRect({_pos, _size});
+    GuiManager().inst().painter().pushClipRect({ _pos, _size });
 
     _rootGroup->draw();
 
     onDraw();
 
-    renderer.setClipRect(oldClipRect);
+    GuiManager().inst().painter().popClipRect();
 }
 
 void Form::show()

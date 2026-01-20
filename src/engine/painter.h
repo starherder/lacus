@@ -2,7 +2,8 @@
 
 #include "engine/wrapper.h"
 #include "utility/i_singleton.h"
-
+#include "i_painter.h"
+#include <stack>
 
 namespace engine
 {
@@ -10,7 +11,7 @@ namespace engine
 	class Texture;
 	class Font;
 
-	class Painter
+	class Painter : public IPainter
 	{
 	public:
 		Painter() = delete;
@@ -20,26 +21,33 @@ namespace engine
 		Painter(Application& app);
 		~Painter();
 
-		void setClearColor(const Color& color);
+		void init() override;
+		void quit() override;
 
-		void fillRect(const Color& color, Rect rect, float round = 0);
-		void drawRect(const Color& color, Rect rect, float round = 0, float lineWidth = 1);
+		void preFrame() override;
+		void postFrame() override;
 
-		void drawCircle(const Color& color, const Vec2& center, float radius, int segments = 12, float thickness = 1.0f);
-		void fillCircle(const Color& color, const Vec2& center, float radius, int segments = 12);
+		void setClearColor(const Color& color) override;
 
-		void drawTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3, float thickness = 1.0f);
-		void fillTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3);
+		void pushClipRect(const Rect& rect) override;
+		void popClipRect() override;
 
-		void drawLine(const Color& color, Vec2 beginPos, Vec2 endPos, float lineWidth = 1);
-		void drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f);
+		void fillRect(const Color& color, const Rect& rect, float round = 0) override;
+		void drawRect(const Color& color, const Rect& rect, float round = 0, float lineWidth = 1) override;
 
-		void drawTexture(Texture* pTexture, const Rect& uv, const Rect& dst);
+		void drawCircle(const Color& color, const Vec2& center, float radius, int segments = 12, float thickness = 1.0f) override;
+		void fillCircle(const Color& color, const Vec2& center, float radius, int segments = 12) override;
 
-		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 });
+		void drawTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3, float thickness = 1.0f) override;
+		void fillTriangle(const Color& color, const Vec2& p1, const Vec2& p2, const Vec2& p3) override;
 
-		void setClipRect(const Rect& rect);
-		Rect getClipRect();
+		void drawLine(const Color& color, const Vec2& beginPos, const Vec2& endPos, float thickness = 1) override;
+		void drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f) override;
+
+		void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
+		void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
+
+		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 }, float wrap_line=0.0f) override;
 
 		bool isAntiAlaised() const { return _antiAliased; }
 		void setAntiAlaised(bool anti_aliased = true);
@@ -62,9 +70,7 @@ namespace engine
 		void drawPath();
 
 	private:
-		Application& _application;
-
-		Rect _clipRect;
+		std::stack<Rect> _clipStack;
 
 		std::vector<Vec2> _vPaths;
 

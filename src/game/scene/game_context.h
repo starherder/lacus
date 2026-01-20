@@ -34,7 +34,7 @@ namespace game {
 
 		Window& window() { return _application.window(); }
 		Renderer& renderer() { return _application.renderer(); }
-		ImPainter& imPainter() { return _application.im_painter(); }
+		IPainter& painter() { return _application.painter(); }
 		AudioPlayer& audioPlayer() { return _application.audioPlayer(); }
 
 		ResourceManager& resourceMgr() { return _application.resourceManager(); }
@@ -63,8 +63,6 @@ namespace game {
 
 		GameCamera& camera();
 		PathFinder& pathFinder() { return _pathFinder; }
-
-		Painter& painter() { return _application.painter(); }
 
 		bool debugMode() { return _debugMode; }
 		void setDebugMode(bool debug) { _debugMode = debug; }

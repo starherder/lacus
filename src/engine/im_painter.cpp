@@ -10,7 +10,12 @@
 
 namespace engine
 {
-	ImPainter::ImPainter(Application& app) : _application(app)
+	static ImColor toImColor(const Color& color)
+	{
+		return ImColor{ color.r, color.g, color.b, color.a };
+	}
+
+	ImPainter::ImPainter(Application& app) : IPainter(app)
 	{
 	}
 
@@ -52,11 +57,6 @@ namespace engine
 	{
 		ImGui::Render();
 		ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), _application.renderer().getSdlRenderer());
-	}
-
-	ImColor ImPainter::toImColor(const Color& color)
-	{
-		return ImColor{color.r, color.g, color.b, color.a};
 	}
 
 	void ImPainter::setClearColor(const Color& color)
@@ -116,12 +116,7 @@ namespace engine
 	void ImPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_width)
 	{
 		assert(font);
-
-#ifdef USE_IMGUI_AS_RENDER_ENGINE		
 		ImGui::GetBackgroundDrawList()->AddText(font->imFont, font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
-#else
-		ImGui::GetBackgroundDrawList()->AddText({ pos.x, pos.y }, toImColor(color), text.c_str());
-#endif
 	}
 
 	void ImPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)

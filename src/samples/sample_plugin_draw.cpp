@@ -158,7 +158,7 @@ namespace samples {
     {
         auto& renderer = application()->renderer();
         auto& painter = application()->painter();
-        auto& gfxPainter = application()->gfx_painter();
+        //auto& gfxPainter = application()->gfx_painter();
 
         renderer.setDrawColor({0, 0, 255, 255});
         renderer.drawRect({ 100, 100, 200, 100 });
@@ -176,8 +176,8 @@ namespace samples {
         painter.drawRect(Color::Blue, { 1700, 160, 200, 100 }, 10);
         painter.drawRect(Color::Green, { 1700, 270, 200, 100 }, 10, 10);
         
-        gfxPainter.drawRect(Color::Pink, {1700, 380, 200, 100 }, 10);
-        gfxPainter.drawRect(Color::Pink, { 1910, 50, 200, 100 }, 10);
+       // gfxPainter.drawRect(Color::Pink, {1700, 380, 200, 100 }, 10);
+        //gfxPainter.drawRect(Color::Pink, { 1910, 50, 200, 100 }, 10);
     }
 
     void SamplePluginDraw::initGeometry()
@@ -232,8 +232,8 @@ namespace samples {
         std::string imagename = "textures/UI/frame.png";
         auto texture = application()->resourceManager().textureManager().get(HashString{ imagename.c_str() });
 
-        auto& imPainter = application()->im_painter();
-        imPainter.drawGeometry(texture, _vertexData.vertices.data(), _vertexData.vertices.size(), 
+        auto& painter = application()->painter();
+        painter.drawGeometry(texture, _vertexData.vertices.data(), _vertexData.vertices.size(),
                                         _vertexData.indices.data(), _vertexData.indices.size());
     }
 
@@ -285,7 +285,7 @@ namespace samples {
             return;
         }
 
-        auto& painter = application()->im_painter();
+        auto& painter = application()->painter();
         //application()->renderer().setClearColor(Color::White);
 
         Vec2 pos = {600, 300};
@@ -313,25 +313,26 @@ namespace samples {
         {
             auto& resourceMgr = application()->resourceManager();
             auto font = resourceMgr.fontManager().get("fonts/msyh.ttf"_hs, 30);
-            auto& imPainter = application()->im_painter();
-            imPainter.drawText("这就是 ImFont 字体，Can you See?", font, pos + Vec2{ 100, -50 }, Color::Pink);
-            imPainter.drawText("Where is the sages of passed? 后不见来者, The sky and earth forever last, 独怆然而涕下。",
+
+            painter.drawText("这就是 ImFont 字体，Can you See?", font, pos + Vec2{ 100, -50 }, Color::Pink);
+            painter.drawText("Where is the sages of passed? 后不见来者, The sky and earth forever last, 独怆然而涕下。",
                                 font, pos + Vec2{ 100, 0 }, Color::DarkCyan, 250.0f);
 
             auto tiger = resourceMgr.textureManager().get("textures/UI/tiger.svg"_hs);
             Rect src = Rect{ Vec2{0.0f, 0.0f }, tiger->size() };
             Rect dst = Rect{ pos + Vec2{0, 700}, tiger->size() / 3.0f };
-            imPainter.drawTexture(tiger, src, dst);
+            painter.drawTexture(tiger, src, dst);
 
             src = Rect{ 83.0f, 163.0f, 74.0f, 74.0f };
             dst = Rect{ pos + Vec2{200, 750}, Vec2{148, 147} };
             auto etc = resourceMgr.textureManager().get("textures/battle_of_tiles/etc.png"_hs);
-            imPainter.drawTexture(etc, src, dst, 20.0f, Color::Green);
+            painter.drawTexture(etc, src, dst, 20.0f, Color::Green);
         }
     }
 
     void SamplePluginDraw::paint()
     {
+#if 0
         auto& painter = application()->painter();
 
         static float timepassed;
@@ -364,10 +365,12 @@ namespace samples {
 
         points = { {1500, 500}, {1550, 600}, {1500, 500}, {1550, 670} };
         painter.drawLines(Color::DarkPink, points.data(), points.size(), true, 1.0f);
+#endif
     }
 
     void SamplePluginDraw::gfx_paint()
     {
+#if 0
         auto& exp = application()->gfx_painter();
 
         static float timepassed;
@@ -415,5 +418,6 @@ namespace samples {
         exp.fillRect(Color::Blue, { pos + Vec2{ 50, 360 }, Vec2{100, 50} }, 10);
 
         exp.fillTriangle(Color::White, pos + Vec2{ 50, 430 }, pos + Vec2{ 100, 430 }, pos + Vec2{ 70, 480 });
+#endif
     }
 }

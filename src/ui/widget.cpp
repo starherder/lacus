@@ -130,60 +130,26 @@ void Widget::draw()
 {
     auto relPos = getAbsPos();
     auto& state = status();
-    auto& renderer = GuiManager::inst().renderer();
     auto& painter = GuiManager::inst().painter();
 
     Rect bksize = {relPos.x, relPos.y, _size.x, _size.y};
 
     if(state.texture)
     {
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
-        auto& imPainter = GuiManager::inst().imPainter();
-        imPainter.drawTexture(state.texture, state.tex_rect, bksize, _borderRound);
-
-#elif defined USE_GFX_PAINTER
-        auto& gfxPainter = GuiManager::inst().gfxPainter();
-        gfxPainter.drawTexture(state.texture, state.tex_rect, bksize);
-
-#else
-        if (state.ground_color.isValid()) 
-        {
-            renderer.setDrawColor(state.ground_color);
-        }
-        renderer.drawTexture(state.texture, state.tex_rect, bksize);
-#endif
+        painter.drawTexture(state.texture, state.tex_rect, bksize, _borderRound);
     }
     else
     {
         if(state.ground_color.isValid())
         {
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
-            auto& imPainter = GuiManager::inst().imPainter();
-            imPainter.fillRect(state.ground_color, bksize, _borderRound);
-
-#elif defined USE_GFX_PAINTER
-            auto& gfxPainter = GuiManager::inst().gfxPainter();
-            gfxPainter.fillRect(state.ground_color, bksize, _borderRound);
-
-#else
             painter.fillRect(state.ground_color, bksize, _borderRound);
-#endif
         }
     }
             
     if(state.border_color.isValid())
     {
-#ifdef  USE_IMGUI_AS_RENDER_ENGINE
-        auto& imPainter = GuiManager::inst().imPainter();
-        imPainter.drawRect(state.border_color, bksize, _borderRound);
-
-#elif defined USE_GFX_PAINTER
-        auto& gfxPainter = GuiManager::inst().gfxPainter();
-        gfxPainter.drawRect(state.border_color, bksize, _borderRound);
-
-#else
-        painter.drawRect(state.border_color, bksize, _borderRound, _borderSize);
-#endif
+        auto& painter = GuiManager::inst().painter();
+        painter.drawRect(state.border_color, bksize, _borderRound);
     }
 }
 

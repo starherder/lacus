@@ -186,7 +186,7 @@ namespace game
     {
         showLoadingForm(true);
 
-        auto mapFile = _gameContext.resPath() / "scenes/test/level_test/test_map.tmj";
+        auto mapFile = _gameContext.resPath() / _gameConfig.scenes.first_scene;
         auto res = _scene->load(mapFile);
         if (!res) {
             spdlog::error("load level test: {} failed.", mapFile.string());

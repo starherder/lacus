@@ -23,8 +23,8 @@ namespace engine {
 #ifdef USE_IMGUI_AS_RENDER_ENGINE
         if (imFont)
         {
-            auto imFonts = ImGui::GetIO().Fonts;
-            imFonts->RemoveFont(imFont);
+            //auto imFonts = ImGui::GetIO().Fonts;
+            //imFonts->RemoveFont(imFont);
         }
 #endif
      }

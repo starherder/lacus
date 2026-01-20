@@ -30,17 +30,9 @@ namespace ui {
             return;
         }
 
-        auto realPos = getAbsPos();
-        auto& renderer = GuiManager::inst().renderer();
-        auto& imPainter = GuiManager::inst().imPainter();
-
         if(clipChildren())
         {
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
-            GuiManager::inst().imPainter().pushClipRect(getClipRect());
-#else
-            renderer.setClipRect(getClipRect());
-#endif
+            GuiManager::inst().painter().pushClipRect(getClipRect());
         }
 
         Widget::draw();
@@ -53,11 +45,7 @@ namespace ui {
         auto parentGroup = dynamic_cast<Group*>(parent());
         if (parentGroup && parentGroup->clipChildren())
         {
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
-            GuiManager::inst().imPainter().popClipRect();
-#else
-            renderer.setClipRect(parentGroup->getClipRect());
-#endif
+            GuiManager::inst().painter().popClipRect();
         }
     } 
     
@@ -98,7 +86,6 @@ namespace ui {
                     curindex++;
                 }
             }
-
         }
 
         if (addOK) 

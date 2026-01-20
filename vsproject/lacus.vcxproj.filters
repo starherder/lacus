@@ -657,6 +657,9 @@
     <ClInclude Include="..\src\game\ui\form_config.h">
       <Filter>game\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\engine\i_painter.h">
+      <Filter>engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md">

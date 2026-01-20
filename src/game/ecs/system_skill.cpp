@@ -131,7 +131,7 @@ namespace game
 
 	void SkillSystem::onCastSkillToObject(const CastSkillToObject& e)
 	{
-		spdlog::info("CastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
+		//spdlog::info("CastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
 
 		if (_context.registry().valid(e.skill) == false)
 		{

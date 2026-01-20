@@ -51,6 +51,16 @@ namespace game
         CampSide side;
     };
 
+    struct CompLevelUp {
+        int level = 1;
+        int exp = 0;
+    };
+
+    struct CompKillAward {
+        int exp = 0;
+        int money = 0;
+    };
+
     enum class CoordMode {
         WorldSpace,
         ScreenSpace,

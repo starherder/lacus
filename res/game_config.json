@@ -4,6 +4,13 @@
 		"tween_swim_mode": "linear"
 	},
 
+	"display" : {
+		"chess_corner" : 5.0,
+		"chess_dead_ground_color":"#808080FF",
+		"chess_dead_border_color": "#505050FF",
+		"chess_dead_font_color": "#000000FF"
+	},
+
 	"float_text": {
 		"font_name": "fonts/msyh.ttf",
 		"font_size": 15,
@@ -11,6 +18,10 @@
 		"color_dec_hp": "#FF0000FF",
 		"tween_mode": "cubicIn",
 		"float_ticks": 1000
+	},
+
+	"scene": {
+		"first_scene": "scenes/demos/one.tmj"
 	},
 
 	"dying_ticks" :  3000

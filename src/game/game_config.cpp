@@ -18,6 +18,21 @@ namespace game
 		auto& json = _jsonConfig.getJson();
 		dying_ticks = json.value("dying_ticks", 1000);
 
+		if (json.contains("scene"))
+		{
+			auto& sceneJs = json["scene"];
+			scenes.first_scene = sceneJs.value("first_scene", "");
+		}
+
+		if (json.contains("display"))
+		{
+			auto& displayJs = json["display"];
+			display.chess_corner = displayJs.value("chess_corner", 5.0f);
+			display.chess_dead_ground_color.fromHexString(displayJs.value("chess_dead_ground_color", "#808080FF"));
+			display.chess_dead_border_color.fromHexString(displayJs.value("chess_dead_border_color", "#505050FF"));
+			display.chess_dead_font_color.fromHexString(displayJs.value("chess_dead_font_color", "#000000FF"));
+		}
+
 		if(json.contains("motion"))
 		{
 			auto& motionJs = json["motion"];

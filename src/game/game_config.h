@@ -23,7 +23,18 @@ namespace game
 			int float_ticks = 1000;
 		} float_text;
 
+		struct Display {
+			float chess_corner = 5.0f;
+			Color chess_dead_ground_color = Color::Light;
+			Color chess_dead_border_color = Color::Gray;
+			Color chess_dead_font_color = Color::Dark;
+		}display;
+
 		int dying_ticks = 1000;
+
+		struct Scenes {
+			std::string first_scene;
+		}scenes;
 
 		bool load(const fs::path& filepath);
 		

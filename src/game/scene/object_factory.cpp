@@ -289,6 +289,8 @@ namespace game
 		if(role == entt::null) {
 			return role;
 		}
+
+		_context->registry().emplace<CompLevelUp>(role, CompLevelUp{0,0});
 		
 		if (json.contains("patrol"))
 		{

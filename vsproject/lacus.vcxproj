@@ -131,14 +131,14 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>..\ext;..\src;..\ext\SDL3\include;..\ext\spdlog\include;..\ext\tmxlite\include;..\ext\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL-uclibc.lib;SDL3-image-static.lib;SDL3-mixer-static.lib;SDL3-ttf-static.lib;SDL3-static.lib;SDL3-gfx-static.lib;spdlogd.lib;libtmxlite-static.lib;winmm.lib;setupapi.lib;imm32.lib;version.lib;Rpcrt4.lib;Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL-uclibc.lib;SDL3-image-static.lib;SDL3-mixer-static.lib;SDL3-ttf-static.lib;SDL3-static.lib;SDL3-gfx-static.lib;spdlog.lib;libtmxlite-static.lib;winmm.lib;setupapi.lib;imm32.lib;version.lib;Rpcrt4.lib;Usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\ext\spdlog\libs\Release;..\ext\SDL3\libs\Release;..\ext\tmxlite\libs\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -256,6 +256,7 @@
     <ClInclude Include="..\src\engine\font.h" />
     <ClInclude Include="..\src\engine\geometry.h" />
     <ClInclude Include="..\src\engine\im_painter.h" />
+    <ClInclude Include="..\src\engine\i_painter.h" />
     <ClInclude Include="..\src\engine\misc.h" />
     <ClInclude Include="..\src\engine\gfx_painter.h" />
     <ClInclude Include="..\src\engine\painter.h" />

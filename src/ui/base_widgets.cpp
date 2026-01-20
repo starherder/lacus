@@ -62,12 +62,7 @@ namespace ui {
         }
 
         auto& state = status();
-
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
-        GuiManager::inst().imPainter().drawText(_text, _font, realPos, state.text_color);
-#else
-        renderer.drawText(_text, _font, realPos, state.text_color);
-#endif
+        GuiManager::inst().painter().drawText(_text, _font, realPos, state.text_color);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -108,11 +103,7 @@ namespace ui {
         auto textSize = renderer.getTextSize(text(), _font);
         auto realPos = getAbsPos();
 
-#ifdef USE_IMGUI_AS_RENDER_ENGINE
-        GuiManager::inst().imPainter().drawText(text(), _font, realPos, _text_color, size().x);
-#else
-        renderer.drawText(_text, _font, realPos, state.text_color);
-#endif
+        GuiManager::inst().painter().drawText(text(), _font, realPos, _text_color, size().x);
     }
 
     //////////////////////////////////////////////////////////////////////

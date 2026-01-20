@@ -54,13 +54,7 @@ void RenderSystem::drawSkyEffect()
     for (auto ent : ent_view)
     {
         auto& skyEffect = _context.registry().get<CompSkyEffect>(ent);
-
-#ifdef USE_IMGUI_AS_RENDER_ENGINE        
-        _context.imPainter().fillRect(skyEffect.color, { {0,0}, sz });
-#else
-        _context.renderer().setDrawColor(skyEffect.color);
-        _context.renderer().drawFillRect({ {0,0}, sz });
-#endif
+        _context.painter().fillRect(skyEffect.color, { {0,0}, sz });
         return;
     }
 }
@@ -74,24 +68,14 @@ void RenderSystem::drawFightText()
         auto& compFt = ent_view.get<CompFightText>(ent);
 
         auto pos = _context.camera().projectPoint(compTrans.position);
-
-#ifdef USE_IMGUI_AS_RENDER_ENGINE        
-        _context.imPainter().drawText(compFt.text, compFt.font, pos, compFt.color);
-#else
-        _context.renderer().drawText(compFt.text, compFt.font, pos, compFt.color);
-#endif
+        _context.painter().drawText(compFt.text, compFt.font, pos, compFt.color);
     }
 }
 
 void RenderSystem::drawObjects()
-{
-#ifdef USE_IMGUI_AS_RENDER_ENGINE   
-    ImPainter& painter = _context.imPainter();
-#else
-    Painter& painter = _context.painter();
-#endif
-
-    GameCamera& camera = _context.camera();
+{ 
+    auto& painter = _context.painter();
+    auto& camera = _context.camera();
 
     // draw objects
     auto ent_view = _context.registry().view<CompNameId, CompTransform, CompDisplay>();
@@ -101,34 +85,47 @@ void RenderSystem::drawObjects()
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& display = ent_view.get<CompDisplay>(ent);
 
-        auto pdead = _context.registry().try_get<CompDead>(ent);
-        //bool dead = (pdead == nullptr);
-
         auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
-
         if(transform.coord_mode == CoordMode::WorldSpace)
         {
             dstrect = camera.projectRect(dstrect);
         }
 
+        int alpha = 255;
+        float corner = _context.gameConfig().display.chess_corner;
+
+        auto pdead = _context.registry().try_get<CompDead>(ent);
+        if (pdead)
+        {
+            auto total = _context.gameConfig().dying_ticks;
+            auto half = total / 2.0f;
+            if (pdead->ticks > half && pdead->ticks < total)
+            {
+                alpha = (int)(256 * (1.0f - ((pdead->ticks - half) / half)));
+            }
+        }
+
         if (display.texture != nullptr)
         {
             auto srcrect = display.tex_rect;
-            painter.drawTexture(display.texture, srcrect, dstrect);
+            painter.drawTexture(display.texture, srcrect, dstrect, corner, { 255, 255, 255, alpha });
         }
         else
         {
             auto ground_color = display.ground_color;
             auto border_color = display.border_color;
+            auto font_color = display.font_color;
+
             if(pdead)
             {
-                ground_color = Color::Light;
-                border_color = Color::Gray;
+                ground_color = _context.gameConfig().display.chess_dead_ground_color; ground_color.a = alpha;
+                border_color = _context.gameConfig().display.chess_dead_border_color; border_color.a = alpha;
+                font_color = _context.gameConfig().display.chess_dead_font_color; font_color.a = alpha;
             }
 
-            painter.fillRect(ground_color, dstrect);
-            painter.drawRect(border_color, dstrect);
-            painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, display.font_color);
+            painter.fillRect(ground_color, dstrect, corner);
+            painter.drawRect(border_color, dstrect, corner);
+            painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, font_color);
         }
 
         auto pFight = _context.registry().try_get<CompFightProp>(ent);
@@ -141,23 +138,26 @@ void RenderSystem::drawObjects()
                 Rect bgrect = {dstrect.x+5, dstrect.y+dstrect.w-10, dstrect.w-10, 5.0f};
                 Rect ftrect = {bgrect.x, bgrect.y, bgrect.w*ratio, bgrect.h};
 
-                painter.fillRect(Color::Light, bgrect);
-                painter.fillRect(Color::Red, ftrect);
+                Color bk_color = Color::Light; bk_color.a = alpha;
+                Color font_color = Color::Red; font_color.a = alpha;
+
+                painter.fillRect(bk_color, bgrect);
+                painter.fillRect(font_color, ftrect);
             }
         }
 
         auto selectComp = _context.registry().try_get<CompSelection>(ent);
         if (selectComp)
         {
-            painter.fillRect(selectComp->ground_color, dstrect);
-            painter.drawRect(selectComp->border_color, dstrect, 0, selectComp->border_size);
+            painter.fillRect(selectComp->ground_color, dstrect, corner);
+            painter.drawRect(selectComp->border_color, dstrect, corner, selectComp->border_size);
         }
     }
 }
 
 void RenderSystem::drawParticles()
 {
-    GameCamera& camera = _context.camera();
+    auto& camera = _context.camera();
 
     // draw particles
     auto parEnts = _context.registry().view<CompTransform, CompBindParticle>();
@@ -181,14 +181,9 @@ void RenderSystem::drawParticles()
 }
 
 void RenderSystem::drawMotionDebug()
-{
-#ifdef USE_IMGUI_AS_RENDER_ENGINE   
-    ImPainter& painter = _context.imPainter();
-#else
-    Painter& painter = _context.painter();
-#endif
-
-    GameCamera& camera = _context.camera();
+{ 
+    auto& painter = _context.painter();
+    auto& camera = _context.camera();
 
     auto ent_view = _context.registry().view<CompTransform, CompMotion>();
     for (auto& ent : ent_view)
@@ -224,12 +219,7 @@ void RenderSystem::drawSceneDebug()
     }
 
     auto& renderer = _context.renderer();
-
-#ifdef USE_IMGUI_AS_RENDER_ENGINE   
-    ImPainter& painter = _context.imPainter();
-#else
-    Painter& painter = _context.painter();
-#endif
+    auto& painter = _context.painter();
 
     // -------------- show collision info ------------------
     auto& _collisionDebugRects = _context.currentScene().getCollisionDebugRects();

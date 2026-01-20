@@ -7,11 +7,27 @@
 
 namespace engine
 {
-	Painter::Painter(Application& app) : _application(app)
+	Painter::Painter(Application& app) : IPainter(app)
 	{
 	}
 
 	Painter::~Painter()
+	{
+	}
+
+	void Painter::init()
+	{
+	}
+
+	void Painter::quit()
+	{
+	}
+
+	void Painter::preFrame()
+	{
+	}
+
+	void Painter::postFrame()
 	{
 	}
 
@@ -20,7 +36,22 @@ namespace engine
 		_application.renderer().setDrawColor(color);
 	}
 
-	void Painter::fillRect(const Color& color, Rect rect, float round)
+	void Painter::pushClipRect(const Rect& rect)
+	{
+		_clipStack.push(rect);
+
+		_application.renderer().setClipRect(rect);
+	}
+
+	void Painter::popClipRect()
+	{
+		auto rect = _clipStack.top();
+		_application.renderer().setClipRect(rect);
+
+		_clipStack.pop();
+	}
+
+	void Painter::fillRect(const Color& color, const Rect& rect, float round)
 	{
 		Vec2 tl = { rect.x, rect.y };
 		Vec2 br = { rect.x + rect.w, rect.y + rect.h };
@@ -40,14 +71,14 @@ namespace engine
 		}
 	}
 
-	void Painter::drawRect(const Color& color, Rect rect, float round, float lineWidth)
+	void Painter::drawRect(const Color& color, const Rect& rect, float round, float thickness)
 	{
 		Vec2 beginPos = { rect.x, rect.y };
 		Vec2 endPos = { rect.x + rect.w, rect.y + rect.h };
 
 		pathRect(beginPos, endPos, round);
 
-		strokePolyline(color, true, lineWidth);
+		strokePolyline(color, true, thickness);
 		drawPath();
 	}
 
@@ -71,12 +102,12 @@ namespace engine
 		drawPath();
 	}
 
-	void Painter::drawLine(const Color& color, Vec2 beginPos, Vec2 endPos, float lineWidth)
+	void Painter::drawLine(const Color& color, const Vec2& beginPos, const Vec2& endPos, float thickness)
 	{
 		pathLineTo(beginPos);
 		pathLineTo(endPos);
 
-		strokePolyline(color, false, lineWidth);
+		strokePolyline(color, false, thickness);
 		drawPath();
 	}
 
@@ -90,19 +121,27 @@ namespace engine
 		drawPath();
 	}
 
-	void Painter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color)
+	void Painter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_line)
 	{
 		_application.renderer().drawText(text, font, pos, color);
 	}
 
-	void Painter::drawTexture(Texture* pTexture, const Rect& uv, const Rect& dst)
+	void Painter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& c)
+	{
+		fail_return(pTexture);
+
+		_application.renderer().drawTexture(pTexture, src, dst);
+		_vPaths.resize(0);
+	}
+
+	void Painter::drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round, const Color& c)
 	{
 		fail_return(pTexture);
 
 		auto size = pTexture->size();
 		Rect srcrect = { uv.x * size.x, uv.y * size.y, uv.w * size.x, uv.h * size.y };
-		_application.renderer().drawTexture(pTexture, srcrect, dst);
 
+		_application.renderer().drawTexture(pTexture, srcrect, dst);
 		_vPaths.resize(0);
 	}
 
@@ -116,7 +155,6 @@ namespace engine
 		_geometryVertices.clear();
 		_geometryIndices.clear();
 	}
-
 
 	void Painter::drawCircle(const Color& color, const Vec2& center, float radius, int segments, float thickness)
 	{
@@ -141,21 +179,6 @@ namespace engine
 		setAntiAlaised(oldAntiAlaise);
 	}
 
-	void Painter::setClipRect(const Rect& rect)
-	{
-		if (rect == _clipRect)
-		{
-			return;
-		}
-
-		_clipRect = rect;
-		_application.renderer().setClipRect(rect);
-	}
-
-	Rect Painter::getClipRect()
-	{
-		return _clipRect;
-	}
 
 	void Painter::setAntiAlaised(bool anti_aliased)
 	{

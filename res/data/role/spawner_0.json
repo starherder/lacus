@@ -1,5 +1,5 @@
 {
-	"id": "npc_spawner_0",
+	"id": "spawner_0",
 	"name": "text_spawner_name_0",
 	"desc": "text_spawner_desc_0",
 	"type": "spawner",

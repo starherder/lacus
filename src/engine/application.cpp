@@ -7,12 +7,16 @@ namespace engine {
 Application::Application() 
 {
     _renderer = std::make_unique<Renderer>();
-    _painter = std::make_unique<Painter>(*this);
-    _gfx_painter = std::make_unique<GFXPainter>(*this);
-    _im_painter = std::make_unique<ImPainter>(*this);
     _window = std::make_unique<Window>();
     _resourceMgr = std::make_unique<ResourceManager>(*this);
     _audioPlayer = std::make_unique<AudioPlayer>();
+    
+#ifdef USE_IMGUI_AS_RENDER_ENGINE
+    _ipainter = std::make_unique<ImPainter>(*this);
+#else
+    _ipainter = std::make_unique<Painter>(*this);
+    //_ipainter = std::make_unique<GfxPainter>(*this);
+#endif
 }
 
 Application::~Application() 
@@ -180,7 +184,7 @@ bool Application::initRenderer()
         return false;
     }
 
-    im_painter().init();
+    painter().init();
 
     spdlog::info("renderer created.");
     return true;
@@ -199,7 +203,7 @@ bool Application::initAudioPlayer()
     _audioPlayer->setMusicVolume(_config.sound.music_volumn);
     _audioPlayer->setSoundVolume(_config.sound.sound_volumn);
 
-    spdlog::info("audio player created.");
+    //spdlog::info("audio player created.");
     return true;
 }
 
@@ -236,7 +240,7 @@ bool Application::close()
     
     spdlog::info("---------------- engine closed ----------------");
 
-    im_painter().quit();
+    painter().quit();
 
     SDL_Quit();
     return true;
@@ -260,7 +264,7 @@ bool Application::preFrame()
 
     _renderer->clear();
 
-    im_painter().preFrame();
+    painter().preFrame();
 
     _renderer->setDrawColor(_renderer->getClearColor());
 
@@ -269,7 +273,7 @@ bool Application::preFrame()
 
 bool Application::postFrame() 
 {
-    im_painter().postFrame();
+    painter().postFrame();
 
     _renderer->present();
 

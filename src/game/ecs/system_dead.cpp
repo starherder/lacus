@@ -13,12 +13,12 @@ namespace game
 		for (auto& ent : destroyViews)
 		{
 			pending.push_back(ent);
+			_context.dispatcher().trigger(RoleDestroyed{ent});
 		}
 
 		// destroy
 		for (auto& ent : pending)
 		{
-			//spdlog::info("object: id {} destroy !", (uint32_t)ent);
 			_context.registry().destroy(ent);
 		}
 
