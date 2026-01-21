@@ -29,6 +29,9 @@ namespace game
         auto ent_view = _context.registry().view<CompTransform, CompMotion>();
         for (auto& ent : ent_view)
         {
+            auto pdead = _context.registry().try_get<CompDead>(ent);
+            if (pdead) { continue; }
+
             auto& transform = ent_view.get<CompTransform>(ent);
             auto& motion = ent_view.get<CompMotion>(ent);
 

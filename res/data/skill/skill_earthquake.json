@@ -10,11 +10,11 @@
 
   "affect": {
     "prev_ticks": 200,
-    "post_ticks": 150,
+    "post_ticks": 60,
 
     "func": "hp-",
     "target": "role",
-    "range": 200,
+    "range": 100,
 
     "event": ""
   },
@@ -27,9 +27,9 @@
   },
 
   "trap": {
-    "duration": 3000,
+    "duration": 10000,
     "period": 1000,
-    "range" : 150,
+    "range" : 100,
     "func": "hp-20",
     "color":"#FF000055",
     "particle": "",
