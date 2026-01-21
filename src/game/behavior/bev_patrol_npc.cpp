@@ -61,8 +61,8 @@ namespace game {
 				Vec2 offset = Vec2{sin(angle), cos(angle)} * dist;
 				Vec2 dest = pPatrolCom->origin_pos + offset;
 
-				Vec2i srcGrid = _context->currentScene().getGridFromPos(src);
-				Vec2i dstGrid = _context->currentScene().getGridFromPos(dest);
+				Vec2i srcGrid = _context->scene().getGridFromPos(src);
+				Vec2i dstGrid = _context->scene().getGridFromPos(dest);
 
 				auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
 				if(!path)
@@ -244,8 +244,8 @@ namespace game {
 		auto& motion = *pmotion;
 
 		const auto& src = trans.position;
-		auto srcGrid = _context->currentScene().getGridFromPos(src);
-		auto gridCenter = _context->currentScene().getGridCenterPos(srcGrid);
+		auto srcGrid = _context->scene().getGridFromPos(src);
+		auto gridCenter = _context->scene().getGridCenterPos(srcGrid);
 
 		auto pbevCom = _context->registry().try_get<CompBehavior>(_actor);
 		if (!pbevCom)
@@ -256,10 +256,10 @@ namespace game {
 		Vec2i dstGrid{ -1,-1 };
 		auto radius = pbevCom->vision_dis;
 
-		auto& gridsmap = _context->currentScene().getGridsInCircle(gridCenter, radius);
+		auto& gridsmap = _context->scene().getGridsInCircle(gridCenter, radius);
 		for (auto& [dis, grid] : gridsmap)
 		{
-			auto& objects = _context->currentScene().getObjectsInGrid(grid);
+			auto& objects = _context->scene().getObjectsInGrid(grid);
 			for (auto& obj : objects)
 			{
 				auto pickable = _context->registry().try_get<CompPickable>(obj);
@@ -366,7 +366,7 @@ namespace game {
 			{
 				// 需要目标，寻找目标
 				auto dis = compSkill.distance;
-				auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
+				auto& objects = _context->scene().getObjectsInCircle(rolePos, dis);
 				for (auto& [dis, target] : objects) 
 				{
 					if (_context->registry().valid(target) == false || target == _actor) 

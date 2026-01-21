@@ -32,7 +32,7 @@ namespace game
 		_scene = std::make_unique<GameScene>(_gameContext);
         _scene->on_load_progress.connect(this, &GameLogic::onSceneLoadProgress);
 
-		_gameContext.setCurrentScene(_scene.get());
+		_gameContext.setScene(_scene.get());
 
 		_gameContext.setGameConfig(&_gameConfig);
 

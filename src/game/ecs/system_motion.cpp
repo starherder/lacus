@@ -59,9 +59,9 @@ namespace game
         auto& transform = _context.registry().get<CompTransform>(id);
 
         const auto& srcPos = transform.position;
-        const auto& dstPos = _context.currentScene().getGridCenterPos(dstGrid);
+        const auto& dstPos = _context.scene().getGridCenterPos(dstGrid);
 
-        Vec2i srcGrid = _context.currentScene().getGridFromPos(srcPos);
+        Vec2i srcGrid = _context.scene().getGridFromPos(srcPos);
         if(srcGrid == dstGrid)
         {
             //SPDLOG_WARN("src_grid == dst_grid");
@@ -107,20 +107,20 @@ namespace game
         motion.path_iterator++;
         if(motion.path_iterator == motion.path.rend())
         {
-            transform.position = _context.currentScene().getGridCenterPos(motion.targetGrid);
+            transform.position = _context.scene().getGridCenterPos(motion.targetGrid);
             motionStop(entid);
             return false;
         }
 
         const auto& curPos = transform.position;
         const auto& nextGrid = *motion.path_iterator;
-        const auto& curGrid = _context.currentScene().getGridFromPos(curPos);
-        const auto& nextPos = _context.currentScene().getGridCenterPos(nextGrid);
+        const auto& curGrid = _context.scene().getGridFromPos(curPos);
+        const auto& nextPos = _context.scene().getGridCenterPos(nextGrid);
 
         std::string mode = _context.gameConfig().motion.walk;
 
-        auto curtype = _context.currentScene().getGridWalkType(curGrid);
-        auto nexttype = _context.currentScene().getGridWalkType(nextGrid);
+        auto curtype = _context.scene().getGridWalkType(curGrid);
+        auto nexttype = _context.scene().getGridWalkType(nextGrid);
         if(curtype == (int)tilemap::WalkType::Swim && nexttype == (int)tilemap::WalkType::Swim)
         {
             mode = _context.gameConfig().motion.swim;
@@ -177,8 +177,8 @@ namespace game
 
     void MotionSystem::checkEntityGrid(entt::entity ent, const Vec2& lstpos, const Vec2& curpos)
     {
-        auto lstgrid = _context.currentScene().getGridFromPos(lstpos);
-        auto curgrid = _context.currentScene().getGridFromPos(curpos);
+        auto lstgrid = _context.scene().getGridFromPos(lstpos);
+        auto curgrid = _context.scene().getGridFromPos(curpos);
         if(curgrid != lstgrid) 
         {
             EvtRoleCrossGrid e;

@@ -24,12 +24,12 @@ namespace game
 
 	entt::registry& GameContext::registry()
 	{
-		return currentScene().registry();
+		return scene().registry();
 	}
 
 	GameCamera& GameContext::camera() 
 	{ 
-		return currentScene().camera(); 
+		return scene().camera(); 
 	}
 
 }

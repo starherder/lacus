@@ -8,7 +8,7 @@
 
   "log": {
     "level": 0,
-    "pattern": "[%H:%M:%S.%e] [%l] [%g %!():%#] %v"
+    "pattern": "[%H:%M:%S.%e] [%l] [%!():%#] %v"
   },
 
   "sound": {

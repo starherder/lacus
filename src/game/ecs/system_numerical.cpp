@@ -74,7 +74,7 @@ namespace game
         // 给e.actor加经验，必要时升级
         auto pEnemyProp = _context.registry().try_get<CompBaseProp>(e.enemy);
         auto pActorProp = _context.registry().try_get<CompBaseProp>(e.actor);
-        if (!pEnemyProp || pActorProp)
+        if (!pEnemyProp || !pActorProp)
         {
             SPDLOG_ERROR("CompBaseProp NOT found.");
             return;
@@ -100,13 +100,16 @@ namespace game
 
         pActorProp->exp = awardExp;
 
-        _context.dispatcher().trigger(EvtRoleLevelAlter{ e.actor, lvup });
+        if (lvup > 0)
+        {
+            _context.dispatcher().trigger(EvtRoleLevelAlter{ e.actor, lvup });
+        }
     }
 
     int NumericalSystem::levelupExp(int level)
     {
         //TODO: 公式
-        return level * 100;
+        return 50 + level * 100;
     }
 
     int NumericalSystem::totalExp(int level)
@@ -122,6 +125,6 @@ namespace game
     int NumericalSystem::enemyDeadDropExp(int enemy_level)
     {
         //TODO: 公式
-        return (int)(totalExp(enemy_level) / 10.0f);
+        return (int)(totalExp(enemy_level) / 2.0f);
     }
 }

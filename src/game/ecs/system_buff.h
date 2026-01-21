@@ -24,7 +24,7 @@ namespace game
 
         void onRemoveBuffFromObject(const EvtRemoveBuff& e);
 
-        void onPeriodExec(entt::entity target, entt::entity buff);
+        void onPeriodExec(entt::entity target, entt::entity buff, entt::entity source);
     };
 
 

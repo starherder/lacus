@@ -53,7 +53,7 @@ void ImFormDebug::draw()
         static bool show_debug = false;
         if(ImGui::Checkbox("show debug", &show_debug))
         {
-            _context->currentScene().setDebugInfo(show_debug);
+            _context->scene().setDebugInfo(show_debug);
         }
 
         ImGui::Separator();
@@ -146,18 +146,18 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
         return;
     }
 
-    auto scenePos = _context->currentScene().camera().screenToWorld(pos);
+    auto scenePos = _context->scene().camera().screenToWorld(pos);
     //SPDLOG_INFO("pos = ({},{}), scene_pos = ({}, {})", pos.x, pos.y, scenePos.x, scenePos.y);
 
     switch (_debugMode)
     {
     case DebugMode::Select:
     {
-        _selectEntity = _context->currentScene().selectObjectAtPos(scenePos);
+        _selectEntity = _context->scene().selectObjectAtPos(scenePos);
     }break;
     case DebugMode::PutObject:
     {
-        _context->currentScene().createActor(_selectCfgId, scenePos);
+        _context->scene().createActor(_selectCfgId, scenePos);
     }break;
     case DebugMode::Null:
     {
@@ -173,7 +173,7 @@ void ImFormDebug::onMouseRightClick(const Vec2& pos)
 {
     if(_debugMode == DebugMode::Select && _context->registry().valid(_selectEntity))
     {
-        auto scenePos = _context->currentScene().camera().screenToWorld(pos);
+        auto scenePos = _context->scene().camera().screenToWorld(pos);
         moveSelectActor(scenePos);
     }
 }
@@ -194,7 +194,7 @@ void ImFormDebug::moveSelectActor(const Vec2& pos)
 
     if(_context->registry().try_get<CompMotion>(_selectEntity))
     {
-        auto gridPos = _context->currentScene().getGridFromPos(pos);
+        auto gridPos = _context->scene().getGridFromPos(pos);
         _context->dispatcher().trigger(EvtMoveToGrid{_selectEntity, gridPos, true});
     }
 }
@@ -274,7 +274,7 @@ void ImFormDebug::roleExecSkill()
         {
             // 需要目标，寻找目标
             auto dis = compSkill.distance;
-            auto& objects = _context->currentScene().getObjectsInCircle(rolePos, dis);
+            auto& objects = _context->scene().getObjectsInCircle(rolePos, dis);
             for (auto& [dis, target] : objects) 
             {
                 if (target == _selectEntity) continue;

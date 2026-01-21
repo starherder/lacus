@@ -79,8 +79,8 @@ namespace game
             Vec2 offset = Vec2{ sin(angle), cos(angle) } *dist;
             Vec2 dest = compTrans.position + offset;
 
-            Vec2 srcGrid = _context.currentScene().getGridFromPos(compTrans.position);
-            Vec2 dstGrid = _context.currentScene().getGridFromPos(dest);
+            Vec2 srcGrid = _context.scene().getGridFromPos(compTrans.position);
+            Vec2 dstGrid = _context.scene().getGridFromPos(dest);
 
             auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
             if (!path)
@@ -88,7 +88,7 @@ namespace game
                 continue;
             }
 
-            auto walktypeOpt = _context.currentScene().getGridWalkType(dstGrid);
+            auto walktypeOpt = _context.scene().getGridWalkType(dstGrid);
             if (walktypeOpt != (int)tilemap::WalkType::Collision)
             {
                 optSpawnPos = dest;
@@ -98,7 +98,7 @@ namespace game
 
         if (optSpawnPos)
         {
-            auto npc = _context.currentScene().createActor(compSpawner.npc, optSpawnPos.value());
+            auto npc = _context.scene().createActor(compSpawner.npc, optSpawnPos.value());
             if (_context.registry().valid(npc))
             {
                 auto compComm = _context.registry().try_get<CompComm>(npc);

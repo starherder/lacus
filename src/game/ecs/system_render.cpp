@@ -198,7 +198,7 @@ void RenderSystem::drawMotionDebug()
 
             for (auto it = motion.path_iterator; it != motion.path.rend(); ++it)
             {
-                auto grid_center = _context.currentScene().getGridCenterPos(*it);
+                auto grid_center = _context.scene().getGridCenterPos(*it);
                 auto grid_pos = camera.projectPoint(grid_center);
                 painter.drawLine(Color::Red, lstPos, grid_pos);
 
@@ -223,7 +223,7 @@ void RenderSystem::drawSceneDebug()
     auto& painter = _context.painter();
 
     // -------------- show collision info ------------------
-    auto& _collisionDebugRects = _context.currentScene().getCollisionDebugRects();
+    auto& _collisionDebugRects = _context.scene().getCollisionDebugRects();
 
     static std::vector<Rect> rects;
     rects.clear();
@@ -235,8 +235,8 @@ void RenderSystem::drawSceneDebug()
     renderer.drawFillRects(rects.data(), (int)rects.size());
 
     // -------------- show grids ------------------
-    auto mapSize = _context.currentScene().mapSize(); 
-    auto tileSize = _context.currentScene().tileSize();
+    auto mapSize = _context.scene().mapSize(); 
+    auto tileSize = _context.scene().tileSize();
     for (int x = 0; x <= mapSize.x; ++x)
     {
         auto srcPos = _context.camera().projectPoint({ x * tileSize.x, 0 });
@@ -257,8 +257,8 @@ void RenderSystem::drawSceneDebug()
     {
         for (int y = 0; y <= mapSize.y; ++y)
         {
-            auto& objs = _context.currentScene().getObjectsInGrid({ x, y });
-            auto pos = _context.currentScene().getGridCenterPos({ x, y });
+            auto& objs = _context.scene().getObjectsInGrid({ x, y });
+            auto pos = _context.scene().getGridCenterPos({ x, y });
 
             pos = _context.camera().projectPoint(pos);
             renderer.drawDebugTextFormat(pos, "%d", (int)objs.size());

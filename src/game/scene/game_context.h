@@ -50,8 +50,8 @@ namespace game {
 
 		const fs::path& resPath() { return _application.resPath(); }
 
-		GameScene& currentScene() { return *_currentScene;  }
-		void setCurrentScene(GameScene* scene) { _currentScene = scene; }
+		GameScene& scene() { return *_currentScene;  }
+		void setScene(GameScene* scene) { _currentScene = scene; }
 
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }

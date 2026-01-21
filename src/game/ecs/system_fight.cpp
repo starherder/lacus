@@ -7,7 +7,7 @@ namespace game
     FightSystem::FightSystem(GameContext& context) : EcsSystem(context)
     {
         _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
-        _context.dispatcher().sink<EvtAddSkillFuncs>().connect<&FightSystem::applyAllFuncs>(this);
+        _context.dispatcher().sink<EvtAddPropFuncs>().connect<&FightSystem::applyAllFuncs>(this);
     }
 
     FightSystem::~FightSystem()
@@ -33,14 +33,14 @@ namespace game
         auto compName = _context.registry().get<CompNameId>(e.skill);
         auto compAffect = _context.registry().get<CompSkillAffect>(e.skill);
         
-        EvtAddSkillFuncs func;
+        EvtAddPropFuncs func;
         func.source = e.source;
         func.target = e.target;
         func.funcs = compAffect.func;
         _context.dispatcher().trigger(func);
     }
 
-    void FightSystem::applyAllFuncs(const EvtAddSkillFuncs& e)
+    void FightSystem::applyAllFuncs(const EvtAddPropFuncs& e)
     {
         auto funcs = SystemUtils::parseFightFunc(e.funcs);
         if (!funcs)

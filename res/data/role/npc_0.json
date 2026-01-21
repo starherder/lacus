@@ -40,9 +40,9 @@
   },
 
   "base_prop": {
-    "desc" : "str:力量,cst:体质,dex:敏捷,met:心智",
-    "roll" : 0,
-    "str": 20,
+    "level" : 1,
+    "roll" : 10,
+    "str": 210,
     "cst": 20,
     "dex": 20,
     "met": 20
@@ -56,7 +56,7 @@
     "exp" : 50,
     "coin" : 100
   },
-  
+
   "buffs": [],
 
   "items": []

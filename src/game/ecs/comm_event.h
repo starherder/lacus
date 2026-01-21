@@ -106,7 +106,7 @@ namespace game
 		std::string event;
 	};
 
-	struct EvtAddSkillFuncs {
+	struct EvtAddPropFuncs {
 		entt::entity source;
 		entt::entity target;
 		std::string funcs;

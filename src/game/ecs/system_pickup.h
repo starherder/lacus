@@ -20,7 +20,9 @@ namespace game {
 
     private:
         void onEventMoveToGrid(const EvtRoleCrossGrid& e);
-        void pickUp(entt::entity role, entt::entity obj, const Vec2i& grid);
+        void pickUp(entt::entity role, entt::entity obj);
+        void useItem(entt::entity actor, entt::entity obj);
     };
+
 }
 

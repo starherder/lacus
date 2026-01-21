@@ -27,15 +27,13 @@ namespace game
         }
     }
 
-    void PickupSystem::pickUp(entt::entity role, entt::entity obj, const Vec2i& grid)
+    void PickupSystem::pickUp(entt::entity role, entt::entity obj)
     {
         auto& nameComp = _context.registry().get<CompNameId>(obj);
-        //SPDLOG_INFO("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
-
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
         // ÇÐ»»µ½ÆÁÄ»¿Õ¼ä
-        _context.currentScene().swichCoord(transComp, CoordMode::ScreenSpace);
+        _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
 
         const auto& curpos = transComp.position;
         const Vec2 uipos = { 0, 0 };
@@ -48,7 +46,7 @@ namespace game
         pickableComp.tween = tweeny::from(curpos.x, curpos.y)
                                     .to(uipos.x, uipos.y)
                                     .via("quadraticIn")
-                                    .during(1000)
+                                    .during(pickableComp.use_ticks)
                                     .onStep([this, role, obj](auto& t, float x, float y) {
                                         if (!_context.registry().valid(obj)) {
                                             return false;
@@ -72,24 +70,63 @@ namespace game
         _context.dispatcher().trigger<EvtRolePickItemStart>(EvtRolePickItemStart{role, obj});
     }
 
+    void PickupSystem::useItem(entt::entity actor, entt::entity obj)
+    {
+        auto& pickableComp = _context.registry().get<CompPickable>(obj);
+        pickableComp.picked = true;
+
+        _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
+
+        pickableComp.tween = tweeny::from(255.0f, 0.0f)
+                                    .to(100.0f, 100.0f)
+                                    .via("linear")
+                                    .during(pickableComp.use_ticks)
+                                    .onStep([this, obj](auto& t, float x, float y) {
+                                        if (t.isFinished())
+                                        {
+                                            _context.registry().emplace_or_replace<CompDestroy>(obj);
+                                            return true;
+                                        }
+                                        auto& displayComp = _context.registry().get<CompDisplay>(obj);
+                                        displayComp.ground_color.a = (int)x;
+                                        return false;
+                                    });
+
+        EvtAddPropFuncs func;
+        func.source = entt::null;
+        func.target = actor;
+        func.funcs = pickableComp.funcs;
+        _context.dispatcher().trigger(func);
+    }
+
     void PickupSystem::onEventMoveToGrid(const EvtRoleCrossGrid& e)
     {
         std::vector<entt::entity> pending_object;
 
-        auto& objects = _context.currentScene().getObjectsInGrid(e.cur_grid);
+        auto& objects = _context.scene().getObjectsInGrid(e.cur_grid);
         for(auto& obj : objects) 
         {
             auto pickComp = _context.registry().try_get<CompPickable>(obj);
             if (pickComp && pickComp->picked == false)
             {
-                pickUp(e.actor, obj, e.cur_grid);
+                if (pickComp->pick_use)
+                {
+                    useItem(e.actor, obj);
+                }
+                else
+                {
+                    pickUp(e.actor, obj);
+                }
+
                 pending_object.push_back(obj);
+                continue;
             }
         }
 
         for (auto& obj : pending_object)
         {
-            _context.currentScene().removeObjectFromGrid(obj, e.cur_grid);
+            _context.scene().removeObjectFromGrid(obj, e.cur_grid);
         }
     }
+
 }

@@ -140,10 +140,12 @@ namespace game
 
     struct CompPickable {
         int amount = 0;
+        std::string effect;
+        std::string funcs;
+        int use_ticks = 1000;
+        bool pick_use = false;
 
         bool picked = false;
-        std::string effect;
-
         tweeny::tween<float, float> tween;
     };
 

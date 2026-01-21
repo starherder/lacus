@@ -78,7 +78,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     }
 
     auto cfgid = card->getCfgid();
-    auto ent = _context.currentScene().createActor(cfgid, pos);
+    auto ent = _context.scene().createActor(cfgid, pos);
     if (!_context.registry().valid(ent))
     {
         SPDLOG_ERROR("FormMain::onDropCard: create actor ({}) failed", cfgid);

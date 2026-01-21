@@ -256,8 +256,8 @@ namespace game
 											return true;
 										}
 
-										auto grid = _context.currentScene().getGridFromPos(Vec2{x, y});
-										if (_context.currentScene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision) 
+										auto grid = _context.scene().getGridFromPos(Vec2{x, y});
+										if (_context.scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision) 
 										{
 											pSrcSprint->running = false;
 											SPDLOG_ERROR("next grid({}, {}) is collision.", grid.x, grid.y);
@@ -270,7 +270,7 @@ namespace game
 										auto it = sprintComp.passed_grids.find(grid);
 										if (it == sprintComp.passed_grids.end())
 										{
-											auto objects = _context.currentScene().getObjectsInGrid(grid);
+											auto objects = _context.scene().getObjectsInGrid(grid);
 											for (auto& obj : objects)
 											{
 												auto pObjComm = _context.registry().try_get<CompComm>(obj);
@@ -381,7 +381,7 @@ namespace game
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		auto range = compAffect.range;
 
-		auto objects = _context.currentScene().getObjectsInCircle(e.pos, range);
+		auto objects = _context.scene().getObjectsInCircle(e.pos, range);
 		for (auto& [d,obj] : objects) 
 		{
 			auto pCmpComm = _context.registry().try_get<CompComm>(obj);

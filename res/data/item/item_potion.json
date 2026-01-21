@@ -15,9 +15,10 @@
     "font_size": 9
   },
 
-  "pickable": {
-    "effect": "trail",
-    "amount": 10
-  }
-
+	"pickable": {
+		"effect": "bomb",
+    "use_ticks": 1000,
+    "pick_use" : true,
+    "func":"hp+100"
+	}
 }

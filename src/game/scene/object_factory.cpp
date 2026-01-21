@@ -247,6 +247,9 @@ namespace game
 			CompPickable com;
 			com.amount = pickable.value("amount", 1);
 			com.effect = pickable.value("effect", "");
+			com.funcs = pickable.value("func", "");
+			com.pick_use = pickable.value("pick_use", false);
+			com.use_ticks = pickable.value("use_ticks", 1000);
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
@@ -333,24 +336,18 @@ namespace game
 		if (json.contains("base_prop")) 
 		{
 			auto& baseJs = json["base_prop"];
-			float roll = baseJs["roll"];
+			float roll = baseJs.value("roll", 0.0f);
 
 			CompBaseProp compBase;
-			compBase.lv = baseJs.value("level", 0.0f) + utility::Random_Minus1_1();
+			compBase.lv = baseJs.value("level", 0);
 			compBase.str = baseJs.value("str", 0.0f) + utility::Random_Minus1_1() * roll;
 			compBase.cst = baseJs.value("cst", 0.0f) + utility::Random_Minus1_1() * roll;
 			compBase.dex = baseJs.value("dex", 0.0f) + utility::Random_Minus1_1() * roll;
 			compBase.met = baseJs.value("met", 0.0f) + utility::Random_Minus1_1() * roll;
-
-			compBase.str = std::clamp(compBase.str, 10.0f, 100.0f);
-			compBase.cst = std::clamp(compBase.cst, 10.0f, 100.0f);
-			compBase.dex = std::clamp(compBase.dex, 10.0f, 100.0f);
-			compBase.met = std::clamp(compBase.met, 10.0f, 100.0f);
+			compBase.exp = 0;
 
 			_context->registry().emplace<CompBaseProp>(role, compBase);
-
-			CompFightProp fightProp;
-			_context->registry().emplace<CompFightProp>(role, fightProp);
+			_context->registry().emplace<CompFightProp>(role, CompFightProp{});
 
 			_context->dispatcher().trigger(EvtRoleLevelAlter{role, 1});
 		}

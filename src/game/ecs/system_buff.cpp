@@ -100,7 +100,7 @@ namespace game
 			buffComm.period_flag += ticks;
 			if(buffComm.period_flag > buffComm.period)
 			{
-				onPeriodExec(e.target, buff);
+				onPeriodExec(e.target, buff, e.source);
 				
 				buffComm.period_flag = 0;
 			}
@@ -143,15 +143,15 @@ namespace game
 	}
 
 
-	void BuffSystem::onPeriodExec(entt::entity target, entt::entity buff)
+	void BuffSystem::onPeriodExec(entt::entity target, entt::entity buff, entt::entity source)
 	{
 		// 改造 FightSystem::onRoleUnderAttack，发消息过去处理伤害
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 		//SPDLOG_INFO("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
 
-		EvtAddSkillFuncs func;
-		func.source = entt::null;
+		EvtAddPropFuncs func;
+		func.source = source;
 		func.target = target;
 		func.funcs = buffComm.func;
 		_context.dispatcher().trigger(func);
