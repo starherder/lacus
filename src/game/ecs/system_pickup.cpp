@@ -77,7 +77,7 @@ namespace game
 
         _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
 
-        pickableComp.tween = tweeny::from(255.0f, 0.0f)
+        pickableComp.tween = tweeny::from(0.0f, 0.0f)
                                     .to(100.0f, 100.0f)
                                     .via("linear")
                                     .during(pickableComp.use_ticks)
@@ -92,7 +92,7 @@ namespace game
                                         return false;
                                     });
 
-        EvtAddPropFuncs func;
+        EvtExecPropFuncs func;
         func.source = entt::null;
         func.target = actor;
         func.funcs = pickableComp.funcs;

@@ -1,0 +1,38 @@
+{
+  "cfgid": "skill_earthquake",
+  "type": "trap",
+  "name": "text_skill_earthquake",
+  "desc": "text_skill_earthquake_desc",
+
+  "distance": 300,
+  "cd_ticks": 5000,
+  "sound": "audio/battle_of_tiles/slime.wav",
+
+  "affect": {
+    "prev_ticks": 200,
+    "post_ticks": 150,
+
+    "func": "hp-",
+    "target": "role",
+    "range": 200,
+
+    "event": ""
+  },
+
+  "tween": {
+    "trans_type": "scale",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "trap": {
+    "duration": 3000,
+    "period": 1000,
+    "range" : 150,
+    "func": "hp-20",
+    "color":"#FF000055",
+    "particle": "",
+    "texture": ""
+  }
+}

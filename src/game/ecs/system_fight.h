@@ -29,7 +29,7 @@ namespace game
 
         float calcHpDamage(CompFightProp props, float hp);
 
-        void applyAllFuncs(const EvtAddPropFuncs& e);
+        void applyAllFuncs(const EvtExecPropFuncs& e);
     };
 
 

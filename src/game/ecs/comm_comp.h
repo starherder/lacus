@@ -16,13 +16,6 @@ namespace game
 {
     using namespace engine;
 
-    struct CompNameId
-    {
-        entt::entity id;
-        std::string name;
-        std::string cfg_id;
-    };
-
     enum class ObjectType {
         Item,
         Npc,
@@ -38,35 +31,6 @@ namespace game
         Gangster,
     };
 
-    struct CompDead {
-        int ticks = 0;
-    };
-
-    struct CompDestroy {
-    };
-
-    struct CompComm {
-        ObjectType type;
-        std::string desc;
-        CampSide side;
-    };
-
-
-    enum class CoordMode {
-        WorldSpace,
-        ScreenSpace,
-    };
-
-    struct CompTransform
-    {
-        Vec2 position;
-        Vec2 size;
-        Vec2 rotation;
-        Vec2 scale;
-
-        CoordMode coord_mode = CoordMode::WorldSpace;
-    };
-
     enum class MotionState 
     {
         Moving,
@@ -79,6 +43,61 @@ namespace game
         Run,
         Swim,
         Ride,
+    };
+
+    enum class CoordMode {
+        WorldSpace,
+        ScreenSpace,
+    };
+
+    enum class SkyEffect
+    {
+        None,
+        Dark,
+        Fog,
+        Cold,
+        Hot,
+        Rain,
+    };
+
+    enum class ShapeType
+    {
+        Circle,
+        Rect,
+        Invalid
+    };
+
+    struct CompNameId
+    {
+        entt::entity id;
+        std::string name;
+        std::string cfg_id;
+    };
+
+    struct CompDead 
+    {
+        int ticks = 0;
+    };
+
+    struct CompDestroy 
+    {
+    };
+
+    struct CompComm 
+    {
+        ObjectType type;
+        std::string desc;
+        CampSide side;
+    };
+
+    struct CompTransform
+    {
+        Vec2 position;
+        Vec2 size;
+        Vec2 rotation;
+        Vec2 scale;
+
+        CoordMode coord_mode = CoordMode::WorldSpace;
     };
 
     struct CompMotion
@@ -120,6 +139,17 @@ namespace game
         Rect tex_rect;
     };
 
+    struct CompMarkDisplay
+    {
+        ShapeType shape_type = ShapeType::Rect;
+
+        Color ground_color = Color::Yellow;
+        Color border_color = Color::Dark;
+
+        Texture* texture = nullptr;
+        Rect tex_rect;
+    };
+
     struct CompRolePick 
     {
         float range = 100.0f;
@@ -154,15 +184,6 @@ namespace game
         std::string audio_name;
     };
 
-    enum class SkyEffect
-    {
-        None,
-        Dark,
-        Fog,
-        Cold,
-        Hot,
-        Rain,
-    };
 
     struct CompSkyEffect
     {

@@ -10,6 +10,7 @@ namespace game
 	SkillSystem::SkillSystem(GameContext& context) : EcsSystem(context) 
 	{
 		_context.dispatcher().sink<EvtCastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
+		_context.dispatcher().sink<EvtCastSkillToPos>().connect<&SkillSystem::onCastSkillToPos>(this);
 		_context.dispatcher().sink<EvtRoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
 		_context.dispatcher().sink<EvtProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
 		_context.dispatcher().sink<EvtExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
@@ -72,6 +73,17 @@ namespace game
 			if (sprint.running) 
 			{
 				sprint.tween.step(deltaTicks);
+			}
+		}
+
+		// 陷阱
+		auto viewsTrap = _context.registry().view<CompTraps>();
+		for (auto& ent : viewsTrap)
+		{
+			auto& trap = viewsTrap.get<CompTraps>(ent);
+			if (trap.running) 
+			{
+				trap.onUpdate(deltaTicks);
 			}
 		}
 	}
@@ -141,13 +153,11 @@ namespace game
 		return tweeny::tween<float, float>{};
 	}
 
-	void SkillSystem::onCastSkillToObject(const EvtCastSkillToObject& e)
+	void SkillSystem::onCastSkillToPos(const EvtCastSkillToPos& e)
 	{
-		//SPDLOG_INFO("EvtCastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
-
 		if (_context.registry().valid(e.skill) == false)
 		{
-			SPDLOG_WARN("onCastSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
+			SPDLOG_WARN("skill ({}) is invalid", (uint32_t)e.skill);
 			return;
 		}
 
@@ -155,7 +165,26 @@ namespace game
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
 		if (skillComm.state != SkillState::OK)
 		{
-			SPDLOG_WARN("onCastSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
+			SPDLOG_WARN("skill ({}) state is NOT OK", compName.cfg_id);
+			return;
+		}
+
+		// TODO: cast skill to pos
+	}
+
+	void SkillSystem::onCastSkillToObject(const EvtCastSkillToObject& e)
+	{
+		if (_context.registry().valid(e.skill) == false)
+		{
+			SPDLOG_WARN("skill ({}) is invalid", (uint32_t)e.skill);
+			return;
+		}
+
+		auto& compName = _context.registry().get<CompNameId>(e.skill);
+		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
+		if (skillComm.state != SkillState::OK)
+		{
+			SPDLOG_WARN("skill ({}) state is NOT OK", compName.cfg_id);
 			return;
 		}
 
@@ -191,8 +220,6 @@ namespace game
 		{
 			_context.audioPlayer().playSound(HashString(pcompAudio->audio_name.c_str()));
 		}
-
-		//SPDLOG_INFO("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
 
 		if (skillComm.type == SkillType::Combat)
 		{
@@ -290,15 +317,60 @@ namespace game
 
 	void SkillSystem::startTraps(entt::entity srcid, entt::entity tarid, entt::entity skill)
 	{
-		auto pTrapsComp = _context.registry().try_get<CompTraps>(skill);
-		if (!pTrapsComp)
+		auto pTrapCfgComp = _context.registry().try_get<CompTrapCfg>(skill);
+		auto pAffect = _context.registry().try_get<CompSkillAffect>(skill);
+		if (!pTrapCfgComp || !pAffect)
 		{
 			return;
 		}
 
-		auto& trapsComp = *pTrapsComp;
-		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
 		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
+		auto trap = _context.objectFactory().createTrap(compTgtTrans.position, pTrapCfgComp->range,
+														pTrapCfgComp->color, pTrapCfgComp->texture,
+														pTrapCfgComp->particle);
+		
+		int src_alpha = pTrapCfgComp->color.a;
+
+		auto& compTrap = _context.registry().get<CompTraps>(trap);
+		compTrap.during_ticks = 0;
+		compTrap.period_flag = 0;
+		compTrap.running = true;
+		compTrap.onUpdate = [this, srcid, skill, trap, src_alpha](int64_t ticks)
+		{
+			if (!_context.registry().valid(skill))
+			{
+				return;
+			}
+
+			auto& compTraps = _context.registry().get<CompTraps>(trap);
+			auto& compTrapCfg = _context.registry().get<CompTrapCfg>(skill);
+			if (compTrapCfg.duration > 0)
+			{
+				compTraps.during_ticks += (int)ticks;
+				if (compTraps.during_ticks > compTrapCfg.duration)
+				{
+					compTraps.running = false;
+					_context.registry().emplace_or_replace<CompDestroy>(trap);
+					SPDLOG_INFO("trap({}) expired, remove ", trap);
+					return;
+				}
+			}
+
+			compTraps.period_flag += (int)ticks;
+			if (compTraps.period_flag > compTrapCfg.period)
+			{
+				onTrapPeriodExec(srcid, skill, trap);
+
+				compTraps.period_flag = 0;
+			}
+			else
+			{
+				float period_ratio = (float)compTraps.period_flag / (float)compTrapCfg.period;
+
+				auto& compDisplay = _context.registry().get<CompMarkDisplay>(trap);
+				compDisplay.ground_color.a = (int)(src_alpha * period_ratio);
+			}
+		};
 
 	}
 
@@ -320,7 +392,7 @@ namespace game
 		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
 		int during = static_cast<int>((glm::distance(source, target) / speed) * 1000);
 
-		auto object = _context.objectFactory().createProjectile(source, target, speed, compProjectile.tween, compProjectile.particle);
+		auto object = _context.objectFactory().createProjectile(source, target, compProjectile.particle);
 		if (!_context.registry().valid(object))
 		{
 			return;
@@ -375,17 +447,20 @@ namespace game
 
 	void SkillSystem::onProjectileHitPos(const EvtProjectileHitPos& e)
 	{
-		//SPDLOG_INFO("projectile: source({}) skill({}) hit ({},{})", 
-		//	(uint32_t)e.source, (uint32_t)e.skill, e.pos.x, e.pos.y);
-
+		auto& compSrcComm = _context.registry().get<CompComm>(e.source);
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
-		auto range = compAffect.range;
-
-		auto objects = _context.scene().getObjectsInCircle(e.pos, range);
+		
+		auto objects = _context.scene().getObjectsInCircle(e.pos, compAffect.range);
 		for (auto& [d,obj] : objects) 
 		{
-			auto pCmpComm = _context.registry().try_get<CompComm>(obj);
-			if (pCmpComm && pCmpComm->type == ObjectType::Npc)
+			auto pCompDead = _context.registry().try_get<CompDead>(obj);
+			if (pCompDead) 
+			{
+				continue;
+			}
+
+			auto pCompDstComm = _context.registry().try_get<CompComm>(obj);
+			if (pCompDstComm && pCompDstComm->type == ObjectType::Npc && pCompDstComm->side != compSrcComm.side)
 			{
 				_context.dispatcher().trigger(EvtRoleOnAttack{ e.source, obj, e.skill });
 			}
@@ -469,4 +544,28 @@ namespace game
 			});
 	}
 
+	void SkillSystem::onTrapPeriodExec(entt::entity srcid, entt::entity skill, entt::entity trap)
+	{
+		if (!_context.registry().valid(skill) || !_context.registry().valid(trap))
+		{
+			SPDLOG_ERROR("src: {}, skill: {}, trap: {} NOT valid", srcid, skill, trap);
+			return;
+		}
+
+		auto pCompTrans = _context.registry().try_get<CompTransform>(trap);
+		if (!pCompTrans)
+		{
+			SPDLOG_ERROR("trap.transform or skill.traps NOT exist.");
+			return;
+		}
+
+		auto& compNameId = _context.registry().get<CompNameId>(skill);
+		SPDLOG_INFO("trap ({}) exec. ", compNameId.cfg_id);
+
+		EvtProjectileHitPos e;
+		e.source = srcid;
+		e.skill = skill;
+		e.pos = pCompTrans->position;
+		_context.dispatcher().trigger(e);
+	}
 }

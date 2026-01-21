@@ -38,6 +38,7 @@ namespace game {
         Vec2i getGridFromPos(const Vec2& pos);
         Vec2 getGridLeftTopPos(const Vec2i& grid);
         Vec2 getGridCenterPos(const Vec2i& grid);
+        Vec2 normalToGridPos(const Vec2& pos);
 
         void swichCoord(CompTransform& trans, CoordMode coordmode);
 

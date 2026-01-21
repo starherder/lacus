@@ -5,6 +5,7 @@
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comp_fight.h"
 #include "game/ecs/comm_event.h"
+#include "game/scene/game_scene.h"
 
 #include "utility/translator.h"
 #include "magic_enum/magic_enum.h"
@@ -559,22 +560,22 @@ namespace game
 			_context->registry().emplace<CompSprint>(skill, sprint);
 		}
 
-		if (json.contains("traps"))
+		if (json.contains("trap"))
 		{
-			auto& trapsJs = json["traps"];
+			auto& trapsJs = json["trap"];
 
-			CompTraps trap;
-			trap.target_type = getSkillTarget(trapsJs.value("type", ""));
+			CompTrapCfg trap;
 			trap.range = trapsJs.value("range", 1);
-			trap.life = trapsJs.value("life", 1000);
-			trap.fade = trapsJs.value("fade", "linear");
-			trap.texture = trapsJs.value("texture", "");
+			trap.duration = trapsJs.value("duration", 1000);
+			trap.period = trapsJs.value("period", 500);
+			trap.func = trapsJs.value("func", "");
+			trap.particle = trapsJs.value("particle", "");
 			trap.color = Color::parseHexString(trapsJs.value("color", "#FF0000FF"));
+			trap.texture = trapsJs.value("texture", "");
 
-			_context->registry().emplace<CompTraps>(skill, trap);
+			_context->registry().emplace<CompTrapCfg>(skill, trap);
 		}
 
-		//SPDLOG_INFO("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
 		return skill;
 	}
 
@@ -597,14 +598,12 @@ namespace game
 			return particlePtr;
 		}
 
+		SPDLOG_ERROR("create particle ({}) failed", particle);
 		return nullptr;
 	}
 
-	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, float speed, const std::string& tween_type, const std::string& particle)
+	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, const std::string& particle)
 	{
-		assert(speed != 0.0f);
-		speed = (speed == 0) ? 100.0f : speed;
-
 		auto bullet = _context->registry().create();
 
 		CompNameId compName;
@@ -616,16 +615,42 @@ namespace game
 		CompTransform compTrans;
 		_context->registry().emplace<CompTransform>(bullet, compTrans);
 
-		auto res = createParticleOnObject(bullet, particle);
-		if (!res) 
-		{
-			//SPDLOG_ERROR("createProjectile: create particle failed.");
-		}
-
-		//SPDLOG_INFO("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
-		//	(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );
-
+		createParticleOnObject(bullet, particle);
+	
 		return bullet;
+	}
+
+	entt::entity ObjectFactory::createTrap(const Vec2& target, float range, const Color& color, const std::string& texture, const std::string& particle)
+	{
+		auto trap = _context->registry().create();
+
+		CompNameId compName;
+		compName.cfg_id = "";
+		compName.name = fmt::format("projectile_{}", trap);
+		compName.id = trap;
+		_context->registry().emplace<CompNameId>(trap, compName);
+
+		CompTransform compTrans;
+		compTrans.position = target;
+		compTrans.size = Vec2{ range, range };
+		_context->registry().emplace<CompTransform>(trap, compTrans);
+
+		CompMarkDisplay compDisplay;
+		compDisplay.shape_type = ShapeType::Circle;
+		compDisplay.ground_color = color;
+		compDisplay.border_color = color;
+		compDisplay.texture = _context->textureMgr().get(texture);
+		_context->registry().emplace<CompMarkDisplay>(trap, compDisplay);
+
+		CompTraps compTraps;
+		compTraps.during_ticks = 0;
+		compTraps.period_flag = 0;
+		compTraps.running = false;
+		_context->registry().emplace<CompTraps>(trap, compTraps);
+
+		createParticleOnObject(trap, particle);
+
+		return trap;
 	}
 
 	void ObjectFactory::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)

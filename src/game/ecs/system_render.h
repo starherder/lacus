@@ -23,6 +23,8 @@ private:
 	void drawMotionDebug();
 
     void drawSceneDebug();
+    
+    void drawMarker();
 
     void drawObjects();
 

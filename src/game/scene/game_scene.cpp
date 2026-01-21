@@ -25,7 +25,6 @@ GameScene::~GameScene()
 {
 }
 
-
 Vec2 GameScene::mapSize()
 {
     return _tileMap.mapSize();
@@ -51,6 +50,11 @@ Vec2 GameScene::getGridLeftTopPos(const Vec2i& grid)
 Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
 {
     return { (grid.x + 0.5f) * tileSize().x, (grid.y + 0.5f) * tileSize().y };
+}
+
+Vec2 GameScene::normalToGridPos(const Vec2& pos)
+{
+    return getGridCenterPos(getGridFromPos(pos));
 }
 
 bool GameScene::load(const engine::fs::path& mapPath)
@@ -83,6 +87,10 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
 
     on_load_progress.emit(0.0f);
 
+    // TODO: remove this
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    on_load_progress(0.2f);
+
     auto res = _tileMap.load(mapPath);
     if(!res)
     {
@@ -90,25 +98,25 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
     }
 
     // TODO: remove this
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(0.5f);
 
     _tileMap.bake(application().resourceManager());
 
     // TODO: remove this
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(0.7f);
 
     initPathFind();
 
     // TODO: remove this
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(0.8f);
 
     loadObjects();
 
     // TODO: remove this
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(1.0f);
 
     _ready = true;

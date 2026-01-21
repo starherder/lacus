@@ -7,7 +7,7 @@ namespace game
     FightSystem::FightSystem(GameContext& context) : EcsSystem(context)
     {
         _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
-        _context.dispatcher().sink<EvtAddPropFuncs>().connect<&FightSystem::applyAllFuncs>(this);
+        _context.dispatcher().sink<EvtExecPropFuncs>().connect<&FightSystem::applyAllFuncs>(this);
     }
 
     FightSystem::~FightSystem()
@@ -28,19 +28,17 @@ namespace game
 
     void FightSystem::onRoleUnderAttack(const EvtRoleOnAttack& e)
     {
-        // º∆À„…À∫¶
-
         auto compName = _context.registry().get<CompNameId>(e.skill);
         auto compAffect = _context.registry().get<CompSkillAffect>(e.skill);
         
-        EvtAddPropFuncs func;
+        EvtExecPropFuncs func;
         func.source = e.source;
         func.target = e.target;
         func.funcs = compAffect.func;
         _context.dispatcher().trigger(func);
     }
 
-    void FightSystem::applyAllFuncs(const EvtAddPropFuncs& e)
+    void FightSystem::applyAllFuncs(const EvtExecPropFuncs& e)
     {
         auto funcs = SystemUtils::parseFightFunc(e.funcs);
         if (!funcs)
@@ -57,7 +55,8 @@ namespace game
 
     void FightSystem::applyFuncToTarget(SystemUtils::FuncFactor fac, entt::entity source, entt::entity target)
     {
-        if (!_context.registry().valid(target)) {
+        if (!_context.registry().valid(target)) 
+        {
             SPDLOG_ERROR("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
             return;
         }
@@ -79,26 +78,31 @@ namespace game
 
         if (fac.key == "hp")
         {
-            if (fac.fval == 0.0f) {
+            if (fac.fval == 0.0f) 
+            {
                 auto& sourceFight = _context.registry().get<CompFightProp>(source);
                 fac.fval = sourceFight.atk;
             }
             else
             {
-                if (fac.unit == SystemUtils::FuncUnitType::Multi) {
+                if (fac.unit == SystemUtils::FuncUnitType::Multi) 
+                {
                     auto& sourceFight = _context.registry().get<CompFightProp>(source);
                     fac.fval *= sourceFight.atk;
                 }
-                else if (fac.unit == SystemUtils::FuncUnitType::Percent) {
+                else if (fac.unit == SystemUtils::FuncUnitType::Percent) 
+                {
                     fac.fval /= 100.0f;
                     fac.fval *= targetFight.hpm;
                 }
-                else {
+                else 
+                {
                     fac.fval = fac.fval;
                 }
             }
             
-            if (fac.operate == SystemUtils::FuncOperate::Minus) {
+            if (fac.operate == SystemUtils::FuncOperate::Minus) 
+            {
                 fac.fval *= -1;
             }
 

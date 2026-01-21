@@ -14,6 +14,7 @@ namespace game
 		Remote, // 远程魔法（闪电,加Buff等）
 		Trap, // 陷阱（地刺、地火、陷阱等有生存周期，会造成伤害）
 		Sprint, // 冲刺，对一条线上敌人造成伤害
+		//EarthQuak, // 地震
 		Other, // 其他（天黑、降雨等）
 		Invalid,
 	};
@@ -75,18 +76,27 @@ namespace game
 		std::string particle;
 		std::string tween;
 	};
+	
+	struct CompTrapCfg
+	{
+		int range = 1;
+		int duration = 5000;
+		int period = 1000;
+
+		std::string func;
+
+		std::string particle;
+		Color color = Color::Red;
+		std::string texture;
+	};
 
 	struct CompTraps
 	{
-		SkillTarget target_type;
-		int range = 1;
-		int life = 1000;
+		bool running = false;
 
-		std::string fade = "linear";
-		std::string texture;
-		Color color = Color::Red;
-
-		tweeny::tween<int> tween;
+		int period_flag = 0;
+		int during_ticks = 0;
+		std::function<void(int64_t)> onUpdate = nullptr;
 	};
 
 	struct CompSprint
@@ -181,7 +191,6 @@ namespace game
 		//tweeny::tween<float, float> tween;
 	};
 
-
 	// 基础属性
 	struct CompBaseProp
 	{
@@ -230,7 +239,6 @@ namespace game
 	{
 		tweeny::tween<float, float> tween;
 	};
-
 
 	// 战斗飘字
 	struct CompFightText

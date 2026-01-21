@@ -33,9 +33,13 @@ namespace game
 
         void onCastSkillToObject(const EvtCastSkillToObject& e);
 
+        void onCastSkillToPos(const EvtCastSkillToPos& e);
+
         void onRoleUnderAttackEffect(const EvtRoleOnAttack& e);
 
         void onProjectileHitPos(const EvtProjectileHitPos& e);
+
+        void onTrapPeriodExec(entt::entity srcid, entt::entity skill, entt::entity trap);
 
         void onSkillEvent(const EvtExecSkillEvent& e);
     };

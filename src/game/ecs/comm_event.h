@@ -64,15 +64,15 @@ namespace game
 		entt::entity object;
 	};
 
-	struct EvtRoleExecSkillToPos {
-		entt::entity source;
-		Vec2 dest;
-		entt::entity skill;
-	};
-
 	struct EvtCastSkillToObject {
 		entt::entity source;
 		entt::entity target;
+		entt::entity skill;
+	};
+
+	struct EvtCastSkillToPos {
+		entt::entity source;
+		Vec2 targetPos;
 		entt::entity skill;
 	};
 
@@ -106,7 +106,7 @@ namespace game
 		std::string event;
 	};
 
-	struct EvtAddPropFuncs {
+	struct EvtExecPropFuncs {
 		entt::entity source;
 		entt::entity target;
 		std::string funcs;

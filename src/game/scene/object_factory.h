@@ -29,8 +29,9 @@ namespace game
 		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
 		entt::entity createBuff(entt::entity owner, const std::string& cfgid);
 
-		entt::entity createProjectile(const Vec2& source, const Vec2& target, float speed, 
-					const std::string& tween_type, const std::string& particle);
+		entt::entity createProjectile(const Vec2& source, const Vec2& target, const std::string& particle);
+
+		entt::entity createTrap(const Vec2& target, float range, const Color& color, const std::string& texture, const std::string& particle);
 
 		particle::ParticlePtr createParticleOnObject(entt::entity owner, const std::string& particle);
 

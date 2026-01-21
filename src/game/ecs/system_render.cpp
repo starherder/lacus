@@ -30,6 +30,8 @@ void RenderSystem::update(float delta)
 
 void RenderSystem::draw()
 {
+    drawMarker();
+
     drawObjects();
 
     drawParticles();
@@ -69,6 +71,46 @@ void RenderSystem::drawFightText()
 
         auto pos = _context.camera().projectPoint(compTrans.position);
         _context.painter().drawText(compFt.text, compFt.font, pos, compFt.color);
+    }
+}
+
+void RenderSystem::drawMarker()
+{
+    auto& painter = _context.painter();
+    auto& camera = _context.camera();
+
+    // draw objects
+    auto ent_view = _context.registry().view<CompNameId, CompTransform, CompMarkDisplay>();
+    for (auto& ent : ent_view)
+    {
+        auto& nameid = ent_view.get<CompNameId>(ent);
+        auto& transform = ent_view.get<CompTransform>(ent);
+        auto& display = ent_view.get<CompMarkDisplay>(ent);
+
+
+        float corner = _context.gameConfig().display.chess_corner;
+
+        if (display.texture != nullptr)
+        {
+            Rect srcrect = display.tex_rect;
+            Rect dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
+            if (transform.coord_mode == CoordMode::WorldSpace)
+            {
+                dstrect = camera.projectRect(dstrect);
+            }
+            painter.drawTexture(display.texture, srcrect, dstrect, corner, display.ground_color);
+        }
+        else
+        {
+            auto ground_color = display.ground_color;
+            auto border_color = display.border_color;
+
+            auto center = camera.projectPoint(transform.position);
+            float radius = transform.size.x;
+
+            painter.fillCircle(ground_color, center, radius, 20);
+            painter.drawCircle(border_color, center, radius, 20);
+        }
     }
 }
 

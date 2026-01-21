@@ -150,7 +150,7 @@ namespace game
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 		//SPDLOG_INFO("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
 
-		EvtAddPropFuncs func;
+		EvtExecPropFuncs func;
 		func.source = source;
 		func.target = target;
 		func.funcs = buffComm.func;
