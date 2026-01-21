@@ -192,12 +192,12 @@ namespace samples {
 		auto sourceGroup = dynamic_cast<ui::CardGroup*>(dragging->src_group);
 		if (!cardWidget || !sourceGroup)
 		{
-			spdlog::error("dragging card widget is invalid.");
+			SPDLOG_ERROR("dragging card widget is invalid.");
 			return;
 		}
 
-		spdlog::info("drop card ({}) at widget ({}), at pos ({},{})",
-			cardWidget->name(), dstWidget ? dstWidget->name():"none", pos.x, pos.y);
+		SPDLOG_INFO("drop card ({}) at widget ({}), at pos ({})",
+			cardWidget->name(), dstWidget ? dstWidget->name():"none", pos);
 
 		if (sourceGroup) 
 		{
@@ -382,7 +382,7 @@ namespace samples {
 				item->setData("index", i);
 				item->on_click.connect([](ui::Button* btn) {
 					int index = btn->getData<int>("index");
-					spdlog::info("click: index = {}", index);
+					SPDLOG_INFO("click: index = {}", index);
 				});
 			}
 		}
@@ -395,7 +395,7 @@ namespace samples {
 			radioHGroup->addItem("belta");
 			radioHGroup->addItem("gama");
 			radioHGroup->on_item_select.connect([](int index) {
-				spdlog::info("radio horizonal group: index: {} selected", index);
+				SPDLOG_INFO("radio horizonal group: index: {} selected", index);
 			});
 
 			auto radioVGroup = root()->createChild<ui::RadioVLayGroup>("radio_vlay_group");
@@ -405,7 +405,7 @@ namespace samples {
 			radioVGroup->addItem("belta");
 			radioVGroup->addItem("gama");
 			radioVGroup->on_item_select.connect([](int index) {
-				spdlog::info("radio vertical group: index: {} selected", index);
+				SPDLOG_INFO("radio vertical group: index: {} selected", index);
 			});
 
 			auto listbox = root()->createChild<ui::ListBox>("list_box");
@@ -469,12 +469,12 @@ namespace samples {
 
 	void FormDemo::onButtonOneClick(ui::Button* btn)
 	{
-		spdlog::info("on button ({}) click !!", btn->name());
+		SPDLOG_INFO("on button ({}) click !!", btn->name());
 	}
 
 	void FormDemo::onProgressChanged(ui::ProgressBar* pbar)
 	{
-		spdlog::info("on progress ({}) changed to {}", pbar->name(), pbar->progress());
+		SPDLOG_INFO("on progress ({}) changed to {}", pbar->name(), pbar->progress());
 	}
 
 	void FormDemo::onSlideValueChanged(ui::SliderBar* bar)
@@ -499,7 +499,7 @@ namespace samples {
 			cbox->setText("check me");
 		}
 
-		spdlog::info("on check ({}) changed to {}", cbox->name(), cbox->checked());
+		SPDLOG_INFO("on check ({}) changed to {}", cbox->name(), cbox->checked());
 	}
 
 	void FormDemo::onClickListButton(ui::Button* btn)

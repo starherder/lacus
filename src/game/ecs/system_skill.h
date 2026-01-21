@@ -21,7 +21,7 @@ namespace game
         void update(float delta) override;
 
     private:
-        void skillApplyToTarget(const CastSkillToObject& e);
+        void skillApplyToTarget(const EvtCastSkillToObject& e);
 
         void startProjectile(entt::entity source, entt::entity target, entt::entity skill);
         
@@ -29,15 +29,15 @@ namespace game
         
         void startSprint(entt::entity srcid, entt::entity tarid, entt::entity skill);
 
-        tweeny::tween<float, float> makeSkillSpellTween(const CastSkillToObject& e);
+        tweeny::tween<float, float> makeSkillSpellTween(const EvtCastSkillToObject& e);
 
-        void onCastSkillToObject(const CastSkillToObject& e);
+        void onCastSkillToObject(const EvtCastSkillToObject& e);
 
-        void onRoleUnderAttackEffect(const RoleOnAttack& e);
+        void onRoleUnderAttackEffect(const EvtRoleOnAttack& e);
 
-        void onProjectileHitPos(const ProjectileHitPos& e);
+        void onProjectileHitPos(const EvtProjectileHitPos& e);
 
-        void onSkillEvent(const ExecSkillEvent& e);
+        void onSkillEvent(const EvtExecSkillEvent& e);
     };
 
 

@@ -134,7 +134,6 @@ namespace game
 	{
 		Vec2 pos;
 	};
-	
 
 	enum class SkillState {
 		Launching,
@@ -187,6 +186,7 @@ namespace game
 	struct CompBaseProp
 	{
 		int lv;
+		int exp;
 
 		float str;
 		float cst;
@@ -253,7 +253,7 @@ namespace game
 		if (type == "sprint") return SkillType::Sprint;
 		if (type == "remote") return SkillType::Remote;
 		if (type == "other") return SkillType::Other;
-		spdlog::error("skill type ({}) NOT support", type);
+		SPDLOG_ERROR("skill type ({}) NOT support", type);
 		return SkillType::Other;
 	};
 
@@ -266,7 +266,7 @@ namespace game
 		if (target == "cross") return SkillTarget::CrossMe;
 		if (target == "around") return SkillTarget::AroundMe;
 		if (target == "other") return SkillTarget::Other;
-		spdlog::error("skill target ({}) NOT support", target);
+		SPDLOG_ERROR("skill target ({}) NOT support", target);
 		return SkillTarget::Other;
 	};
 
@@ -276,7 +276,7 @@ namespace game
 		if (trans == "scale") return TweenTransform::Scale;
 		if (trans == "rotate") return TweenTransform::Rotate;
 		if (trans == "other") return TweenTransform::Other;
-		spdlog::error("tween trans ({}) NOT support", trans);
+		SPDLOG_ERROR("tween trans ({}) NOT support", trans);
 		return TweenTransform::Other;
 	};
 }

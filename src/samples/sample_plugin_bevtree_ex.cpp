@@ -137,7 +137,7 @@ public:
         BrRole* role = getBlackboard()->getValue<BrRole*>("role", nullptr);
         BrScene* scene = getBlackboard()->getValue<BrScene*>("scene", nullptr);
         if(!role || !scene) {
-            spdlog::error("pointer is nullptr");
+            SPDLOG_ERROR("pointer is nullptr");
             return Node::Status::Failure;
         }
 
@@ -164,7 +164,7 @@ public:
         BrRole* role = getBlackboard()->getValue<BrRole*>("role", nullptr);
         BrScene* scene = getBlackboard()->getValue<BrScene*>("scene", nullptr);
         if (!role || !scene) {
-            spdlog::error("pointer is nullptr");
+            SPDLOG_ERROR("pointer is nullptr");
             return Node::Status::Failure;
         }
 
@@ -222,7 +222,7 @@ public:
         BrRole* role = getBlackboard()->getValue<BrRole*>("role", nullptr);
         BrScene* scene = getBlackboard()->getValue<BrScene*>("scene", nullptr);
         if (!role || !scene) {
-            spdlog::error("pointer is nullptr");
+            SPDLOG_ERROR("pointer is nullptr");
             return Node::Status::Failure;
         }
 

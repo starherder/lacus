@@ -115,7 +115,7 @@ bool Application::init(std::string_view configFile, std::string_view logFile)
 
     _frameTicker.init(_config.window.fps);
 
-    spdlog::info("---------------- engine init OK ----------------");
+    SPDLOG_INFO("---------------- engine init OK ----------------");
     return true;
 }
 
@@ -145,25 +145,25 @@ bool Application::initWindow()
 {
     int numDrivers = _renderer->getNumRenderDrivers();
     if (numDrivers <= 0) {
-        spdlog::error("No render drivers available");
+        SPDLOG_ERROR("No render drivers available");
         return false;
     }
     
     for (int i = 0; i < numDrivers; ++i) 
     {
         const char* name = _renderer->getRenderDriver(i);
-        spdlog::info("Render driver[{}]: {}", i, name);
+        SPDLOG_INFO("Render driver[{}]: {}", i, name);
     }
 
     if (!SDL_Init(SDL_INIT_VIDEO)) 
     {
-        spdlog::error("SDL_Init failed: %s", SDL_GetError());
+        SPDLOG_ERROR("SDL_Init failed: %s", SDL_GetError());
         return false;
     }
 
     bool res = _window->create(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::Resizable);
     if (!res) {
-        spdlog::error("Failed to create window");
+        SPDLOG_ERROR("Failed to create window");
         return false;
     }
 
@@ -172,7 +172,7 @@ bool Application::initWindow()
     _eventDispatcher = std::make_unique<EventDispatcher>();
     _eventDispatcher->onQuit.connect([&]{_running = false;});
 
-    spdlog::info("window created.");
+    SPDLOG_INFO("window created.");
     return true;
 }
 
@@ -180,13 +180,13 @@ bool Application::initRenderer()
 {
     auto res = _renderer->init(_window->getSdlWindow());
     if (!res) {
-        spdlog::error("Failed to create renderer");
+        SPDLOG_ERROR("Failed to create renderer");
         return false;
     }
 
     painter().init();
 
-    spdlog::info("renderer created.");
+    SPDLOG_INFO("renderer created.");
     return true;
 }
 
@@ -196,14 +196,14 @@ bool Application::initAudioPlayer()
     auto res = _audioPlayer->init(&audioMgr);
     if(!res)
     {
-        spdlog::error("fail to create audio player");
+        SPDLOG_ERROR("fail to create audio player");
         return false;
     }
 
     _audioPlayer->setMusicVolume(_config.sound.music_volumn);
     _audioPlayer->setSoundVolume(_config.sound.sound_volumn);
 
-    //spdlog::info("audio player created.");
+    //SPDLOG_INFO("audio player created.");
     return true;
 }
 
@@ -238,7 +238,7 @@ bool Application::close()
         plugin.second->close();
     }   
     
-    spdlog::info("---------------- engine closed ----------------");
+    SPDLOG_INFO("---------------- engine closed ----------------");
 
     painter().quit();
 

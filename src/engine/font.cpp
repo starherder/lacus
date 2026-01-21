@@ -36,7 +36,7 @@ namespace engine {
      {
         if (!TTF_WasInit() && !TTF_Init()) {
             
-            spdlog::error("ttf font init faild.");
+            SPDLOG_ERROR("ttf font init faild.");
             assert("ttf font init faild");
         }
      }
@@ -52,20 +52,20 @@ namespace engine {
     {
         auto it = _Fonts.find({id, size});
         if (it != _Fonts.end()) {
-            spdlog::warn("Font {} already loaded", id);
+            SPDLOG_WARN("Font {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            spdlog::error("Font {}, path({}) NOT exist.", id, filepath);
+            SPDLOG_ERROR("Font {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
         auto ttfFont = TTF_OpenFont(path.string().c_str(), (float)size);
         if (!ttfFont) {
-            spdlog::error("Failed to load Font {}: {}", path.string(), SDL_GetError());
+            SPDLOG_ERROR("Failed to load Font {}: {}", path.string(), SDL_GetError());
             return nullptr;
         }
 
@@ -79,7 +79,7 @@ namespace engine {
         auto imfont = imFonts->AddFontFromFileTTF(path.string().c_str(), (float)size, nullptr, imFonts->GetGlyphRangesChineseFull());
         if (!imfont)
         {
-            spdlog::error("load font {} failed. use default.", path.string());
+            SPDLOG_ERROR("load font {} failed. use default.", path.string());
         }
 
         pFont->imFont = imfont;
@@ -123,17 +123,17 @@ namespace engine {
     {
         auto it = _Fonts.find({str.value(), size});
         if (it != _Fonts.end()) {
-            spdlog::info("Unloaded Font {}", str.data());
+            SPDLOG_INFO("Unloaded Font {}", str.data());
             _Fonts.erase(it);
         }
         else {
-            spdlog::warn("Font {} not found", str.data());
+            SPDLOG_WARN("Font {} not found", str.data());
         }
     }
 
     void FontManager::clear()
     {
-        spdlog::info("Unloaded all Fonts");
+        SPDLOG_INFO("Unloaded all Fonts");
         _Fonts.clear();
     }
 

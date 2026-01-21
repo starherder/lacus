@@ -63,7 +63,7 @@ namespace engine {
     {
         if (duration <= 0 || frequency <= 0 || ampl <= 0)
         {
-            spdlog::info("camera::shake: param <= 0");
+            SPDLOG_INFO("camera::shake: param <= 0");
             return;
         }
 

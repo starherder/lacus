@@ -90,8 +90,8 @@ namespace game {
 
         void unloadObjects();
 
-        void onRoleCrossGrid(const RoleCrossGrid& e);
-        void onRoleDestroyed(const RoleDestroyed& e);
+        void onRoleCrossGrid(const EvtRoleCrossGrid& e);
+        void onRoleDestroyed(const EvtRoleDestroyed& e);
 
         void loadInThread(const engine::fs::path& mapPath);
         void unloadInThread();

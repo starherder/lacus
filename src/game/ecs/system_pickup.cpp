@@ -6,7 +6,7 @@ namespace game
 
     PickupSystem::PickupSystem(GameContext& context) : EcsSystem(context)
     {
-        context.dispatcher().sink<RoleCrossGrid>().connect<&PickupSystem::onEventMoveToGrid>(this);
+        context.dispatcher().sink<EvtRoleCrossGrid>().connect<&PickupSystem::onEventMoveToGrid>(this);
     }
 
     PickupSystem::~PickupSystem()
@@ -30,7 +30,7 @@ namespace game
     void PickupSystem::pickUp(entt::entity role, entt::entity obj, const Vec2i& grid)
     {
         auto& nameComp = _context.registry().get<CompNameId>(obj);
-        //spdlog::info("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
+        //SPDLOG_INFO("pickUp: obj.id = {}, obj.name = {}, obj.cfg = {}", (int)nameComp.id, nameComp.name, nameComp.cfg_id);
 
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
@@ -59,20 +59,20 @@ namespace game
                                         transComp.position = {x,y };
 
                                         if (t.isFinished()) {
-                                            spdlog::info("pickable object {} tween finish", nameComp.cfg_id);
+                                            SPDLOG_INFO("pickable object {} tween finish", nameComp.cfg_id);
                                             
                                             _context.registry().emplace_or_replace<CompDestroy>(obj);
 
-                                            _context.dispatcher().trigger<RolePickItemFinish>(RolePickItemFinish{ role, obj });
+                                            _context.dispatcher().trigger<EvtRolePickItemFinish>(EvtRolePickItemFinish{ role, obj });
                                         }
 
                                         return false;
                                     });
         
-        _context.dispatcher().trigger<RolePickItemStart>(RolePickItemStart{role, obj});
+        _context.dispatcher().trigger<EvtRolePickItemStart>(EvtRolePickItemStart{role, obj});
     }
 
-    void PickupSystem::onEventMoveToGrid(const RoleCrossGrid& e)
+    void PickupSystem::onEventMoveToGrid(const EvtRoleCrossGrid& e)
     {
         std::vector<entt::entity> pending_object;
 

@@ -11,7 +11,7 @@ namespace game
 	{
 		bool res = _jsonConfig.load(filepath);
 		if(!res) {
-			spdlog::error("GameConfig:load {} failed.", filepath.string());
+			SPDLOG_ERROR("GameConfig:load {} failed.", filepath.string());
 			return false;
 		}
 

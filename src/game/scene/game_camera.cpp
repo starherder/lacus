@@ -8,7 +8,7 @@ namespace game
 
     void GameCamera::init(Application* app)
     {
-        spdlog::info("GameCamera::init");
+        SPDLOG_INFO("GameCamera::init");
 
         assert(app && "app is null");
         _application = app;
@@ -27,7 +27,7 @@ namespace game
 
     void GameCamera::onKeyDown(KeyCode keyCode)
     {
-        //spdlog::info("GameCamera::onKeyDown, keyCode = {}", (int)keyCode);
+        //SPDLOG_INFO("GameCamera::onKeyDown, keyCode = {}", (int)keyCode);
 
         switch (keyCode)
         {
@@ -53,7 +53,7 @@ namespace game
 
     void GameCamera::onKeyUp(KeyCode keyCode)
     {
-        //spdlog::info("GameCamera::onKeyDown, onKeyUp = {}", (int)keyCode);
+        //SPDLOG_INFO("GameCamera::onKeyDown, onKeyUp = {}", (int)keyCode);
 
         switch (keyCode)
         {
@@ -74,7 +74,7 @@ namespace game
     {
         if(!checkInputOK()) return;
 
-        //spdlog::info("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 
+        //SPDLOG_INFO("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 
         //    pos.x, pos.y, delta.x, delta.y);
 
         move(-delta);
@@ -84,7 +84,7 @@ namespace game
     {
         if(!checkInputOK()) return;
 
-        //spdlog::info("GameCamera::onMouseWheel, pos = ({}, {}), dir = {}", 
+        //SPDLOG_INFO("GameCamera::onMouseWheel, pos = ({}, {}), dir = {}", 
         //    pos.x, pos.y, dir);
     }
 
@@ -110,13 +110,13 @@ namespace game
         }
 
         auto& pos = getPos();
-        //spdlog::info("move camera ({}, {}), pos = ({}, {}), vec = ({}, {})", 
+        //SPDLOG_INFO("move camera ({}, {}), pos = ({}, {}), vec = ({}, {})", 
         //    dir.x, dir.y, pos.x, pos.y, _vec.x, _vec.y);
     }
 
     void GameCamera::stopCamera()
     {
-        //spdlog::info("stop camera.");
+        //SPDLOG_INFO("stop camera.");
         _vec = { 0, 0 };
     }
 

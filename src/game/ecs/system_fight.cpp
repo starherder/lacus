@@ -6,11 +6,8 @@ namespace game
 
     FightSystem::FightSystem(GameContext& context) : EcsSystem(context)
     {
-        _context.dispatcher().sink<RolePropAlter>().connect<&FightSystem::onRolePropAlter>(this);
-        _context.dispatcher().sink<RoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
-        _context.dispatcher().sink<RoleLevelAlter>().connect<&FightSystem::onRoleLevelAlter>(this);
-        _context.dispatcher().sink<AddFuncsToTarget>().connect<&FightSystem::applyAllFuncs>(this);
-
+        _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
+        _context.dispatcher().sink<EvtAddSkillFuncs>().connect<&FightSystem::applyAllFuncs>(this);
     }
 
     FightSystem::~FightSystem()
@@ -29,27 +26,26 @@ namespace game
         }
     }
 
-    void FightSystem::onRoleUnderAttack(const RoleOnAttack& e)
+    void FightSystem::onRoleUnderAttack(const EvtRoleOnAttack& e)
     {
         // 计算伤害
 
         auto compName = _context.registry().get<CompNameId>(e.skill);
         auto compAffect = _context.registry().get<CompSkillAffect>(e.skill);
         
-        AddFuncsToTarget func;
+        EvtAddSkillFuncs func;
         func.source = e.source;
         func.target = e.target;
         func.funcs = compAffect.func;
         _context.dispatcher().trigger(func);
     }
 
-
-    void FightSystem::applyAllFuncs(const AddFuncsToTarget& e)
+    void FightSystem::applyAllFuncs(const EvtAddSkillFuncs& e)
     {
         auto funcs = SystemUtils::parseFightFunc(e.funcs);
         if (!funcs)
         {
-            spdlog::error("parse func config({}) error.", e.funcs);
+            SPDLOG_ERROR("parse func config({}) error.", e.funcs);
             return;
         }
 
@@ -59,48 +55,10 @@ namespace game
         }
     }
 
-    void FightSystem::onRolePropAlter(const RolePropAlter& e)
-    {
-        auto& base = _context.registry().get<CompBaseProp>(e.actor);
-        auto& fight = _context.registry().get<CompFightProp>(e.actor);
-
-        // TODO: 计算公式 ！！！！
-
-        fight.hpm = base.cst * 10; // hp max
-        fight.hpr = 0.1f; // hp increase ratio
-        if (e.reset_hp) fight.hp = fight.hpm;
-
-        fight.atk = base.cst / 3 + base.str; 
-        fight.def = base.cst + base.str / 3; 
-        fight.mvs = base.dex;
-        fight.ats = base.dex;
-        fight.atd = base.dex + base.str;
-        fight.crt = base.dex / 10000;
-        fight.par = base.dex / 10000;
-
-        // fight.xxx += buf.xxx // buf
-        // fight.xxx += equip.xxx // 装备
-        // fight.xxx + carrier.xxx // 载具
-    }
-
-    void FightSystem::onRoleLevelAlter(const RoleLevelAlter& e)
-    {
-        int level = e.level;
-
-        // TODO: 计算公式 ！！！！
-        auto& base = _context.registry().get<CompBaseProp>(e.actor);
-        base.cst += 10;
-        base.str += 10;
-        base.met += 10;
-        base.met += 10;
-
-        _context.dispatcher().trigger(RolePropAlter{ e.actor, true });
-    }
-
     void FightSystem::applyFuncToTarget(SystemUtils::FuncFactor fac, entt::entity source, entt::entity target)
     {
         if (!_context.registry().valid(target)) {
-            spdlog::error("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
+            SPDLOG_ERROR("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
             return;
         }
 
@@ -146,7 +104,7 @@ namespace game
 
             fac.fval = calcHpDamage(targetFight, fac.fval);
 
-            addHpToTarget(target, fac.fval);
+            addHpToTarget(target, fac.fval, source);
         }
     }
 
@@ -161,7 +119,7 @@ namespace game
         return hp;
     }
 
-    void FightSystem::addHpToTarget(entt::entity target, float hp)
+    void FightSystem::addHpToTarget(entt::entity target, float hp, entt::entity source)
     {
         auto& targetTrans = _context.registry().get<CompTransform>(target);
         auto& targetFight = _context.registry().get<CompFightProp>(target);
@@ -180,17 +138,19 @@ namespace game
         auto pdead = _context.registry().try_get<CompDead>(target);
         if(targetFight.hp <= 0.0f && pdead == nullptr) 
         {
+            _context.dispatcher().trigger(EvtEnemyKilled{ source, target });
+
             _context.registry().emplace_or_replace<CompDead>(target, CompDead{0});
         }
 
-        _context.dispatcher().trigger(RolHpAlter{ target, hp });
+        _context.dispatcher().trigger(EvtRolHpAlter{ target, hp });
     }
 
     void FightSystem::addBuf(entt::entity source, entt::entity target, const std::string& buf)
     {
-        //spdlog::info("target({}) add buff {}", (uint32_t)target, buf);
+        //SPDLOG_INFO("target({}) add buff {}", (uint32_t)target, buf);
 
-        AddBuffToObject buff;
+        EvtAddBuff buff;
         buff.source = source;
         buff.target = target;
         buff.cfgid = buf;
@@ -199,9 +159,9 @@ namespace game
 
     void FightSystem::removeBuf(entt::entity target, const std::string& buf)
     {
-        //spdlog::info("target({}) remove buff {}", (uint32_t)target, buf);
+        //SPDLOG_INFO("target({}) remove buff {}", (uint32_t)target, buf);
 
-        RemoveBuffFromObject buff;
+        EvtRemoveBuff buff;
         buff.target = target;
         buff.cfgid = buf;
         _context.dispatcher().trigger(buff);
@@ -213,7 +173,7 @@ namespace game
         float curY = targetTrans.position.y;
         float dstY = targetTrans.position.y - 100;
 
-        //spdlog::info("target({}) hp {}{}", (uint32_t)target, hp > 0 ? "+" : "", hp);
+        //SPDLOG_INFO("target({}) hp {}{}", (uint32_t)target, hp > 0 ? "+" : "", hp);
 
         auto word = _context.registry().create();
         _context.registry().emplace<CompTransform>(word, targetTrans);

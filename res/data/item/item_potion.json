@@ -1,8 +1,8 @@
 {
-  "id": "item_1",
-  "name": "text_item_name_1",
+  "id": "item_potion",
+  "name": "text_item_name_potion",
   "type": "item",
-  "desc": "text_item_1_desc",
+  "desc": "text_item_desc_potion",
 
   "display": {
     "size": "32,32",

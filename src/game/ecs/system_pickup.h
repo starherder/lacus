@@ -19,7 +19,7 @@ namespace game {
         void update(float deltaTime);
 
     private:
-        void onEventMoveToGrid(const RoleCrossGrid& e);
+        void onEventMoveToGrid(const EvtRoleCrossGrid& e);
         void pickUp(entt::entity role, entt::entity obj, const Vec2i& grid);
     };
 }

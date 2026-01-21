@@ -6,102 +6,107 @@
 
 namespace game 
 {
-	struct RoleDead {
+	struct EvtRoleDead {
 		entt::entity actor;
 	};
 
-	struct RoleDestroyed {
+	struct EvtRoleDestroyed {
 		entt::entity actor;
 	};
 
-	struct RolePropAlter {
+	struct EvtRolePropAlter {
 		entt::entity actor;
 		bool reset_hp = false;
 	};
 
-	struct RoleLevelAlter {
+	struct EvtRoleLevelAlter {
 		entt::entity actor;
 		int level = 0;
 	};
 
-	struct RolHpAlter {
+	struct EvtEnemyKilled {
+		entt::entity actor;
+		entt::entity enemy;
+	};
+
+	struct EvtRolHpAlter {
 		entt::entity actor;
 		float diff = 0;
 	};
 
-	struct MoveToGrid {
+	struct EvtMoveToGrid {
 		entt::entity actor;
 		Vec2i dest;
 		bool findPath = false;
 	};
 
-	struct MotionStop {
+	struct EvtMotionStop {
 		entt::entity actor;
 	};
 
-	struct RoleCrossGrid {
+	struct EvtRoleCrossGrid {
 		entt::entity actor;
 		Vec2i lst_grid;
 		Vec2i cur_grid;
 	};
 
-	struct RolePickItemStart {
+	struct EvtRolePickItemStart {
 		entt::entity actor;
 		entt::entity item;
 	};
 
-	struct RolePickItemFinish {
+	struct EvtRolePickItemFinish {
 		entt::entity actor;
 		entt::entity item;
 	};
 
-	struct ObjectSelection {
+	struct EvtObjectSelection {
 		entt::entity object;
 	};
 
-	struct RoleExecSkillToPos {
+	struct EvtRoleExecSkillToPos {
 		entt::entity source;
 		Vec2 dest;
 		entt::entity skill;
 	};
 
-	struct CastSkillToObject {
+	struct EvtCastSkillToObject {
 		entt::entity source;
 		entt::entity target;
 		entt::entity skill;
 	};
 
-	struct AddBuffToObject {
+	struct EvtAddBuff {
 		entt::entity source;
 		entt::entity target;
 		std::string cfgid;
 	};
 
-	struct RemoveBuffFromObject {
+	struct EvtRemoveBuff {
 		entt::entity target;
 		std::string cfgid;
 	};
 
-	struct RoleOnAttack {
+	struct EvtRoleOnAttack {
 		entt::entity source;
 		entt::entity target;
 		entt::entity skill;
 	};
 
-	struct ProjectileHitPos {
+	struct EvtProjectileHitPos {
 		entt::entity source;
 		entt::entity skill;
 		//entt::entity projectile;
 		Vec2 pos;
 	};
 
-	struct ExecSkillEvent {
+	struct EvtExecSkillEvent {
 		entt::entity source;
 		entt::entity skill;
 		std::string event;
 	};
 
-	struct AddFuncsToTarget {
+	struct EvtAddSkillFuncs {
 		entt::entity source;
 		entt::entity target;
 		std::string funcs;

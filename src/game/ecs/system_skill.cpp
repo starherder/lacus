@@ -9,10 +9,10 @@ namespace game
 
 	SkillSystem::SkillSystem(GameContext& context) : EcsSystem(context) 
 	{
-		_context.dispatcher().sink<CastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
-		_context.dispatcher().sink<RoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
-		_context.dispatcher().sink<ProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
-		_context.dispatcher().sink<ExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
+		_context.dispatcher().sink<EvtCastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
+		_context.dispatcher().sink<EvtRoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
+		_context.dispatcher().sink<EvtProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
+		_context.dispatcher().sink<EvtExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
 	}
 	
 	SkillSystem::~SkillSystem() 
@@ -76,7 +76,7 @@ namespace game
 		}
 	}
 
-	tweeny::tween<float, float> SkillSystem::makeSkillSpellTween(const CastSkillToObject& e)
+	tweeny::tween<float, float> SkillSystem::makeSkillSpellTween(const EvtCastSkillToObject& e)
 	{
 		if (!_context.registry().valid(e.source))
 		{
@@ -141,13 +141,13 @@ namespace game
 		return tweeny::tween<float, float>{};
 	}
 
-	void SkillSystem::onCastSkillToObject(const CastSkillToObject& e)
+	void SkillSystem::onCastSkillToObject(const EvtCastSkillToObject& e)
 	{
-		//spdlog::info("CastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
+		//SPDLOG_INFO("EvtCastSkillToObject: source ({}) -> target ({})", (uint32_t)e.source, (uint32_t)e.target );
 
 		if (_context.registry().valid(e.skill) == false)
 		{
-			spdlog::warn("onCastSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
+			SPDLOG_WARN("onCastSkillToObject: skill ({}) is invalid", (uint32_t)e.skill);
 			return;
 		}
 
@@ -155,7 +155,7 @@ namespace game
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
 		if (skillComm.state != SkillState::OK)
 		{
-			spdlog::warn("onCastSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
+			SPDLOG_WARN("onCastSkillToObject: skill ({}) state is NOT OK", compName.cfg_id);
 			return;
 		}
 
@@ -181,7 +181,7 @@ namespace game
 		});
 	}
 
-	void SkillSystem::skillApplyToTarget(const CastSkillToObject& e)
+	void SkillSystem::skillApplyToTarget(const EvtCastSkillToObject& e)
 	{
 		auto& compName = _context.registry().get<CompNameId>(e.skill);
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
@@ -192,11 +192,11 @@ namespace game
 			_context.audioPlayer().playSound(HashString(pcompAudio->audio_name.c_str()));
 		}
 
-		//spdlog::info("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
+		//SPDLOG_INFO("skill id:{} cfg:{} affect !", (uint32_t)compName.id, compName.cfg_id);
 
 		if (skillComm.type == SkillType::Combat)
 		{
-			_context.dispatcher().trigger(RoleOnAttack{e.source, e.target, e.skill});
+			_context.dispatcher().trigger(EvtRoleOnAttack{e.source, e.target, e.skill});
 		}
 		else if (skillComm.type == SkillType::Projectile)
 		{
@@ -213,7 +213,7 @@ namespace game
 		else
 		{
 			auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
-			_context.dispatcher().trigger(ExecSkillEvent{e.source, e.skill, skillAffect.event});
+			_context.dispatcher().trigger(EvtExecSkillEvent{e.source, e.skill, skillAffect.event});
 		}
 	}
 
@@ -247,7 +247,7 @@ namespace game
 										auto pSrcComm = _context.registry().try_get<CompComm>(srcid);
 										if (!pSrcSprint || !pSrcTrans || !pSrcComm) 
 										{
-											spdlog::error("srcid ({}) transform or comm component not exist.", (uint64_t)srcid);
+											SPDLOG_ERROR("srcid ({}) transform or comm component not exist.", (uint64_t)srcid);
 											return true;
 										}
 
@@ -260,7 +260,7 @@ namespace game
 										if (_context.currentScene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision) 
 										{
 											pSrcSprint->running = false;
-											spdlog::error("next grid({}, {}) is collision.", grid.x, grid.y);
+											SPDLOG_ERROR("next grid({}, {}) is collision.", grid.x, grid.y);
 											return true;
 										}
 
@@ -276,7 +276,7 @@ namespace game
 												auto pObjComm = _context.registry().try_get<CompComm>(obj);
 												if (pObjComm && pObjComm->type == ObjectType::Npc && pObjComm->side != pSrcComm->side)
 												{
-													_context.dispatcher().trigger(RoleOnAttack{ srcid, obj, skill });
+													_context.dispatcher().trigger(EvtRoleOnAttack{ srcid, obj, skill });
 												}
 											}
 
@@ -349,7 +349,7 @@ namespace game
 				return true;
 			}
 
-			ProjectileHitPos e;
+			EvtProjectileHitPos e;
 			e.source = srcid;
 			e.skill = skill;
 			e.pos = target;
@@ -373,9 +373,9 @@ namespace game
 		});
 	}
 
-	void SkillSystem::onProjectileHitPos(const ProjectileHitPos& e)
+	void SkillSystem::onProjectileHitPos(const EvtProjectileHitPos& e)
 	{
-		//spdlog::info("projectile: source({}) skill({}) hit ({},{})", 
+		//SPDLOG_INFO("projectile: source({}) skill({}) hit ({},{})", 
 		//	(uint32_t)e.source, (uint32_t)e.skill, e.pos.x, e.pos.y);
 
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
@@ -387,14 +387,14 @@ namespace game
 			auto pCmpComm = _context.registry().try_get<CompComm>(obj);
 			if (pCmpComm && pCmpComm->type == ObjectType::Npc)
 			{
-				_context.dispatcher().trigger(RoleOnAttack{ e.source, obj, e.skill });
+				_context.dispatcher().trigger(EvtRoleOnAttack{ e.source, obj, e.skill });
 			}
 		}
 	}
 
-	void SkillSystem::onSkillEvent(const ExecSkillEvent& e)
+	void SkillSystem::onSkillEvent(const EvtExecSkillEvent& e)
 	{
-		spdlog::info("onSkillEvent: event = source({}), skill({}), event({})", 
+		SPDLOG_INFO("onSkillEvent: event = source({}), skill({}), event({})", 
 			(uint32_t)e.source, (uint32_t)e.skill, e.event);
 
 		const auto& views = utility::StringUtil::split(e.event, ',');
@@ -406,7 +406,7 @@ namespace game
 
 			int ticks = std::stoi(views[1].data());
 			if (ticks < 2000) {
-				spdlog::error("sky_turn_dar time must greater than 2000");
+				SPDLOG_ERROR("sky_turn_dar time must greater than 2000");
 				ticks = 2000;
 			}
 
@@ -414,7 +414,7 @@ namespace game
 		}
 	}
 
-	void SkillSystem::onRoleUnderAttackEffect(const RoleOnAttack& e)
+	void SkillSystem::onRoleUnderAttackEffect(const EvtRoleOnAttack& e)
 	{
 		auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
 		if(!underatk)
@@ -425,7 +425,7 @@ namespace game
 		auto& targetNameComp = _context.registry().get<CompNameId>(e.target);
 		auto& skillNameComp = _context.registry().get<CompNameId>(e.skill);
 
-		//spdlog::info("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
+		//SPDLOG_INFO("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
 		//	(uint32_t)targetNameComp.id, targetNameComp.cfg_id, targetNameComp.name, skillNameComp.cfg_id, skillNameComp.name);
 
 		auto& srcTrans = _context.registry().get<CompTransform>(e.source);

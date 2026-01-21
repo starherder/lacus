@@ -179,6 +179,7 @@
     <ClCompile Include="..\src\game\ecs\system_buff.cpp" />
     <ClCompile Include="..\src\game\ecs\system_dead.cpp" />
     <ClCompile Include="..\src\game\ecs\system_fight.cpp" />
+    <ClCompile Include="..\src\game\ecs\system_numerical.cpp" />
     <ClCompile Include="..\src\game\ecs\system_skill.cpp" />
     <ClCompile Include="..\src\game\ecs\system_motion.cpp" />
     <ClCompile Include="..\src\game\ecs\system_pickup.cpp" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\src\game\ecs\system_buff.h" />
     <ClInclude Include="..\src\game\ecs\system_dead.h" />
     <ClInclude Include="..\src\game\ecs\system_fight.h" />
+    <ClInclude Include="..\src\game\ecs\system_numerical.h" />
     <ClInclude Include="..\src\game\ecs\system_skill.h" />
     <ClInclude Include="..\src\game\ecs\system_motion.h" />
     <ClInclude Include="..\src\game\ecs\system_pickup.h" />

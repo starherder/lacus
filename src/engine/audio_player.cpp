@@ -23,14 +23,14 @@ namespace engine {
         MIX_InitFlags flags = MIX_INIT_OGG | MIX_INIT_MP3;
         if ((Mix_Init(flags) & flags) != flags) 
         {
-            spdlog::error("init mix failed, err = : ", SDL_GetError());
+            SPDLOG_ERROR("init mix failed, err = : ", SDL_GetError());
             return false;
         }
 
         if (!Mix_OpenAudio(0, nullptr)) 
         {
             Mix_Quit(); 
-            spdlog::error("mix open audio failed: ", SDL_GetError());
+            SPDLOG_ERROR("mix open audio failed: ", SDL_GetError());
             return false;
         }
 
@@ -56,7 +56,7 @@ namespace engine {
         auto sound = _audioManager->getSound(name);
         if(!sound || !sound->_chunk)
         {
-            spdlog::error("sound {} NOT found", name.data());
+            SPDLOG_ERROR("sound {} NOT found", name.data());
             return -1;
         }
 
@@ -64,7 +64,7 @@ namespace engine {
         int played_channel = Mix_PlayChannel(channel, chunk, 0);  
         if(played_channel == -1)
         {
-            spdlog::error("can NOT play sound {}", name.data());
+            SPDLOG_ERROR("can NOT play sound {}", name.data());
         }
 
         return played_channel;
@@ -93,7 +93,7 @@ namespace engine {
         auto fmusic = _audioManager->getMusic(name);
         if(!fmusic || !fmusic->_music)
         {
-            spdlog::error("music {} NOT found.", name.data());
+            SPDLOG_ERROR("music {} NOT found.", name.data());
             return false;
         }
 
@@ -109,7 +109,7 @@ namespace engine {
 
         if(!result)
         {
-            spdlog::error("playe music {} failed, err = {}", name.data(), SDL_GetError());
+            SPDLOG_ERROR("playe music {} failed, err = {}", name.data(), SDL_GetError());
         }
         else 
         {

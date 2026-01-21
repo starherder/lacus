@@ -100,6 +100,6 @@ namespace samples {
 
     void SamplePluginAudio::onClose()  
     {
-        spdlog::info("Release sample plugin draw");
+        SPDLOG_INFO("Release sample plugin draw");
     }
 }

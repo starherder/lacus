@@ -7,8 +7,8 @@ namespace game
 
 	BuffSystem::BuffSystem(GameContext& context) : EcsSystem(context)
 	{
-		_context.dispatcher().sink<AddBuffToObject>().connect<&BuffSystem::onAddBuffToObject>(this);
-		_context.dispatcher().sink<RemoveBuffFromObject>().connect<&BuffSystem::onRemoveBuffFromObject>(this);
+		_context.dispatcher().sink<EvtAddBuff>().connect<&BuffSystem::onAddBuffToObject>(this);
+		_context.dispatcher().sink<EvtRemoveBuff>().connect<&BuffSystem::onRemoveBuffFromObject>(this);
 	}
 
 	BuffSystem::~BuffSystem()
@@ -26,7 +26,7 @@ namespace game
 
 			if(!_context.registry().valid(buff.owner))
 			{
-				spdlog::info("buff({}) owner({}) NOT valid, remove buff({}).", 
+				SPDLOG_INFO("buff({}) owner({}) NOT valid, remove buff({}).", 
 							(uint32_t)buff.owner, (uint32_t)ent, buff.cfgid);
 				_context.registry().emplace_or_replace<CompDestroy>(ent);
 				continue;
@@ -60,19 +60,19 @@ namespace game
 	}
 
 
-	void BuffSystem::onAddBuffToObject(const AddBuffToObject& e)
+	void BuffSystem::onAddBuffToObject(const EvtAddBuff& e)
 	{
 		auto buff = _context.objectFactory().createBuff(e.target, e.cfgid);
 		if(!_context.registry().valid(buff))
 		{
-			//spdlog::error("add buff ({}) failed.", e.cfgid);
+			//SPDLOG_ERROR("add buff ({}) failed.", e.cfgid);
 			return;
 		}
 
 		auto pbuffs = _context.registry().try_get<CompBuffs>(e.target);
 		if(!pbuffs)
 		{
-			//spdlog::error("object ({}) can NOT hold buffs.", (uint32_t)e.target);
+			//SPDLOG_ERROR("object ({}) can NOT hold buffs.", (uint32_t)e.target);
 			return;
 		}
 
@@ -91,7 +91,7 @@ namespace game
 				buffComm.during_ticks += ticks;
 				if(buffComm.during_ticks > buffComm.duration)
 				{
-					//spdlog::info("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
+					//SPDLOG_INFO("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
 					_context.registry().emplace_or_replace<CompDestroy>(buff);
 					return;
 				}
@@ -107,19 +107,19 @@ namespace game
 		};
 	}
 
-	void BuffSystem::onRemoveBuffFromObject(const RemoveBuffFromObject& e)
+	void BuffSystem::onRemoveBuffFromObject(const EvtRemoveBuff& e)
 	{
 		auto buff = _context.objectFactory().createBuff(e.target, e.cfgid);
 		if (!_context.registry().valid(buff))
 		{
-			spdlog::error("add buff ({}) failed.", e.cfgid);
+			SPDLOG_ERROR("add buff ({}) failed.", e.cfgid);
 			return;
 		}
 
 		auto pbuffs = _context.registry().try_get<CompBuffs>(e.target);
 		if (!pbuffs)
 		{
-			spdlog::error("object ({}) can NOT hold buffs.", (uint32_t)e.target);
+			SPDLOG_ERROR("object ({}) can NOT hold buffs.", (uint32_t)e.target);
 			return;
 		}
 
@@ -148,9 +148,9 @@ namespace game
 		// 改造 FightSystem::onRoleUnderAttack，发消息过去处理伤害
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
-		//spdlog::info("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
+		//SPDLOG_INFO("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
 
-		AddFuncsToTarget func;
+		EvtAddSkillFuncs func;
 		func.source = entt::null;
 		func.target = target;
 		func.funcs = buffComm.func;

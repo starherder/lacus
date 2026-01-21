@@ -20,7 +20,7 @@ namespace game
         void update(float delta) override;
 
     private:
-        void onObjectSelection(const ObjectSelection& e);
+        void onObjectSelection(const EvtObjectSelection& e);
     };
 
 

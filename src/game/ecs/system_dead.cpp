@@ -13,7 +13,7 @@ namespace game
 		for (auto& ent : destroyViews)
 		{
 			pending.push_back(ent);
-			_context.dispatcher().trigger(RoleDestroyed{ent});
+			_context.dispatcher().trigger(EvtRoleDestroyed{ent});
 		}
 
 		// destroy
@@ -30,7 +30,7 @@ namespace game
 			auto& compDead = deadViews.get<CompDead>(ent);
 			if (compDead.ticks <= 0)
 			{
-				_context.dispatcher().trigger(RoleDead{ent});
+				_context.dispatcher().trigger(EvtRoleDead{ent});
 			}
 			else if (compDead.ticks > _context.gameConfig().dying_ticks)
 			{

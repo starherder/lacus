@@ -72,7 +72,7 @@ void FormEntry::onExit(Button* btn)
 
 void FormEntry::onSizeChanged()
 {
-	spdlog::info("FormEntry::onWindowResized");
+	SPDLOG_INFO("FormEntry::onWindowResized");
 
 	auto x = size().x / 2 - _lblTitle->size().x / 2;
 	auto y = size().y / 2 - 160;

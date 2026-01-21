@@ -82,7 +82,7 @@ namespace samples {
 
         void initialize() override
         {
-            //spdlog::info("Move({}) initialize", _name);
+            //SPDLOG_INFO("Move({}) initialize", _name);
 
             int symx = (rand() % 2 == 0) ? 1 : -1;
             int symy = (rand() % 2 == 0) ? 1 : -1;
@@ -95,7 +95,7 @@ namespace samples {
 
         void terminate(Status s) override
         {
-            //spdlog::info("Move({}) terminate", _name);
+            //SPDLOG_INFO("Move({}) terminate", _name);
         }
 
         Status update() override
@@ -141,14 +141,14 @@ namespace samples {
 
         void initialize() override
         {
-            //spdlog::info("Resize({}) initialize", _name);
+            //SPDLOG_INFO("Resize({}) initialize", _name);
             _npc->size = NpcDefaultSize;
             _scaleMode = ScaleNone;
         }
 
         void terminate(Status s) override
         {
-            //spdlog::info("Resize({}) terminate", _name);
+            //SPDLOG_INFO("Resize({}) terminate", _name);
             _npc->size = NpcDefaultSize;
             _scaleMode = ScaleNone;
         }
@@ -206,13 +206,13 @@ namespace samples {
 
         void initialize() override
         {
-            //spdlog::info("Alpha({}) initialize", _name);
+            //SPDLOG_INFO("Alpha({}) initialize", _name);
         }
 
         void terminate(Status s) override
         {
             _npc->color.a = 255;
-            //spdlog::info("Alpha({}) terminate", _name);
+            //SPDLOG_INFO("Alpha({}) terminate", _name);
         }
 
         Status update() override
@@ -247,7 +247,7 @@ namespace samples {
 
         void initialize() override
         {
-            //spdlog::info("Alpha({}) initialize", _name);
+            //SPDLOG_INFO("Alpha({}) initialize", _name);
             _srcColor = _npc->color;
 
             _target = _npc->color.toHSV().h + 90;
@@ -257,7 +257,7 @@ namespace samples {
         void terminate(Status s) override
         {
             _npc->color = _srcColor;
-            //spdlog::info("Alpha({}) terminate", _name);
+            //SPDLOG_INFO("Alpha({}) terminate", _name);
         }
 
         Status update() override

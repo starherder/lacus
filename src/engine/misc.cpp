@@ -112,7 +112,7 @@ uintmax_t PathUtils::calculate_directory_size(const fs::path& dir)
             }
         }
     } catch (const fs::filesystem_error& e) {
-        spdlog::error("calc path size error: {}", e.what());
+        SPDLOG_ERROR("calc path size error: {}", e.what());
     }
     
     return total_size;

@@ -67,4 +67,39 @@ public:
     static uintmax_t calculate_directory_size(const fs::path& dir);
 };
 
+
 }
+
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h" 
+#include "spdlog/sinks/stdout_sinks.h"
+
+inline std::ostream& operator<<(std::ostream& os, const engine::Vec2& v)
+{
+    return os << "(" << v.x << "," << v.y << ")";
+}
+template <> struct fmt::formatter<engine::Vec2> : fmt::ostream_formatter {};
+
+inline std::ostream& operator<<(std::ostream& os, const engine::Vec2i& v)
+{
+    return os << "(" << v.x << "," << v.y << ")";
+}
+template <> struct fmt::formatter<engine::Vec2i> : fmt::ostream_formatter {};
+
+inline std::ostream& operator<<(std::ostream& os, const engine::Rect& r)
+{
+    return os << "(" << r.x << "," << r.y << r.w << "," << r.h << ")";
+}
+template <> struct fmt::formatter<engine::Rect> : fmt::ostream_formatter {};
+
+inline std::ostream& operator<<(std::ostream& os, const engine::Color& c)
+{
+    return os << "(" << c.r << "," << c.b << c.b << "," << c.a << ")";
+}
+template <> struct fmt::formatter<engine::Color> : fmt::ostream_formatter {};
+
+inline std::ostream& operator<<(std::ostream& os, const entt::entity& ent)
+{
+    return os << (uint32_t)ent;
+}
+template <> struct fmt::formatter<entt::entity> : fmt::ostream_formatter {};

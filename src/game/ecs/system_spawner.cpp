@@ -6,7 +6,7 @@ namespace game
 
     SpawnerSystem::SpawnerSystem(GameContext& context) : EcsSystem(context)
     {
-        _context.dispatcher().sink<RoleDead>().connect<&SpawnerSystem::onRoleDead>(this);
+        _context.dispatcher().sink<EvtRoleDead>().connect<&SpawnerSystem::onRoleDead>(this);
     }
 
     SpawnerSystem::~SpawnerSystem()
@@ -46,7 +46,7 @@ namespace game
         }
     }
 
-    void SpawnerSystem::onRoleDead(const RoleDead& e)
+    void SpawnerSystem::onRoleDead(const EvtRoleDead& e)
     {
         auto pCompSpawner = _context.registry().try_get<CompSpawnMe>(e.actor);
         if(pCompSpawner)
@@ -69,7 +69,7 @@ namespace game
         {
             if (LoopCount++ > 20)
             {
-                spdlog::warn("SpawnerSystem::spawnActor: loop time > {}, break;", LoopCount);
+                SPDLOG_WARN("SpawnerSystem::spawnActor: loop time > {}, break;", LoopCount);
                 break;
             }
 

@@ -111,7 +111,7 @@ void SamplePluginEntt::onDraw()
 
 void SamplePluginEntt::onClose()  
 {
-    spdlog::info("Release sample plugin scene");
+    SPDLOG_INFO("Release sample plugin scene");
 }
 
 void SamplePluginEntt::initEntities()
@@ -132,6 +132,8 @@ void SamplePluginEntt::initEntities()
             auto color = Color{ HSVColor{(float)(x % 360), 1.0f, 1.0f, 1.0f } };
             ComDisplay disp{ color };
             _registry.emplace<ComDisplay>(ent, disp);
+
+            SPDLOG_INFO("init ent:{} , pos: {}, size: {}", ent, trans.pos, trans.size);
         }
     }
 }

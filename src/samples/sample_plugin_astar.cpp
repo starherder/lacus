@@ -166,7 +166,7 @@ namespace samples {
                 return;
             }
 
-            spdlog::info("mouse.click: pos = ({}, {}), grid_pos = ({}, {})", mousePos.x, mousePos.y, gridPos.x, gridPos.y);
+            SPDLOG_INFO("mouse.click: pos = ({}, {}), grid_pos = ({}, {})", mousePos.x, mousePos.y, gridPos.x, gridPos.y);
 
             if (_state == State::SetSource) {
                 _source = gridPos;
@@ -190,14 +190,14 @@ namespace samples {
     {
         _blocks.insert(grid);
        
-        spdlog::info("block size = {}", _blocks.size());
+        SPDLOG_INFO("block size = {}", _blocks.size());
     }
 
     void ImPathFindForm::delBlock(const Vec2i& grid)
     {
         _blocks.erase(grid);
 
-        spdlog::info("block size = {}", _blocks.size());
+        SPDLOG_INFO("block size = {}", _blocks.size());
     }
 
     void ImPathFindForm::resetAll()
@@ -220,7 +220,7 @@ namespace samples {
         _state = State::Normal;
         _tips.clear();
 
-        spdlog::info("start find pos: src = ({}, {}),  dst = ({}, {})", 
+        SPDLOG_INFO("start find pos: src = ({}, {}),  dst = ({}, {})", 
             _source.x, _source.y, _target.x, _target.y);
 
         AStar::Generator generator;
@@ -245,7 +245,7 @@ namespace samples {
         if (!result)
         {
             _tips = "find path failed.";
-            spdlog::error("findpath faild. ({},{}) -> ({},{})", _source.x, _source.y, _target.x, _target.y);
+            SPDLOG_ERROR("findpath faild. ({},{}) -> ({},{})", _source.x, _source.y, _target.x, _target.y);
             return;
         }
 
@@ -255,7 +255,7 @@ namespace samples {
         {
             gridlist += fmt::format("[{},{}]", grid.x, grid.y);
         }
-        spdlog::info("grid_list = {}", gridlist);
+        SPDLOG_INFO("grid_list = {}", gridlist);
 
         _path.clear();
         _path.reserve(pathgrids.size());

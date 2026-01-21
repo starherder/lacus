@@ -6,6 +6,7 @@
 #include "comm_event.h"
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
+#include "game/scene/game_context.h"
 
 
 namespace game

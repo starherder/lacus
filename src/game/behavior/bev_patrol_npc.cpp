@@ -35,7 +35,7 @@ namespace game {
 		auto pmotion = _context->registry().try_get<CompMotion>(_actor);
 		if(!ptrans || !pmotion)
 		{
-			spdlog::error("actor {} Have NO transform nor motion.", (uint32_t)_actor);
+			SPDLOG_ERROR("actor {} Have NO transform nor motion.", (uint32_t)_actor);
 			return Status::Failure;
 		}
 
@@ -51,7 +51,7 @@ namespace game {
 			{
 				if (LoopCount++ > 20)
 				{
-					spdlog::warn("BevNode_FindPatrolPos: loop time > {}, break;", LoopCount);
+					SPDLOG_WARN("BevNode_FindPatrolPos: loop time > {}, break;", LoopCount);
 					break;
 				}
 
@@ -74,7 +74,7 @@ namespace game {
 
 				motion.targetGrid = dstGrid;
 
-				//spdlog::info("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
+				//SPDLOG_INFO("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
 				return Status::Success;
 			}
 		}
@@ -87,12 +87,12 @@ namespace game {
 		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 
-		//spdlog::info("BevNode_FindPatrolPos: initialize");
+		//SPDLOG_INFO("BevNode_FindPatrolPos: initialize");
 	}
 
 	void BevNode_FindPatrolPos::terminate(Status s)
 	{
-		//spdlog::info("BevNode_FindPatrolPos: terminate");
+		//SPDLOG_INFO("BevNode_FindPatrolPos: terminate");
 	}
 
 
@@ -120,22 +120,22 @@ namespace game {
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 		if(!_context || _context->registry().valid(_actor) == false) 
 		{
-			spdlog::error("actor NOT valid.");
+			SPDLOG_ERROR("actor NOT valid.");
 			return;
 		}
 
 		_finished = false;
 
 		auto& motion = _context->registry().get<CompMotion>(_actor);
-		_context->dispatcher().trigger(MoveToGrid{ _actor, motion.targetGrid, false });
-		_context->dispatcher().sink<MotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
+		_context->dispatcher().trigger(EvtMoveToGrid{ _actor, motion.targetGrid, false });
+		_context->dispatcher().sink<EvtMotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
 	}
 	
 	void BevNode_PatrolMove::terminate(Status s) 
 	{
 	}
 
-	void BevNode_PatrolMove::onMotionStop(const MotionStop& e)
+	void BevNode_PatrolMove::onMotionStop(const EvtMotionStop& e)
 	{
 		if(e.actor != _actor) 
 		{
@@ -193,7 +193,7 @@ namespace game {
 	{
 		if (_pickOK)
 		{
-			spdlog::info("BevNode_PickItem: finished.");
+			SPDLOG_INFO("BevNode_PickItem: finished.");
 			return Status::Success;
 		}
 
@@ -213,13 +213,13 @@ namespace game {
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 		if (!_context || _actor == entt::null)
 		{
-			spdlog::error("actor NOT valid.");
+			SPDLOG_ERROR("actor NOT valid.");
 			return;
 		}
 
 		_pickOK = false;
-		_context->dispatcher().sink< RolePickItemStart>().connect<&BevNode_PickItem::onRolePickItemStart>(this);
-		_context->dispatcher().sink< RoleCrossGrid>().connect<&BevNode_PickItem::onRoleEnterGrid>(this);
+		_context->dispatcher().sink< EvtRolePickItemStart>().connect<&BevNode_PickItem::onRolePickItemStart>(this);
+		_context->dispatcher().sink< EvtRoleCrossGrid>().connect<&BevNode_PickItem::onRoleEnterGrid>(this);
 	}
 
 	void BevNode_PickItem::terminate(Status s)
@@ -279,34 +279,34 @@ namespace game {
 		auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
 		if (!path)
 		{
-			spdlog::warn("find pickable item pos ({}, {}) unreachable, find again.", dstGrid.x, dstGrid.y);
+			SPDLOG_WARN("find pickable item pos ({}, {}) unreachable, find again.", dstGrid.x, dstGrid.y);
 			return Status::Failure;
 		}
 
 		motion.path.swap(path.value());
 		motion.targetGrid = dstGrid;
 
-		spdlog::info("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
+		SPDLOG_INFO("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
 
-		_context->dispatcher().trigger(MoveToGrid{ _actor, motion.targetGrid, false });
+		_context->dispatcher().trigger(EvtMoveToGrid{ _actor, motion.targetGrid, false });
 
 		return Status::Running;
 	}
 
-	void BevNode_PickItem::onRolePickItemStart(const RolePickItemStart& e)
+	void BevNode_PickItem::onRolePickItemStart(const EvtRolePickItemStart& e)
 	{
 		if (e.actor == _actor) 
 		{
-			spdlog::info("BevNode_PickItem: onRolePickItemStart.");
+			SPDLOG_INFO("BevNode_PickItem: onRolePickItemStart.");
 			_pickOK = true;
 		}
 	}
 
-	void BevNode_PickItem::onRoleEnterGrid(const RoleCrossGrid& e)
+	void BevNode_PickItem::onRoleEnterGrid(const EvtRoleCrossGrid& e)
 	{
 		if (e.actor == _actor)
 		{
-			//spdlog::info("BevNode_PickItem: role grid change, need check.");
+			//SPDLOG_INFO("BevNode_PickItem: role grid change, need check.");
 			_needCheck = true;
 		}
 	}
@@ -330,7 +330,7 @@ namespace game {
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 		if (!_context || _actor == entt::null)
 		{
-			spdlog::error("actor NOT valid.");
+			SPDLOG_ERROR("actor NOT valid.");
 			return;
 		}
 	}
@@ -345,14 +345,14 @@ namespace game {
 		auto& rolePos = trans.position;
 		if(std::isnan(rolePos.x) || std::isnan(rolePos.y))
 		{
-			spdlog::error("rolepos ({}, {}) is nan!!", rolePos.x, rolePos.y);
+			SPDLOG_ERROR("rolepos ({}, {}) is nan!!", rolePos.x, rolePos.y);
 			return Status::Failure;
 		}
 
 		auto pNpcComm = _context->registry().try_get<CompComm>(_actor);
 		if (!pNpcComm)
 		{
-			spdlog::error("role {} No CompComm found.", (uint32_t)_actor);
+			SPDLOG_ERROR("role {} No CompComm found.", (uint32_t)_actor);
 			return Status::Failure;
 		}
 
@@ -383,7 +383,7 @@ namespace game {
 					auto pCompComm = _context->registry().try_get<CompComm>(target);
 					if (pCompComm && pCompComm->type == ObjectType::Npc && pCompComm->side != pNpcComm->side) 
 					{
-						_context->dispatcher().trigger(CastSkillToObject{ _actor, target, skill_id });
+						_context->dispatcher().trigger(EvtCastSkillToObject{ _actor, target, skill_id });
 						return Status::Success;
 					}
 				}

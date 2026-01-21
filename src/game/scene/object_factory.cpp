@@ -67,23 +67,23 @@ namespace game
 
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
-			spdlog::error("open file '{}' failed.", cfgfile.string());
+			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
 			return false;
 		}
 
 		try {
 			ifile >> *jsonptr;
-			spdlog::info("load json from '{}' OK.", cfgfile.string());
+			SPDLOG_INFO("load json from '{}' OK.", cfgfile.string());
 		}
 		catch (const std::exception& e) {
-			spdlog::error("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
 			return false;
 		}
 
 		std::string cfgid = jsonptr->value("id", "");
 		if (cfgid.empty())
 		{
-			spdlog::error("role file({}) NOT found cfgid.", cfgfile.string());
+			SPDLOG_ERROR("role file({}) NOT found cfgid.", cfgfile.string());
 			return false;
 		}
 
@@ -99,23 +99,23 @@ namespace game
 
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
-			spdlog::error("open file '{}' failed.", cfgfile.string());
+			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
 			return false;
 		}
 
 		try {
 			ifile >> *jsonptr;
-			spdlog::info("load json from '{}' OK.", cfgfile.string());
+			SPDLOG_INFO("load json from '{}' OK.", cfgfile.string());
 		}
 		catch (const std::exception& e) {
-			spdlog::error("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
 			return false;
 		}
 
 		std::string cfgid = jsonptr->value("cfgid", "");
 		if(cfgid.empty())
 		{
-			spdlog::error("skill file({}) NOT found cfgid.", cfgfile.string());
+			SPDLOG_ERROR("skill file({}) NOT found cfgid.", cfgfile.string());
 			return false;
 		}
 
@@ -131,23 +131,23 @@ namespace game
 
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
-			spdlog::error("open file '{}' failed.", cfgfile.string());
+			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
 			return false;
 		}
 
 		try {
 			ifile >> *jsonptr;
-			spdlog::info("load json from '{}' OK.", cfgfile.string());
+			SPDLOG_INFO("load json from '{}' OK.", cfgfile.string());
 		}
 		catch (const std::exception& e) {
-			spdlog::error("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
 			return false;
 		}
 
 		std::string cfgid = jsonptr->value("cfgid", "");
 		if (cfgid.empty())
 		{
-			spdlog::error("buff file({}) NOT found cfgid.", cfgfile.string());
+			SPDLOG_ERROR("buff file({}) NOT found cfgid.", cfgfile.string());
 			return false;
 		}
 
@@ -162,14 +162,14 @@ namespace game
 	{
 		if (!_context)
 		{
-			spdlog::error("ObjectFactory need Load first.");
+			SPDLOG_ERROR("ObjectFactory need Load first.");
 			return entt::null;
 		}
 
 		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
 		{
-			spdlog::error("object ({}) cfg NOT found.", cfgid);
+			SPDLOG_ERROR("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
@@ -250,7 +250,7 @@ namespace game
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
-		//spdlog::info("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
+		//SPDLOG_INFO("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
 		
 		return object;
 	}
@@ -290,8 +290,6 @@ namespace game
 			return role;
 		}
 
-		_context->registry().emplace<CompLevelUp>(role, CompLevelUp{0,0});
-		
 		if (json.contains("patrol"))
 		{
 			auto& patrolJs = json["patrol"];
@@ -338,6 +336,7 @@ namespace game
 			float roll = baseJs["roll"];
 
 			CompBaseProp compBase;
+			compBase.lv = baseJs.value("level", 0.0f) + utility::Random_Minus1_1();
 			compBase.str = baseJs.value("str", 0.0f) + utility::Random_Minus1_1() * roll;
 			compBase.cst = baseJs.value("cst", 0.0f) + utility::Random_Minus1_1() * roll;
 			compBase.dex = baseJs.value("dex", 0.0f) + utility::Random_Minus1_1() * roll;
@@ -353,7 +352,7 @@ namespace game
 			CompFightProp fightProp;
 			_context->registry().emplace<CompFightProp>(role, fightProp);
 
-			_context->dispatcher().trigger(RoleLevelAlter{role, 1});
+			_context->dispatcher().trigger(EvtRoleLevelAlter{role, 1});
 		}
 
 		if (json.contains("behavior"))
@@ -415,14 +414,14 @@ namespace game
 	{
 		if (!_context)
 		{
-			spdlog::error("ObjectFactory need Load first.");
+			SPDLOG_ERROR("ObjectFactory need Load first.");
 			return entt::null;
 		}
 
 		auto jsonptr = _jsonBuffCfgs[cfgid];
 		if (!jsonptr)
 		{
-			spdlog::error("object ({}) cfg NOT found.", cfgid);
+			SPDLOG_ERROR("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
@@ -474,14 +473,14 @@ namespace game
 	{
 		if (!_context)
 		{
-			spdlog::error("ObjectFactory need Load first.");
+			SPDLOG_ERROR("ObjectFactory need Load first.");
 			return entt::null;
 		}
 
 		auto jsonptr = _jsonSkillCfgs[cfgid];
 		if (!jsonptr)
 		{
-			spdlog::error("object ({}) cfg NOT found.", cfgid);
+			SPDLOG_ERROR("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
@@ -578,7 +577,7 @@ namespace game
 			_context->registry().emplace<CompTraps>(skill, trap);
 		}
 
-		//spdlog::info("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
+		//SPDLOG_INFO("create skill ({}) on ({}) OK.", cfgid, (uint32_t)owner);
 		return skill;
 	}
 
@@ -586,7 +585,7 @@ namespace game
 	{
 		if (!_context || _context->registry().valid(owner) == false)
 		{
-			spdlog::error("create particle ({}) on invald object({})", particle, (uint32_t)owner);
+			SPDLOG_ERROR("create particle ({}) on invald object({})", particle, (uint32_t)owner);
 			return nullptr;
 		}
 
@@ -623,10 +622,10 @@ namespace game
 		auto res = createParticleOnObject(bullet, particle);
 		if (!res) 
 		{
-			//spdlog::error("createProjectile: create particle failed.");
+			//SPDLOG_ERROR("createProjectile: create particle failed.");
 		}
 
-		//spdlog::info("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
+		//SPDLOG_INFO("create projectile {} (source:({},{}), target({},{}), particle:{}) OK.", 
 		//	(uint32_t)bullet, source.x, source.y, target.x, target.y, particle );
 
 		return bullet;
@@ -652,12 +651,12 @@ namespace game
 				}
 
 				if (t.isFinished()) {
-					spdlog::info("sky effect({}) finish", magic_enum::enum_name(effect).data());
+					SPDLOG_INFO("sky effect({}) finish", magic_enum::enum_name(effect).data());
 					_context->registry().emplace<CompDestroy>(sky);
 					return true;
 				}
 
-				spdlog::info("sky.color.a = {}", a);
+				SPDLOG_INFO("sky.color.a = {}", a);
 
 				auto& compSky = _context->registry().get<CompSkyEffect>(sky);
 				compSky.color.a = a;
@@ -671,7 +670,7 @@ namespace game
 	{
 		if (!_context)
 		{
-			spdlog::error("ObjectFactory need Load first.");
+			SPDLOG_ERROR("ObjectFactory need Load first.");
 			return ;
 		}
 
@@ -698,17 +697,17 @@ namespace game
 			}
 			else if (value.is_array()) {
 				//auto arr = value.get<std::vector<int>>();
-				spdlog::error("json value is array.");
+				SPDLOG_ERROR("json value is array.");
 			}
 			else if (value.is_object()) {
 				//std::cout << "Object with " << value.size() << " fields" << std::endl;
-				spdlog::error("json value is object.");
+				SPDLOG_ERROR("json value is object.");
 			}
 			else {
-				spdlog::error("json type unkonw: tpye = {}", value.type_name());
+				SPDLOG_ERROR("json type unkonw: tpye = {}", value.type_name());
 			}
 		} catch (const std::exception& e) {
-			spdlog::error("type convert failed. e = {}", e.what());
+			SPDLOG_ERROR("type convert failed. e = {}", e.what());
 		}
 
 		return std::nullopt;
@@ -722,7 +721,7 @@ namespace game
 		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
 		{
-			spdlog::error("getObjectCfgProperties: object ({}) cfg NOT found.", cfgid);
+			SPDLOG_ERROR("getObjectCfgProperties: object ({}) cfg NOT found.", cfgid);
 			return props;
 		}
 

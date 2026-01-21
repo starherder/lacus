@@ -1,8 +1,8 @@
 {
-	"id": "item_0",
-	"name" : "text_item_name_0",
+	"id": "item_coin",
+	"name" : "text_item_name_coin",
 	"type" : "item",
-	"desc" : "text_item_0_desc",	
+	"desc" : "text_item_desc_coin",	
 
 	"display": {
 		"size": "32,32",

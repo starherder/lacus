@@ -303,7 +303,7 @@ namespace ui {
             _draggingData->src_group = parentGroup;
             _draggingData->_offset= wpos - mpos;
 
-            //spdlog::info("GuiManager::drag: start.");
+            //SPDLOG_INFO("GuiManager::drag: start.");
         }
 
         void GuiManager::drop()
@@ -318,7 +318,7 @@ namespace ui {
 
             _draggingData = nullptr;
 
-            //spdlog::info("GuiManager::drop: finish.");
+            //SPDLOG_INFO("GuiManager::drop: finish.");
         }
 
         void GuiManager::emitCustomEvent(int eventId, const utility::VarList& varlist)

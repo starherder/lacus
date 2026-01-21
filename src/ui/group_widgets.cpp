@@ -53,7 +53,7 @@ namespace ui {
     {
         if(!widget)
         {
-            spdlog::error("Group::addWidget widiget==nullptr.");
+            SPDLOG_ERROR("Group::addWidget widiget==nullptr.");
             return;
         }
 
@@ -95,7 +95,7 @@ namespace ui {
         }
         else
         {
-            spdlog::error("add widget ({}) to index {} failed. child_count = {}", widget->name(), index, _children.size());
+            SPDLOG_ERROR("add widget ({}) to index {} failed. child_count = {}", widget->name(), index, _children.size());
         }
     }
 

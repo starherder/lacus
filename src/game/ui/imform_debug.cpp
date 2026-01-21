@@ -147,7 +147,7 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     }
 
     auto scenePos = _context->currentScene().camera().screenToWorld(pos);
-    //spdlog::info("pos = ({},{}), scene_pos = ({}, {})", pos.x, pos.y, scenePos.x, scenePos.y);
+    //SPDLOG_INFO("pos = ({},{}), scene_pos = ({}, {})", pos.x, pos.y, scenePos.x, scenePos.y);
 
     switch (_debugMode)
     {
@@ -195,7 +195,7 @@ void ImFormDebug::moveSelectActor(const Vec2& pos)
     if(_context->registry().try_get<CompMotion>(_selectEntity))
     {
         auto gridPos = _context->currentScene().getGridFromPos(pos);
-        _context->dispatcher().trigger(MoveToGrid{_selectEntity, gridPos, true});
+        _context->dispatcher().trigger(EvtMoveToGrid{_selectEntity, gridPos, true});
     }
 }
 
@@ -285,18 +285,18 @@ void ImFormDebug::roleExecSkill()
                 auto pCompComm = _context->registry().try_get<CompComm>(target);
                 if (pCompComm && pCompComm->type == ObjectType::Npc) 
                 {
-                    _context->dispatcher().trigger(CastSkillToObject{_selectEntity, target, skill_id });
+                    _context->dispatcher().trigger(EvtCastSkillToObject{_selectEntity, target, skill_id });
                     return;
                 }
             }
 
-            spdlog::info("skill ({}) find enemy faild.", compName.cfg_id);
+            SPDLOG_INFO("skill ({}) find enemy faild.", compName.cfg_id);
         }
         else
         {
-            spdlog::info("skill ({}) ha NO enmey.", compName.cfg_id);
+            SPDLOG_INFO("skill ({}) ha NO enmey.", compName.cfg_id);
 
-            _context->dispatcher().trigger(CastSkillToObject{ _selectEntity, entt::null, skill_id });
+            _context->dispatcher().trigger(EvtCastSkillToObject{ _selectEntity, entt::null, skill_id });
         }
 
     }

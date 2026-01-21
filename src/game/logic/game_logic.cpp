@@ -22,6 +22,7 @@
 #include "game/ecs/system_fight.h"
 #include "game/ecs/system_buff.h"
 #include "game/ecs/system_spawner.h"
+#include "game/ecs/system_numerical.h"
 
 
 namespace game
@@ -57,6 +58,7 @@ namespace game
         _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
         _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
         _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SpawnerSystem>(_gameContext) });
+        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<NumericalSystem>(_gameContext) });
     }
     
 	void GameLogic::loadResource()
@@ -64,56 +66,56 @@ namespace game
         auto gamecfg = _gameContext.resPath() / "game_config.json";
         bool res = _gameConfig.load(gamecfg);
         if (!res) {
-            spdlog::error("load game config: {} failed.", gamecfg.string());
+            SPDLOG_ERROR("load game config: {} failed.", gamecfg.string());
             return;
         }
 
         auto btreePath =_gameContext.resPath() / "data/bevtree/";
         res = bevtree::BevTreeManager::inst().load(btreePath);
         if (!res) {
-            spdlog::error("load bevtree config: {} failed.", btreePath.string());
+            SPDLOG_ERROR("load bevtree config: {} failed.", btreePath.string());
             return;
         }
 
         auto roleCfgs =_gameContext.resPath() / "data/role/";
         res = ObjectFactory::inst().loadObjects(_gameContext, roleCfgs);
         if (!res) {
-            spdlog::error("load role config: {} failed.", roleCfgs.string());
+            SPDLOG_ERROR("load role config: {} failed.", roleCfgs.string());
             return;
         }
 
         auto itemCfgs =_gameContext.resPath() / "data/item/";
         res = ObjectFactory::inst().loadObjects(_gameContext, itemCfgs);
         if (!res) {
-            spdlog::error("load item config: {} failed.", itemCfgs.string());
+            SPDLOG_ERROR("load item config: {} failed.", itemCfgs.string());
             return;
         }
 
         auto skilldir =_gameContext.resPath() / "data/skill/";
         res = ObjectFactory::inst().loadSkills(_gameContext, skilldir);
         if (!res) {
-            spdlog::error("load skill config: {} failed.", skilldir.string());
+            SPDLOG_ERROR("load skill config: {} failed.", skilldir.string());
             return;
         }
 
         auto buffdir =_gameContext.resPath() / "data/buff/";
         res = ObjectFactory::inst().loadBuffs(_gameContext, buffdir);
         if (!res) {
-            spdlog::error("load buff config: {} failed.", buffdir.string());
+            SPDLOG_ERROR("load buff config: {} failed.", buffdir.string());
             return;
         }
 
         auto particleCfgs =_gameContext.resPath() / "particles/";
         res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
         if (!res) {
-            spdlog::error("load partiles config: {} failed.", particleCfgs.string());
+            SPDLOG_ERROR("load partiles config: {} failed.", particleCfgs.string());
             return;
         }
 
         auto textdir =_gameContext.resPath() / "localized/CHS/";
         res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
         if (!res) {
-            spdlog::error("load translator file ({}) failed.", textdir.string());
+            SPDLOG_ERROR("load translator file ({}) failed.", textdir.string());
             return;
         }
 	}
@@ -199,7 +201,7 @@ namespace game
         auto mapFile = _gameContext.resPath() / _gameConfig.scenes.first_scene;
         auto res = _scene->load(mapFile);
         if (!res) {
-            spdlog::error("load level test: {} failed.", mapFile.string());
+            SPDLOG_ERROR("load level test: {} failed.", mapFile.string());
             return;
         }
 

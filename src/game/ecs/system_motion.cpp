@@ -7,7 +7,7 @@ namespace game
 
     MotionSystem::MotionSystem(GameContext& context) : EcsSystem(context)
     {
-        context.dispatcher().sink<MoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
+        context.dispatcher().sink<EvtMoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
     }
 
     MotionSystem::~MotionSystem()
@@ -51,7 +51,7 @@ namespace game
     {
         if (!_context.registry().valid(id))
         {
-            spdlog::error("entity {} NOT found.", (uint32_t)id);
+            SPDLOG_ERROR("entity {} NOT found.", (uint32_t)id);
             return false;
         }
 
@@ -64,7 +64,7 @@ namespace game
         Vec2i srcGrid = _context.currentScene().getGridFromPos(srcPos);
         if(srcGrid == dstGrid)
         {
-            //spdlog::warn("src_grid == dst_grid");
+            //SPDLOG_WARN("src_grid == dst_grid");
             return false;
         }
 
@@ -74,7 +74,7 @@ namespace game
             auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
             if (!path)
             {
-                spdlog::info("path find failed.");
+                SPDLOG_INFO("path find failed.");
                 motionStop(id);
                 return false;
             }
@@ -86,7 +86,7 @@ namespace game
 
         if(motion.path.size() < 2) 
         {
-            spdlog::warn("path TOO short!,only {} grids", motion.path.size());
+            SPDLOG_WARN("path TOO short!,only {} grids", motion.path.size());
             return false;
         }
 
@@ -151,7 +151,7 @@ namespace game
             motion.path_iterator = motion.path.rbegin();
         }
 
-        _context.dispatcher().trigger(MotionStop{ id });
+        _context.dispatcher().trigger(EvtMotionStop{ id });
         return true;
     }
 
@@ -166,7 +166,7 @@ namespace game
         return true;
     }
 
-    void MotionSystem::onEventMoveToGrid(const MoveToGrid& e)
+    void MotionSystem::onEventMoveToGrid(const EvtMoveToGrid& e)
     {
         bool res = motionStart(e.actor, e.dest, e.findPath);
         if (!res) 
@@ -181,7 +181,7 @@ namespace game
         auto curgrid = _context.currentScene().getGridFromPos(curpos);
         if(curgrid != lstgrid) 
         {
-            RoleCrossGrid e;
+            EvtRoleCrossGrid e;
             e.actor = ent;
             e.cur_grid = curgrid;
             e.lst_grid = lstgrid;

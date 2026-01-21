@@ -325,6 +325,9 @@
     <ClCompile Include="..\src\game\ui\form_config.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_numerical.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -659,6 +662,9 @@
     </ClInclude>
     <ClInclude Include="..\src\engine\i_painter.h">
       <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_numerical.h">
+      <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -52,10 +52,11 @@
     "skill_combat"
   ],
 
-  "talent" : [
-    ""
-  ],
-
+  "dead_drop":{
+    "exp" : 50,
+    "coin" : 100
+  },
+  
   "buffs": [],
 
   "items": []

@@ -17,8 +17,8 @@ GameScene::GameScene(GameContext& context)
 
     _camera.setSize(Vec2{_context.window().getSize()});
 
-    _context.dispatcher().sink<RoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
-    _context.dispatcher().sink<RoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
+    _context.dispatcher().sink<EvtRoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
+    _context.dispatcher().sink<EvtRoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
 }
 
 GameScene::~GameScene()
@@ -145,7 +145,7 @@ void GameScene::onDraw()
 
 void GameScene::onStart()
 {
-    spdlog::info("========================= GameScene::onStart =========================");
+    SPDLOG_INFO("========================= GameScene::onStart =========================");
 
     showAllGui();
 }
@@ -154,7 +154,7 @@ void GameScene::onStop()
 {
     closeAllGui();
     
-    spdlog::info("========================= GameScene::onStop =========================");
+    SPDLOG_INFO("========================= GameScene::onStop =========================");
 }
 
 void GameScene::showAllGui()
@@ -225,7 +225,7 @@ entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
     auto& objset = getObjectsInGrid(grid);
     if (objset.empty()) 
     {
-        _context.dispatcher().trigger(ObjectSelection{ entt::null });
+        _context.dispatcher().trigger(EvtObjectSelection{ entt::null });
         return entt::null;
     }
 
@@ -237,15 +237,15 @@ entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
             auto rect = Rect{ transComp.position - transComp.size / 2.0f, transComp.size };
             if (rect.contains(pos)) 
             {
-                spdlog::info("object ({}) selected.", (int)obj);
-                _context.dispatcher().trigger(ObjectSelection{ obj });
+                SPDLOG_INFO("object ({}) selected.", (int)obj);
+                _context.dispatcher().trigger(EvtObjectSelection{ obj });
                 return obj;
             }
         }
     }
 
-    //spdlog::info("object (null) selected.");
-    _context.dispatcher().trigger(ObjectSelection{ entt::null });
+    //SPDLOG_INFO("object (null) selected.");
+    _context.dispatcher().trigger(EvtObjectSelection{ entt::null });
     return entt::null;
 }
 
@@ -284,7 +284,7 @@ entt::entity GameScene::createActor(const std::string& cfgid, const Vec2& pos)
     auto grid = getGridFromPos(pos);
     addObjectToGrid(ent, grid);
 
-    //spdlog::info("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
+    //SPDLOG_INFO("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
     return ent;
 }
 
@@ -292,7 +292,7 @@ void GameScene::destroyActor(entt::entity id)
 {
     if (!_registry.valid(id))
     {
-        spdlog::warn("entity {} not exist.", (int32_t)id);
+        SPDLOG_WARN("entity {} not exist.", (int32_t)id);
         return;
     }
 
@@ -300,7 +300,7 @@ void GameScene::destroyActor(entt::entity id)
     _registry.emplace_or_replace<CompDestroy>(id);
 }
 
-void GameScene::onRoleDestroyed(const RoleDestroyed& e)
+void GameScene::onRoleDestroyed(const EvtRoleDestroyed& e)
 {
     auto pTrans = _context.registry().try_get<CompTransform>(e.actor);
     if(pTrans)
@@ -312,7 +312,7 @@ void GameScene::onRoleDestroyed(const RoleDestroyed& e)
     }
 }
 
-void GameScene::onRoleCrossGrid(const RoleCrossGrid& e)
+void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
 {
     auto& lstset = _gridObjects[e.lst_grid];
     lstset.erase(e.actor);
@@ -386,7 +386,7 @@ const std::multimap<float, Vec2i>& GameScene::getGridsInRing(const Vec2& center,
 
     if (min_radius >= max_radius)
     {
-        spdlog::error("getGridsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
+        SPDLOG_ERROR("getGridsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
         return result;
     }
 
@@ -470,7 +470,7 @@ const std::multimap<float, entt::entity>& GameScene::getObjectsInRing(const Vec2
 
     if (min_radius >= max_radius)
     {
-        spdlog::error("getObjectsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
+        SPDLOG_ERROR("getObjectsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
         return result;
     }
 

@@ -25,7 +25,7 @@ namespace game {
         bool motionPause(entt::entity id, bool pause);
 
     private:
-        void onEventMoveToGrid(const MoveToGrid& e);
+        void onEventMoveToGrid(const EvtMoveToGrid& e);
 
         bool tweenNextGrid(entt::entity id);
 

@@ -19,7 +19,7 @@ namespace game {
         void update(float deltaTime);
 
     private:
-        void onRoleDead(const RoleDead& e);
+        void onRoleDead(const EvtRoleDead& e);
 
         void spawnActor(entt::entity spawner, const CompSpawner& compSpawner, const CompTransform& trans);
     };

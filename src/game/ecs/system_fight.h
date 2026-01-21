@@ -15,11 +15,7 @@ namespace game
         void update(float delta) override;
 
     private:
-        void onRoleUnderAttack(const RoleOnAttack& e);
-
-        void onRolePropAlter(const RolePropAlter& e);
-
-        void onRoleLevelAlter(const RoleLevelAlter& e);
+        void onRoleUnderAttack(const EvtRoleOnAttack& e);
 
         void applyFuncToTarget(SystemUtils::FuncFactor fac, entt::entity source, entt::entity target);
 
@@ -27,13 +23,13 @@ namespace game
 
         void removeBuf(entt::entity target, const std::string& buf);
 
-        void addHpToTarget(entt::entity target, float hp);
+        void addHpToTarget(entt::entity target, float hp, entt::entity source);
 
         void showHpFloatingTip(entt::entity target, float hp);
 
         float calcHpDamage(CompFightProp props, float hp);
 
-        void applyAllFuncs(const AddFuncsToTarget& e);
+        void applyAllFuncs(const EvtAddSkillFuncs& e);
     };
 
 

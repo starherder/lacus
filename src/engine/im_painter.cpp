@@ -181,7 +181,7 @@ namespace engine
 		auto fontPath = _application.resPath() / fontName;
 		if (!std::filesystem::exists(fontPath))
 		{
-			spdlog::error("font file({}) NOT found.", fontPath.string());
+			SPDLOG_ERROR("font file({}) NOT found.", fontPath.string());
 			return;
 		}
 
@@ -190,7 +190,7 @@ namespace engine
 		auto font = fonts->AddFontFromFileTTF(fontPath.string().c_str(), (float)fontSize, nullptr, fonts->GetGlyphRangesChineseFull());
 		if (!font)
 		{
-			spdlog::error("load font {} failed. use default.", fontPath.string());
+			SPDLOG_ERROR("load font {} failed. use default.", fontPath.string());
 			io.Fonts->AddFontDefault();
 		}
 	}

@@ -58,7 +58,7 @@ namespace ui {
         }
         else 
         {
-            spdlog::error("invalid text align: {}", magic_enum::enum_name(_textAlign));
+            SPDLOG_ERROR("invalid text align: {}", magic_enum::enum_name(_textAlign));
         }
 
         auto& state = status();

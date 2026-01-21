@@ -26,14 +26,14 @@ namespace engine {
         // 初始化 SDL_ttf
         if (!TTF_WasInit() && !TTF_Init() ) 
         {
-            spdlog::error("init ttf failed: {}", SDL_GetError());
+            SPDLOG_ERROR("init ttf failed: {}", SDL_GetError());
             return false;
         }
 
         _text_engine = TTF_CreateRendererTextEngine(_renderer);
         if (!_text_engine) 
         {
-            spdlog::error("create render text engine failed: {}", SDL_GetError());
+            SPDLOG_ERROR("create render text engine failed: {}", SDL_GetError());
             return false;
         }
 
@@ -54,7 +54,7 @@ namespace engine {
         // 创建临时 TTF_Text 对象   (目前效率不高，未来可以考虑使用缓存优化)
         TTF_Text* temp_text_object = TTF_CreateText(_text_engine, ttf, text.c_str(), 0);
         if (!temp_text_object) {
-            spdlog::error("create text failed. {}", SDL_GetError());
+            SPDLOG_ERROR("create text failed. {}", SDL_GetError());
             return {0,0};
         }
 
@@ -79,13 +79,13 @@ namespace engine {
         // 创建临时 TTF_Text 对象   (目前效率不高，未来可以考虑使用缓存优化)
         TTF_Text* temp_text_object = TTF_CreateText(_text_engine, ttf, text.c_str(), 0);
         if (!temp_text_object) {
-            spdlog::error("create text failed. {}", SDL_GetError());
+            SPDLOG_ERROR("create text failed. {}", SDL_GetError());
             return false;
         }
 
         TTF_SetTextColor(temp_text_object, color.r, color.g, color.b, color.a);
         if (!TTF_DrawRendererText(temp_text_object, pos.x, pos.y)) {
-            spdlog::error("render text failed. {}", SDL_GetError());
+            SPDLOG_ERROR("render text failed. {}", SDL_GetError());
         }
 
         // 销毁临时 TTF_Text 对象
