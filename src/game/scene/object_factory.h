@@ -20,21 +20,24 @@ namespace game
 		ObjectFactory(ObjectFactory&&) = delete;
 		ObjectFactory(const ObjectFactory&) = delete;
 
-		bool loadObjects(GameContext& context, const fs::path& roledir);
-		bool loadSkills(GameContext& context, const fs::path& skilldif);
-		bool loadBuffs(GameContext& context, const fs::path& buffdir);
+		void init(GameContext* context);
+		void reloadAll();
+
+		bool loadItems(const fs::path& itemdir);
+		bool loadRoles(const fs::path& roledir);
+		bool loadSkills(const fs::path& skilldif);
+		bool loadBuffs(const fs::path& buffdir);
 
 		entt::entity createActor(const std::string& cfgid);
 
 		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
+
 		entt::entity createBuff(entt::entity owner, const std::string& cfgid);
 
 		entt::entity createProjectile(const Vec2& source, const Vec2& target, const std::string& particle);
 
 		entt::entity createTrap(const Vec2& target, float range, const Color& color, 
 			const std::string& texture, const std::string& particle, ShapeType shape_type);
-
-		//entt::entity createWave()
 
 		particle::ParticlePtr createParticleOnObject(entt::entity owner, const std::string& particle);
 
@@ -48,7 +51,7 @@ namespace game
 		const Properties& getObjectCfgProperties(const std::string& cfgid);
 
 	private:
-		bool loadRoleCfg(const fs::path& rolescfg);
+		bool loadObjectCfg(const fs::path& rolescfg);
 		bool loadSkillCfg(const fs::path& skillcfg);
 		bool loadBuffCfg(const fs::path& skillcfg);
 
@@ -62,12 +65,18 @@ namespace game
 		GameContext* _context = nullptr;
 
 		std::vector<std::string> _objectCfgIds;
-		std::vector<std::string> _skillCfgIds;
-		std::vector<std::string> _buffCfgIds;
-
 		ConfigJsonMap _jsonObjectCfgs;
+
+		std::vector<std::string> _skillCfgIds;
 		ConfigJsonMap _jsonSkillCfgs;
+
+		std::vector<std::string> _buffCfgIds;
 		ConfigJsonMap _jsonBuffCfgs;
+
+		fs::path _skillPath;
+		fs::path _buffPath;
+		fs::path _itemPath;
+		fs::path _rolePath;
 	};
 
 

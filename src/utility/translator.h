@@ -107,7 +107,7 @@ namespace utility
             auto& text = _all_text[_language];
             auto it = text.find(key);
             if (it == text.end()) {
-                return "";
+                return key;
             }
 
             return it->second;

@@ -1,8 +1,8 @@
 {
-  "cfgid": "skill_wave",
+  "cfgid": "skill_wave_range",
   "type": "wave",
-  "name": "text_skill_wave",
-  "desc": "text_skill_wave_desc",
+  "name": "text_skill_wave_range",
+  "desc": "text_skill_wave_range_desc",
 
   "distance": 300,
   "cd_ticks": 1000,
@@ -27,8 +27,8 @@
   },
 
   "wave": {
-    "type": 1,
-    "grids": 3,
+    "type": 3,
+    "grids": 2,
     "duration": 500,
     "interval":50,
     "func": "hp-",

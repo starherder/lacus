@@ -6,7 +6,7 @@
 
 #include "ui/gui_manager.h"
 #include "game/ui/ui_logic_events.h"
-
+#include "utility/translator.h"
 
 
 namespace game 
@@ -58,13 +58,14 @@ void ImFormDebug::draw()
 
         ImGui::Separator();
 
-        if(ImGui::Button("reload particle"))
+        if (ImGui::Button("sky")) 
         {
-            particle::ParticleManager::inst().Reload();
+            _showSkyWindow = !_showSkyWindow;
         }
 
-        if (ImGui::Button("sky")) {
-            _showSkyWindow = !_showSkyWindow;
+        if (ImGui::Button("reload resource"))
+        {
+            on_reload_res.emit();
         }
 
         ImGui::SameLine(0, 20);
@@ -111,9 +112,10 @@ void ImFormDebug::draw()
         }
 
         ImGui::Separator();
-        if (ImGui::Button("exec_skill"))
+
+        if (ImGui::Button("skill"))
         {
-            roleExecSkill();
+            _showSkillWindow = !_showSkillWindow;
         }
 
         //drawSelectEntityProps();
@@ -133,6 +135,11 @@ void ImFormDebug::draw()
     if (_showCameraWindow)
     {
         drawCameraWindow();
+    }
+
+    if (_showSkillWindow)
+    {
+        drawSkillWindow();
     }
 }
 
@@ -248,12 +255,11 @@ void ImFormDebug::drawSelectEntityProps()
             ImGui::TableNextColumn();
             ImGui::Text(value.c_str());
         }
-
     }
     ImGui::EndTable();
 }
 
-void ImFormDebug::roleExecSkill()
+void ImFormDebug::roleExecSkill(entt::entity skill)
 {
     if (_selectEntity == entt::null ||
         _context->registry().valid(_selectEntity) == false)
@@ -264,42 +270,39 @@ void ImFormDebug::roleExecSkill()
     auto& trans = _context->registry().get<CompTransform>(_selectEntity);
     auto& rolePos = trans.position;
 
-    auto& skills = _context->registry().get<CompSkills>(_selectEntity);
-    for (auto& skill_id : skills.skills)
+    auto& compName = _context->registry().get<CompNameId>(skill);
+    auto& compSkill = _context->registry().get<CompSkillComm>(skill);
+
+    // 不需要目标
+    if (compSkill.type == SkillType::Other)
     {
-        auto& compName = _context->registry().get<CompNameId>(skill_id);
-        auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);
-
-        if (compSkill.type != SkillType::Invalid)
-        {
-            // 需要目标，寻找目标
-            auto dis = compSkill.distance;
-            auto& objects = _context->scene().getObjectsInCircle(rolePos, dis);
-            for (auto& [dis, target] : objects) 
-            {
-                if (target == _selectEntity) continue;
-
-                auto pdead = _context->registry().try_get<CompDead>(target);
-                if (pdead) continue;
-
-                auto pCompComm = _context->registry().try_get<CompComm>(target);
-                if (pCompComm && pCompComm->type == ObjectType::Npc) 
-                {
-                    _context->dispatcher().trigger(EvtCastSkillToObject{_selectEntity, target, skill_id });
-                    return;
-                }
-            }
-
-            SPDLOG_INFO("skill ({}) find enemy faild.", compName.cfg_id);
-        }
-        else
-        {
-            SPDLOG_INFO("skill ({}) ha NO enmey.", compName.cfg_id);
-
-            _context->dispatcher().trigger(EvtCastSkillToObject{ _selectEntity, entt::null, skill_id });
-        }
-
+        SPDLOG_INFO("skill ({}) need NO enmey.", compName.cfg_id);
+        _context->dispatcher().trigger(EvtCastSkillToObject{ _selectEntity, entt::null, skill});
+        return;
     }
+
+    // 需要目标，寻找目标
+    auto dis = compSkill.distance;
+    auto& objects = _context->scene().getObjectsInCircle(rolePos, dis);
+    for (auto& [dis, target] : objects) 
+    {
+        if (target == _selectEntity) { 
+            continue; 
+        }
+
+        auto pdead = _context->registry().try_get<CompDead>(target);
+        if (pdead) { 
+            continue; 
+        }
+
+        auto pCompComm = _context->registry().try_get<CompComm>(target);
+        if (pCompComm && pCompComm->type == ObjectType::Npc)  {
+            _context->dispatcher().trigger(EvtCastSkillToObject{_selectEntity, target, skill});
+            return;
+        }
+    }
+
+    SPDLOG_INFO("skill ({}) find enemy faild.", compName.cfg_id);
 }
 
 void ImFormDebug::drawCameraWindow()
@@ -368,6 +371,31 @@ void ImFormDebug::drawSkyWindow()
     ImGui::End();
 }
 
+void ImFormDebug::drawSkillWindow()
+{
+    ImGui::Begin("skills");
 
+    if (_selectEntity == entt::null ||
+        _context->registry().valid(_selectEntity) == false)
+    {
+        ImGui::End();
+        return;
+    }
+
+    auto& skills = _context->registry().get<CompSkills>(_selectEntity);
+    for (auto& skill_id : skills.skills)
+    {
+        auto& compName = _context->registry().get<CompNameId>(skill_id);
+        auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);
+
+        auto skill_name = std::format("{}##_btn", Trans(compName.name));
+        if (ImGui::Button(skill_name.c_str()))
+        {
+            roleExecSkill(skill_id);
+        }
+    }
+
+    ImGui::End();
+}
 
 }

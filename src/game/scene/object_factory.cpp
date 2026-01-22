@@ -13,9 +13,45 @@
 namespace game 
 {
 
-	bool ObjectFactory::loadBuffs(GameContext& context, const fs::path& buffdir)
+	void ObjectFactory::init(GameContext* context)
 	{
-		_context = &context;
+		_context = context;
+
+		_objectCfgIds.clear();
+		_jsonObjectCfgs.clear();
+
+		_skillCfgIds.clear();
+		_jsonSkillCfgs.clear();
+
+		_buffCfgIds.clear();
+		_jsonBuffCfgs.clear();
+	}
+
+	void ObjectFactory::reloadAll()
+	{
+		_objectCfgIds.clear();
+		_jsonObjectCfgs.clear();
+
+		_skillCfgIds.clear();
+		_jsonSkillCfgs.clear();
+
+		_buffCfgIds.clear();
+		_jsonBuffCfgs.clear();
+
+		loadBuffs(_buffPath);
+
+		loadSkills(_skillPath);
+
+		loadRoles(_rolePath);
+
+		loadItems(_itemPath);
+	}
+
+	bool ObjectFactory::loadBuffs(const fs::path& buffdir)
+	{
+		assert(_context);
+
+		_buffPath = buffdir;
 
 		for (const auto& entry : std::filesystem::directory_iterator(buffdir))
 		{
@@ -29,9 +65,11 @@ namespace game
 		return true;
 	}
 
-	bool ObjectFactory::loadSkills(GameContext& context, const fs::path& skilldir)
+	bool ObjectFactory::loadSkills(const fs::path& skilldir)
 	{
-		_context = &context;
+		assert(_context);
+
+		_skillPath = skilldir;
 
 		for (const auto& entry : std::filesystem::directory_iterator(skilldir))
 		{
@@ -45,25 +83,45 @@ namespace game
 		return true;
 	}
 
-	bool ObjectFactory::loadObjects(GameContext& context, const fs::path& cfgdir)
+	bool ObjectFactory::loadRoles(const fs::path& cfgdir)
 	{
-		_context = &context;
+		assert(_context);
 
+		_rolePath = cfgdir;
 
 		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
 		{
 			if (entry.is_regular_file())
 			{
 				auto filename = entry.path();
-				loadRoleCfg(filename);
+				loadObjectCfg(filename);
+			}
+		}
+
+		return true;
+	}
+	bool ObjectFactory::loadItems(const fs::path& cfgdir)
+	{
+		assert(_context);
+
+		_itemPath = cfgdir;
+
+		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
+		{
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
+				loadObjectCfg(filename);
 			}
 		}
 
 		return true;
 	}
 	
-	bool ObjectFactory::loadRoleCfg(const fs::path& cfgfile)
+	bool ObjectFactory::loadObjectCfg(const fs::path& cfgfile)
 	{
+		assert(_context);
+
 		auto jsonptr = std::make_shared<nlohmann::json>();
 
 		std::ifstream ifile(cfgfile.string());
@@ -89,13 +147,13 @@ namespace game
 		}
 
 		_objectCfgIds.push_back(cfgid);
-
 		_jsonObjectCfgs[cfgid] = jsonptr;
 		return true;
 	}
 
 	bool ObjectFactory::loadSkillCfg(const fs::path& cfgfile)
 	{
+		assert(_context);
 		auto jsonptr = std::make_shared<nlohmann::json>();
 
 		std::ifstream ifile(cfgfile.string());
@@ -128,6 +186,8 @@ namespace game
 
 	bool ObjectFactory::loadBuffCfg(const fs::path& cfgfile)
 	{
+		assert(_context);
+
 		auto jsonptr = std::make_shared<nlohmann::json>();
 
 		std::ifstream ifile(cfgfile.string());
@@ -161,11 +221,7 @@ namespace game
 
 	entt::entity ObjectFactory::createActor(const std::string& cfgid)
 	{
-		if (!_context)
-		{
-			SPDLOG_ERROR("ObjectFactory need Load first.");
-			return entt::null;
-		}
+		assert(_context);
 
 		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
@@ -201,6 +257,8 @@ namespace game
 
 	entt::entity ObjectFactory::createObject(const nJson& json)
 	{
+		assert(_context);
+
 		auto object = _context->registry().create();
 
 		std::string cfgid = json.value("id", "");
@@ -262,6 +320,8 @@ namespace game
 
 	entt::entity ObjectFactory::createSpawner(const nJson& json)
 	{
+		assert(_context);
+
 		auto object = createObject(json);
 		if (_context->registry().valid(object) == false) 
 		{
@@ -469,11 +529,7 @@ namespace game
 
 	entt::entity ObjectFactory::createSkill(entt::entity owner, const std::string& cfgid)
 	{
-		if (!_context)
-		{
-			SPDLOG_ERROR("ObjectFactory need Load first.");
-			return entt::null;
-		}
+		assert(_context);
 
 		auto jsonptr = _jsonSkillCfgs[cfgid];
 		if (!jsonptr)
@@ -591,8 +647,8 @@ namespace game
 			_context->registry().emplace<CompTrapCfg>(skill, trap);
 
 			CompWaveCfg wave;
-			wave.count = waveJs.value("count", 1);
-			wave.range = waveJs.value("range", 1);
+			wave.type = waveJs.value("type", 1);
+			wave.grids = waveJs.value("grids", 1);
 			wave.interval = waveJs.value("interval", 500);
 			_context->registry().emplace<CompWaveCfg>(skill, wave);
 		}
@@ -602,11 +658,7 @@ namespace game
 
 	particle::ParticlePtr ObjectFactory::createParticleOnObject(entt::entity owner, const std::string& particle)
 	{
-		if (!_context || _context->registry().valid(owner) == false)
-		{
-			SPDLOG_ERROR("create particle ({}) on invald object({})", particle, (uint32_t)owner);
-			return nullptr;
-		}
+		assert(_context);
 
 		auto particlePtr = particle::ParticleManager::inst().CreateParticle(particle);
 		if (particlePtr)
@@ -624,6 +676,8 @@ namespace game
 
 	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, const std::string& particle)
 	{
+		assert(_context);
+
 		auto bullet = _context->registry().create();
 
 		CompNameId compName;
@@ -643,6 +697,8 @@ namespace game
 	entt::entity ObjectFactory::createTrap(const Vec2& target, float range, const Color& color, 
 										const std::string& texture, const std::string& particle, ShapeType shape_type)
 	{
+		assert(_context);
+
 		auto trap = _context->registry().create();
 
 		CompNameId compName;
@@ -676,6 +732,8 @@ namespace game
 
 	void ObjectFactory::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)
 	{
+		assert(_context);
+
 		auto sky = _context->registry().create();
 		CompTransform trans;
 		trans.position = { 0, 0 };
@@ -711,11 +769,7 @@ namespace game
 
 	void ObjectFactory::destroyObject(entt::entity entityid)
 	{
-		if (!_context)
-		{
-			SPDLOG_ERROR("ObjectFactory need Load first.");
-			return ;
-		}
+		assert(_context);
 
 		_context->registry().destroy(entityid);
 	}

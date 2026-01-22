@@ -52,6 +52,8 @@ namespace game
 
 		void initEscSystem();
 
+		void onDebugReloadResource();
+
 	private:
 		std::unique_ptr<GameScene> _scene = nullptr;
 

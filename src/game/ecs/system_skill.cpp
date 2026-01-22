@@ -1,6 +1,6 @@
 ﻿#include "system_skill.h"
 
-
+#include <array>
 
 namespace game 
 {
@@ -266,8 +266,6 @@ namespace game
 			return;
 		}
 
-		SPDLOG_ERROR(">>>>>>>>>> startWave: skill = {} <<<<<<<<<<", skill);
-
 		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
 		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
 
@@ -294,10 +292,8 @@ namespace game
 				return;
 			}
 			
-			if (compWave.cur_wave >= waveCfg.range)
+			if (compWave.cur_wave >= waveCfg.grids)
 			{
-				SPDLOG_ERROR(">>>> waveStop: skill = {}", skill);
-
 				_context.registry().emplace_or_replace<CompDestroy>(wave);
 				compWave.running = false;
 				return;
@@ -386,24 +382,54 @@ namespace game
 
 	void SkillSystem::createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill)
 	{
-		SPDLOG_ERROR(">>>> createWaveRange: r = {}, skill = {}", r, skill);
-
 		auto& waveCfg = _context.registry().get<CompWaveCfg>(skill);
 		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
 		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
 
-		if (waveCfg.count == 1)
+		auto normlToCoord = [](const Vec2& dir) {
+			float x = std::fabs(dir.x) > std::fabs(dir.y) ? dir.x : 0;
+			float y = std::fabs(dir.x) > std::fabs(dir.y) ? 0 : dir.y;
+			return SafeNormal({x, y});
+		};
+
+		if (waveCfg.type == 1)
 		{
-			auto dir = SafeNormal(compDstTrans.position - compSrcTrans.position);
+			auto dir = normlToCoord(compDstTrans.position - compSrcTrans.position);
 			auto trapPos = compSrcTrans.position + _context.scene().tileSize() * dir * (float)(r+1);
 			createTrapAtPos(srcid, trapPos, skill, ShapeType::Rect);
+		}
+		else if (waveCfg.type == 2)
+		{
+			std::vector<Vec2> targets = { {0, -1}, {0, 1}, {-1, 0}, {1, 0} };
+			for (auto& dir : targets)
+			{
+				auto pos = compSrcTrans.position + _context.scene().tileSize() * dir * (float)(r+1);
+				createTrapAtPos(srcid, pos, skill, ShapeType::Rect);
+			}
+		}
+		else if (waveCfg.type == 3)
+		{
+			int min_r = -r - 1, max_r = r + 1;
+			for (int x = min_r; x <= max_r; x++)
+			{
+				for (int y = min_r; y <= max_r; y++)
+				{
+					if (x == min_r || x == max_r || y == min_r || y == max_r)
+					{
+						auto pos = compSrcTrans.position + _context.scene().tileSize() * Vec2 { x, y };
+						createTrapAtPos(srcid, pos, skill, ShapeType::Rect);
+					}
+				}
+			}
+		}
+		else
+		{
+			SPDLOG_ERROR("wavecfg.type {} NOT support", waveCfg.type);
 		}
 	}
 
 	entt::entity SkillSystem::createTrapAtPos(entt::entity srcid, const Vec2& target, entt::entity skill, ShapeType shape_type)
 	{
-		SPDLOG_ERROR(">>>> createTrap: exec skill = {}", skill);
-
 		auto pTrapCfgComp = _context.registry().try_get<CompTrapCfg>(skill);
 		if (!pTrapCfgComp)
 		{
@@ -630,8 +656,6 @@ namespace game
 
 	void SkillSystem::onTrapPeriodExec(entt::entity srcid, entt::entity skill, entt::entity trap)
 	{
-		SPDLOG_ERROR(">>>> onTrapPeriodExec: exec skill = {}", skill);
-
 		if (!_context.registry().valid(skill) || !_context.registry().valid(trap))
 		{
 			SPDLOG_ERROR("src: {}, skill: {}, trap: {} NOT valid", srcid, skill, trap);

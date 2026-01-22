@@ -22,6 +22,7 @@ namespace game
     {
     public:
         signals::Signal<bool> on_show_debug;
+        signals::Signal<> on_reload_res;
 
     public:
         ImFormDebug();
@@ -38,13 +39,15 @@ namespace game
 
         void moveSelectActor(const Vec2& pos);
 
-        void roleExecSkill();
+        void roleExecSkill(entt::entity skill);
 
         void drawSkyWindow();
         
         void drawCameraWindow();
 
         void drawSelectEntityProps();
+
+        void drawSkillWindow();
 
     public:
         entt::entity _selectEntity = entt::null;
@@ -56,6 +59,7 @@ namespace game
 
         bool _showSkyWindow = false;
         bool _showCameraWindow = false;
+        bool _showSkillWindow = false;
 
         Vec2 _windowPos, _windowSize;
 

@@ -39,8 +39,8 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
 
     ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
 
-    auto& objcfgs = _context.objectFactory().getAllObjectCfgIds();
-    for(auto& cfg : objcfgs)
+    auto& roleCfgs = _context.objectFactory().getAllObjectCfgIds();
+    for(auto& cfg : roleCfgs)
     {
         auto& props = _context.objectFactory().getObjectCfgProperties(cfg);
         _cardGroup->addCard(props);

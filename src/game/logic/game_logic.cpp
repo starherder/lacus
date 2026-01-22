@@ -24,6 +24,9 @@
 #include "game/ecs/system_spawner.h"
 #include "game/ecs/system_numerical.h"
 
+#include "../ui/form_main.h"
+#include "../ui/imform_debug.h"
+
 
 namespace game
 {
@@ -33,7 +36,6 @@ namespace game
         _scene->on_load_progress.connect(this, &GameLogic::onSceneLoadProgress);
 
 		_gameContext.setScene(_scene.get());
-
 		_gameContext.setGameConfig(&_gameConfig);
 
         ui::GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
@@ -63,6 +65,8 @@ namespace game
     
 	void GameLogic::loadResource()
 	{
+        ObjectFactory::inst().init(&_gameContext);
+
         auto gamecfg = _gameContext.resPath() / "game_config.json";
         bool res = _gameConfig.load(gamecfg);
         if (!res) {
@@ -78,28 +82,28 @@ namespace game
         }
 
         auto roleCfgs =_gameContext.resPath() / "data/role/";
-        res = ObjectFactory::inst().loadObjects(_gameContext, roleCfgs);
+        res = ObjectFactory::inst().loadRoles(roleCfgs);
         if (!res) {
             SPDLOG_ERROR("load role config: {} failed.", roleCfgs.string());
             return;
         }
 
         auto itemCfgs =_gameContext.resPath() / "data/item/";
-        res = ObjectFactory::inst().loadObjects(_gameContext, itemCfgs);
+        res = ObjectFactory::inst().loadItems(itemCfgs);
         if (!res) {
             SPDLOG_ERROR("load item config: {} failed.", itemCfgs.string());
             return;
         }
 
         auto skilldir =_gameContext.resPath() / "data/skill/";
-        res = ObjectFactory::inst().loadSkills(_gameContext, skilldir);
+        res = ObjectFactory::inst().loadSkills(skilldir);
         if (!res) {
             SPDLOG_ERROR("load skill config: {} failed.", skilldir.string());
             return;
         }
 
         auto buffdir =_gameContext.resPath() / "data/buff/";
-        res = ObjectFactory::inst().loadBuffs(_gameContext, buffdir);
+        res = ObjectFactory::inst().loadBuffs(buffdir);
         if (!res) {
             SPDLOG_ERROR("load buff config: {} failed.", buffdir.string());
             return;
@@ -166,10 +170,18 @@ namespace game
         formEntry->on_resume_game.connect(this, &GameLogic::onResumeGame);
         formEntry->on_config_game.connect(this, &GameLogic::onConfigGame);
         formEntry->on_exit_game.connect(this, &GameLogic::onExitGame);
+
+        auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
+        if (form_debug)
+        {
+            form_debug->init(&_gameContext);
+            form_debug->on_reload_res.connect(this, &GameLogic::onDebugReloadResource);
+        }
     }
 
     void GameLogic::pause()
     {
+        imgui::ImFormManager::inst().closeForm("ImFormDebug");
     }
 
     void GameLogic::onStartNewGame()
@@ -281,5 +293,8 @@ namespace game
         }
     }
 
-
+    void GameLogic::onDebugReloadResource()
+    {
+        ObjectFactory::inst().reloadAll();
+    }
 }

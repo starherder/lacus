@@ -1,8 +1,8 @@
 {
-  "cfgid": "skill_wave",
+  "cfgid": "skill_wave_cross",
   "type": "wave",
-  "name": "text_skill_wave",
-  "desc": "text_skill_wave_desc",
+  "name": "text_skill_wave_cross",
+  "desc": "text_skill_wave_cross_desc",
 
   "distance": 300,
   "cd_ticks": 1000,
@@ -27,7 +27,7 @@
   },
 
   "wave": {
-    "type": 1,
+    "type": 2,
     "grids": 3,
     "duration": 500,
     "interval":50,

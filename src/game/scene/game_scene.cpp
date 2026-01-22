@@ -1,12 +1,7 @@
 ﻿#include "game_scene.h"
 
-#include "../ui/form_main.h"
-#include "../ui/imform_debug.h"
-
-#include "glm/glm.hpp"
-
-namespace game {
-
+namespace game 
+{
 
 GameScene::GameScene(GameContext& context)
     : engine::Scene(context.applicaton()), _context(context)
@@ -167,11 +162,6 @@ void GameScene::onStop()
 
 void GameScene::showAllGui()
 {
-    auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
-    if(form_debug) 
-    {
-        form_debug->init(&_context);
-    }
 }
 
 void GameScene::setDebugInfo(bool show)
@@ -181,7 +171,6 @@ void GameScene::setDebugInfo(bool show)
 
 void GameScene::closeAllGui()
 {
-    imgui::ImFormManager::inst().closeForm("ImFormDebug");
 }   
 
 void GameScene::initPathFind()

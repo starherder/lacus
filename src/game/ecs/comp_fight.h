@@ -101,8 +101,8 @@ namespace game
 
 	struct CompWaveCfg
 	{
-		int count = 1;
-		int range = 3;
+		int type = 1;
+		int grids = 3;
 		int interval = 500;
 	};
 
