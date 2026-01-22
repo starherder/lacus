@@ -4,6 +4,7 @@
 
 namespace game
 {
+	DeclareEcsSystem(BuffSystem, EcsPriority::Middle);
 
 	BuffSystem::BuffSystem(GameContext& context) : EcsSystem(context)
 	{

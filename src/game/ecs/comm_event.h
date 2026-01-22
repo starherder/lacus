@@ -116,4 +116,24 @@ namespace game
 		entt::entity target;
 		std::string funcs;
 	};
+
+	enum FloatTextType
+	{
+		HP,
+		LV,
+		BUF,
+		CRI,
+		PAR,
+
+		OTHER,
+	};
+
+	struct EvtShowFloatText {
+		entt::entity actor;
+
+		FloatTextType type;
+
+		int val = 0;
+		
+	};
 }

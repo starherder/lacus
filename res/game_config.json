@@ -17,9 +17,9 @@
 
 	"float_text": {
 		"font_name": "fonts/msyh.ttf",
-		"font_size": 15,
-		"color_inc_hp": "#00FF00FF",
-		"color_dec_hp": "#FF0000FF",
+		"font_size": 20,
+		"color_inc": "#00FF00FF",
+		"color_dec": "#FF0000FF",
 		"tween_mode": "cubicIn",
 		"float_ticks": 1000
 	},

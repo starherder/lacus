@@ -4,7 +4,8 @@
 
 namespace game 
 {
-	CompSprint g_testSprint;
+
+	DeclareEcsSystem(SkillSystem, EcsPriority::Middle);
 
 
 	SkillSystem::SkillSystem(GameContext& context) : EcsSystem(context) 

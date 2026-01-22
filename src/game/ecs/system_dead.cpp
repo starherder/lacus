@@ -4,7 +4,7 @@
 
 namespace game 
 {
-
+	DeclareEcsSystem(DeadSystem, EcsPriority::Middle);
 
 	void DeadSystem::update(float delta)
 	{

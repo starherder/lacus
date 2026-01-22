@@ -114,7 +114,9 @@ void ImFormDebug::draw()
 
         drawSkillWindow();
 
-        //drawSelectEntityProps();
+        ImGui::Separator();
+
+        drawSelectEntityProps();
 
         ImVec2 winpos = ImGui::GetWindowPos();
         ImVec2 winsize = ImGui::GetWindowSize();
@@ -146,6 +148,8 @@ void ImFormDebug::drawSelectEntityProps()
     auto pbase = _context->registry().try_get<CompBaseProp>(_selectEntity);
     if(pbase)
     {
+        props.insert({ "lv", std::to_string(pbase->lv) });
+        props.insert({ "exp", std::to_string(pbase->exp) });
         props.insert({ "str", std::to_string(pbase->str) });
         props.insert({ "cst", std::to_string(pbase->cst) });
         props.insert({ "dex", std::to_string(pbase->dex) });
@@ -300,12 +304,12 @@ void ImFormDebug::drawSkyWindow()
 
 void ImFormDebug::drawSkillWindow()
 {
-    ImGui::BeginChild("skills#child_wnd", {0,0}, ImGuiChildFlags_Borders);
+    //ImGui::BeginChild("skills#child_wnd", {0,0}, ImGuiChildFlags_Borders);
 
     if (_selectEntity == entt::null ||
         _context->registry().valid(_selectEntity) == false)
     {
-        ImGui::EndChild();
+        //ImGui::EndChild();
         return;
     }
 
@@ -326,7 +330,7 @@ void ImFormDebug::drawSkillWindow()
         }
     }
 
-    ImGui::EndChild();
+    //ImGui::EndChild();
 }
 
 }

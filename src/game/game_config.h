@@ -16,9 +16,9 @@ namespace game
 
 		struct FloatText {
 			std::string font_name = "fonts/msyh.ttf";
-			float font_size = 15.0f;
-			Color color_inc_hp = Color::Green;
-			Color color_dec_hp = Color::Red;
+			int font_size = 20;
+			Color color_inc = Color::Green;
+			Color color_dec = Color::Red;
 			std::string tween_mode = "cubicIn";
 			int float_ticks = 1000;
 		} float_text;

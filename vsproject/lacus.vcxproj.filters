@@ -328,6 +328,9 @@
     <ClCompile Include="..\src\game\ecs\system_numerical.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_float_text.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -664,6 +667,9 @@
       <Filter>engine</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_numerical.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_float_text.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
   </ItemGroup>

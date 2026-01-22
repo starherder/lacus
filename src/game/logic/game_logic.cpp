@@ -23,6 +23,7 @@
 #include "game/ecs/system_buff.h"
 #include "game/ecs/system_spawner.h"
 #include "game/ecs/system_numerical.h"
+#include "game/ecs/system_float_text.h"
 
 #include "../ui/form_main.h"
 #include "../ui/imform_debug.h"
@@ -49,18 +50,21 @@ namespace game
 
     void GameLogic::initEscSystem()
     {
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<MotionSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<RenderSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SkillSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SpawnerSystem>(_gameContext) });
-        _ecsSystems.insert({ EcsPriority::Middle, std::make_shared<NumericalSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<MotionSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<RenderSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SkillSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SpawnerSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<NumericalSystem>(_gameContext) });
+        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FloatTextSystem>(_gameContext) });
+
+        EcsSystemManager::inst().init(_gameContext);
     }
     
 	void GameLogic::loadResource()
@@ -142,10 +146,13 @@ namespace game
 
         _scene->onUpdate(delta);
 
-        for (auto& [prio, sys] : _ecsSystems)
-        {
-            sys->update(delta);
-        }
+
+        EcsSystemManager::inst().update(delta);
+
+        //for (auto& [prio, sys] : _ecsSystems)
+        //{
+        //    sys->update(delta);
+        //}
     }
 
     void GameLogic::draw()
@@ -157,10 +164,12 @@ namespace game
 
         _scene->onDraw();
 
-        for (auto& [prio, sys] : _ecsSystems)
-        {
-            sys->draw();
-        }
+        EcsSystemManager::inst().draw();
+
+        //for (auto& [prio, sys] : _ecsSystems)
+        //{
+        //    sys->draw();
+        //}
     }
 
     void GameLogic::start()

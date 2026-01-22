@@ -1,11 +1,7 @@
 ﻿#pragma once
 
 
-#include "comm_system.h"
-#include "comm_comp.h"
-#include "comm_event.h"
-#include "game/scene/game_camera.h"
-#include "game/scene/game_scene.h"
+#include "system_utils.h"
 
 
 namespace game 
@@ -20,8 +16,4 @@ namespace game
         void update(float delta) override;
 
     };
-
-
-
-
 }

@@ -3,6 +3,7 @@
 
 namespace game 
 {
+    DeclareEcsSystem(SpawnerSystem, EcsPriority::Middle);
 
     SpawnerSystem::SpawnerSystem(GameContext& context) : EcsSystem(context)
     {

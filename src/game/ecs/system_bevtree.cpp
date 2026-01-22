@@ -3,6 +3,7 @@
 
 namespace game 
 {
+	DeclareEcsSystem(BevTreeSystem, EcsPriority::Middle);
 
 	void BevTreeSystem::update(float delta) 
 	{

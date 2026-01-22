@@ -4,6 +4,8 @@
 
 namespace game 
 {
+    DeclareEcsSystem(NumericalSystem, EcsPriority::Middle);
+
 
     NumericalSystem::NumericalSystem(GameContext& context) : EcsSystem(context)
 	{
@@ -56,14 +58,13 @@ namespace game
             return;
         }
 
-        int diff = e.level - pBaseProp->lv;
-
         // TODO: 计算公式 ！！！！
         auto& base = _context.registry().get<CompBaseProp>(e.actor);
-        base.cst += 10 * diff;
-        base.str += 10 * diff;
-        base.met += 10 * diff;
-        base.met += 10 * diff;
+        base.lv += e.level;
+        base.cst += 10 * e.level;
+        base.str += 10 * e.level;
+        base.met += 10 * e.level;
+        base.met += 10 * e.level;
 
         _context.dispatcher().trigger(EvtRolePropAlter{ e.actor, true });
     }
@@ -102,6 +103,8 @@ namespace game
         if (lvup > 0)
         {
             _context.dispatcher().trigger(EvtRoleLevelAlter{ e.actor, lvup });
+
+            _context.dispatcher().trigger(EvtShowFloatText{ e.actor, FloatTextType::LV, lvup });
         }
     }
 

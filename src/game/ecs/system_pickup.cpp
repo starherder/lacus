@@ -4,6 +4,8 @@
 namespace game 
 {
 
+    DeclareEcsSystem(PickupSystem, EcsPriority::Middle);
+
     PickupSystem::PickupSystem(GameContext& context) : EcsSystem(context)
     {
         context.dispatcher().sink<EvtRoleCrossGrid>().connect<&PickupSystem::onEventMoveToGrid>(this);

@@ -1,11 +1,7 @@
 ﻿#pragma once
 
 
-#include "comm_system.h"
-#include "comm_comp.h"
-#include "comm_event.h"
-#include "game/scene/game_camera.h"
-#include "game/scene/game_scene.h"
+#include "game/ecs/system_utils.h"
 
 #include "tweeny/tweeny.h"
 
@@ -52,8 +48,6 @@ namespace game
         void createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill);
 
     };
-
-
 
 
 }

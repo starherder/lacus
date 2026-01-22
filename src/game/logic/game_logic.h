@@ -59,7 +59,7 @@ namespace game
 
 		GameContext& _gameContext;
 
-		EcsSystemMap _ecsSystems;
+		//EcsSystemMap _ecsSystems;
 
 		GameConfig _gameConfig;
 	};

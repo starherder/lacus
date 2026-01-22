@@ -4,6 +4,8 @@
 
 namespace game 
 {
+    DeclareEcsSystem(MotionSystem, EcsPriority::Middle);
+
 
     MotionSystem::MotionSystem(GameContext& context) : EcsSystem(context)
     {

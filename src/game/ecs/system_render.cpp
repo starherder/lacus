@@ -3,6 +3,8 @@
 namespace game 
 {
 
+    DeclareEcsSystem(RenderSystem, EcsPriority::Middle);
+
 
 void RenderSystem::update(float delta)
 {

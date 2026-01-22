@@ -4,6 +4,8 @@
 namespace game
 {
 
+    DeclareEcsSystem(FightSystem, EcsPriority::Middle);
+
     FightSystem::FightSystem(GameContext& context) : EcsSystem(context)
     {
         _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
@@ -16,14 +18,6 @@ namespace game
 
     void FightSystem::update(float delta)
     {
-        auto views = _context.registry().view<CompFightText>();
-        for (auto& ent : views)
-        {
-            auto& ft = views.get<CompFightText>(ent);
-
-            auto delta = _context.frameTicker().deltaTicks();
-            ft.tween.step(delta);
-        }
     }
 
     void FightSystem::onRoleUnderAttack(const EvtRoleOnAttack& e)
@@ -173,48 +167,10 @@ namespace game
 
     void FightSystem::showHpFloatingTip(entt::entity target, float hp)
     {
-        auto& targetTrans = _context.registry().get<CompTransform>(target);
-        float curY = targetTrans.position.y;
-        float dstY = targetTrans.position.y - 100;
-
-        //SPDLOG_INFO("target({}) hp {}{}", (uint32_t)target, hp > 0 ? "+" : "", hp);
-
-        auto word = _context.registry().create();
-        _context.registry().emplace<CompTransform>(word, targetTrans);
-        _context.registry().emplace<CompFightText>(word, CompFightText{});
-
-        auto& ft = _context.registry().get<CompFightText>(word);
-
-        auto& fontname = _context.gameConfig().float_text.font_name;
-        auto& fontsize = _context.gameConfig().float_text.font_size;
-        auto& colorinc = _context.gameConfig().float_text.color_inc_hp;
-        auto& colordec = _context.gameConfig().float_text.color_dec_hp;
-        auto& tweenMode = _context.gameConfig().float_text.tween_mode;
-        auto& floatticks = _context.gameConfig().float_text.float_ticks;
-
-        ft.font = _context.fontMgr().get(HashString(fontname.c_str()), fontsize);
-        ft.color = (hp > 0) ? colorinc : colordec;
-
-        ft.text = fmt::format("HP{}{}", hp > 0 ? "+" : "", (int)hp);
-        ft.tween = tweeny::from(curY, 255.0f)
-            .to(dstY, 0.0f)
-            .via(tweenMode)
-            .during(floatticks)
-            .onStep([this, word](auto& t, float y, float a) {
-            if (t.isFinished()) {
-                _context.registry().emplace_or_replace<CompDestroy>(word);
-                return true;
-            }
-
-            auto& compTrans = _context.registry().get<CompTransform>(word);
-            compTrans.position.y = y;
-
-            auto& compFightText = _context.registry().get<CompFightText>(word);
-            compFightText.color.a = (uint8_t)a;
-
-            return false;
-        });
-
-
+        EvtShowFloatText ft;
+        ft.actor = target;
+        ft.type = FloatTextType::HP;
+        ft.val = (int)hp;
+        _context.dispatcher().trigger(ft);
     }
 }

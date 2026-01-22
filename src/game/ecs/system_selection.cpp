@@ -4,6 +4,8 @@
 
 namespace game 
 {
+	DeclareEcsSystem(SelectionSystem, EcsPriority::Middle);
+
 
 	SelectionSystem::SelectionSystem(GameContext& context) : EcsSystem(context)
 	{

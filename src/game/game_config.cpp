@@ -49,8 +49,8 @@ namespace game
 			auto& floattxtJs = json["float_text"];
 			float_text.font_name = floattxtJs.value("font_name", "fonts/msyh.ttf");
 			float_text.font_size = floattxtJs.value("font_size", 15.0f);
-			float_text.color_inc_hp.fromHexString(floattxtJs.value("color_inc_hp", "#00FF00FF"));
-			float_text.color_dec_hp.fromHexString(floattxtJs.value("color_dec_hp", "#FF0000FF"));
+			float_text.color_inc.fromHexString(floattxtJs.value("color_inc", "#00FF00FF"));
+			float_text.color_dec.fromHexString(floattxtJs.value("color_dec", "#FF0000FF"));
 			float_text.tween_mode = floattxtJs.value("tween_mode", "cubicIn");
 			float_text.float_ticks = floattxtJs.value("float_ticks", 1000);
 		}
