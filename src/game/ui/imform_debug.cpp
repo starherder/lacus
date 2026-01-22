@@ -113,10 +113,7 @@ void ImFormDebug::draw()
 
         ImGui::Separator();
 
-        if (ImGui::Button("skill"))
-        {
-            _showSkillWindow = !_showSkillWindow;
-        }
+        drawSkillWindow();
 
         //drawSelectEntityProps();
 
@@ -135,11 +132,6 @@ void ImFormDebug::draw()
     if (_showCameraWindow)
     {
         drawCameraWindow();
-    }
-
-    if (_showSkillWindow)
-    {
-        drawSkillWindow();
     }
 }
 
@@ -327,7 +319,6 @@ void ImFormDebug::drawCameraWindow()
     }
 
     ImGui::End();
-
 }
 
 void ImFormDebug::drawSkyWindow()
@@ -373,12 +364,12 @@ void ImFormDebug::drawSkyWindow()
 
 void ImFormDebug::drawSkillWindow()
 {
-    ImGui::Begin("skills");
+    ImGui::BeginChild("skills#child_wnd", {0,0}, ImGuiChildFlags_Borders);
 
     if (_selectEntity == entt::null ||
         _context->registry().valid(_selectEntity) == false)
     {
-        ImGui::End();
+        ImGui::EndChild();
         return;
     }
 
@@ -395,7 +386,7 @@ void ImFormDebug::drawSkillWindow()
         }
     }
 
-    ImGui::End();
+    ImGui::EndChild();
 }
 
 }

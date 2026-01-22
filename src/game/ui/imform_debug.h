@@ -59,7 +59,6 @@ namespace game
 
         bool _showSkyWindow = false;
         bool _showCameraWindow = false;
-        bool _showSkillWindow = false;
 
         Vec2 _windowPos, _windowSize;
 
