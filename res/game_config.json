@@ -9,10 +9,10 @@
 		"chess_dead_ground_color":"#808080FF",
 		"chess_dead_border_color": "#505050FF",
 		"chess_dead_font_color": "#000000FF",
-		"ground_color_drag_ok" : "80FF8080",
-		"border_color_drag_ok" : "80FF80F0",
-		"ground_color_drag_error" : "FF808080",
-		"border_color_drag_error" : "FF8080F0"
+		"ground_color_drag_ok" : "#80FF8080",
+		"border_color_drag_ok" : "#80FF80F0",
+		"ground_color_drag_error" : "#FF808080",
+		"border_color_drag_error" : "#FF8080F0"
 	},
 
 	"float_text": {
