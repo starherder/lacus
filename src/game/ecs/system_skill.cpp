@@ -86,6 +86,16 @@ namespace game
 				trap.onUpdate(deltaTicks);
 			}
 		}
+
+		auto viewsWave = _context.registry().view<CompWave>();
+		for (auto& ent : viewsWave)
+		{
+			auto& wave = viewsWave.get<CompWave>(ent);
+			if (wave.running)
+			{
+				wave.onUpdate(deltaTicks);
+			}
+		}
 	}
 
 	tweeny::tween<float, float> SkillSystem::makeSkillSpellTween(const EvtCastSkillToObject& e)
@@ -237,11 +247,64 @@ namespace game
 		{
 			startSprint(e.source, e.target, e.skill);
 		}
+		else if (skillComm.type == SkillType::Wave)
+		{
+			startWave(e.source, e.target, e.skill);
+		}
 		else
 		{
 			auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
 			_context.dispatcher().trigger(EvtExecSkillEvent{e.source, e.skill, skillAffect.event});
 		}
+	}
+
+	void SkillSystem::startWave(entt::entity srcid, entt::entity tarid, entt::entity skill)
+	{
+		auto pWaveCfg = _context.registry().try_get<CompWaveCfg>(skill);
+		if (!pWaveCfg)
+		{
+			return;
+		}
+
+		SPDLOG_ERROR(">>>>>>>>>> startWave: skill = {} <<<<<<<<<<", skill);
+
+		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
+		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
+
+		auto wave = _context.registry().create();
+		_context.registry().emplace<CompWave>(wave);
+
+		auto& compWave = _context.registry().get<CompWave>(wave);
+		compWave.running = true;
+		compWave.wave_ticks = 0;
+		compWave.cur_wave = 0;
+		compWave.onUpdate = [this, srcid, tarid, skill, wave](int64_t tick) 
+		{
+			auto& waveCfg = _context.registry().get<CompWaveCfg>(skill);
+			auto& compWave = _context.registry().get<CompWave>(wave);
+
+			if (compWave.wave_ticks == 0)
+			{
+				createWaveRange(compWave.cur_wave, srcid, tarid, skill);
+				compWave.cur_wave++;
+			}
+			else if (compWave.wave_ticks >= waveCfg.interval)
+			{
+				compWave.wave_ticks = 0;
+				return;
+			}
+			
+			if (compWave.cur_wave >= waveCfg.range)
+			{
+				SPDLOG_ERROR(">>>> waveStop: skill = {}", skill);
+
+				_context.registry().emplace_or_replace<CompDestroy>(wave);
+				compWave.running = false;
+				return;
+			}
+
+			compWave.wave_ticks += (int)tick;
+		};
 	}
 
 	void SkillSystem::startSprint(entt::entity srcid, entt::entity tarid, entt::entity skill)
@@ -317,23 +380,45 @@ namespace game
 
 	void SkillSystem::startTraps(entt::entity srcid, entt::entity tarid, entt::entity skill)
 	{
-		auto pTrapCfgComp = _context.registry().try_get<CompTrapCfg>(skill);
-		auto pAffect = _context.registry().try_get<CompSkillAffect>(skill);
-		if (!pTrapCfgComp || !pAffect)
+		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
+		createTrapAtPos(srcid, compTgtTrans.position, skill, ShapeType::Circle);
+	}
+
+	void SkillSystem::createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill)
+	{
+		SPDLOG_ERROR(">>>> createWaveRange: r = {}, skill = {}", r, skill);
+
+		auto& waveCfg = _context.registry().get<CompWaveCfg>(skill);
+		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
+		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
+
+		if (waveCfg.count == 1)
 		{
-			return;
+			auto dir = SafeNormal(compDstTrans.position - compSrcTrans.position);
+			auto trapPos = compSrcTrans.position + _context.scene().tileSize() * dir * (float)(r+1);
+			createTrapAtPos(srcid, trapPos, skill, ShapeType::Rect);
+		}
+	}
+
+	entt::entity SkillSystem::createTrapAtPos(entt::entity srcid, const Vec2& target, entt::entity skill, ShapeType shape_type)
+	{
+		SPDLOG_ERROR(">>>> createTrap: exec skill = {}", skill);
+
+		auto pTrapCfgComp = _context.registry().try_get<CompTrapCfg>(skill);
+		if (!pTrapCfgComp)
+		{
+			return entt::null;
 		}
 
-		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
-		auto trap = _context.objectFactory().createTrap(compTgtTrans.position, pTrapCfgComp->range,
+		auto trap = _context.objectFactory().createTrap(target, pTrapCfgComp->range,
 														pTrapCfgComp->color, pTrapCfgComp->texture,
-														pTrapCfgComp->particle);
+														pTrapCfgComp->particle, shape_type);
 		
 		int src_alpha = pTrapCfgComp->color.a;
 
 		auto& compTrap = _context.registry().get<CompTraps>(trap);
 		compTrap.during_ticks = 0;
-		compTrap.period_flag = 0;
+		compTrap.period_ticks = 0;
 		compTrap.running = true;
 		compTrap.onUpdate = [this, srcid, skill, trap, src_alpha](int64_t ticks)
 		{
@@ -344,34 +429,33 @@ namespace game
 
 			auto& compTraps = _context.registry().get<CompTraps>(trap);
 			auto& compTrapCfg = _context.registry().get<CompTrapCfg>(skill);
-			if (compTrapCfg.duration > 0)
+
+			if (compTrapCfg.duration > 0 && compTraps.during_ticks >= compTrapCfg.duration)
 			{
-				compTraps.during_ticks += (int)ticks;
-				if (compTraps.during_ticks > compTrapCfg.duration)
-				{
-					compTraps.running = false;
-					_context.registry().emplace_or_replace<CompDestroy>(trap);
-					SPDLOG_INFO("trap({}) expired, remove ", trap);
-					return;
-				}
+				compTraps.running = false;
+				_context.registry().emplace_or_replace<CompDestroy>(trap);
+				return;
 			}
 
-			compTraps.period_flag += (int)ticks;
-			if (compTraps.period_flag > compTrapCfg.period)
+			if (compTraps.period_ticks == 0)
 			{
 				onTrapPeriodExec(srcid, skill, trap);
-
-				compTraps.period_flag = 0;
 			}
-			else
+			else if (compTraps.period_ticks > compTrapCfg.period)
 			{
-				float period_ratio = (float)compTraps.period_flag / (float)compTrapCfg.period;
-
-				auto& compDisplay = _context.registry().get<CompMarkDisplay>(trap);
-				compDisplay.ground_color.a = (int)(src_alpha * period_ratio);
+				compTraps.period_ticks = 0;
+				return;
 			}
+
+			float period_ratio = 1.0f - (float)compTraps.period_ticks / (float)compTrapCfg.period;
+			auto& compDisplay = _context.registry().get<CompMarkDisplay>(trap);
+			compDisplay.ground_color.a = (int)(src_alpha * period_ratio);
+
+			compTraps.period_ticks += (int)ticks;
+			compTraps.during_ticks += (int)ticks;
 		};
 
+		return trap;
 	}
 
 	void SkillSystem::startProjectile(entt::entity srcid, entt::entity tarid, entt::entity skill)
@@ -546,6 +630,8 @@ namespace game
 
 	void SkillSystem::onTrapPeriodExec(entt::entity srcid, entt::entity skill, entt::entity trap)
 	{
+		SPDLOG_ERROR(">>>> onTrapPeriodExec: exec skill = {}", skill);
+
 		if (!_context.registry().valid(skill) || !_context.registry().valid(trap))
 		{
 			SPDLOG_ERROR("src: {}, skill: {}, trap: {} NOT valid", srcid, skill, trap);
@@ -558,9 +644,6 @@ namespace game
 			SPDLOG_ERROR("trap.transform or skill.traps NOT exist.");
 			return;
 		}
-
-		auto& compNameId = _context.registry().get<CompNameId>(skill);
-		SPDLOG_INFO("trap ({}) exec. ", compNameId.cfg_id);
 
 		EvtProjectileHitPos e;
 		e.source = srcid;

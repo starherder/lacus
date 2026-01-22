@@ -1,6 +1,6 @@
 {
   "cfgid": "skill_wave",
-  "type": "projectile",
+  "type": "wave",
   "name": "text_skill_wave",
   "desc": "text_skill_wave_desc",
 
@@ -26,13 +26,14 @@
     "post_tween": "cubicOut"
   },
 
-  "traps": {
-    "desc": "type:point/dir/cross/around",
-    "type": "dir",
-    "range": "3",
-    "life": 1000,
-    "fade": "cubicIn",
-    "texture": "",
-    "color": "#FF0000FF"
+  "wave": {
+    "count": 1,
+    "range": 3,
+    "duration": 500,
+    "interval":50,
+    "func": "hp-",
+    "color": "#FF000088",
+    "particle": "",
+    "texture": ""
   }
 }

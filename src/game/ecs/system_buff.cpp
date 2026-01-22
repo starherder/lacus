@@ -97,12 +97,12 @@ namespace game
 				}
 			}
 
-			buffComm.period_flag += ticks;
-			if(buffComm.period_flag > buffComm.period)
+			buffComm.period_ticks += ticks;
+			if(buffComm.period_ticks > buffComm.period)
 			{
 				onPeriodExec(e.target, buff, e.source);
 				
-				buffComm.period_flag = 0;
+				buffComm.period_ticks = 0;
 			}
 		};
 	}

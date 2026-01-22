@@ -14,7 +14,7 @@ namespace game
 		Remote, // 远程魔法（闪电,加Buff等）
 		Trap, // 陷阱（地刺、地火、陷阱等有生存周期，会造成伤害）
 		Sprint, // 冲刺，对一条线上敌人造成伤害
-		//EarthQuak, // 地震
+		Wave, // 龟仙波
 		Other, // 其他（天黑、降雨等）
 		Invalid,
 	};
@@ -79,7 +79,7 @@ namespace game
 	
 	struct CompTrapCfg
 	{
-		int range = 1;
+		float range = 1.0f;
 		int duration = 5000;
 		int period = 1000;
 
@@ -94,8 +94,24 @@ namespace game
 	{
 		bool running = false;
 
-		int period_flag = 0;
+		int period_ticks = 0;
 		int during_ticks = 0;
+		std::function<void(int64_t)> onUpdate = nullptr;
+	};
+
+	struct CompWaveCfg
+	{
+		int count = 1;
+		int range = 3;
+		int interval = 500;
+	};
+
+	struct CompWave
+	{
+		bool running = false;
+
+		int wave_ticks = 0;
+		int cur_wave = 0;
 		std::function<void(int64_t)> onUpdate = nullptr;
 	};
 
@@ -183,7 +199,7 @@ namespace game
 		// 周期（定时触发）
 		int period = 0;
 
-		int64_t period_flag = 0;
+		int64_t period_ticks = 0;
 
 		int64_t during_ticks = 0;
 
@@ -258,6 +274,7 @@ namespace game
 		if (type == "combat") return SkillType::Combat;
 		if (type == "projectile") return SkillType::Projectile;
 		if (type == "trap") return SkillType::Trap;
+		if (type == "wave") return SkillType::Wave;
 		if (type == "sprint") return SkillType::Sprint;
 		if (type == "remote") return SkillType::Remote;
 		if (type == "other") return SkillType::Other;

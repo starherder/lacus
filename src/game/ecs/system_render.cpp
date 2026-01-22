@@ -87,7 +87,6 @@ void RenderSystem::drawMarker()
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& display = ent_view.get<CompMarkDisplay>(ent);
 
-
         float corner = _context.gameConfig().display.chess_corner;
 
         if (display.texture != nullptr)
@@ -105,11 +104,21 @@ void RenderSystem::drawMarker()
             auto ground_color = display.ground_color;
             auto border_color = display.border_color;
 
-            auto center = camera.projectPoint(transform.position);
-            float radius = transform.size.x;
+            if (display.shape_type == ShapeType::Circle)
+            {
+                auto center = camera.projectPoint(transform.position);
+                float radius = transform.size.x;
 
-            painter.fillCircle(ground_color, center, radius, 20);
-            painter.drawCircle(border_color, center, radius, 20);
+                painter.fillCircle(ground_color, center, radius, 20);
+                painter.drawCircle(border_color, center, radius, 20);
+            }
+            else
+            {
+                auto rect = Rect{ transform.position - transform.size / 2.0f, transform.size };
+                auto dstrect = camera.projectRect(rect);
+                painter.fillRect(ground_color, dstrect, corner);
+                painter.drawRect(border_color, dstrect, corner);
+            }
         }
     }
 }

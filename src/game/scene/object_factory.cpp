@@ -565,7 +565,7 @@ namespace game
 			auto& trapsJs = json["trap"];
 
 			CompTrapCfg trap;
-			trap.range = trapsJs.value("range", 1);
+			trap.range = trapsJs.value("range", 32.0f);
 			trap.duration = trapsJs.value("duration", 1000);
 			trap.period = trapsJs.value("period", 500);
 			trap.func = trapsJs.value("func", "");
@@ -574,6 +574,27 @@ namespace game
 			trap.texture = trapsJs.value("texture", "");
 
 			_context->registry().emplace<CompTrapCfg>(skill, trap);
+		}
+
+		if (json.contains("wave"))
+		{
+			auto& waveJs = json["wave"];
+
+			CompTrapCfg trap;
+			trap.range = _context->scene().tileSize().x;
+			trap.duration = waveJs.value("duration", 1000);
+			trap.period = trap.duration;
+			trap.func = waveJs.value("func", "");
+			trap.particle = waveJs.value("particle", "");
+			trap.color = Color::parseHexString(waveJs.value("color", "#FF0000FF"));
+			trap.texture = waveJs.value("texture", "");
+			_context->registry().emplace<CompTrapCfg>(skill, trap);
+
+			CompWaveCfg wave;
+			wave.count = waveJs.value("count", 1);
+			wave.range = waveJs.value("range", 1);
+			wave.interval = waveJs.value("interval", 500);
+			_context->registry().emplace<CompWaveCfg>(skill, wave);
 		}
 
 		return skill;
@@ -598,7 +619,6 @@ namespace game
 			return particlePtr;
 		}
 
-		SPDLOG_ERROR("create particle ({}) failed", particle);
 		return nullptr;
 	}
 
@@ -620,7 +640,8 @@ namespace game
 		return bullet;
 	}
 
-	entt::entity ObjectFactory::createTrap(const Vec2& target, float range, const Color& color, const std::string& texture, const std::string& particle)
+	entt::entity ObjectFactory::createTrap(const Vec2& target, float range, const Color& color, 
+										const std::string& texture, const std::string& particle, ShapeType shape_type)
 	{
 		auto trap = _context->registry().create();
 
@@ -636,7 +657,7 @@ namespace game
 		_context->registry().emplace<CompTransform>(trap, compTrans);
 
 		CompMarkDisplay compDisplay;
-		compDisplay.shape_type = ShapeType::Circle;
+		compDisplay.shape_type = shape_type;
 		compDisplay.ground_color = color;
 		compDisplay.border_color = color;
 		compDisplay.texture = _context->textureMgr().get(texture);
@@ -644,7 +665,7 @@ namespace game
 
 		CompTraps compTraps;
 		compTraps.during_ticks = 0;
-		compTraps.period_flag = 0;
+		compTraps.period_ticks = 0;
 		compTraps.running = false;
 		_context->registry().emplace<CompTraps>(trap, compTraps);
 

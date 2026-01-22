@@ -31,7 +31,10 @@ namespace game
 
 		entt::entity createProjectile(const Vec2& source, const Vec2& target, const std::string& particle);
 
-		entt::entity createTrap(const Vec2& target, float range, const Color& color, const std::string& texture, const std::string& particle);
+		entt::entity createTrap(const Vec2& target, float range, const Color& color, 
+			const std::string& texture, const std::string& particle, ShapeType shape_type);
+
+		//entt::entity createWave()
 
 		particle::ParticlePtr createParticleOnObject(entt::entity owner, const std::string& particle);
 

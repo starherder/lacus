@@ -56,6 +56,9 @@ namespace game {
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }
 
+		int64_t currentTicks() { return _application.frameTicker().ticks(); }
+		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
+
 		ObjectFactory& objectFactory();
 
 		entt::registry& registry();
