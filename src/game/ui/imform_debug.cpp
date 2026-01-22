@@ -24,9 +24,6 @@ void ImFormDebug::init(GameContext* context)
 {
     _context = context;
 
-    _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick);
-    _context->eventDispatcher().onMouseRightClicked.connect(this, &ImFormDebug::onMouseRightClick);
-
     auto& particles = particle::ParticleManager::inst().GetAllParticleConfigs();
     for (auto& [name, file] : particles) {
         _particleNames.push_back(name.c_str());
@@ -35,6 +32,8 @@ void ImFormDebug::init(GameContext* context)
 
 void ImFormDebug::draw()
 {
+    _selectEntity = _context->scene().getSelectEntity();
+
     ImGui::Begin("debug");
     {
         auto ent_num = _context->registry().storage<entt::entity>().size();
@@ -132,69 +131,6 @@ void ImFormDebug::draw()
     if (_showCameraWindow)
     {
         drawCameraWindow();
-    }
-}
-
-void ImFormDebug::onMouseLeftClick(const Vec2& pos)
-{
-    ImVec2 mousePos = ImGui::GetMousePos();
-
-    if (mousePos.x > _windowPos.x && mousePos.x < _windowPos.x + _windowSize.x &&
-        mousePos.y > _windowPos.y && mousePos.y < _windowPos.y + _windowSize.y)
-    {
-        return;
-    }
-
-    auto scenePos = _context->scene().camera().screenToWorld(pos);
-    //SPDLOG_INFO("pos = ({},{}), scene_pos = ({}, {})", pos.x, pos.y, scenePos.x, scenePos.y);
-
-    switch (_debugMode)
-    {
-    case DebugMode::Select:
-    {
-        _selectEntity = _context->scene().selectObjectAtPos(scenePos);
-    }break;
-    case DebugMode::PutObject:
-    {
-        _context->scene().createActor(_selectCfgId, scenePos);
-    }break;
-    case DebugMode::Null:
-    {
-        _selectEntity = entt::null;
-    }break;
-    default:
-    {
-    }break;
-    }
-}
-
-void ImFormDebug::onMouseRightClick(const Vec2& pos)
-{
-    if(_debugMode == DebugMode::Select && _context->registry().valid(_selectEntity))
-    {
-        auto scenePos = _context->scene().camera().screenToWorld(pos);
-        moveSelectActor(scenePos);
-    }
-}
-
-void ImFormDebug::moveSelectActor(const Vec2& pos)
-{
-    if (_selectEntity == entt::null || 
-        _context->registry().valid(_selectEntity) == false)
-    {
-        return;
-    }
-
-    auto bevComp = _context->registry().try_get<CompBehavior>(_selectEntity);
-    if (bevComp && bevComp->bevtree)
-    {
-        bevComp->bevtree->stop();
-    }
-
-    if(_context->registry().try_get<CompMotion>(_selectEntity))
-    {
-        auto gridPos = _context->scene().getGridFromPos(pos);
-        _context->dispatcher().trigger(EvtMoveToGrid{_selectEntity, gridPos, true});
     }
 }
 
@@ -373,8 +309,12 @@ void ImFormDebug::drawSkillWindow()
         return;
     }
 
-    auto& skills = _context->registry().get<CompSkills>(_selectEntity);
-    for (auto& skill_id : skills.skills)
+    auto pskills = _context->registry().try_get<CompSkills>(_selectEntity);
+    if (!pskills) {
+        return;
+    }
+
+    for (auto& skill_id : pskills->skills)
     {
         auto& compName = _context->registry().get<CompNameId>(skill_id);
         auto& compSkill = _context->registry().get<CompSkillComm>(skill_id);

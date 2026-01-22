@@ -174,14 +174,15 @@ namespace samples {
         eventDispatcher.onSdlEvent.connect([this] (const Event& e) {
             imgui::ImFormManager::inst().processEvent(e);
         });
+        eventDispatcher.setEventFilterFunc([this](const Event& e) {
+            return imgui::ImFormManager::inst().isAnyWindowHovered();
+        });
         
         imgui::ImFormManager::inst().init(window, renderer);
 
         auto font_path = application()->resPath()/"fonts/msyh.ttf";
         imgui::ImFormManager::inst().setFont(font_path, 20);
-
         imgui::ImFormManager::inst().showForm<ImFormMainFrame>("ImFormMainFrame");
-
         imgui::ImFormManager::inst().showForm<ImGuiFormHUD>("ImGuiFormHUD", application());
     }
 

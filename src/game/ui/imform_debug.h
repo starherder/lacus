@@ -34,11 +34,6 @@ namespace game
 
 		void draw() override;
 
-        void onMouseLeftClick(const Vec2& pos);
-        void onMouseRightClick(const Vec2& pos);
-
-        void moveSelectActor(const Vec2& pos);
-
         void roleExecSkill(entt::entity skill);
 
         void drawSkyWindow();

@@ -21,8 +21,7 @@ namespace game
 
     bool GameCamera::checkInputOK()
     {
-        // 如果有调试用的ImGui窗口，要当心当前是不是在调试窗口上
-        return imgui::ImFormManager::inst().isAnyWindowHovered() == false;
+        return true;
     }
 
     void GameCamera::onKeyDown(KeyCode keyCode)

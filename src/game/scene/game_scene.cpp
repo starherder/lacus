@@ -14,6 +14,9 @@ GameScene::GameScene(GameContext& context)
 
     _context.dispatcher().sink<EvtRoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
     _context.dispatcher().sink<EvtRoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
+
+    _context.eventDispatcher().onMouseLeftClicked.connect(this, &GameScene::onMouseLeftClick);
+    _context.eventDispatcher().onMouseRightClicked.connect(this, &GameScene::onMouseRightClick);
 }
 
 GameScene::~GameScene()
@@ -494,6 +497,41 @@ SkyEffect GameScene::getSkyEffect()
     }
 
     return SkyEffect::None;
+}
+
+void GameScene::onMouseLeftClick(const Vec2& pos)
+{
+    auto scenePos = camera().screenToWorld(pos);
+    _selectEntity = selectObjectAtPos(scenePos);
+}
+
+void GameScene::onMouseRightClick(const Vec2& pos)
+{
+    if (_context.registry().valid(_selectEntity))
+    {
+        auto scenePos = camera().screenToWorld(pos);
+        moveSelectActor(scenePos);
+    }
+}
+
+void GameScene::moveSelectActor(const Vec2& pos)
+{
+    if (_context.registry().valid(_selectEntity) == false)
+    {
+        return;
+    }
+
+    auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
+    if (bevComp && bevComp->bevtree)
+    {
+        bevComp->bevtree->stop();
+    }
+
+    if (_context.registry().try_get<CompMotion>(_selectEntity))
+    {
+        auto gridPos = getGridFromPos(pos);
+        _context.dispatcher().trigger(EvtMoveToGrid{ _selectEntity, gridPos, true });
+    }
 }
 
 } 

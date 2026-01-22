@@ -80,6 +80,8 @@ namespace game {
 
         SkyEffect getSkyEffect();
 
+        entt::entity getSelectEntity() { return _selectEntity; }
+
     private:
         void showAllGui();
 
@@ -97,6 +99,11 @@ namespace game {
         void loadInThread(const engine::fs::path& mapPath);
         void unloadInThread();
 
+        void onMouseLeftClick(const Vec2& pos);
+        void onMouseRightClick(const Vec2& pos);
+
+        void moveSelectActor(const Vec2& pos);
+
     private:
         tilemap::TileMap _tileMap;
 
@@ -112,6 +119,8 @@ namespace game {
         std::vector<Rect> _collisionDebugRects;
 
         std::mutex _threadMutex;
+
+        entt::entity _selectEntity = entt::null;
     };
 
 

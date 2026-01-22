@@ -154,7 +154,8 @@ namespace imgui
 	
 	bool ImFormManager::isAnyWindowHovered()
 	{
-		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) 
+			|| ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered();
 	}
 	
 }

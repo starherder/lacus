@@ -32,6 +32,8 @@ public:
 	signals::Signal<> onQuit;
 	signals::Signal<const Event&> onSdlEvent;
 
+	using EventFilterFunc = std::function<bool(const Event&)>;
+
 public:
 	EventDispatcher() = default;
 	~EventDispatcher() = default;
@@ -48,9 +50,15 @@ public:
 
 	const Vec2& mousePos() { return _mousePos; }
 
+	bool isEventFilter(const Event& e);
+
+	void setEventFilterFunc(EventFilterFunc func);
+
 private:
 	entt::dispatcher _logicDispatcher;
 	Vec2 _mousePos;
+
+	EventFilterFunc _eventFilter;
 };
 
 }

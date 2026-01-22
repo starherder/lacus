@@ -1,5 +1,6 @@
 ﻿#include "event.h"
 
+#include "magic_enum/magic_enum.h"
 
 namespace engine {
 
@@ -15,12 +16,31 @@ bool EventDispatcher::isCtrlKeyDown()
 	return state[(int)SDL_SCANCODE_LCTRL] || state[(int)SDL_SCANCODE_RCTRL];
 }
 
+bool EventDispatcher::isEventFilter(const Event& e)
+{
+	if (_eventFilter)
+	{
+		return _eventFilter(e);
+	}
+	return false;
+}
+
+void EventDispatcher::setEventFilterFunc(EventFilterFunc func)
+{
+	_eventFilter = func;
+}
+
 void EventDispatcher::run()
 {
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
 		onSdlEvent.emit(e);
+
+		if (isEventFilter(e))
+		{
+			continue;
+		}
 
 		switch(e.type)
 		{
@@ -85,7 +105,9 @@ void EventDispatcher::run()
 			onQuit.emit();
 		}break;
 		default:
+		{
 			break;
+		}
 		}
 	}
 }
