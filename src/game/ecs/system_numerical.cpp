@@ -23,7 +23,6 @@ namespace game
 
 	}
 
-
     void NumericalSystem::onRolePropAlter(const EvtRolePropAlter& e)
     {
         auto& base = _context.registry().get<CompBaseProp>(e.actor);

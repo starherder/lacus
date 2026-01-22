@@ -93,6 +93,11 @@ namespace game
 		entt::entity skill;
 	};
 
+	struct EvtRoleOnDrop {
+		entt::entity actor;
+		Vec2 pos;
+	};
+
 	struct EvtProjectileHitPos {
 		entt::entity source;
 		entt::entity skill;

@@ -20,6 +20,9 @@ public:
 	signals::Signal<const Vec2&> onMouseLeftClicked;
 	signals::Signal<const Vec2&> onMouseRightClicked;
 
+	signals::Signal<const Vec2&> onMouseLeftDragStart;
+	signals::Signal<const Vec2&> onMouseLeftDragFinish;
+
 	signals::Signal<const Vec2&, const Vec2&> onMouseLeftDrag;
 	signals::Signal<const Vec2&, const Vec2&> onMouseRightDrag;
 
@@ -56,7 +59,10 @@ public:
 
 private:
 	entt::dispatcher _logicDispatcher;
+
 	Vec2 _mousePos;
+
+	bool _isDragging = false;
 
 	EventFilterFunc _eventFilter;
 };

@@ -15,8 +15,14 @@ GameScene::GameScene(GameContext& context)
     _context.dispatcher().sink<EvtRoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
     _context.dispatcher().sink<EvtRoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
 
-    _context.eventDispatcher().onMouseLeftClicked.connect(this, &GameScene::onMouseLeftClick);
-    _context.eventDispatcher().onMouseRightClicked.connect(this, &GameScene::onMouseRightClick);
+    _context.eventDispatcher().onMouseLeftDown.connect(this, &GameScene::onMouseLeftPressed, -1);
+    _context.eventDispatcher().onMouseLeftDrag.connect(this, &GameScene::onMouseLeftDrag, -1);
+
+    _context.eventDispatcher().onMouseLeftDragStart.connect(this, &GameScene::onMouseLeftDragStart, -1);
+    _context.eventDispatcher().onMouseLeftDragFinish.connect(this, &GameScene::onMouseLeftDragFinish, -1);
+
+    _context.eventDispatcher().onMouseLeftClicked.connect(this, &GameScene::onMouseLeftClick, -1);
+    _context.eventDispatcher().onMouseRightClicked.connect(this, &GameScene::onMouseRightClick, -1);
 }
 
 GameScene::~GameScene()
@@ -499,10 +505,42 @@ SkyEffect GameScene::getSkyEffect()
     return SkyEffect::None;
 }
 
-void GameScene::onMouseLeftClick(const Vec2& pos)
+void GameScene::onMouseLeftPressed(const Vec2& pos)
 {
     auto scenePos = camera().screenToWorld(pos);
     _selectEntity = selectObjectAtPos(scenePos);
+}
+
+void GameScene::onMouseLeftRelease(const Vec2& pos)
+{
+}
+
+void GameScene::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+{
+    if (dragSelectActorInProgress(pos))
+    {
+        slot_context().setBreak(true);
+    }
+}
+
+void GameScene::onMouseLeftDragStart(const Vec2& pos)
+{
+    if (dragSelectActor(pos))
+    {
+        slot_context().setBreak(true);
+    }
+}
+
+void GameScene::onMouseLeftDragFinish(const Vec2& pos)
+{
+    if (dropSelectActor(pos))
+    {
+        slot_context().setBreak(true);
+    }
+}
+
+void GameScene::onMouseLeftClick(const Vec2& pos)
+{
 }
 
 void GameScene::onMouseRightClick(const Vec2& pos)
@@ -512,6 +550,7 @@ void GameScene::onMouseRightClick(const Vec2& pos)
         auto scenePos = camera().screenToWorld(pos);
         moveSelectActor(scenePos);
     }
+
 }
 
 void GameScene::moveSelectActor(const Vec2& pos)
@@ -532,6 +571,122 @@ void GameScene::moveSelectActor(const Vec2& pos)
         auto gridPos = getGridFromPos(pos);
         _context.dispatcher().trigger(EvtMoveToGrid{ _selectEntity, gridPos, true });
     }
+}
+
+bool GameScene::dragSelectActor(const Vec2& pos)
+{
+    if (!_context.registry().valid(_selectEntity))
+    {
+        return false;
+    }
+
+    auto pDead = _context.registry().try_get<CompDead>(_selectEntity);
+    if (pDead)
+    {
+        return false;
+    }
+
+    auto pTrans = _context.registry().try_get<CompTransform>(_selectEntity);
+    if (!pTrans)
+    {
+        return false;
+    }
+    
+    auto dstpos = pTrans->position;
+    _context.registry().emplace_or_replace<CompDragging>(_selectEntity, CompDragging{ dstpos, dstpos, pTrans->size });
+
+    removeObjectFromGrid(_selectEntity, getGridFromPos(pTrans->position));
+
+    auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
+    if (bevComp && bevComp->bevtree)
+    {
+        bevComp->bevtree->stop();
+    }
+
+    return true;
+}
+
+bool GameScene::dragSelectActorInProgress(const Vec2& pos)
+{
+    if (!_context.registry().valid(_selectEntity))
+    {
+        return false;
+    }
+
+    auto pDragging = _context.registry().try_get<CompDragging>(_selectEntity);
+    if (!pDragging)
+    {
+        return false;
+    }
+
+    auto pTrans = _context.registry().try_get<CompTransform>(_selectEntity);
+    if (!pTrans)
+    {
+        return false;
+    }
+
+    auto dstpos = camera().screenToWorld(pos);
+    if (!canDropToPos(dstpos))
+    {
+        pDragging->ground_color = _context.gameConfig().display.ground_color_drag_error;
+        pDragging->border_color = _context.gameConfig().display.border_color_drag_error;
+    }
+    else
+    {
+        pDragging->ground_color = _context.gameConfig().display.ground_color_drag_ok;
+        pDragging->border_color = _context.gameConfig().display.border_color_drag_ok;
+    }
+
+    pTrans->position = dstpos;
+    pDragging->tip_pos = normalToGridPos(dstpos);
+
+    return true;
+}
+
+bool GameScene::dropSelectActor(const Vec2& pos)
+{
+    if (!_context.registry().valid(_selectEntity))
+    {
+        return false;
+    }
+
+    auto pDragging = _context.registry().try_get<CompDragging>(_selectEntity);
+    auto pTrans = _context.registry().try_get<CompTransform>(_selectEntity);
+    if (!pDragging || !pTrans)
+    {
+        return false;
+    }
+
+    auto dstpos = camera().screenToWorld(pos);
+    if (canDropToPos(dstpos))
+    {
+        dstpos = normalToGridPos(dstpos);
+        _context.dispatcher().trigger(EvtRoleOnDrop{ _selectEntity, dstpos });
+    }
+    else
+    {
+        dstpos = pDragging->origin_pos;
+    }
+
+    pTrans->position = dstpos;
+
+    addObjectToGrid(_selectEntity, getGridFromPos(dstpos));
+
+    _context.registry().remove<CompDragging>(_selectEntity);
+
+    auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
+    if (bevComp && bevComp->bevtree)
+    {
+        bevComp->bevtree->start();
+    }
+
+    return true;
+}
+
+bool GameScene::canDropToPos(const Vec2& pos)
+{
+    auto walktype = getGridWalkType(getGridFromPos(pos));
+    return walktype != (int)tilemap::WalkType::Collision;
 }
 
 } 

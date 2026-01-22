@@ -168,7 +168,8 @@ namespace game
         std::shared_ptr<bevtree::BehaviorTree> bevtree = nullptr;
     };
 
-    struct CompPickable {
+    struct CompPickable 
+    {
         int amount = 0;
         std::string effect;
         std::string funcs;
@@ -177,6 +178,16 @@ namespace game
 
         bool picked = false;
         tweeny::tween<float, float> tween;
+    };
+
+    struct CompDragging 
+    {
+        Vec2 origin_pos;
+        Vec2 tip_pos;
+        Vec2 tip_size;
+        Color ground_color = Color::LightRed;
+        Color border_color = Color::Red;
+        float border_size = 1.0f;
     };
 
     struct CompAudio 

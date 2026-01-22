@@ -65,6 +65,12 @@ void EventDispatcher::run()
 			{
 				onMouseLeftUp({e.button.x, e.button.y});
 				onMouseLeftClicked.emit({e.button.x, e.button.y});
+
+				if (_isDragging)
+				{
+					_isDragging = false;
+					onMouseLeftDragFinish.emit({ e.motion.x, e.motion.y });
+				}
 			}
 			if (e.button.button == SDL_BUTTON_RIGHT) 
 			{
@@ -80,6 +86,12 @@ void EventDispatcher::run()
 			if(e.button.button == SDL_BUTTON_LEFT) 
 			{
 				onMouseLeftDrag.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
+
+				if (!_isDragging) 
+				{
+					_isDragging = true;
+					onMouseLeftDragStart.emit({ e.motion.x, e.motion.y });
+				}
 			}
 			if (e.button.button == SDL_BUTTON_RIGHT) 
 			{

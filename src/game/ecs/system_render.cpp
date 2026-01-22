@@ -145,6 +145,7 @@ void RenderSystem::drawObjects()
         int alpha = 255;
         float corner = _context.gameConfig().display.chess_corner;
 
+        // is dead
         auto pdead = _context.registry().try_get<CompDead>(ent);
         if (pdead)
         {
@@ -157,6 +158,20 @@ void RenderSystem::drawObjects()
             }
         }
 
+        // dragging tip
+        auto dragComp = _context.registry().try_get<CompDragging>(ent);
+        if (dragComp)
+        {
+            auto dstrect = Rect{ dragComp->tip_pos - dragComp->tip_size / 2.0f, dragComp->tip_size };
+            if (transform.coord_mode == CoordMode::WorldSpace) {
+                dstrect = camera.projectRect(dstrect);
+            }
+
+            painter.fillRect(dragComp->ground_color, dstrect, corner);
+            painter.drawRect(dragComp->border_color, dstrect, corner, dragComp->border_size);
+        }
+
+        // display
         if (display.texture != nullptr)
         {
             auto srcrect = display.tex_rect;
@@ -180,6 +195,7 @@ void RenderSystem::drawObjects()
             painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, font_color);
         }
 
+        // fight hp
         auto pFight = _context.registry().try_get<CompFightProp>(ent);
         if(pFight)
         {
@@ -198,6 +214,7 @@ void RenderSystem::drawObjects()
             }
         }
 
+        // selection
         auto selectComp = _context.registry().try_get<CompSelection>(ent);
         if (selectComp)
         {

@@ -31,6 +31,11 @@ namespace game
 			display.chess_dead_ground_color.fromHexString(displayJs.value("chess_dead_ground_color", "#808080FF"));
 			display.chess_dead_border_color.fromHexString(displayJs.value("chess_dead_border_color", "#505050FF"));
 			display.chess_dead_font_color.fromHexString(displayJs.value("chess_dead_font_color", "#000000FF"));
+
+			display.ground_color_drag_ok.fromHexString(displayJs.value("ground_color_drag_ok", "#80FF8080"));
+			display.border_color_drag_ok.fromHexString(displayJs.value("border_color_drag_ok", "#80FF80F0"));
+			display.ground_color_drag_error.fromHexString(displayJs.value("ground_color_drag_error", "#FF808080"));
+			display.border_color_drag_error.fromHexString(displayJs.value("border_color_drag_error", "#FF8080F0"));
 		}
 
 		if(json.contains("motion"))

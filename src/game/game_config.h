@@ -28,6 +28,11 @@ namespace game
 			Color chess_dead_ground_color = Color::Light;
 			Color chess_dead_border_color = Color::Gray;
 			Color chess_dead_font_color = Color::Dark;
+
+			Color ground_color_drag_ok = Color::LightGreen;
+			Color border_color_drag_ok = Color::Green;
+			Color ground_color_drag_error = Color::LightRed;
+			Color border_color_drag_error = Color::Red;
 		}display;
 
 		int dying_ticks = 1000;

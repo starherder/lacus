@@ -99,10 +99,23 @@ namespace game {
         void loadInThread(const engine::fs::path& mapPath);
         void unloadInThread();
 
+        void onMouseLeftPressed(const Vec2& pos);
+        void onMouseLeftRelease(const Vec2& pos);
+
+        void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
+
+        void onMouseLeftDragStart(const Vec2& pos);
+        void onMouseLeftDragFinish(const Vec2& pos);
+
         void onMouseLeftClick(const Vec2& pos);
         void onMouseRightClick(const Vec2& pos);
 
         void moveSelectActor(const Vec2& pos);
+
+        bool dragSelectActor(const Vec2& pos);
+        bool dragSelectActorInProgress(const Vec2& pos);
+        bool dropSelectActor(const Vec2& pos);
+        bool canDropToPos(const Vec2& pos);
 
     private:
         tilemap::TileMap _tileMap;
@@ -115,12 +128,12 @@ namespace game {
 
         GridEntityMap _gridObjects;
 
-        // debug
-        std::vector<Rect> _collisionDebugRects;
-
         std::mutex _threadMutex;
 
         entt::entity _selectEntity = entt::null;
+
+        // debug
+        std::vector<Rect> _collisionDebugRects;
     };
 
 
