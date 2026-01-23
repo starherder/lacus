@@ -290,6 +290,7 @@ namespace game
 			auto font_size = display.value("font_size", 12);
 
 			CompDisplay comdis;
+			comdis.visible = true;
 			comdis.ground_color = bg;
 			comdis.border_color = bd;
 			comdis.font_color = fc;
@@ -459,8 +460,14 @@ namespace game
 			auto& itemsJs = json["items"];
 			for (auto& it : itemsJs)
 			{
-				auto itname = it.get<std::string>();
-				//compItems.items.push_back(itname);
+				auto item_name = it.get<std::string>();
+				auto item = createActor(item_name);
+				auto pDisplay = _context->registry().try_get<CompDisplay>(item);
+				if(pDisplay) {
+					pDisplay->visible = false;
+				}
+
+				compItems.items.push_back(item);
 			}
 			_context->registry().emplace<CompItems>(role, compItems);
 		}
@@ -515,6 +522,7 @@ namespace game
 			auto font_size = display.value("font_size", 12);
 
 			CompDisplay comdis;
+			comdis.visible = true;
 			comdis.ground_color = bg;
 			comdis.border_color = bd;
 			comdis.font_color = fc;

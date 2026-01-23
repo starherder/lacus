@@ -41,7 +41,7 @@
 
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level":1,
+    "level": 1,
     "roll": 20,
     "str": 30,
     "cst": 300,
@@ -56,5 +56,5 @@
 
   "buffs": [],
 
-  "items": ["item_coin:100", "weapon_blade_1"]
+  "items": [ "item_coin", "item_coin", "item_poision", "item_medicine" ]
 }

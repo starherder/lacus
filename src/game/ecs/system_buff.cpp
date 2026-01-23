@@ -110,13 +110,6 @@ namespace game
 
 	void BuffSystem::onRemoveBuffFromObject(const EvtRemoveBuff& e)
 	{
-		auto buff = _context.objectFactory().createBuff(e.target, e.cfgid);
-		if (!_context.registry().valid(buff))
-		{
-			SPDLOG_ERROR("add buff ({}) failed.", e.cfgid);
-			return;
-		}
-
 		auto pbuffs = _context.registry().try_get<CompBuffs>(e.target);
 		if (!pbuffs)
 		{
@@ -125,7 +118,6 @@ namespace game
 		}
 
 		auto& buffs = pbuffs->buffs;
-
 		for(auto it=buffs.begin(); it!=buffs.end(); )
 		{
 			auto& buff = *it;
@@ -134,6 +126,7 @@ namespace game
 				auto& bufComm = _context.registry().get<CompBuffComm>(buff);
 				if(bufComm.cfgid == e.cfgid)
 				{
+					_context.registry().emplace_or_replace<CompDestroy>(buff);
 					it = buffs.erase(it);
 					continue;
 				}

@@ -16,9 +16,7 @@ namespace game
 
     NumericalSystem::~NumericalSystem()
 	{
-
 	}
-
 	
 	void NumericalSystem::update(float delta)
 	{

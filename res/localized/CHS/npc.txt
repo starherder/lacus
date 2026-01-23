@@ -22,8 +22,10 @@ text_spawner_name_2=法
 text_spawner_desc_2="产生法师的刷怪器"
 
 text_item_name_coin=金币
-text_item_name_potion=药水
+text_item_name_poision=毒药
+text_item_name_medicine=解药
 
-buff_name_poison=毒
+buff_name_poision=毒
+buff_name_medicine=解
 buff_name_slow=慢
 buff_name_encourage=激

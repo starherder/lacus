@@ -76,6 +76,7 @@ namespace game
 
     struct CompDead 
     {
+        entt::entity killer;
         int ticks = 0;
     };
 
@@ -130,6 +131,8 @@ namespace game
 
     struct CompDisplay
     {
+        bool visible = true;
+
         Color ground_color = Color::Yellow;
         Color border_color = Color::Dark;
         Color font_color = Color::Dark;

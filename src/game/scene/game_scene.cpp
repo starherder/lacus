@@ -670,7 +670,11 @@ bool GameScene::dropSelectActor(const Vec2& pos)
 
     pTrans->position = dstpos;
 
-    addObjectToGrid(_selectEntity, getGridFromPos(dstpos));
+    EvtRoleCrossGrid e;
+    e.actor = _selectEntity;
+    e.cur_grid = getGridFromPos(dstpos);
+    e.lst_grid = getGridFromPos(pDragging->origin_pos);
+    _context.dispatcher().trigger(e);
 
     _context.registry().remove<CompDragging>(_selectEntity);
 

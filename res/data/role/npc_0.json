@@ -59,6 +59,6 @@
 
   "buffs": [],
 
-  "items": []
+  "items": [ "item_coin", "item_coin", "item_poision", "item_medicine" ]
 
 }

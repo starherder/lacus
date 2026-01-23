@@ -37,7 +37,7 @@
 
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level" : 1,
+    "level": 1,
     "roll": 10,
     "str": 20,
     "cst": 20,
@@ -49,13 +49,13 @@
     "skill_archery"
   ],
 
-  "dead_drop":{
-    "exp" : 50,
-    "coin" : 100
+  "dead_drop": {
+    "exp": 50,
+    "coin": 100
   },
 
   "buffs": [],
 
-  "items": []
+  "items": [ "item_coin",  "item_medicine" ]
 
 }

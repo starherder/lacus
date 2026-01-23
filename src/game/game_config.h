@@ -37,6 +37,8 @@ namespace game
 
 		int dying_ticks = 1000;
 
+		int dead_drop_range = 130;
+
 		struct Scenes {
 			std::string first_scene;
 		}scenes;

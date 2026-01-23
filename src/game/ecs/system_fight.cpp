@@ -138,7 +138,7 @@ namespace game
         {
             _context.dispatcher().trigger(EvtEnemyKilled{ source, target });
 
-            _context.registry().emplace_or_replace<CompDead>(target, CompDead{0});
+            _context.registry().emplace_or_replace<CompDead>(target, CompDead{source, 0});
         }
 
         _context.dispatcher().trigger(EvtRolHpAlter{ target, hp });

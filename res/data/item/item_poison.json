@@ -1,0 +1,24 @@
+{
+  "id": "item_poision",
+  "name": "text_item_name_poision",
+  "type": "item",
+  "desc": "text_item_desc_poision",
+
+  "display": {
+    "size": "32,32",
+    "groud_color": "#FFAAFFFF",
+    "border_color": "#FF55FFFF",
+    "font_color": "#555555FF",
+    "# texture": "textures/icon/sry1.png",
+    "# tex_rect": "0,0,0.25,0.5",
+    "font_file": "fonts/msyh.ttf",
+    "font_size": 12
+  },
+
+  "pickable": {
+    "effect": "bomb",
+    "use_ticks": 1000,
+    "pick_use": true,
+    "func": "buf+buff_poison"
+  }
+}

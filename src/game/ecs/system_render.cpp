@@ -137,6 +137,11 @@ void RenderSystem::drawObjects()
         auto& nameid = ent_view.get<CompNameId>(ent);
         auto& transform = ent_view.get<CompTransform>(ent);
         auto& display = ent_view.get<CompDisplay>(ent);
+        
+        if (!display.visible) 
+        {
+            continue;
+        }
 
         auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
         if(transform.coord_mode == CoordMode::WorldSpace)
