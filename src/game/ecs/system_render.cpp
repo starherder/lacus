@@ -5,6 +5,20 @@ namespace game
 
     DeclareEcsSystem(RenderSystem, EcsPriority::Middle);
 
+    Color RenderSystem::getBorderColor(CampSide side)
+    {
+        switch (side)
+        {
+        case CampSide::Officer: return _context.gameConfig().display.border_color_camp_officer;
+        case CampSide::Rebel: return _context.gameConfig().display.border_color_camp_rebel;
+        case CampSide::Gangster: return _context.gameConfig().display.border_color_camp_ganster;
+        case CampSide::Civilian: return _context.gameConfig().display.border_color_camp_civilian;
+        default:
+            return Color::Black;
+        }
+
+        return Color::Black;
+    }
 
 void RenderSystem::update(float delta)
 {
@@ -190,11 +204,19 @@ void RenderSystem::drawObjects()
             auto border_color = display.border_color;
             auto font_color = display.font_color;
 
+            auto pCompComm = _context.registry().try_get<CompComm>(ent);
+            if (pCompComm)
+            {
+                border_color = getBorderColor(pCompComm->side);
+            }
+
             if(pdead)
             {
                 ground_color = _context.gameConfig().display.chess_dead_ground_color; ground_color.a = alpha;
-                border_color = _context.gameConfig().display.chess_dead_border_color; border_color.a = alpha;
                 font_color = _context.gameConfig().display.chess_dead_font_color; font_color.a = alpha;
+
+                //border_color = _context.gameConfig().display.chess_dead_border_color; border_color.a = alpha;
+                border_color = {border_color.r/2, border_color.g/2, border_color.b/2, border_color.a};
             }
 
             painter.fillRect(ground_color, dstrect, corner);

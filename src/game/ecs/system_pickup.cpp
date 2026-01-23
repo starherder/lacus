@@ -59,7 +59,7 @@ namespace game
                                         transComp.position = {x,y };
 
                                         if (t.isFinished()) {
-                                            SPDLOG_INFO("pickable object {} tween finish", nameComp.cfg_id);
+                                            //SPDLOG_INFO("pickable object {} tween finish", nameComp.cfg_id);
                                             
                                             _context.registry().emplace_or_replace<CompDestroy>(obj);
 

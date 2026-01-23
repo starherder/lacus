@@ -71,7 +71,7 @@ namespace game
 		for (auto& item : item_list)
 		{
 			auto& nameId = _context.registry().get<CompNameId>(item);
-			SPDLOG_INFO("item.cfg = {}", nameId.cfg_id);
+			//SPDLOG_INFO("item.cfg = {}", nameId.cfg_id);
 
 			auto pItemTrans = _context.registry().try_get<CompTransform>(item);
 			auto pItemDisplay = _context.registry().try_get<CompDisplay>(item);

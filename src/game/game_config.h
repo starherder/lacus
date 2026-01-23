@@ -33,6 +33,11 @@ namespace game
 			Color border_color_drag_ok = Color::Green;
 			Color ground_color_drag_error = Color::LightRed;
 			Color border_color_drag_error = Color::Red;
+
+			Color border_color_camp_officer = Color::Red;
+			Color border_color_camp_ganster = Color::Green;
+			Color border_color_camp_rebel = Color::Pink;
+			Color border_color_camp_civilian = Color::White;
 		}display;
 
 		int dying_ticks = 1000;

@@ -26,9 +26,9 @@ namespace game
 
     enum class CampSide {
         Officer,
-        Foreign,
         Rebel,
         Gangster,
+        Civilian
     };
 
     enum class MotionState 
@@ -241,7 +241,7 @@ namespace game
     inline CampSide getCampSide(const std::string& side)
     {
         if (side == "official") return CampSide::Officer;
-        if (side == "foreign") return CampSide::Foreign;
+        if (side == "civilian") return CampSide::Civilian;
         if (side == "rebel") return CampSide::Rebel;
         if (side == "gangster") return CampSide::Gangster;
 

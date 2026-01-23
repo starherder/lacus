@@ -29,6 +29,8 @@ private:
     void drawSkyEffect();
 
     void drawFightText();
+
+    Color getBorderColor(CampSide side);
 };
 
 

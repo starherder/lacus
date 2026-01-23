@@ -45,6 +45,11 @@ namespace game
 		entt::entity actor;
 	};
 
+	struct EvtMotionSwitchState {
+		entt::entity actor;
+		MotionState new_state;
+	};
+
 	struct EvtRoleCrossGrid {
 		entt::entity actor;
 		Vec2i lst_grid;

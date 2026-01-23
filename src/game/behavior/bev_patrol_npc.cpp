@@ -193,7 +193,7 @@ namespace game {
 	{
 		if (_pickOK)
 		{
-			SPDLOG_INFO("BevNode_PickItem: finished.");
+			//SPDLOG_INFO("BevNode_PickItem: finished.");
 			return Status::Success;
 		}
 
@@ -286,7 +286,7 @@ namespace game {
 		motion.path.swap(path.value());
 		motion.targetGrid = dstGrid;
 
-		SPDLOG_INFO("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
+		//SPDLOG_INFO("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
 
 		_context->dispatcher().trigger(EvtMoveToGrid{ _actor, motion.targetGrid, false });
 
@@ -297,7 +297,7 @@ namespace game {
 	{
 		if (e.actor == _actor) 
 		{
-			SPDLOG_INFO("BevNode_PickItem: onRolePickItemStart.");
+			//SPDLOG_INFO("BevNode_PickItem: onRolePickItemStart.");
 			_pickOK = true;
 		}
 	}
@@ -383,6 +383,7 @@ namespace game {
 					auto pCompComm = _context->registry().try_get<CompComm>(target);
 					if (pCompComm && pCompComm->type == ObjectType::Npc && pCompComm->side != pNpcComm->side) 
 					{
+						_context->dispatcher().trigger(EvtMotionSwitchState{ _actor, MotionState::Paused });
 						_context->dispatcher().trigger(EvtCastSkillToObject{ _actor, target, skill_id });
 						return Status::Success;
 					}

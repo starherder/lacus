@@ -10,6 +10,7 @@ namespace game
     MotionSystem::MotionSystem(GameContext& context) : EcsSystem(context)
     {
         context.dispatcher().sink<EvtMoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
+        context.dispatcher().sink<EvtMotionSwitchState>().connect<&MotionSystem::onEventMotionStateSwtich>(this);
     }
 
     MotionSystem::~MotionSystem()
@@ -177,6 +178,15 @@ namespace game
         if (!res) 
         {
             motionStop(e.actor);
+        }
+    }
+    
+    void MotionSystem::onEventMotionStateSwtich(const EvtMotionSwitchState& e)
+    {
+        if (_context.registry().valid(e.actor))
+        {
+            auto& motion = _context.registry().get<CompMotion>(e.actor);
+            motion.state = e.new_state;
         }
     }
 

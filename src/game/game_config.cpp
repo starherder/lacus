@@ -36,6 +36,13 @@ namespace game
 			display.border_color_drag_ok.fromHexString(displayJs.value("border_color_drag_ok", "#80FF80F0"));
 			display.ground_color_drag_error.fromHexString(displayJs.value("ground_color_drag_error", "#FF808080"));
 			display.border_color_drag_error.fromHexString(displayJs.value("border_color_drag_error", "#FF8080F0"));
+
+			/*			
+			border_color_camp_officer = Color::Red;
+			border_color_camp_ganster = Color::Green;
+			border_color_camp_rebel = Color::Pink;
+			border_color_camp_civilian = Color::White;
+			*/
 		}
 
 		if(json.contains("motion"))

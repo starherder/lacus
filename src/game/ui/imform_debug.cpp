@@ -217,6 +217,7 @@ void ImFormDebug::roleExecSkill(entt::entity skill)
     if (compSkill.type == SkillType::Other)
     {
         SPDLOG_INFO("skill ({}) need NO enmey.", compName.cfg_id);
+        _context->dispatcher().trigger(EvtMotionSwitchState{ _selectEntity, MotionState::Paused });
         _context->dispatcher().trigger(EvtCastSkillToObject{ _selectEntity, entt::null, skill});
         return;
     }
@@ -237,6 +238,8 @@ void ImFormDebug::roleExecSkill(entt::entity skill)
 
         auto pCompComm = _context->registry().try_get<CompComm>(target);
         if (pCompComm && pCompComm->type == ObjectType::Npc)  {
+            
+            _context->dispatcher().trigger(EvtMotionSwitchState{ _selectEntity, MotionState::Paused});
             _context->dispatcher().trigger(EvtCastSkillToObject{_selectEntity, target, skill});
             return;
         }
