@@ -93,5 +93,6 @@ namespace samples {
             std::vector<int> indices;
         } _vertexData;
 
+        std::vector<std::vector<Vec2>> _lightning;
     };
 }

@@ -437,7 +437,8 @@ namespace game
 			return entt::null;
 		}
 
-		auto trap = _context.objectFactory().createTrap(target, pTrapCfgComp->range,
+		auto pos = _context.scene().normalToGridPos(target);
+		auto trap = _context.objectFactory().createTrap(pos, pTrapCfgComp->range,
 														pTrapCfgComp->color, pTrapCfgComp->texture,
 														pTrapCfgComp->particle, shape_type);
 		

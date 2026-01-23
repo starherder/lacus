@@ -220,6 +220,21 @@ namespace samples {
                 _vertexData.indices.push_back((x * _xcount + y) * 4 + 3);
             }
         }
+
+
+        auto& painter = application()->painter();
+
+        float dis = 200.0f;
+        Vec2 center =  Vec2{ 1500, 300 };
+        for (float r = 0; r < 2 * PI; r += 0.5f)
+        {
+            Vec2 dst = center + Vec2{ sin(r) * dis, cos(r) * dis };
+
+            std::vector<Vec2> data;
+            painter.makeLightningData(data, center, dst, 100);
+
+            _lightning.push_back(data);
+        }
     }
 
     void SamplePluginDraw::drawGeometry()
@@ -328,6 +343,20 @@ namespace samples {
             auto etc = resourceMgr.textureManager().get("textures/battle_of_tiles/etc.png"_hs);
             painter.drawTexture(etc, src, dst, 20.0f, Color::Green);
         }
+
+        float dis = 200.0f;
+        Vec2 center = pos + Vec2{-300, 300};
+        for (float r = 0; r < 2 * PI; r += 0.5f)
+        {
+            Vec2 dst = center + Vec2 { sin(r)*dis, cos(r)*dis };
+            painter.drawLightning(Color::White, center, dst, 100);
+        }
+
+        for (const auto& data : _lightning)
+        {
+            painter.drawLightningData(Color::PaleBlue, data, 2.0f);
+        }
+
     }
 
     void SamplePluginDraw::paint()

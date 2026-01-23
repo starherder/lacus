@@ -195,6 +195,60 @@ namespace engine
 		}
 	}
 
+
+	void ImPainter::drawLightning(const Color& color, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace, float thickness)
+	{
+		//使用中点位移算法递归绘制闪电
+		if (displace < min_displace) // 终止条件：位移量足够小
+		{
+			drawLine(color, beginPos, endPos, thickness);
+		}
+		else
+		{
+			// 计算中点
+			Vec2 mid = (beginPos + endPos) / 2.0f;
+			mid.x += (utility::rand_0_1() - 0.5f) * displace;
+			mid.y += (utility::rand_0_1() - 0.5f) * displace;
+
+			//# 递归处理两个子线段
+			drawLightning(color, beginPos, mid, displace / 2, min_displace, thickness);
+			drawLightning(color, mid, endPos, displace / 2, min_displace, thickness);
+		}
+	}
+
+	void ImPainter::makeLightningData(std::vector<Vec2>& data, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace)
+	{
+		//使用中点位移算法递归绘制闪电
+		if (displace < min_displace) // 终止条件：位移量足够小
+		{
+			data.push_back(beginPos);
+			data.push_back(endPos);
+		}
+		else
+		{
+			// 计算中点
+			Vec2 mid = (beginPos + endPos) / 2.0f;
+			mid.x += (utility::rand_0_1() - 0.5f) * displace;
+			mid.y += (utility::rand_0_1() - 0.5f) * displace;
+
+			//# 递归处理两个子线段
+			makeLightningData(data, beginPos, mid, displace / 2, min_displace);
+			makeLightningData(data, mid, endPos, displace / 2, min_displace);
+		}
+	}
+
+	void ImPainter::drawLightningData(const Color& color, const std::vector<Vec2>& data, float thickness)
+	{
+		assert(data.size() % 2 == 0);
+
+		for (int i = 0; i < data.size(); i += 2)
+		{
+			auto& begPos = data.at(i);
+			auto& endPos = data.at(i+1);
+			drawLine(color, begPos, endPos, thickness);
+		}
+	}
+
 #if 1
 	void ImPainter::drawGeometry(Texture* texture, const Vertex* vertices, int vertices_count, const int* indices, int indices_count, const Vec2& pos, float scale)
 	{
