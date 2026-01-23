@@ -19,6 +19,8 @@ public:
 
     void onUpdate(float delta) override;
 
+    void setDragMode(bool dragable) { _dragMode = dragable; }
+
 private:
     void onKeyDown(KeyCode keyCode);
 
@@ -39,6 +41,8 @@ private:
 private:
     Application* _application = nullptr;
     
+    bool _dragMode = false;
+
     float _speed = 200.0f;
     Vec2 _vec = {0.0f, 0.0f};
 };

@@ -23,7 +23,7 @@ namespace game
     public:
         signals::Signal<bool> on_show_debug;
         signals::Signal<> on_reload_res;
-
+        
     public:
         ImFormDebug();
         ~ImFormDebug();

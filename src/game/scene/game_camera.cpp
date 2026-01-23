@@ -71,6 +71,8 @@ namespace game
 
     void GameCamera::onMouseLeftDrag(const Vec2& pos, const Vec2& delta)
     {
+        if (!_dragMode) return;
+
         if(!checkInputOK()) return;
 
         //SPDLOG_INFO("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 

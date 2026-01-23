@@ -55,6 +55,14 @@ void ImFormDebug::draw()
             _context->scene().setDebugInfo(show_debug);
         }
 
+        ImGui::SameLine();
+
+        static bool camera_ctrl = false;
+        if (ImGui::Checkbox("camera_control", &camera_ctrl))
+        {
+            _context->scene().camera().setDragMode(camera_ctrl);
+        }
+
         ImGui::Separator();
 
         if (ImGui::Button("sky")) 

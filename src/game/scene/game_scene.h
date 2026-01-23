@@ -76,6 +76,7 @@ namespace game {
         const std::multimap<float, entt::entity>& getObjectsInRing(const Vec2& center, float min_radius, float max_radius);
 
         void setDebugInfo(bool show);
+        
         auto& getCollisionDebugRects() { return _collisionDebugRects; }
 
         SkyEffect getSkyEffect();
