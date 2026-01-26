@@ -603,11 +603,15 @@ namespace ui
             return Coordinate::Horizonal;
         };
 
+        auto bgcolor = Color::parseHexString(node->Attribute("fore_color"));
+        _foreground->setBgColor(bgcolor);
+
         auto direction = getCoord(node->Attribute("coordinate"));
         setDirection(direction);
 
         auto value = node->FloatAttribute("value");
         setProgress(value);
+
 
         return true;
     }
