@@ -16,10 +16,5 @@ namespace game
         void onUpdate(float delta) override;
 
         void onSizeChanged() override;
-
-        void onBtnClose(ui::Button* btn);
-
-    private:
-        ui::VLayout* _vlay_bg = nullptr ;
     };
 }

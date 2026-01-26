@@ -9,6 +9,10 @@ namespace samples
 
 	void ImFormUIViewer::setSkinPath(const fs::path& skinPath) 
 	{
+		_uiSkinPath = skinPath;
+		_formNames.clear();
+		_formList.clear();
+
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(skinPath))
 		{
 			if (entry.is_regular_file())
@@ -45,6 +49,10 @@ namespace samples
 				ui::GuiManager::inst().closeAllForms();
 
 				ui::GuiManager::inst().loadForm(_application->resPath() / form_name);
+			}
+
+			if (ImGui::Button("reload all", { 200, 30 })) {
+				setSkinPath(_uiSkinPath);
 			}
 		}
 		ImGui::End();
@@ -629,7 +637,7 @@ namespace samples
 
     void SamplePluginUI::onDisable()
     {
-		ui::GuiManager::inst().closeForm("form_demo");
+		ui::GuiManager::inst().closeAllForms();
 
 		imgui::ImFormManager::inst().closeForm("form_list");
     }

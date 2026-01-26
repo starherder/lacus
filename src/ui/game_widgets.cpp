@@ -291,4 +291,14 @@ namespace ui
     {
         adjustChildren();
     }
+
+    bool CardGroup::onLoad(XmlNode* node)
+    {
+        if (!node) {
+            return false;
+        }
+
+        adjustChildren();
+        return true;
+    }
 }

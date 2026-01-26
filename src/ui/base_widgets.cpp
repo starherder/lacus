@@ -6,7 +6,7 @@
 namespace ui 
 {
     DeclareWidgetType(Label, "label");
-    DeclareWidgetType(TextBox, "textbox");
+    DeclareWidgetType(TextBox, "text");
     DeclareWidgetType(Button, "button");
 
     DeclareWidgetType(CheckBox, "check");
@@ -58,7 +58,7 @@ namespace ui
         }
 
         _text = node->Attribute("text");
-        _text_color.parseHexString(node->Attribute("text_color"));
+        _text_color.fromHexString(node->Attribute("text_color"));
         if (_text_color.a <= 0) {
             _text_color.a = 255;
         }
@@ -139,7 +139,7 @@ namespace ui
         _fontSize = node->IntAttribute("font_size", 20);
 
         _text = node->Attribute("text");
-        _text_color.parseHexString(node->Attribute("text_color"));
+        _text_color.fromHexString(node->Attribute("text_color"));
         
         if (_text_color.a <= 0)  {
             _text_color.a = 255;
@@ -780,6 +780,21 @@ namespace ui
         {
             return false;
         }
+
+        auto getCoord = [](const std::string& str) {
+            if (str == "horizonal") return Coordinate::Horizonal;
+            if (str == "vertical") return Coordinate::Vertical;
+            return Coordinate::Horizonal;
+        };
+
+        auto direction = getCoord(node->Attribute("coordinate"));
+        setDirection(direction);
+
+        auto maxValue = node->FloatAttribute("max_value", 100.0f);
+        setMaxValue(maxValue);
+
+        auto value = node->FloatAttribute("value");
+        setValue(value);
 
         adjustSliderSize();
         return true;

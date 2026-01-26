@@ -28,13 +28,15 @@ namespace ui
         while (child)
         {
             auto widget = ui::GuiManager::inst().createWidget(child->Name(), this);
-            if (!widget)
+            if (widget)
             {
-                SPDLOG_INFO("create widget: ({}) failed", child->Name());
-                continue;
+                widget->load(child);
+            }
+            else
+            {
+                SPDLOG_ERROR("create widget: {} failed.", child->Name());
             }
 
-            widget->load(child);
             child = child->NextSiblingElement();
         }
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form name="form_entry" maximize="true" ground_color="#00000000" border_color="#00000000" border_size="0">
+    <hlayout >
+        <vlayout name="vlay_menu" size="500, 0" pad="10,10" ground_color="#005555DD" border_color="#000000DD" border_size="2" >
+            <label name="lbl_icon" size="0,300" ground_color="#FF5555DD" border_color="#000000DD" border_size="2"/>
+            <text name="txt_desc" size="0,300" text="dangerouse! keeep away!" text_color="#FFFFFFFF" font_size="30" border_size="1"/>
+            <card_group name="cg_cards" />
+            <hlayout name="hlay_footer" size="0, 80" border_color="#000000DD" border_size="1" >
+                <button name="btn_enter" text="enter" />
+                <button name="btn_leave" text="leave" />
+            </hlayout>
+        </vlayout>
+        <group />
+    </hlayout>
+</form>

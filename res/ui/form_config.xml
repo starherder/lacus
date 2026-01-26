@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form name="form_config" maximize="true" ground_color="#005555FF" border_color="#555555FF" border_size="1">
+    <vlayout name="vlay_bg"  border_color="#555555FF" border_size="1">
+        <widget size="0,200" />
+
+        <vlayout name="vlay_content"  border_size="1">
+            <widget />
+            <hlayout name="hlay_sound" size="0,30"  border_size="1">
+                <widget />
+                <label text="音效" size="50,0" text_color="#FFFFFFFF" font_size="30" />
+                <widget size="10,0" />
+                <slider name="slider_sound" size="500,0" value="0" max_value="100" ground_color="#AAAAFFFF" border_color="#555555FF" border_size="1"/>
+                <widget />
+            </hlayout>
+
+            <hlayout name="hlay_music" size="0,30" border_size="1">
+                <widget />
+                <label text="音乐" size="50,0" text_color="#FFFFFFFF" font_size="30" />
+                <widget size="10,0" />
+                <slider name="slider_music" size="500,0" value="0" max_value="100" ground_color="#AAAAFFFF" border_color="#555555FF" border_size="1"/>
+                <widget />
+            </hlayout>
+            
+            <hlayout name="hlay_other"  border_size="1">
+            </hlayout>
+
+            <widget size="0,100" />
+        </vlayout>
+
+        <hlayout name="hlay_footer" size="0,50"  border_size="1">
+            <widget  />
+            <button name="btn_confirm" size="200,0" text="confirm" text_color="#8888FFFF" font_size="25" />
+            <widget size="50,0" />
+            <button name="btn_cancel" size="200,0" text="cancel" text_color="#8888FFFF" font_size="25" />
+            <widget />
+        </hlayout>
+        
+        <widget size="0,100" />
+    </vlayout>
+</form>

@@ -104,6 +104,8 @@ namespace ui
 
         void onChildMouseLeave(CardWidget* card);
 
+        bool onLoad(XmlNode* node);
+
     private:
         ui::Coordinate _coord = ui::Coordinate::Horizonal;
 
