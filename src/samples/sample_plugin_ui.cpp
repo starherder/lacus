@@ -4,7 +4,56 @@
 #include "engine/color.h"
 #include "ui/game_widgets.h"
 
-namespace samples {
+namespace samples 
+{
+
+	void ImFormUIViewer::setSkinPath(const fs::path& skinPath) 
+	{
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(skinPath))
+		{
+			if (entry.is_regular_file())
+			{
+				auto audioname = entry.path().lexically_relative(_application->resPath());
+				_formNames.push_back(audioname.string());
+			}
+		}
+
+		for (auto& name : _formNames)
+		{
+			_formList.push_back(name.c_str());
+		}
+	}
+
+	void ImFormUIViewer::onInit()
+	{
+	}
+
+	void ImFormUIViewer::draw()
+	{
+		ImGui::Begin("forms");
+		{
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowSize({ viewport->Size.x, 500 });
+
+			static std::string form_name;
+
+			static int listbox_item_current = 0;
+			if (ImGui::ListBox("##form_list", &listbox_item_current, _formList.data(), (int)_formList.size()))
+			{
+				form_name = _formList[listbox_item_current];
+
+				ui::GuiManager::inst().closeAllForms();
+
+				ui::GuiManager::inst().loadForm(_application->resPath() / form_name);
+			}
+		}
+		ImGui::End();
+	}
+
+	///////////////////////////////////////////////////////////////////////
+
+
+
 
 	FormLayout::FormLayout(const std::string& name) : Form(name)
 	{
@@ -569,11 +618,20 @@ namespace samples {
 
 		_textures.push_back({ tex, {3, 3, 74, 74} });
 		_textures.push_back({ tex, {83, 3, 74, 74} });
+
+		auto pImForm = imgui::ImFormManager::inst().showForm<ImFormUIViewer>("form_list", &_application);
+		if (pImForm)
+		{
+			pImForm->setSkinPath(_application.resPath() / "ui");
+		}
+		
     }
 
     void SamplePluginUI::onDisable()
     {
 		ui::GuiManager::inst().closeForm("form_demo");
+
+		imgui::ImFormManager::inst().closeForm("form_list");
     }
 
     void SamplePluginUI::onUpdate() 

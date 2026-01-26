@@ -25,30 +25,35 @@ bool Form::load(const fs::path& filepath)
 
     XMLDocument doc;
     XMLError error = doc.LoadFile(filepath.string().c_str());
-    if (error != XML_SUCCESS)
-    {
+    if (error != XML_SUCCESS) {
         return false;
     }
 
     XMLElement* ele = doc.RootElement();
-    if (!ele)
-    {
+    if (!ele) {
         return false;
     }
 
-    auto def_name = std::format("form_{}", ui::GuiManager::inst().generateId());
+    auto defname = std::format("form_{}", ui::GuiManager::inst().generateId());
 
     _name = ele->Attribute("name");
-    _name = _name.empty() ? def_name : _name;
-    _pos = ToVec2(ele->Attribute("pos"));
-    _visible = ele->BoolAttribute("visible", true);
+    _name = _name.empty() ? defname : _name;
+    
+    auto pos = ToVec2(ele->Attribute("pos"));
+    setPos(pos);
+
+    auto visible = ele->BoolAttribute("visible", true);
+    setVisible(visible);
 
     auto maximized = ele->BoolAttribute("maximize");
-    _dragMovable = ele->BoolAttribute("dragable", !maximized);
+    setMaximize(maximized);
+
+    auto dragMovable = ele->BoolAttribute("dragable", !maximized);
+    setDragMovable(dragMovable);
 
     bool res = root()->load(ele);
-    if (!res)
-    {
+    if (!res) {
+        SPDLOG_ERROR("load form {} failed.", _name);
         return false;
     }
 

@@ -1,6 +1,7 @@
 ﻿#include "sample_plugin_audio.h"
 
-namespace samples {
+namespace samples 
+{
     
 	void ImGuiFormAudio::onInit()
 	{

@@ -3,10 +3,36 @@
 #include "engine/application.h"
 
 #include "ui/ui.h"
+#include "imform/imform.h"
+#include "imform/imform_manager.h"
 
-namespace samples {
-
+namespace samples 
+{
     using namespace engine;
+
+    class ImFormUIViewer : public imgui::ImForm
+    {
+    public:
+        ImFormUIViewer() = delete;
+        ImFormUIViewer(engine::Application* app) : _application(app) {}
+        ~ImFormUIViewer() = default;
+
+        void setSkinPath(const fs::path& skinPath);
+
+    protected:
+        void onInit() override;
+
+        void draw() override;
+
+    private:
+        engine::Application* _application = nullptr;
+
+        fs::path _uiSkinPath;
+
+        std::vector<std::string> _formNames;
+        std::vector<const char*> _formList;
+    };
+
 
     class FormDemo : public ui::Form
     {

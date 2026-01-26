@@ -39,7 +39,10 @@ public:
     void close();
 
     auto& name() { return _name; }
+    
     bool visible() { return _visible; }
+    void setVisible(bool visible) { _visible = visible; }
+
     bool focused() { return _focused; }
 
     const Vec2& pos()  const { return _pos; }
