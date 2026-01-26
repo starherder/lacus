@@ -197,6 +197,7 @@
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
     <ClCompile Include="..\src\game\ui\form_config.cpp" />
     <ClCompile Include="..\src\game\ui\form_entry.cpp" />
+    <ClCompile Include="..\src\game\ui\form_start.cpp" />
     <ClCompile Include="..\src\game\ui\form_loading.cpp" />
     <ClCompile Include="..\src\game\ui\form_main.cpp" />
     <ClCompile Include="..\src\game\ui\form_scenes.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="..\src\game\scene\game_scene.h" />
     <ClInclude Include="..\src\game\ui\form_config.h" />
     <ClInclude Include="..\src\game\ui\form_entry.h" />
+    <ClInclude Include="..\src\game\ui\form_start.h" />
     <ClInclude Include="..\src\game\ui\form_loading.h" />
     <ClInclude Include="..\src\game\ui\form_logic_base.h" />
     <ClInclude Include="..\src\game\ui\form_main.h" />

@@ -237,7 +237,7 @@ namespace engine
 		}
 	}
 
-	void ImPainter::drawLightningData(const Color& color, const std::vector<Vec2>& data, float thickness)
+	void ImPainter::drawLightningData(const Color& color, const Vec2& pos, const std::vector<Vec2>& data, float thickness)
 	{
 		assert(data.size() % 2 == 0);
 
@@ -245,7 +245,7 @@ namespace engine
 		{
 			auto& begPos = data.at(i);
 			auto& endPos = data.at(i+1);
-			drawLine(color, begPos, endPos, thickness);
+			drawLine(color, begPos + pos, endPos + pos, thickness);
 		}
 	}
 

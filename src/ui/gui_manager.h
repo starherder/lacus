@@ -8,11 +8,6 @@
 
 namespace ui {
 
-class Widget;
-using WidgetPtr = std::shared_ptr<Widget>;
-
-
-
 class GuiManager : public utility::ISingleton<GuiManager>,
                     public signals::SlotHandler
 {
@@ -24,7 +19,6 @@ public:
         Widget* dst_group = nullptr;
 
         Vec2 drop_screen_pos;
-
         Vec2 _offset;
     };
 
@@ -53,14 +47,24 @@ public:
     auto& frameTicker() { return _app->frameTicker(); }
 
     template<typename FormType, typename... Args>
-    FormType* showForm(const std::string& name, Args&... args);
-        
+    FormType* createForm(const std::string& name, Args&... args);
+    
+    Form* loadForm(const fs::path& filepath);
+
     template<typename FormType>
     FormType* getForm(const std::string& name);
 
     void closeForm(const std::string& name);
+    void closeAllForms();
 
     void emitCustomEvent(int eventId, const utility::VarList& varlist);
+
+    template<typename CreatorType>
+    void addWidgetCreator();
+
+    Widget* createWidget(const std::string& type, Widget* parent);
+
+    int generateId() { return _widgetId++; }
 
 private:
     void onWindowResized(const Vec2& size);
@@ -103,13 +107,17 @@ private:
     std::list<FormPtr> _forms;
 
     std::set<std::string> _pendingNames;
+
+    std::map<std::string, WidgetCreatorPtr> _creators;
+
+    static int _widgetId;
 };
 
 
 // ---------------------------------------------------------------------------
 
 template<typename FormType, typename... Args>
-FormType* GuiManager::showForm(const std::string& name, Args&... args)
+FormType* GuiManager::createForm(const std::string& name, Args&... args)
 {
     _pendingNames.erase(name);
 
@@ -141,4 +149,10 @@ FormType* GuiManager::getForm(const std::string& name)
     return nullptr;
 }
 
+template<typename CreatorType>
+void GuiManager::addWidgetCreator()
+{
+    auto creator = std::make_shared<CreatorType>();
+    _creators[creator->typeName()] = creator;
+}
 }

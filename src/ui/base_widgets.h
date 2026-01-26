@@ -40,11 +40,14 @@ public:
 
     void draw() override;
 
-private:
+protected:
     void adjust();
 
-private:
+    bool onLoad(XmlNode* node) override;
+
+protected:
     std::string _text;
+    Color _text_color = Color::Black;
 
     Vec2 _textPadding = {0, 0};
     Align _textAlign = Align::Center;
@@ -78,6 +81,8 @@ public:
 
 protected:
     void adjust();
+
+    bool onLoad(XmlNode* node) override;
 
 protected:
     std::string _text;
@@ -116,6 +121,8 @@ protected:
 
     void setState(WidgetState state);
 
+    bool onLoad(XmlNode* node) override;
+
 protected:
     WidgetState _state = WidgetState::Normal;
 
@@ -138,7 +145,7 @@ public:
     bool checked() const { return _checked; }
     virtual void setChecked(bool checked);
 
-private:
+protected:
     void onMouseEnter(const Vec2& pos) override;
     void onMouseLeave(const Vec2& pos) override;
 
@@ -146,6 +153,10 @@ private:
 
     void onMouseLeftDown(const Vec2& pos) override;
     void onMouseLeftUp(const Vec2& pos) override;
+
+    bool onLoad(XmlNode* node) override;
+
+    void adjust();
 
 protected:
     bool _checked = false;
@@ -163,8 +174,10 @@ public:
 
     void setChecked(bool checked) override;
 
-private:
+protected:
     using CheckBox::on_check_changed;
+
+    bool onLoad(XmlNode* node) override;
 
     void onMouseLeftClick(const Vec2& pos) override;
 };
@@ -220,6 +233,9 @@ public:
     int getSelectIndex();
     void setSelectItem(int index);
 
+protected:
+    bool onLoad(XmlNode* node) override;
+
 private:
     class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
 };
@@ -241,6 +257,9 @@ public:
 
     int getSelectIndex();
     void setSelectItem(int index);
+
+protected:
+    bool onLoad(XmlNode* node) override;
 
 private:
     class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
@@ -267,6 +286,9 @@ public:
     Widget* getForeground() { return _foreground; }
     Widget* getBackground() { return this; }
 
+protected:
+    bool onLoad(XmlNode* node);
+
 private:
     Vec2 DefaultSize = {100, 20};
     Coordinate _direction = Coordinate::Horizonal;
@@ -283,6 +305,9 @@ public:
     SliderBlock() = delete;
     ~SliderBlock() = default;
     SliderBlock(const std::string& name, Widget* parent = nullptr);
+
+protected:
+    bool onLoad(XmlNode* node);
 
 public:
     void onMouseLeftDown(const Vec2& pos) override;
@@ -324,6 +349,8 @@ private:
 
     void adjustSliderSize();
 
+    bool onLoad(XmlNode* node);
+
 private:
     Vec2 DefaultSize = {100, 30};
 
@@ -358,6 +385,9 @@ public:
     void setSelectItem(int index);
 
     void setItemHeight(float height);
+
+protected:
+    bool onLoad(XmlNode* node);
 
 private:
     float _itemHeight = 25;

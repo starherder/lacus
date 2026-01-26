@@ -21,9 +21,6 @@ public:
     bool clipChildren() const { return _clipChildren; }
     void setClipChildren(bool clip) { _clipChildren = clip; }
 
-    bool maxChildren() { return _maxChildren; }
-    void setMaxChildren(bool maxChildren) { _maxChildren = maxChildren; }
-
     Rect getClipRect() const;
 
     template<typename WidgetType>
@@ -43,7 +40,9 @@ public:
 
     const std::list<WidgetPtr>& children() const { return _children; }
 
-protected:    
+protected:
+    bool onLoad(XmlNode* node) override;
+
     Vec2 getContentPos() const override { return Vec2{ 0.0f, 0.0f }; }
 
     virtual void onChildAdded(Widget* child);
@@ -60,8 +59,29 @@ private:
     std::list<WidgetPtr> _children;
 
     bool _clipChildren = true;
-    bool _maxChildren = false;
 };
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+class BackGroup : public Group
+{
+public:
+    BackGroup() = delete;
+    BackGroup(const std::string& name, Widget* parent = nullptr);
+    ~BackGroup();
+
+protected:
+    bool onLoad(XmlNode* node) override;
+
+    void adjustChildren();
+
+    virtual void onChildAdded(Widget* child);
+    virtual void onChildRemoved(Widget* child);
+
+    void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,7 +93,9 @@ public:
     ExpandGroup(const std::string& name, Widget* parent = nullptr);
     ~ExpandGroup();
 
-private:
+protected:
+    bool onLoad(XmlNode* node) override;
+
     Vec2 getContentPos() const override { return _contentPos; }
 
     void onHorizonalSlide(class SliderBar* slider);
@@ -121,6 +143,8 @@ public:
     void setSpacing(float spacing) { _spacing = spacing; }
 
 protected:
+    bool onLoad(XmlNode* node) override;
+
     virtual void adjustLayout();
 
     void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
@@ -150,7 +174,9 @@ public:
 
     void update(float delta) override;
 
-private:
+protected:
+    bool onLoad(XmlNode* node) override;
+
     void adjustLayout() override;
 
     void onChildSizeChanged(Widget* child) override;

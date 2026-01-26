@@ -4,8 +4,13 @@
 #include "gui_manager.h"
 #include "widget.h"
 
-namespace ui {
+namespace ui 
+{
 
+    DeclareWidgetType(Group, "group");
+    DeclareWidgetType(ExpandGroup, "exgroup");
+    DeclareWidgetType(HLayout, "hlayout");
+    DeclareWidgetType(VLayout, "vlayout");
 
 	Group::Group(const std::string& name, Widget* parent) : Widget(name, parent)
     {
@@ -13,6 +18,27 @@ namespace ui {
 
     Group::~Group()
     {
+    }
+
+    bool Group::onLoad(XmlNode* node)
+    {
+        _clipChildren = node->BoolAttribute("clip_children", true);
+
+        auto child = node->FirstChildElement();
+        while (child)
+        {
+            auto widget = ui::GuiManager::inst().createWidget(child->Name(), this);
+            if (!widget)
+            {
+                SPDLOG_INFO("create widget: ({}) failed", child->Name());
+                continue;
+            }
+
+            widget->load(child);
+            child = child->NextSiblingElement();
+        }
+
+        return true;
     }
 
     void Group::update(float delta)
@@ -91,6 +117,7 @@ namespace ui {
         if (addOK) 
         {
             widget->setParent(this);
+            SPDLOG_INFO("    addWidget: {} to {}", widget->name(), name());
             onChildAdded(widget.get());
         }
         else
@@ -175,10 +202,6 @@ namespace ui {
 
     void Group::onChildAdded(Widget* child)
     {
-        if (child && maxChildren())
-        {
-            child->setSize(size());
-        }
     }
 
     void Group::onChildRemoved(Widget* child)
@@ -199,19 +222,54 @@ namespace ui {
     
     void Group::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
     {
-        if (maxChildren())
-        {
-            for (auto& child : children())
-            {
-                child->setSize(size());
-            }
-        }
     }
 
     void Group::onVisibleChanged(bool oldVisual, bool newVisual)
     {
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    BackGroup::BackGroup(const std::string& name, Widget* parent) : Group(name, parent)
+    {
+    }
+
+    BackGroup::~BackGroup()
+    {
+    }
+
+    void BackGroup::adjustChildren()
+    {
+        for (auto& child : children())
+        {
+            child->setSize(size());
+        }
+    }
+
+    bool BackGroup::onLoad(XmlNode* node)
+    {
+        if (!Group::onLoad(node))
+        {
+            return false;
+        }
+
+        adjustChildren();
+        return true;
+    }
+
+    void BackGroup::onChildAdded(Widget* child)
+    {
+        adjustChildren();
+    }
+
+    void BackGroup::onChildRemoved(Widget* child)
+    {
+    }
+
+    void BackGroup::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        adjustChildren();
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -237,6 +295,17 @@ namespace ui {
 
     ExpandGroup::~ExpandGroup()
     {
+    }
+
+    bool ExpandGroup::onLoad(XmlNode* node)
+    {
+        if (!Group::onLoad(node))
+        {
+            return false;
+        }
+
+        adjustContent();
+        return true;
     }
 
     void ExpandGroup::onHorizonalSlide(SliderBar* slider)
@@ -404,6 +473,21 @@ namespace ui {
     {
     }
 
+    bool HorizonalLayout::onLoad(XmlNode* node)
+    {
+        if (!Group::onLoad(node))
+        {
+            return false;
+        }
+
+        _padding = ToVec2(node->Attribute("pad"));
+
+        _spacing = node->FloatAttribute("space", 10.0f);
+
+        adjustLayout();
+        return true;
+    }
+
     void HorizonalLayout::update(float delta) 
     {
     }
@@ -509,11 +593,20 @@ namespace ui {
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-
-
 	VerticalLayout::VerticalLayout(const std::string& name, Widget* parent)
         : HorizonalLayout(name, parent)
     {
+    }
+
+    bool VerticalLayout::onLoad(XmlNode* node)
+    {
+        if (!HorizonalLayout::onLoad(node))
+        {
+            return false;
+        }
+
+        adjustLayout();
+        return true;
     }
 
     void VerticalLayout::update(float delta)

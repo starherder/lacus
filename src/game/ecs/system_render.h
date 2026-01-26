@@ -24,6 +24,8 @@ private:
 
     void drawObjects();
 
+    void drawSkillEffect();
+
     void drawParticles();
 
     void drawSkyEffect();

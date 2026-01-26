@@ -318,7 +318,6 @@ namespace game
 		return object;
 	}
 
-
 	entt::entity ObjectFactory::createSpawner(const nJson& json)
 	{
 		assert(_context);
@@ -411,7 +410,7 @@ namespace game
 			_context->registry().emplace<CompBaseProp>(role, compBase);
 			_context->registry().emplace<CompFightProp>(role, CompFightProp{});
 
-			_context->dispatcher().trigger(EvtRoleLevelAlter{role, 1});
+			_context->dispatcher().trigger(EvtRoleLevelAlter{role, compBase.lv-1});
 		}
 
 		if (json.contains("behavior"))
@@ -632,7 +631,6 @@ namespace game
 			trap.range = trapsJs.value("range", 32.0f);
 			trap.duration = trapsJs.value("duration", 1000);
 			trap.period = trapsJs.value("period", 500);
-			trap.func = trapsJs.value("func", "");
 			trap.particle = trapsJs.value("particle", "");
 			trap.color = Color::parseHexString(trapsJs.value("color", "#FF0000FF"));
 			trap.texture = trapsJs.value("texture", "");
@@ -648,7 +646,6 @@ namespace game
 			trap.range = _context->scene().tileSize().x;
 			trap.duration = waveJs.value("duration", 1000);
 			trap.period = trap.duration;
-			trap.func = waveJs.value("func", "");
 			trap.particle = waveJs.value("particle", "");
 			trap.color = Color::parseHexString(waveJs.value("color", "#FF0000FF"));
 			trap.texture = waveJs.value("texture", "");
@@ -659,6 +656,22 @@ namespace game
 			wave.grids = waveJs.value("grids", 1);
 			wave.interval = waveJs.value("interval", 500);
 			_context->registry().emplace<CompWaveCfg>(skill, wave);
+		}
+
+
+		if (json.contains("lightning"))
+		{
+			auto& lightningJs = json["lightning"];
+
+			CompLightningCfg cfg;
+			cfg.target_count = lightningJs.value("target_count", 1);
+			cfg.attack_times = lightningJs.value("attack_times", 1);
+			cfg.interval = lightningJs.value("interval", 500);
+			cfg.color = Color::parseHexString(lightningJs.value("color", "#FF0000FF55"));
+			cfg.displace = lightningJs.value("displace", 50.0f);
+			cfg.thickness = lightningJs.value("thickness", 2.0f);
+			cfg.during = lightningJs.value("during", 500);
+			_context->registry().emplace<CompLightningCfg>(skill, cfg);
 		}
 
 		return skill;
@@ -730,7 +743,7 @@ namespace game
 		CompTraps compTraps;
 		compTraps.during_ticks = 0;
 		compTraps.period_ticks = 0;
-		compTraps.running = false;
+		compTraps.onUpdate = nullptr;
 		_context->registry().emplace<CompTraps>(trap, compTraps);
 
 		createParticleOnObject(trap, particle);

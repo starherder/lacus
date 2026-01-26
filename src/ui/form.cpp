@@ -8,13 +8,55 @@ namespace ui {
 
 Form::Form(const std::string& name) : _name(name)
 {
-    _rootGroup = std::make_unique<Group>("group_main");
+    _rootGroup = std::make_unique<BackGroup>("group_main", nullptr);
 
-    root()->setAcceptEvent(true);
+    root()->setBgColor({ 0,0,0,0 });
+    root()->setMovable(false);
+    root()->setAcceptEvent(false);
 }
 
 Form::~Form()
 {
+}
+
+bool Form::load(const fs::path& filepath)
+{
+    using namespace tinyxml2;
+
+    XMLDocument doc;
+    XMLError error = doc.LoadFile(filepath.string().c_str());
+    if (error != XML_SUCCESS)
+    {
+        return false;
+    }
+
+    XMLElement* ele = doc.RootElement();
+    if (!ele)
+    {
+        return false;
+    }
+
+    auto def_name = std::format("form_{}", ui::GuiManager::inst().generateId());
+
+    _name = ele->Attribute("name");
+    _name = _name.empty() ? def_name : _name;
+    _pos = ToVec2(ele->Attribute("pos"));
+    _visible = ele->BoolAttribute("visible", true);
+
+    auto maximized = ele->BoolAttribute("maximize");
+    _dragMovable = ele->BoolAttribute("dragable", !maximized);
+
+    bool res = root()->load(ele);
+    if (!res)
+    {
+        return false;
+    }
+
+    setPos(_pos);
+    setSize(_size);
+    setMaximize(maximized);
+
+    return true;
 }
 
 void Form::setMaximize(bool v)

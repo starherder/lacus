@@ -79,7 +79,7 @@ inline Vec2 ToVec2(const SDL_FPoint& v) {
 inline Vec2 ToVec2(const std::string& s) {
     try {
         auto arr = utility::StringUtil::split(s, ',');
-        assert(arr.size() == 2);
+        if (arr.size() != 2) { return Vec2{0, 0}; }
 
         return { std::stof(arr[0].data()),
                 std::stof(arr[1].data()) };

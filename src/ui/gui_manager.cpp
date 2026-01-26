@@ -3,326 +3,379 @@
 #include "base_widgets.h"
 #include "group_widgets.h"
 
-namespace ui {
+namespace ui 
+{
+    int GuiManager::_widgetId = 0;
 
-        
-        void GuiManager::init(engine::Application* app)
+    Form* GuiManager::loadForm(const fs::path& filepath)
+    {
+        auto def_name = std::format("form_{}", ui::GuiManager::inst().generateId());
+
+        auto form = createForm<Form>(def_name);
+        if (!form)
         {
-             _app = app;
-
-             _app->eventDispatcher().onKeyDown.connect(this, &GuiManager::onKeyDown, -1);
-             _app->eventDispatcher().onKeyUp.connect(this, &GuiManager::onKeyUp, -1);
-
-             _app->eventDispatcher().onMouseLeftClicked.connect(this, &GuiManager::onMouseLeftClick, -1);
-             _app->eventDispatcher().onMouseRightClicked.connect(this, &GuiManager::onMouseRightClick, -1);
-
-             _app->eventDispatcher().onMouseLeftDown.connect(this, &GuiManager::onMouseLeftDown, -1);
-             _app->eventDispatcher().onMouseLeftUp.connect(this, &GuiManager::onMouseLeftUp, -1);
-
-             _app->eventDispatcher().onMouseRightDown.connect(this, &GuiManager::onMouseRightDown, -1);
-             _app->eventDispatcher().onMouseRightUp.connect(this, &GuiManager::onMouseRightUp, -1);
-
-             _app->eventDispatcher().onMouseLeftDrag.connect(this, &GuiManager::onMouseLeftDrag, -1);
-             _app->eventDispatcher().onMouseWheel.connect(this, &GuiManager::onMouseWheel, -1);
-             _app->eventDispatcher().onMouseMotion.connect(this, &GuiManager::onMouseMotion, -1);
-
-             _app->eventDispatcher().onWindowResized.connect(this, &GuiManager::onWindowResized, -1);
-        }
-
-        void GuiManager::update(float delta)
-        {
-            closePendingForms();
-
-            for(auto& form : _forms)
-            {
-                form->update(delta);
-            }
-
-            if (_draggingData && _draggingData->widget) 
-            {
-                auto pos = _app->eventDispatcher().mousePos() + _draggingData->_offset;
-                _draggingData->widget->setPos(pos);
-            }
-        }
-
-        void GuiManager::draw()
-        {
-            for(auto& form : _forms)
-            {
-                form->draw();
-            }
-
-            if (_draggingData && _draggingData->widget)
-            {
-                _draggingData->widget->draw();
-            }
-        }
-
-        void GuiManager::closePendingForms()
-        {
-            for (auto it = _forms.begin(); it != _forms.end(); )
-            {
-                auto ptr = *it;
-                if (ptr)
-                {
-                    auto iter = _pendingNames.find(ptr->name());
-                    if (iter != _pendingNames.end())
-                    {
-                        ptr->onClose();
-                        it = _forms.erase(it);
-                        continue;
-                    }
-                }
-
-                it++;
-            }
-
-            _pendingNames.clear();
-        }
-        
-        void GuiManager::closeForm(const std::string& name)
-        {
-            _pendingNames.insert(name);
-        }
-
-        Form* GuiManager::getFormAtPos(const Vec2& pos)
-        {
-            for(auto it=_forms.rbegin(); it!=_forms.rend(); it++)
-            {
-                auto ptr = *it;
-                if(ptr && ptr->visible())
-                {
-                    Rect rect = {ptr->pos(), ptr->size()};
-                    if(rect.contains(pos))
-                    {
-                        return ptr.get();
-                    }
-                }
-            }
-
+            SPDLOG_ERROR("create form : {} failed", def_name);
             return nullptr;
         }
 
-        Widget* GuiManager::getWidgetAtPos(const Vec2& pos)
+        if (!form->load(filepath))
         {
-            auto form = getFormAtPos(pos);
-            if(!form)
-            {
-                return nullptr;
-            }
-
-            return form->getWidgetAtPos(pos);
+            SPDLOG_ERROR("load form : {}, from file {} failed", def_name, filepath.string());
+            return nullptr;
         }
 
-        void GuiManager::moveToTop(const std::string& formName)
+        return form;
+    }
+
+    void GuiManager::init(engine::Application* app)
+    {
+        _app = app;
+
+        _app->eventDispatcher().onKeyDown.connect(this, &GuiManager::onKeyDown, -1);
+        _app->eventDispatcher().onKeyUp.connect(this, &GuiManager::onKeyUp, -1);
+
+        _app->eventDispatcher().onMouseLeftClicked.connect(this, &GuiManager::onMouseLeftClick, -1);
+        _app->eventDispatcher().onMouseRightClicked.connect(this, &GuiManager::onMouseRightClick, -1);
+
+        _app->eventDispatcher().onMouseLeftDown.connect(this, &GuiManager::onMouseLeftDown, -1);
+        _app->eventDispatcher().onMouseLeftUp.connect(this, &GuiManager::onMouseLeftUp, -1);
+
+        _app->eventDispatcher().onMouseRightDown.connect(this, &GuiManager::onMouseRightDown, -1);
+        _app->eventDispatcher().onMouseRightUp.connect(this, &GuiManager::onMouseRightUp, -1);
+
+        _app->eventDispatcher().onMouseLeftDrag.connect(this, &GuiManager::onMouseLeftDrag, -1);
+        _app->eventDispatcher().onMouseWheel.connect(this, &GuiManager::onMouseWheel, -1);
+        _app->eventDispatcher().onMouseMotion.connect(this, &GuiManager::onMouseMotion, -1);
+
+        _app->eventDispatcher().onWindowResized.connect(this, &GuiManager::onWindowResized, -1);
+    }
+
+    void GuiManager::update(float delta)
+    {
+        closePendingForms();
+
+        for(auto& form : _forms)
         {
-            Form::SharedPtr form = nullptr;
-            for(auto it=_forms.begin(); it!=_forms.end(); it++)
+            form->update(delta);
+        }
+
+        if (_draggingData && _draggingData->widget) 
+        {
+            auto pos = _app->eventDispatcher().mousePos() + _draggingData->_offset;
+            _draggingData->widget->setPos(pos);
+        }
+    }
+
+    void GuiManager::draw()
+    {
+        for(auto& form : _forms)
+        {
+            form->draw();
+        }
+
+        if (_draggingData && _draggingData->widget)
+        {
+            _draggingData->widget->draw();
+        }
+    }
+
+    void GuiManager::closePendingForms()
+    {
+        for (auto it = _forms.begin(); it != _forms.end(); )
+        {
+            auto ptr = *it;
+            if (ptr)
             {
-                if((*it)->name() == formName)
+                auto iter = _pendingNames.find(ptr->name());
+                if (iter != _pendingNames.end())
                 {
-                    form = *it;
-                    _forms.erase(it);
-                    break;
+                    ptr->onClose();
+                    it = _forms.erase(it);
+                    continue;
                 }
             }
 
-            _forms.push_back(form);
+            it++;
         }
 
-        void GuiManager::onWindowResized(const Vec2& size)
+        _pendingNames.clear();
+    }
+        
+    void GuiManager::closeForm(const std::string& name)
+    {
+        _pendingNames.insert(name);
+    }
+
+    void GuiManager::closeAllForms()
+    {
+        for (auto it = _forms.begin(); it != _forms.end(); it++)
         {
-            for(auto& form : _forms)
+            auto ptr = *it;
+            if (ptr)
             {
-                form->onWindowResized(size);
+                _pendingNames.insert(ptr->name());
             }
         }
+    }
 
-        void GuiManager::onKeyDown(KeyCode key)
+    Form* GuiManager::getFormAtPos(const Vec2& pos)
+    {
+        for(auto it=_forms.rbegin(); it!=_forms.rend(); it++)
         {
-        }
-
-        void GuiManager::onKeyUp(KeyCode key)
-        {
-        }
-
-        void GuiManager::onMouseLeftClick(const Vec2& pos)
-        {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
+            auto ptr = *it;
+            if(ptr && ptr->visible())
             {
-                moveToTop(form->name());
-
-                form->onMouseLeftClick(pos);
-
-                checkEventBreak(form);
-            }
-        }
-
-        void GuiManager::onMouseRightClick(const Vec2& pos)
-        {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
-            {
-                moveToTop(form->name());
-                form->onMouseRightClick(pos);
-
-                checkEventBreak(form);
+                Rect rect = {ptr->pos(), ptr->size()};
+                if(rect.contains(pos))
+                {
+                    return ptr.get();
+                }
             }
         }
 
-        void GuiManager::onMouseLeftDown(const Vec2& pos)
-        {
-            auto form = getFormAtPos(pos);
-            if (form && form->visible())
-            {
-                moveToTop(form->name());
-                form->onMouseLeftDown(pos);
+        return nullptr;
+    }
 
-                checkEventBreak(form);
+    Widget* GuiManager::getWidgetAtPos(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if(!form)
+        {
+            return nullptr;
+        }
+
+        return form->getWidgetAtPos(pos);
+    }
+
+    void GuiManager::moveToTop(const std::string& formName)
+    {
+        Form::SharedPtr form = nullptr;
+        for(auto it=_forms.begin(); it!=_forms.end(); it++)
+        {
+            if((*it)->name() == formName)
+            {
+                form = *it;
+                _forms.erase(it);
+                break;
             }
         }
 
-        void GuiManager::onMouseLeftUp(const Vec2& pos)
+        _forms.push_back(form);
+    }
+
+    void GuiManager::onWindowResized(const Vec2& size)
+    {
+        for(auto& form : _forms)
         {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
-            {
-                form->onMouseLeftUp(pos);
-
-                checkEventBreak(form);
-            }
-
-            if (_draggingData)
-            {
-                drop();
-            }
+            form->onWindowResized(size);
         }
+    }
 
-        void GuiManager::onMouseRightDown(const Vec2& pos)
+    void GuiManager::onKeyDown(KeyCode key)
+    {
+    }
+
+    void GuiManager::onKeyUp(KeyCode key)
+    {
+    }
+
+    void GuiManager::onMouseLeftClick(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
         {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
-            {
-                form->onMouseRightDown(pos);
+            moveToTop(form->name());
 
-                checkEventBreak(form);
-            }
+            form->onMouseLeftClick(pos);
+
+            checkEventBreak(form);
         }
+    }
 
-        void GuiManager::onMouseRightUp(const Vec2& pos)
+    void GuiManager::onMouseRightClick(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
         {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
-            {
-                form->onMouseRightUp(pos);
+            moveToTop(form->name());
+            form->onMouseRightClick(pos);
 
-                checkEventBreak(form);
-            }
+            checkEventBreak(form);
         }
+    }
 
-        void GuiManager::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+    void GuiManager::onMouseLeftDown(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if (form && form->visible())
         {
-            if (_draggingData)
-            {
-                slot_context().setBreak(true);
-                return;
-            }
+            moveToTop(form->name());
+            form->onMouseLeftDown(pos);
 
-            auto form = getFormAtPos(pos);
-            if (!form || !form->visible()) 
-            {
-                return;
-            }
+            checkEventBreak(form);
+        }
+    }
 
-            auto widget = form->hoverWidget();
-            if (widget && widget->canDragOut())
-            {
-                drag(widget);
-
-                slot_context().setBreak(true);
-                return;
-            }
-
-            form->onMouseLeftDrag(pos, offset);
+    void GuiManager::onMouseLeftUp(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
+        {
+            form->onMouseLeftUp(pos);
 
             checkEventBreak(form);
         }
 
-        void GuiManager::onMouseWheel(const Vec2& pos, float dir)
+        if (_draggingData)
         {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
-            {
-                form->onMouseWheel(pos, dir);
+            drop();
+        }
+    }
 
-                checkEventBreak(form);
-            }
+    void GuiManager::onMouseRightDown(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
+        {
+            form->onMouseRightDown(pos);
+
+            checkEventBreak(form);
+        }
+    }
+
+    void GuiManager::onMouseRightUp(const Vec2& pos)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
+        {
+            form->onMouseRightUp(pos);
+
+            checkEventBreak(form);
+        }
+    }
+
+    void GuiManager::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+    {
+        if (_draggingData)
+        {
+            slot_context().setBreak(true);
+            return;
         }
 
-        void GuiManager::onMouseMotion(const Vec2& pos, const Vec2& offset)
+        auto form = getFormAtPos(pos);
+        if (!form || !form->visible()) 
         {
-            auto form = getFormAtPos(pos);
-            if(form && form->visible())
-            {
-                form->onMouseMotion(pos, offset);
+            return;
+        }
+
+        auto widget = form->hoverWidget();
+        if (widget && widget->canDragOut())
+        {
+            drag(widget);
+
+            slot_context().setBreak(true);
+            return;
+        }
+
+        form->onMouseLeftDrag(pos, offset);
+
+        checkEventBreak(form);
+    }
+
+    void GuiManager::onMouseWheel(const Vec2& pos, float dir)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
+        {
+            form->onMouseWheel(pos, dir);
+
+            checkEventBreak(form);
+        }
+    }
+
+    void GuiManager::onMouseMotion(const Vec2& pos, const Vec2& offset)
+    {
+        auto form = getFormAtPos(pos);
+        if(form && form->visible())
+        {
+            form->onMouseMotion(pos, offset);
                 
-                checkEventBreak(form);
-            }
+            checkEventBreak(form);
+        }
+    }
+
+    void GuiManager::checkEventBreak(Form* form)
+    {
+        assert(form);
+
+        auto widget = form->hoverWidget();
+        if (widget && widget->acceptEvent())
+        {
+            slot_context().setBreak(true);
+        }
+    }
+
+    void GuiManager::drag(Widget* widget)
+    {
+        if (!widget)
+        {
+            return;
         }
 
-        void GuiManager::checkEventBreak(Form* form)
+        auto parentGroup = dynamic_cast<Group*>(widget->parent());
+        if (!parentGroup)
         {
-            assert(form);
-
-            auto widget = form->hoverWidget();
-            if (widget && widget->acceptEvent())
-            {
-                slot_context().setBreak(true);
-            }
+            return;
         }
 
-        void GuiManager::drag(Widget* widget)
-        {
-            if (!widget)
-            {
-                return;
-            }
+        auto wpos = widget->getAbsPos();
+        auto mpos = _app->eventDispatcher().mousePos();
 
-            auto parentGroup = dynamic_cast<Group*>(widget->parent());
-            if (!parentGroup)
-            {
-                return;
-            }
+        _draggingData = std::make_shared<DraggingData>();
+        _draggingData->widget= parentGroup->moveOut(widget);
+        _draggingData->src_group = parentGroup;
+        _draggingData->_offset= wpos - mpos;
+    }
 
-            auto wpos = widget->getAbsPos();
-            auto mpos = _app->eventDispatcher().mousePos();
-
-            _draggingData = std::make_shared<DraggingData>();
-            _draggingData->widget= parentGroup->moveOut(widget);
-            _draggingData->src_group = parentGroup;
-            _draggingData->_offset= wpos - mpos;
-
-            //SPDLOG_INFO("GuiManager::drag: start.");
-        }
-
-        void GuiManager::drop()
-        {
-            auto pos = _app->eventDispatcher().mousePos();
-            auto widget = getWidgetAtPos(pos);
+    void GuiManager::drop()
+    {
+        auto pos = _app->eventDispatcher().mousePos();
+        auto widget = getWidgetAtPos(pos);
             
-            _draggingData->dst_group = widget;
-            _draggingData->drop_screen_pos = pos;
+        _draggingData->dst_group = widget;
+        _draggingData->drop_screen_pos = pos;
 
-            on_drop.emit(_draggingData);
+        on_drop.emit(_draggingData);
 
-            _draggingData = nullptr;
+        _draggingData = nullptr;
+    }
 
-            //SPDLOG_INFO("GuiManager::drop: finish.");
+    void GuiManager::emitCustomEvent(int eventId, const utility::VarList& varlist)
+    {
+        on_custom_event.emit(eventId, varlist);
+    }
+
+    Widget* GuiManager::createWidget(const std::string& type, Widget* parent)
+    {
+        auto it = _creators.find(type);
+        if (it == _creators.end()) return nullptr;
+
+        auto creator = it->second;
+        if (!creator) { 
+            return nullptr; 
         }
 
-        void GuiManager::emitCustomEvent(int eventId, const utility::VarList& varlist)
-        {
-            on_custom_event.emit(eventId, varlist);
+        auto name = std::format("{}-{}", type, generateId());
+        auto widget = creator->create(name, parent);
+        if (!widget) { 
+            return nullptr; 
         }
+
+        auto group = dynamic_cast<Group*>(parent);
+        if (group) {
+            group->addWidget(widget);
+        }
+
+        return widget.get();
+    }
 }

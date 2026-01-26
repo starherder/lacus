@@ -104,11 +104,17 @@ namespace game
 		Vec2 pos;
 	};
 
-	struct EvtProjectileHitPos {
+	struct EvtSkillHitPos {
 		entt::entity source;
 		entt::entity skill;
-		//entt::entity projectile;
 		Vec2 pos;
+	};
+
+	struct EvtSkillHitTarget
+	{
+		entt::entity source;
+		entt::entity skill;
+		entt::entity target;
 	};
 
 	struct EvtExecSkillEvent {

@@ -15,7 +15,7 @@ namespace samples {
 
     public:
         FormDemo() = delete;
-        FormDemo(const std::string& name);
+        FormDemo(const std::string& name, Application& app);
         virtual ~FormDemo();
 
         void onUpdate(float delta) override;
@@ -27,6 +27,9 @@ namespace samples {
         void onProgressChanged(ui::ProgressBar* pbar);
         void onCheckChanged(ui::CheckBox* cbox);
         void onClickListButton(ui::Button* btn);
+
+    private:
+        Application& _application;
     };
 
 

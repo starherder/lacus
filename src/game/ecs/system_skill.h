@@ -27,6 +27,7 @@ namespace game
 
         void startSprint(entt::entity srcid, entt::entity tarid, entt::entity skill);
 
+        void startLightning(entt::entity srcid, entt::entity tarid, entt::entity skill);
 
         void onCastSkillToObject(const EvtCastSkillToObject& e);
 
@@ -34,7 +35,9 @@ namespace game
 
         void onRoleUnderAttackEffect(const EvtRoleOnAttack& e);
 
-        void onProjectileHitPos(const EvtProjectileHitPos& e);
+        void onSkillHitPos(const EvtSkillHitPos& e);
+
+        void onSkillHitTarget(const EvtSkillHitTarget& e);
 
         void onTrapPeriodExec(entt::entity srcid, entt::entity skill, entt::entity trap);
 
@@ -47,6 +50,7 @@ namespace game
 
         void createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill);
 
+        void createLightningToTarget(entt::entity srcid, entt::entity target, entt::entity skill);
     };
 
 

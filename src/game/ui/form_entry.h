@@ -9,34 +9,23 @@ namespace game
     class FormEntry : public FormLogicBase
     {
     public:
-        signals::Signal<> on_start_game;
-        signals::Signal<> on_resume_game;
-        signals::Signal<> on_config_game;
-        signals::Signal<> on_exit_game;
-
-    public:
         FormEntry(const std::string& name) = delete;
         FormEntry(const std::string& name, GameContext& context);
         ~FormEntry();
 
+        void selectScene(int index, const std::string& scene);
+        
     private:
         void onStart(Button* btn);
-
-        void onResume(Button* btn);
-
-        void onConfig(Button* btn);
-
-        void onExit(Button* btn);
 
         void onUpdate(float delta) override;
 
         void onSizeChanged() override;
 
+        void onWindowResized(const Vec2& size);
+
     private:
-        ui::Label* _lblTitle = nullptr;
-        ui::Button* _btnStart = nullptr;
-        ui::Button* _btnResume = nullptr;
-        ui::Button* _btnConfig = nullptr;
-        ui::Button* _btnExit = nullptr;
+        int _sceneIndex;
+        std::string _sceneFile;
     };
 }

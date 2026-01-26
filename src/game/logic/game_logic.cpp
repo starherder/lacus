@@ -7,7 +7,7 @@
 #include "game/scene/object_factory.h"
 
 #include "game/ui/form_loading.h"
-#include "game/ui/form_entry.h"
+#include "game/ui/form_start.h"
 #include "game/ui/form_main.h"
 #include "game/ui/form_scenes.h"
 #include "game/ui/ui_logic_events.h"
@@ -174,11 +174,11 @@ namespace game
 
     void GameLogic::start()
     {
-        auto formEntry = ui::GuiManager::inst().showForm<FormEntry>("form_entry", _gameContext);
-        formEntry->on_start_game.connect(this, &GameLogic::onStartNewGame);
-        formEntry->on_resume_game.connect(this, &GameLogic::onResumeGame);
-        formEntry->on_config_game.connect(this, &GameLogic::onConfigGame);
-        formEntry->on_exit_game.connect(this, &GameLogic::onExitGame);
+        auto formStart = ui::GuiManager::inst().createForm<FormStart>("form_entry", _gameContext);
+        formStart->on_start_game.connect(this, &GameLogic::onStartNewGame);
+        formStart->on_resume_game.connect(this, &GameLogic::onResumeGame);
+        formStart->on_config_game.connect(this, &GameLogic::onConfigGame);
+        formStart->on_exit_game.connect(this, &GameLogic::onExitGame);
 
         auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
         if (form_debug)
@@ -231,7 +231,7 @@ namespace game
 
     bool GameLogic::switchScene(const std::string& sceneName)
     {
-        showMainForm(false);
+        closeAllForms();
 
         showLoadingForm(true);
 
@@ -247,11 +247,10 @@ namespace game
     {
         if (visible)
         {
-            ui::GuiManager::inst().showForm<FormMain>("form_main", _gameContext);
+            ui::GuiManager::inst().createForm<FormMain>("form_main", _gameContext);
         }
         else
         {
-
             ui::GuiManager::inst().closeForm("form_main");
         }
     }
@@ -260,7 +259,7 @@ namespace game
     {
         if (visible)
         {
-            ui::GuiManager::inst().showForm<FormLoading>("form_loading", _gameContext);
+            ui::GuiManager::inst().createForm<FormLoading>("form_loading", _gameContext);
         }
         else
         {
@@ -305,5 +304,10 @@ namespace game
     void GameLogic::onDebugReloadResource()
     {
         ObjectFactory::inst().reloadAll();
+    }
+
+    void GameLogic::closeAllForms()
+    {
+        ui::GuiManager::inst().closeAllForms();
     }
 }

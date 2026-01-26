@@ -56,7 +56,7 @@ namespace engine
 			float displace, float min_displace=3, float thickness = 1) override;
 
 		void makeLightningData(std::vector<Vec2>& data, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace = 3) override;
-		void drawLightningData(const Color& color, const std::vector<Vec2>& data, float thickness = 1.0f) override;
+		void drawLightningData(const Color& color, const Vec2& pos, const std::vector<Vec2>& data, float thickness = 1.0f) override;
 
 	private:
 		void initDefaultFont(const std::string& fontName, int fontSize);

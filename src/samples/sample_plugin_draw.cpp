@@ -354,7 +354,7 @@ namespace samples {
 
         for (const auto& data : _lightning)
         {
-            painter.drawLightningData(Color::PaleBlue, data, 2.0f);
+            painter.drawLightningData(Color::PaleBlue, {0,0}, data, 2.0f);
         }
 
     }

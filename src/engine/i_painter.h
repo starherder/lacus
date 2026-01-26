@@ -53,7 +53,7 @@ namespace engine
 		virtual void drawLightning(const Color& color, const Vec2& beginPos, const Vec2& endPos,
 							float displace, float min_displace = 3, float thickness = 1) {}
 		virtual void makeLightningData(std::vector<Vec2>& data, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace = 3) {}
-		virtual void drawLightningData(const Color& color, const std::vector<Vec2>& data, float thickness = 1.0f) {}
+		virtual void drawLightningData(const Color& color, const Vec2& pos, const std::vector<Vec2>& data, float thickness = 1.0f) {}
 
 	protected:
 		Application& _application;

@@ -13,7 +13,8 @@ namespace game
 		_context.dispatcher().sink<EvtCastSkillToObject>().connect<&SkillSystem::onCastSkillToObject>(this);
 		_context.dispatcher().sink<EvtCastSkillToPos>().connect<&SkillSystem::onCastSkillToPos>(this);
 		_context.dispatcher().sink<EvtRoleOnAttack>().connect<&SkillSystem::onRoleUnderAttackEffect>(this);
-		_context.dispatcher().sink<EvtProjectileHitPos>().connect<&SkillSystem::onProjectileHitPos>(this);
+		_context.dispatcher().sink<EvtSkillHitPos>().connect<&SkillSystem::onSkillHitPos>(this);
+		_context.dispatcher().sink<EvtSkillHitTarget>().connect<&SkillSystem::onSkillHitTarget>(this);
 		_context.dispatcher().sink<EvtExecSkillEvent>().connect<&SkillSystem::onSkillEvent>(this);
 	}
 	
@@ -82,21 +83,34 @@ namespace game
 		for (auto& ent : viewsTrap)
 		{
 			auto& trap = viewsTrap.get<CompTraps>(ent);
-			if (trap.running) 
+			if (trap.onUpdate)
 			{
 				trap.onUpdate(deltaTicks);
 			}
 		}
 
+		// 冲击波
 		auto viewsWave = _context.registry().view<CompWave>();
 		for (auto& ent : viewsWave)
 		{
 			auto& wave = viewsWave.get<CompWave>(ent);
-			if (wave.running)
+			if (wave.onUpdate)
 			{
 				wave.onUpdate(deltaTicks);
 			}
 		}
+
+		// 闪电
+		auto viewsLightning = _context.registry().view<CompLightning>();
+		for (auto& ent : viewsLightning)
+		{
+			auto& lightning = viewsLightning.get<CompLightning>(ent);
+			if (lightning.onUpdate)
+			{
+				lightning.onUpdate(deltaTicks);
+			}
+		}
+		
 	}
 
 	tweeny::tween<float, float> SkillSystem::makeSkillSpellTween(const EvtCastSkillToObject& e)
@@ -185,6 +199,17 @@ namespace game
 
 	void SkillSystem::onCastSkillToObject(const EvtCastSkillToObject& e)
 	{
+		if(!_context.registry().valid(e.target))
+		{
+			return;
+		}
+
+		auto pCompDead = _context.registry().try_get<CompDead>(e.target);
+		if(pCompDead)
+		{
+			return;
+		}
+
 		if (_context.registry().valid(e.skill) == false)
 		{
 			SPDLOG_WARN("skill ({}) is invalid", (uint32_t)e.skill);
@@ -252,6 +277,10 @@ namespace game
 		{
 			startWave(e.source, e.target, e.skill);
 		}
+		else if (skillComm.type == SkillType::Lightning)
+		{
+			startLightning(e.source, e.target, e.skill);
+		}
 		else
 		{
 			auto& skillAffect = _context.registry().get<CompSkillAffect>(e.skill);
@@ -274,7 +303,6 @@ namespace game
 		_context.registry().emplace<CompWave>(wave);
 
 		auto& compWave = _context.registry().get<CompWave>(wave);
-		compWave.running = true;
 		compWave.wave_ticks = 0;
 		compWave.cur_wave = 0;
 		compWave.onUpdate = [this, srcid, tarid, skill, wave](int64_t tick) 
@@ -296,7 +324,6 @@ namespace game
 			if (compWave.cur_wave >= waveCfg.grids)
 			{
 				_context.registry().emplace_or_replace<CompDestroy>(wave);
-				compWave.running = false;
 				return;
 			}
 
@@ -381,6 +408,46 @@ namespace game
 		createTrapAtPos(srcid, compTgtTrans.position, skill, ShapeType::Circle);
 	}
 
+	void SkillSystem::startLightning(entt::entity srcid, entt::entity tarid, entt::entity skill)
+	{
+		auto pCompLightningCfg = _context.registry().try_get<CompLightningCfg>(skill);
+		auto pCompAffect = _context.registry().try_get<CompSkillAffect>(skill);
+		if (!pCompAffect || !pCompLightningCfg)
+		{
+			return;
+		}
+
+		float atk_dis = pCompAffect->range;
+		int tgt_count = pCompLightningCfg->target_count;
+
+		auto& srcTrans = _context.registry().get<CompTransform>(srcid);
+		auto& srcComm = _context.registry().get<CompComm>(srcid);
+		auto& objects = _context.scene().getObjectsInCircle(srcTrans.position, atk_dis);
+		tgt_count = tgt_count > (int)objects.size() ? (int)objects.size() : tgt_count;
+
+		int index = 0;
+		for (auto& [dis, obj] : objects)
+		{
+			if(obj == srcid || !_context.registry().valid(obj)) 
+			{
+				continue;
+			}
+
+			auto objComm = _context.registry().try_get<CompComm>(obj);
+			if(!objComm || objComm->type != ObjectType::Npc || objComm->side == srcComm.side)
+			{
+				continue;
+			}
+
+			if (index++ >= tgt_count)
+			{
+				break;
+			}
+
+			createLightningToTarget(srcid, obj, skill);
+		}
+	}
+
 	void SkillSystem::createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill)
 	{
 		auto& waveCfg = _context.registry().get<CompWaveCfg>(skill);
@@ -429,6 +496,74 @@ namespace game
 		}
 	}
 
+	void SkillSystem::createLightningToTarget(entt::entity source, entt::entity target, entt::entity skill)
+	{
+		auto pCompLightningCfg = _context.registry().try_get<CompLightningCfg>(skill);
+		if(!pCompLightningCfg)
+		{
+			return;
+		}
+
+		auto& srcTrans = _context.registry().get<CompTransform>(source);
+		auto& dstTrans = _context.registry().get<CompTransform>(target);
+
+		// create a lightning
+		auto lightning = _context.registry().create();
+		_context.registry().emplace<CompLightning>(lightning);
+
+		SPDLOG_INFO("create light: {}", lightning);
+
+		// set lightning
+		auto& compLightning = _context.registry().get<CompLightning>(lightning);
+		compLightning.atk_ticks = 0;
+		compLightning.cur_atk = 0;
+		compLightning.onUpdate = [this, source, target, skill, lightning](int64_t tick)
+			{
+				auto& lightningCfg = _context.registry().get<CompLightningCfg>(skill);
+				auto& compLightning = _context.registry().get<CompLightning>(lightning);
+				auto& compDisplay = _context.registry().get<CompLightningDisplay>(lightning);
+
+				if (compLightning.atk_ticks == 0)
+				{
+					EvtSkillHitTarget e;
+					e.source = source;
+					e.skill = skill;
+					e.target = target;
+					_context.dispatcher().trigger(e);
+
+					SPDLOG_INFO("execute light: {}", lightning);
+
+					compDisplay.color = lightningCfg.color;
+					compLightning.cur_atk++;
+				}
+				else if (compLightning.atk_ticks >= lightningCfg.interval)
+				{
+					compLightning.atk_ticks = 0;
+
+					if (compLightning.cur_atk >= lightningCfg.attack_times)
+					{
+						SPDLOG_INFO("destroy light: {}", lightning);
+						_context.registry().emplace_or_replace<CompDestroy>(lightning);
+					}
+
+					return;
+				}
+
+				compDisplay.color. a = (int)(255*(1.0f - (float)compLightning.atk_ticks/(float)lightningCfg.during));
+
+				compLightning.atk_ticks += (int)tick;
+			};
+
+		// add display
+		CompLightningDisplay disp;
+		disp.color = pCompLightningCfg->color;
+		disp.during = pCompLightningCfg->during;
+		disp.thickness = pCompLightningCfg->thickness;
+		_context.painter().makeLightningData(disp.data, srcTrans.position, dstTrans.position, pCompLightningCfg->displace);
+		
+		_context.registry().emplace_or_replace<CompLightningDisplay>(lightning, disp);
+	}
+
 	entt::entity SkillSystem::createTrapAtPos(entt::entity srcid, const Vec2& target, entt::entity skill, ShapeType shape_type)
 	{
 		auto pTrapCfgComp = _context.registry().try_get<CompTrapCfg>(skill);
@@ -447,7 +582,6 @@ namespace game
 		auto& compTrap = _context.registry().get<CompTraps>(trap);
 		compTrap.during_ticks = 0;
 		compTrap.period_ticks = 0;
-		compTrap.running = true;
 		compTrap.onUpdate = [this, srcid, skill, trap, src_alpha](int64_t ticks)
 		{
 			if (!_context.registry().valid(skill))
@@ -460,7 +594,6 @@ namespace game
 
 			if (compTrapCfg.duration > 0 && compTraps.during_ticks >= compTrapCfg.duration)
 			{
-				compTraps.running = false;
 				_context.registry().emplace_or_replace<CompDestroy>(trap);
 				return;
 			}
@@ -533,7 +666,7 @@ namespace game
 				return true;
 			}
 
-			EvtProjectileHitPos e;
+			EvtSkillHitPos e;
 			e.source = srcid;
 			e.skill = skill;
 			e.pos = target;
@@ -557,7 +690,7 @@ namespace game
 		});
 	}
 
-	void SkillSystem::onProjectileHitPos(const EvtProjectileHitPos& e)
+	void SkillSystem::onSkillHitPos(const EvtSkillHitPos& e)
 	{
 		auto& compSrcComm = _context.registry().get<CompComm>(e.source);
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
@@ -576,6 +709,22 @@ namespace game
 			{
 				_context.dispatcher().trigger(EvtRoleOnAttack{ e.source, obj, e.skill });
 			}
+		}
+	}
+
+	void SkillSystem::onSkillHitTarget(const EvtSkillHitTarget& e)
+	{
+		auto pCompDead = _context.registry().try_get<CompDead>(e.target);
+		if (pCompDead)
+		{
+			return;
+		}
+
+		auto& compSrcComm = _context.registry().get<CompComm>(e.source);
+		auto& compDstComm = _context.registry().get<CompComm>(e.target);
+		if (compDstComm.type == ObjectType::Npc && compDstComm.side != compSrcComm.side)
+		{
+			_context.dispatcher().trigger(EvtRoleOnAttack{ e.source, e.target, e.skill });
 		}
 	}
 
@@ -671,7 +820,7 @@ namespace game
 			return;
 		}
 
-		EvtProjectileHitPos e;
+		EvtSkillHitPos e;
 		e.source = srcid;
 		e.skill = skill;
 		e.pos = pCompTrans->position;

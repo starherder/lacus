@@ -6,6 +6,7 @@ namespace ui {
 
 class Widget;
 class Group;
+class BackGroup;
 
 class Form : public signals::SlotHandler
 {
@@ -17,7 +18,9 @@ public:
     Form(const std::string& name);
     virtual ~Form();
 
-    Group* root() { return _rootGroup.get(); }
+    bool load(const fs::path& filepath);
+
+    BackGroup* root() { return _rootGroup.get(); }
 
     Widget* getWidgetAtPos(const Vec2& pos);
 
@@ -95,7 +98,7 @@ private:
     Vec2 _pos = {0, 0};
     Vec2 _size = {400, 300};
 
-    std::unique_ptr<Group> _rootGroup = nullptr;
+    std::unique_ptr<BackGroup> _rootGroup = nullptr;
     Widget* _hoverWidget = nullptr;
 };
 

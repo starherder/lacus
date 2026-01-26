@@ -50,6 +50,8 @@ void RenderSystem::draw()
 
     drawObjects();
 
+    drawSkillEffect();
+
     drawParticles();
 
     drawSkyEffect();
@@ -87,6 +89,19 @@ void RenderSystem::drawFightText()
 
         auto pos = _context.camera().projectPoint(compTrans.position);
         _context.painter().drawText(compFt.text, compFt.font, pos, compFt.color);
+    }
+}
+
+void RenderSystem::drawSkillEffect()
+{
+    auto& painter = _context.painter();
+    auto& camera = _context.camera();
+    
+    auto ent_view = _context.registry().view<CompLightningDisplay>();
+    for(auto& ent : ent_view)
+    {
+        auto& disp = ent_view.get<CompLightningDisplay>(ent);
+        painter.drawLightningData(disp.color, -_context.camera().getPos(), disp.data, disp.thickness);
     }
 }
 

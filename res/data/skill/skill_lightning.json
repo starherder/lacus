@@ -1,0 +1,39 @@
+{
+  "cfgid": "skill_lightning",
+  "type": "lightning",
+  "name": "text_skill_lightning",
+  "desc": "text_skill_lightning_desc",
+
+  "distance": 300,
+  "cd_ticks": 1000,
+  "sound": "audio/battle_of_tiles/slime.wav",
+
+  "affect": {
+    "prev_ticks": 200,
+    "post_ticks": 60,
+
+    "func": "hp-2*",
+    "target": "role",
+    "range": 300,
+
+    "event": ""
+  },
+
+  "tween": {
+    "trans_type": "scale",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "lightning": {
+    "target_count": 10,
+    "attack_times": 1,
+    "interval" :  500,
+
+    "color": "#CCCCFFFF",
+    "thickness": 2,
+    "displace": 60,
+    "during" :  500
+  }
+}

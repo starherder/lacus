@@ -1,7 +1,11 @@
 ﻿#include "widget.h"
 #include "gui_manager.h"
 
+#include <format>
+
 namespace ui {
+
+DeclareWidgetType(Widget, "widget");
 
 
 Widget::Widget(const std::string& name, Widget* parent) 
@@ -121,6 +125,50 @@ Rect Widget::getAbsRect() const
     return {getAbsPos(), _size};
 }
 
+
+bool Widget::load(XmlNode* node) 
+{ 
+    if (!node) return false;
+
+    int id = ui::GuiManager::inst().generateId();
+    auto def_name = std::format("widget_{}", id);
+
+    _name = node->Attribute("name");
+    _name = _name.empty() ? def_name : _name;
+
+    auto pos = ToVec2(node->Attribute("pos"));
+    setPos(pos);
+
+    auto size = ToVec2(node->Attribute("size"));
+    setSize(size);
+
+    auto borderSize = node->FloatAttribute("border_size");
+    setBorderSize(borderSize);
+
+    auto borderRound = node->FloatAttribute("broder_round");
+    setBorderRound(borderRound);
+
+    auto visible = node->BoolAttribute("visible", true);
+    setVisible(visible);
+
+    auto canDragOut = node->BoolAttribute("drag_out");
+    setCanDragOut(canDragOut);
+
+    _normalStatus.ground_color.fromHexString(node->Attribute("ground_color"));
+    _normalStatus.border_color.fromHexString(node->Attribute("border_color"));
+    _normalStatus.text_color.fromHexString(node->Attribute("text_color"));
+
+    SPDLOG_INFO("widget: name({}) pos({}) size({}) border_size({}) border_round({}) visible({}) ground_color({}), border_color({})",
+        _name, _pos, _size,_borderSize, _borderRound, _visible, _normalStatus.ground_color, _normalStatus.border_color);
+
+    return onLoad(node); 
+}
+
+
+bool Widget::onLoad(XmlNode* node)
+{
+    return true;
+}
 
 void Widget::update(float delta)
 {

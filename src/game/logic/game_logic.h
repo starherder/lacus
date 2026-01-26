@@ -54,6 +54,8 @@ namespace game
 
 		void onDebugReloadResource();
 
+		void closeAllForms();
+
 	private:
 		std::unique_ptr<GameScene> _scene = nullptr;
 

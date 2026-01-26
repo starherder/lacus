@@ -12,11 +12,14 @@ public:
     using SharedPtr = std::shared_ptr<Widget>;
 
 public:
+    //Widget();
     Widget() = delete;
     Widget(const std::string& name, Widget* parent=nullptr);
     virtual ~Widget();
 
     const auto& name() { return _name; }
+
+    bool load(XmlNode* node);
 
     virtual void update(float delta);
     virtual void draw();
@@ -101,10 +104,11 @@ public:
     virtual void onVisibleChanged(bool oldVisual, bool newVisual) {}
 
 protected:
+    virtual bool onLoad(XmlNode* node);
+
+    virtual WidgetStatus& status() { return _normalStatus; }
 
     virtual Vec2 getContentPos() const { return Vec2{0.0f, 0.0f}; }
-    
-    virtual WidgetStatus& status() { return _normalStatus; }
 
     std::string _name;
     Widget* _parent = nullptr;

@@ -310,7 +310,7 @@
     <ClCompile Include="..\src\game\logic\game_logic.cpp">
       <Filter>game\logic</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\ui\form_entry.cpp">
+    <ClCompile Include="..\src\game\ui\form_start.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\src\game\ui\form_loading.cpp">
@@ -330,6 +330,9 @@
     </ClCompile>
     <ClCompile Include="..\src\game\ecs\system_float_text.cpp">
       <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_entry.cpp">
+      <Filter>game\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -642,7 +645,7 @@
     <ClInclude Include="..\src\game\logic\game_logic.h">
       <Filter>game\logic</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\ui\form_entry.h">
+    <ClInclude Include="..\src\game\ui\form_start.h">
       <Filter>game\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ui\form_loading.h">
@@ -671,6 +674,9 @@
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_float_text.h">
       <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_entry.h">
+      <Filter>game\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

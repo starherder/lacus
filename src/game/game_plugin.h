@@ -29,6 +29,8 @@ public:
     void onEnable() override;
     void onDisable() override;
 
+    GameContext& context() { return _gameContext; }
+
 private:
     std::unique_ptr<GameLogic> _gameLogic = nullptr;
 

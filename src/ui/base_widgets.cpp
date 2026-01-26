@@ -3,7 +3,23 @@
 #include "magic_enum/magic_enum.h"
 #include "ui_utils.h"
 
-namespace ui {
+namespace ui 
+{
+    DeclareWidgetType(Label, "label");
+    DeclareWidgetType(TextBox, "textbox");
+    DeclareWidgetType(Button, "button");
+
+    DeclareWidgetType(CheckBox, "check");
+    DeclareWidgetType(RadioBox, "radio");
+
+    DeclareWidgetType(RadioHLayGroup, "radio_hlay");
+    DeclareWidgetType(RadioVLayGroup, "radio_vlay");
+
+    DeclareWidgetType(ProgressBar, "progress");
+    DeclareWidgetType(SliderBar, "slider");
+    DeclareWidgetType(ListBox, "list");
+    
+    // --------------------------------------------------------------------
 
     const int Label::DefaultFontSize = 20;
     const std::string Label::DefaultFontName = "fonts/msyh.ttf";
@@ -18,6 +34,7 @@ namespace ui {
     {
         _fontName = name;
         _fontSize = size;
+
         adjust();
     }
 
@@ -32,6 +49,41 @@ namespace ui {
         }
 
         _font = GuiManager::inst().fontManager().get(HashString(_fontName.c_str()), _fontSize);
+    }
+
+    bool Label::onLoad(XmlNode* node)
+    {
+        if (!node) {
+            return false;
+        }
+
+        _text = node->Attribute("text");
+        _text_color.parseHexString(node->Attribute("text_color"));
+        if (_text_color.a <= 0) {
+            _text_color.a = 255;
+        }
+
+        _textPadding = ToVec2(node->Attribute("text_padding"));
+
+        auto getAlign = [](const std::string& str) {
+            if (str == "left") return Align::Left;
+            else if (str == "right") return Align::Right;
+            else if (str == "center") return Align::Center;
+            else if (str == "top") return Align::Top;
+            else if (str == "bottom") return Align::Bottom;
+            
+            return Align::Center;
+        };
+
+        _textAlign = getAlign(node->Attribute("align"));
+
+        _fontName = node->Attribute("font_name");
+        _fontName = _fontName.empty() ? DefaultFontName : _fontName;
+        _fontSize = node->IntAttribute("font_size", 20);
+
+        adjust();
+
+        return true;
     }
 
     void Label::draw()
@@ -74,7 +126,27 @@ namespace ui {
 
     TextBox::~TextBox()
     {
+    }
 
+    bool TextBox::onLoad(XmlNode* node)
+    {
+        if (!node)  { 
+            return false; 
+        }
+
+        _fontName = node->Attribute("font_name");
+        _fontName = _fontName.empty() ? Label::DefaultFontName : _fontName;
+        _fontSize = node->IntAttribute("font_size", 20);
+
+        _text = node->Attribute("text");
+        _text_color.parseHexString(node->Attribute("text_color"));
+        
+        if (_text_color.a <= 0)  {
+            _text_color.a = 255;
+        }
+
+        adjust();
+        return true;
     }
 
     void TextBox::setFont(const std::string& name, int size)
@@ -121,6 +193,15 @@ namespace ui {
 
     Button::~Button()
     {
+    }
+
+    bool Button::onLoad(XmlNode* node)
+    {
+        if (!Label::onLoad(node)) {
+            return false;
+        }
+
+        return false;
     }
 
     void Button::setState(WidgetState state)
@@ -171,6 +252,31 @@ namespace ui {
         _status[WidgetState::SelectedHover] = WigetUtils::selectHoverStatus;
     }
 
+    bool CheckBox::onLoad(XmlNode* node)
+    {
+        if (!Button::load(node)) {
+            return false;
+        }
+
+        _checked = node->BoolAttribute("checked");
+
+        adjust();
+
+        return true;
+    }
+
+    void CheckBox::adjust()
+    {
+        if(_checked)
+        {
+            setState(WidgetState::Selected);
+        }
+        else 
+        {
+            setState(WidgetState::Normal);
+        }
+    }
+
     void CheckBox::setChecked(bool checked)
     {
         if (checked == _checked) 
@@ -180,15 +286,8 @@ namespace ui {
 
         _checked = checked;
         on_check_changed.emit(this);
-
-        if(_checked)
-        {
-            setState(WidgetState::Selected);
-        }
-        else 
-        {
-            setState(WidgetState::Normal);
-        }
+        
+        adjust();
     }
 
     void CheckBox::onMouseEnter(const Vec2& pos) 
@@ -256,14 +355,19 @@ namespace ui {
         _checked = checked;
         on_selected.emit(this);
 
-        if (_checked)
+        adjust();
+    }
+    
+    bool RadioBox::onLoad(XmlNode* node)
+    {
+        if (!CheckBox::onLoad(node))
         {
-            setState(WidgetState::Selected);
+            return false;
         }
-        else
-        {
-            setState(WidgetState::Normal);
-        }
+
+
+        adjust();
+        return true;
     }
 
     /////////////////////////////////////////////////////////////////
@@ -396,6 +500,16 @@ namespace ui {
         return _radioGroup->setSelectItem(index);
     }
 
+    bool RadioHLayGroup::onLoad(XmlNode* node)
+    {
+        if (!HorizonalLayout::onLoad(node))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     /////////////////////////////////////////////////////////////////
 
     RadioVLayGroup::RadioVLayGroup(const std::string& name, Widget* parent) : VerticalLayout(name, parent)
@@ -422,6 +536,16 @@ namespace ui {
     void RadioVLayGroup::setSelectItem(int index)
     {
         return _radioGroup->setSelectItem(index);
+    }
+
+    bool RadioVLayGroup::onLoad(XmlNode* node)
+    {
+        if (!VerticalLayout::onLoad(node))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /////////////////////////////////////////////////////////////////
@@ -466,6 +590,16 @@ namespace ui {
         _foreground->setSize(foreSize);
     }
 
+    bool ProgressBar::onLoad(XmlNode* node)
+    {
+        if (!Group::onLoad(node))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     /////////////////////////////////////////////////////////////////
 
     SliderBlock::SliderBlock(const std::string& name, Widget* parent) : Button(name, parent)
@@ -493,6 +627,16 @@ namespace ui {
         {
             parent_wgt->onSliderBlockDrag(pos, offset);
         }
+    }
+
+    bool SliderBlock::onLoad(XmlNode* node)
+    {
+        if (!Button::onLoad(node))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     SliderBar::SliderBar(const std::string& name, Widget* parent) 
@@ -630,6 +774,16 @@ namespace ui {
         setValue(value);
     }
 
+    bool SliderBar::onLoad(XmlNode* node)
+    {
+        if (!Group::onLoad(node))
+        {
+            return false;
+        }
+
+        adjustSliderSize();
+        return true;
+    }
 
     // ------------------------------------------------------------------------------------------
 
@@ -694,6 +848,15 @@ namespace ui {
     void ListBox::setSelectItem(int index)
     {
         return _radioGroup->setSelectItem(index);
+    }
+
+    bool ListBox::onLoad(XmlNode* node)
+    {
+        if (!ExpandGroup::onLoad(node))
+        {
+            return false;
+        }
+        return true;
     }
 
 }

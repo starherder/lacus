@@ -13,29 +13,28 @@ namespace game
 
 FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-    root()->setMovable(false);
+    auto group = root()->createChild<Group>("group_bg");
+    group->setBgColor({ 0,0,0,0 });
+    group->setMovable(false);
+    group->setAcceptEvent(false);
 
-    root()->setAcceptEvent(false);
-
-    root()->setBgColor({ 0,0,0, 0 });
-
-    _btnScenes = root()->createChild<ui::Button>("btn_scenes");
+    _btnScenes = group->createChild<ui::Button>("btn_scenes");
     _btnScenes->setPos({size().x - 260, 50});
     _btnScenes->setSize({100, 50});
     _btnScenes->setText("scenes");
     _btnScenes->on_click.connect([this](ui::Button* btn) {
-        ui::GuiManager::inst().showForm<FormScenes>("form_scenes", _context);
+        ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _context);
     });
 
-    _btnConfig = root()->createChild<ui::Button>("btn_config");
+    _btnConfig = group->createChild<ui::Button>("btn_config");
     _btnConfig->setPos({ size().x - 150, 50 });
     _btnConfig->setSize({ 100, 50 });
     _btnConfig->setText("config");
     _btnConfig->on_click.connect([this](ui::Button* btn) {
-        ui::GuiManager::inst().showForm<FormConfig>("form_config", _context);
+        ui::GuiManager::inst().createForm<FormConfig>("form_config", _context);
     });
 
-    _cardGroup = root()->createChild<CardGroup>("card_group");
+    _cardGroup = group->createChild<CardGroup>("card_group");
 
     ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
 

@@ -11,10 +11,10 @@ namespace game
 	{
 		Combat, // 近战(刀枪)
 		Projectile, // 远程抛射(弓箭、炮铳、火球术)
-		Remote, // 远程魔法（闪电,加Buff等）
 		Trap, // 陷阱（地刺、地火、陷阱等有生存周期，会造成伤害）
 		Sprint, // 冲刺，对一条线上敌人造成伤害
 		Wave, // 龟仙波
+		Lightning, // 闪电
 		Other, // 其他（天黑、降雨等）
 		Invalid,
 	};
@@ -83,8 +83,6 @@ namespace game
 		int duration = 5000;
 		int period = 1000;
 
-		std::string func;
-
 		std::string particle;
 		Color color = Color::Red;
 		std::string texture;
@@ -92,8 +90,6 @@ namespace game
 
 	struct CompTraps
 	{
-		bool running = false;
-
 		int period_ticks = 0;
 		int during_ticks = 0;
 		std::function<void(int64_t)> onUpdate = nullptr;
@@ -108,11 +104,39 @@ namespace game
 
 	struct CompWave
 	{
-		bool running = false;
-
 		int wave_ticks = 0;
 		int cur_wave = 0;
 		std::function<void(int64_t)> onUpdate = nullptr;
+	};
+
+	struct CompLightningCfg
+	{
+		int target_count = 1;
+		int attack_times = 1;
+		
+		int interval = 500;
+		
+		float displace = 50.0f;
+		Color color = {200, 200, 255, 200};
+		float thickness = 3.0f;
+		int during = 500;
+	};
+
+	struct CompLightning
+	{
+		int atk_ticks = 0;
+		int cur_atk = 0;
+
+		std::function<void(int64_t)> onUpdate = nullptr;
+	};
+
+	struct CompLightningDisplay
+	{
+		std::vector<Vec2> data;
+
+		Color color = { 200, 200, 255, 200 };
+		float thickness = 3.0f;
+		int during = 500;
 	};
 
 	struct CompSprint
@@ -276,7 +300,7 @@ namespace game
 		if (type == "trap") return SkillType::Trap;
 		if (type == "wave") return SkillType::Wave;
 		if (type == "sprint") return SkillType::Sprint;
-		if (type == "remote") return SkillType::Remote;
+		if (type == "lightning") return SkillType::Lightning;
 		if (type == "other") return SkillType::Other;
 		SPDLOG_ERROR("skill type ({}) NOT support", type);
 		return SkillType::Other;

@@ -1,5 +1,7 @@
 ﻿#include "form_scenes.h"
 #include "game/ui/ui_logic_events.h"
+#include "form_entry.h"
+#include "ui/gui_manager.h"
 
 
 namespace game 
@@ -7,11 +9,12 @@ namespace game
 
 FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-    root()->setBgColor({ 0,100,0, 200 });
-    root()->setMovable(false);
-    root()->setAcceptEvent(true);
+    auto group = root()->createChild<Group>("group_bg");
+    group->setBgColor({ 0,0,0,200 });
+    group->setMovable(false);
+    group->setAcceptEvent(true);
 
-    _btnClose = root()->createChild<ui::Button>("btn_close");
+    _btnClose = group->createChild<ui::Button>("btn_close");
     _btnClose->setPos({ size().x - 150, 50 });
     _btnClose->setSize({ 100, 50 });
     _btnClose->setText("close");
@@ -23,7 +26,7 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
     std::vector<Vec2> btnScenesPos = { {300,600}, {500,100}, {900, 300} };
     for (auto& pos : btnScenesPos)
     {
-        auto btn = root()->createChild<ui::Button>(std::format("btn_scene_{}", index));
+        auto btn = group->createChild<ui::Button>(std::format("btn_scene_{}", index));
         btn->setPos(pos);
         btn->setSize({100, 100});
         btn->setText(std::format("scene-{}", index));
@@ -53,11 +56,13 @@ void FormScenes::onSizeChanged()
 
 void FormScenes::onSelectScene(ui::Button* btn)
 {
-    ui::GuiManager::inst().closeForm("form_scenes");
-
     int index = btn->getData<int>("index");
     auto name = btn->getData<std::string>("scene");
 
-    ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, { index, name });
+    auto form = ui::GuiManager::inst().createForm<FormEntry>("form_entry", _context);
+    if (form)
+    {
+        form->selectScene(index, name);
+    }
 }
 }

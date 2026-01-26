@@ -45,10 +45,17 @@ namespace samples {
 		auto& frameTicker = _application->frameTicker();
         auto& mousePos = _application->eventDispatcher().mousePos();
 
+        Vec2 cameraPos;
+        game::GamePlugin* plugin =(game::GamePlugin*)_application->getPlugin("game_plugin");
+        if (plugin) {
+            cameraPos = plugin->context().camera().getPos();
+        }
+
 		static bool open = true;
 		if (ImGui::Begin("Example: Simple overlay", &open, window_flags))
 		{
-			ImGui::Text("mouse: %d, %d", (int)mousePos.x, (int)mousePos.y);
+            ImGui::Text("mouse: %d, %d", (int)mousePos.x, (int)mousePos.y);
+            ImGui::Text("camera: %d, %d", (int)cameraPos.x, (int)cameraPos.y);
 			ImGui::Separator();
 			
 			ImGui::Text("fps: %d", 	 frameTicker.fps());

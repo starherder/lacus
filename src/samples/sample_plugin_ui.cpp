@@ -12,7 +12,6 @@ namespace samples {
 		setSize({ 1000, 600 });
 
 		root()->setBgColor({0, 60, 60, 200});
-		root()->setMaxChildren(true);
 
 		auto vlay_bg = root()->createChild<ui::VLayout>("vlay_bg");
 		vlay_bg->setBgColor(Color::Pale);
@@ -123,7 +122,7 @@ namespace samples {
 		setSize({ 1500, 1000 });
 
 		// create child
-		auto bgGroup = root();
+		auto bgGroup = root()->createChild<ui::Group>("grp_bg");
 		bgGroup->setBgColor({ 0, 60, 0, 200});
 
 		{
@@ -220,17 +219,17 @@ namespace samples {
 
 
 
-	FormDemo::FormDemo(const std::string& name) : Form(name)
+	FormDemo::FormDemo(const std::string& name, Application& app) : Form(name), _application(app)
 	{
 		setPos({ 100, 100 });
 		setSize({ 1500, 1000 });
 
 		// create child
-		auto group = root();
-		group->setBgColor({ 0, 100, 100, 200 });
+		auto bk_group = root()->createChild<ui::Group>("grp_bg");
+		bk_group->setBgColor({ 0, 100, 100, 200 });
 
 		{// ---------------------- base ----------------------
-			auto bar = group->createChild<ui::Label>("head_bar");
+			auto bar = bk_group->createChild<ui::Label>("head_bar");
 			bar->setPos({ 100, 0 });
 			bar->setSize({ 1300, 50 });
 			bar->setBgColor({ 125, 200, 125, 255 });
@@ -240,15 +239,15 @@ namespace samples {
 			bar->setText("Wigets Demo");
 
 			// get child
-			group->createChild<ui::Widget>("rect_area");
-			auto area = group->getChild<ui::Widget>("rect_area");
+			bk_group->createChild<ui::Widget>("rect_area");
+			auto area = bk_group->getChild<ui::Widget>("rect_area");
 			area->setPos({ 100, 80 });
 			area->setSize({ 50, 50 });
 			area->setBgColor({ 255, 255, 125, 255 });
 		}
 
 		{ // ---------------------- group ----------------------
-			auto grp_right = group->createChild<ui::Group>("grp_right");
+			auto grp_right = bk_group->createChild<ui::Group>("grp_right");
 			grp_right->setPos({ 100, 200 });
 			grp_right->setSize({ 300, 350 });
 			grp_right->setBgColor({ 125, 125, 200, 255 });
@@ -277,7 +276,7 @@ namespace samples {
 		}
 
 		{// ---------------------- buttons ----------------------
-			auto grp_btns = group->createChild<ui::Group>("grp_btns");
+			auto grp_btns = bk_group->createChild<ui::Group>("grp_btns");
 			grp_btns->setPos({ 500, 200 });
 			grp_btns->setSize({ 300, 350 });
 			grp_btns->setBgColor({ 125, 200, 125, 255 });
@@ -326,7 +325,7 @@ namespace samples {
 		}
 
 		{	// ---------------------- horizonal layout ----------------------
-			auto hlay = root()->createChild<ui::HorizonalLayout>("hlay");
+			auto hlay = bk_group->createChild<ui::HorizonalLayout>("hlay");
 			hlay->setPos({ 100, 650 });
 			hlay->setSize({ 800, 100 });
 			hlay->setBgColor(Color::LightRed);
@@ -348,10 +347,11 @@ namespace samples {
 		}
 
 		{	// ---------------------- vertical layout ----------------------
-			auto vlay = root()->createChild<ui::VerticalLayout>("vlay");
+			auto vlay = bk_group->createChild<ui::VerticalLayout>("vlay");
 			vlay->setPos({ 900, 100 });
 			vlay->setSize({ 100, 600 });
 			vlay->setBgColor(Color::LightGreen);
+
 			auto wgt = vlay->createChild<ui::Widget>("wgt_3");
 			wgt->setSize({ 50, 50 });
 			wgt->setBgColor(Color::LightRed);
@@ -368,7 +368,7 @@ namespace samples {
 		}
 
 		{
-			auto exgroup = root()->createChild<ui::ExpandGroup>("exp_group");
+			auto exgroup = bk_group->createChild<ui::ExpandGroup>("exp_group");
 			exgroup->setPos({1050, 100});
 			exgroup->setSize({300, 300});
 
@@ -388,7 +388,7 @@ namespace samples {
 		}
 
 		{
-			auto radioHGroup = root()->createChild<ui::RadioHLayGroup>("radio_hlay_group");
+			auto radioHGroup = bk_group->createChild<ui::RadioHLayGroup>("radio_hlay_group");
 			radioHGroup->setPos({1050, 450});
 			radioHGroup->setSize({ 300, 80 });
 			radioHGroup->addItem("alpha");
@@ -398,7 +398,7 @@ namespace samples {
 				SPDLOG_INFO("radio horizonal group: index: {} selected", index);
 			});
 
-			auto radioVGroup = root()->createChild<ui::RadioVLayGroup>("radio_vlay_group");
+			auto radioVGroup = bk_group->createChild<ui::RadioVLayGroup>("radio_vlay_group");
 			radioVGroup->setPos({ 1050, 550 });
 			radioVGroup->setSize({ 300, 180 });
 			radioVGroup->addItem("alpha");
@@ -408,7 +408,7 @@ namespace samples {
 				SPDLOG_INFO("radio vertical group: index: {} selected", index);
 			});
 
-			auto listbox = root()->createChild<ui::ListBox>("list_box");
+			auto listbox = bk_group->createChild<ui::ListBox>("list_box");
 			listbox->setPos({1050, 750});
 			listbox->setSize({300, 180});
 			listbox->on_item_select.connect([this](int index) { on_list_select.emit(index); });
@@ -418,14 +418,14 @@ namespace samples {
 		}
 
 		{
-			auto btn = root()->createChild<ui::Button>("btn_show_cards");
+			auto btn = bk_group->createChild<ui::Button>("btn_show_cards");
 			btn->setSize({150, 50});
 			btn->setPos({200, 80});
 			btn->setText("cards");
 			btn->on_click.connect([](ui::Button* btn) {
 				bool visible = btn->getData<bool>("cards_show");
 				if (!visible) {
-					ui::GuiManager::inst().showForm<FormCards>("form_cars");
+					ui::GuiManager::inst().createForm<FormCards>("form_cars");
 				}
 				else {
 					ui::GuiManager::inst().closeForm("form_cars");
@@ -436,14 +436,14 @@ namespace samples {
 		}
 
 		{
-			auto btn = root()->createChild<ui::Button>("btn_show_layout");
+			auto btn = bk_group->createChild<ui::Button>("btn_show_layout");
 			btn->setSize({ 150, 50 });
 			btn->setPos({ 380, 80 });
 			btn->setText("layout");
 			btn->on_click.connect([](ui::Button* btn) {
 				bool visible = btn->getData<bool>("layout_show");
 				if (!visible) {
-					ui::GuiManager::inst().showForm<FormLayout>("form_layout");
+					ui::GuiManager::inst().createForm<FormLayout>("form_layout");
 				}
 				else {
 					ui::GuiManager::inst().closeForm("form_layout");
@@ -452,6 +452,33 @@ namespace samples {
 				btn->setData("layout_show", !visible);
 			});
 
+			{
+				auto btn = bk_group->createChild<ui::Button>("btn_load_xml");
+				btn->setSize({ 150, 50 });
+				btn->setPos({ 550, 80 });
+				btn->setText("xml");
+				btn->on_click.connect([this](ui::Button* btn) 
+				{
+					bool visible = btn->getData<bool>("load_xml");
+					if (!visible) 
+					{
+						auto form = ui::GuiManager::inst().loadForm(_application.resPath()/ "ui/form_test.xml");
+						if (form)
+						{
+							auto btn = form->getWidget<ui::Button>("btn_close");
+							if (btn) {
+								btn->on_click.connect([form](ui::Button* btn) { form->close(); });
+							}
+						}
+					}
+					else 
+					{
+						ui::GuiManager::inst().closeForm("form_test");
+					}
+
+					btn->setData("layout_show", !visible);
+				});
+			}
 		}
 	}
 
@@ -525,7 +552,7 @@ namespace samples {
 
     void SamplePluginUI::onEnable()
     {
-		auto form = ui::GuiManager::inst().showForm<FormDemo>("form_sample_demo");
+		auto form = ui::GuiManager::inst().createForm<FormDemo>("form_sample_demo", _application);
 		form->on_list_select.connect(this, &SamplePluginUI::onSelectBackGroud);
 
 		auto tex = _application.resourceManager().textureManager().get("textures/battle_of_tiles/etc.png"_hs);

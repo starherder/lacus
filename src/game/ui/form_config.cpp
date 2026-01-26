@@ -6,15 +6,10 @@ namespace game
 
     FormConfig::FormConfig(const std::string& name, GameContext& context) : FormLogicBase(name, context)
     {
-        root()->setBgColor(Color::DarkCyan);
-
-        root()->setMaxChildren(true);
-
         _vlay_bg = root()->createChild<ui::VLayout>("vlay_main");
         _vlay_bg->setBgColor(Color::DarkCyan);
 
         {
-
             auto hlay_title = _vlay_bg->createChild<ui::HLayout>("hlay_title");
             hlay_title->setSize({ 0, 50 });
 

@@ -37,12 +37,10 @@ namespace game
 			display.ground_color_drag_error.fromHexString(displayJs.value("ground_color_drag_error", "#FF808080"));
 			display.border_color_drag_error.fromHexString(displayJs.value("border_color_drag_error", "#FF8080F0"));
 
-			/*			
-			border_color_camp_officer = Color::Red;
-			border_color_camp_ganster = Color::Green;
-			border_color_camp_rebel = Color::Pink;
-			border_color_camp_civilian = Color::White;
-			*/
+			display.border_color_camp_officer.fromHexString(displayJs.value("border_color_camp_officer", "#FF0000FF"));
+			display.border_color_camp_ganster.fromHexString(displayJs.value("border_color_camp_ganster", "#00FF00FF"));
+			display.border_color_camp_rebel.fromHexString(displayJs.value("border_color_camp_rebel", "#FF00FFFF"));
+			display.border_color_camp_civilian.fromHexString(displayJs.value("border_color_camp_civilian", "#FFFFFFFF"));
 		}
 
 		if(json.contains("motion"))

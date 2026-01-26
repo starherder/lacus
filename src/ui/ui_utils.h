@@ -42,6 +42,8 @@ enum class Align {
     Left,
     Center,
     Right,
+    Top,
+    Bottom,
 };
 
 enum class Coordinate {
@@ -59,6 +61,39 @@ public:
     static const WidgetStatus selectedStatus;
     static const WidgetStatus selectHoverStatus;
 };
+
+
+class Widget;
+using WidgetPtr = std::shared_ptr<Widget>;
+
+class WidgetCreator
+{
+public:
+    virtual const char* typeName() = 0;
+    virtual WidgetPtr create(const std::string& name, Widget* widget) = 0;
+};
+
+using WidgetCreatorPtr = std::shared_ptr<WidgetCreator>;
+
+
+#define DeclareWidgetType(WidgetType, TypeName)                             \
+    struct WidgetType##_Creator : public WidgetCreator {                    \
+        const char* typeName() override { return TypeName; }                \
+        WidgetPtr create(const std::string& name, Widget* widget) override  \
+        { return std::make_shared<WidgetType>(name, widget); }              \
+    };                                                                      \
+    struct WidgetType##_Initializer{                                        \
+        WidgetType##_Initializer() {                                        \
+            ui::GuiManager::inst()                                          \
+                .addWidgetCreator<WidgetType##_Creator>();                  \
+        }                                                                   \
+        ~##WidgetType##_Initializer() {}                                    \
+    }g_##WidgetType##_Initializer;
+
+
+
+
+
 
 
 }

@@ -5,6 +5,8 @@
 #include "game/ecs/comp_fight.h"
 
 #include "ui/gui_manager.h"
+#include "samples/sample_plugin_manager.h"
+
 #include "game/ui/ui_logic_events.h"
 #include "utility/translator.h"
 
@@ -53,6 +55,17 @@ void ImFormDebug::draw()
         if(ImGui::Checkbox("show debug", &show_debug))
         {
             _context->scene().setDebugInfo(show_debug);
+        }
+
+        ImGui::SameLine();
+
+        static bool show_hud = true;
+        if (ImGui::Checkbox("show HUD", &show_hud))
+        {
+            auto form = imgui::ImFormManager::inst().getForm<samples::ImGuiFormHUD>("ImGuiFormHUD");
+            if (form) {
+                form->show(show_hud);
+            }
         }
 
         ImGui::SameLine();
@@ -191,12 +204,11 @@ void ImFormDebug::drawSelectEntityProps()
             ImGui::TableNextColumn();
             ImGui::Text(name.c_str());
 
-
             ImGui::TableNextColumn();
             ImGui::Text(value.c_str());
         }
+        ImGui::EndTable();
     }
-    ImGui::EndTable();
 }
 
 void ImFormDebug::roleExecSkill(entt::entity skill)

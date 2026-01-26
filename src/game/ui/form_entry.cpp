@@ -1,48 +1,44 @@
 ﻿#include "form_entry.h"
 #include "form_config.h"
 
+#include "game/ui/ui_logic_events.h"
+
 namespace game 
 {
 
 FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-	root()->setBgColor(Color::Light);
-	//root()->setMaxChildren(true);
+	auto group = root()->createChild<Group>("group_bg");
+	group->setBgColor(Color::DarkCyan);
 
-	_lblTitle = root()->createChild<Label>("title");
-	_lblTitle->setFont("fonts/Vonwaon.ttf", 40);
-	_lblTitle->setBgColor(Color::Light);
-	_lblTitle->setBorderColor(Color::Light);
-	_lblTitle->setTextColor(Color::DarkGreen);
-	_lblTitle->setText("Lacus");
-	_lblTitle->setSize({ 300, 100 });
-	
-	_btnStart = root()->createChild<ui::Button>("btn_start");
-	_btnStart->setText("start");
-	_btnStart->setSize({ 200, 50 });
-	_btnStart->on_click.connect([this](ui::Button* btn) { onStart(btn); });
+	auto btnStart = group->createChild<ui::Button>("btn_start");
+	btnStart->setText("start");
+	btnStart->setSize({ 200, 50 });
+	btnStart->on_click.connect([this](ui::Button* btn) { onStart(btn); });
 
-	_btnResume = root()->createChild<ui::Button>("btn_resume");
-	_btnResume->setText("resume");
-	_btnResume->setSize({ 200, 50 });
-	_btnResume->on_click.connect([this](ui::Button* btn) { onResume(btn); });
+	auto btnCancel = group->createChild<ui::Button>("btn_cancel");
+	btnCancel->setText("cancel");
+	btnCancel->setSize({ 200, 50 });
+	btnCancel->on_click.connect([this](ui::Button* btn) { close(); });
 
-	_btnConfig = root()->createChild<ui::Button>("btn_config");
-	_btnConfig->setText("config");
-	_btnConfig->setSize({ 200, 50 });
-	_btnConfig->on_click.connect([this](ui::Button* btn) { onConfig(btn); });
-
-	_btnExit = root()->createChild<ui::Button>("btn_exit");
-	_btnExit->setText("exit");
-	_btnExit->setSize({ 200, 50 });
-	_btnExit->on_click.connect([this](ui::Button* btn) { onExit(btn); });
-
-	setMaximize(true);
+	setMaximize(false);
 	setDragMovable(false);
+
+	auto winsz = ui::GuiManager::inst().windowSize();
+	setSize({ winsz.x / 3, winsz.y });
+	setPos({ 0, 0 });
 }
 
 FormEntry::~FormEntry()
 {
+}
+
+void FormEntry::selectScene(int index, const std::string& scene)
+{
+	_sceneIndex = index;
+	_sceneFile = scene;
+
+	//showDescript();
 }
 
 void FormEntry::onUpdate(float delta)
@@ -51,48 +47,38 @@ void FormEntry::onUpdate(float delta)
 
 void FormEntry::onStart(Button* btn)
 {
-	on_start_game.emit();
-}
+	SPDLOG_INFO("FormEntry: onStart, index={}, file={}", _sceneIndex, _sceneFile);
 
-void FormEntry::onResume(Button* btn)
-{
-	on_resume_game.emit();
-}
-
-void FormEntry::onConfig(Button* btn)
-{
-	//on_config_game.emit();
-	GuiManager::inst().showForm<FormConfig>("from_config", _context);
-}
-
-void FormEntry::onExit(Button* btn)
-{
-	on_exit_game.emit();
+	ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, { _sceneIndex, _sceneFile });
 }
 
 void FormEntry::onSizeChanged()
 {
-	SPDLOG_INFO("FormEntry::onWindowResized");
+	auto btnStart = getWidget<Widget>("btn_start");
+	if (btnStart)
+	{
+		auto winsz = size();
+		auto dstPos = Vec2{20, winsz.y - 60};
+		btnStart->setPos(dstPos);
+	}
 
-	auto x = size().x / 2 - _lblTitle->size().x / 2;
-	auto y = size().y / 2 - 160;
-	_lblTitle->setPos({ x, y });
+	auto btnCancel = getWidget<Widget>("btn_cancel");
+	if (btnCancel)
+	{
+		auto winsz = size();
+		auto dstPos = Vec2{ btnCancel->size().x + 40, winsz.y - 60 };
+		btnCancel->setPos(dstPos);
+	}
 
-	x = size().x / 2 - _btnStart->size().x / 2;
-	y = _lblTitle->pos().y + _lblTitle->size().y + 50;
-	_btnStart->setPos({ x, y });
+}
 
-	x = size().x / 2 - _btnResume->size().x / 2;
-	y = _btnStart->pos().y + _btnStart->size().y + 20;
-	_btnResume->setPos({ x, y });
+void FormEntry::onWindowResized(const Vec2& size)
+{
+	auto winsz = ui::GuiManager::inst().windowSize();
+	setSize({ winsz.x / 3, winsz.y });
+	setPos({ 0, 0 });
 
-	x = size().x / 2 - _btnConfig->size().x / 2;
-	y = _btnResume->pos().y + _btnResume->size().y + 20;
-	_btnConfig->setPos({ x, y });
 
-	x = size().x / 2 - _btnExit->size().x / 2;
-	y = _btnConfig->pos().y + _btnConfig->size().y + 20;
-	_btnExit->setPos({ x, y });
 }
 
 }

@@ -3,6 +3,9 @@
 
 namespace ui
 {
+    DeclareWidgetType(CardWidget, "card");
+    DeclareWidgetType(CardGroup, "card_group");
+
     using namespace engine;
 
     const Vec2 CardTitlePos = {30, 30};

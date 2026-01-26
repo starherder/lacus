@@ -6,13 +6,14 @@ namespace game
 
     FormLoading::FormLoading(const std::string& name, GameContext& context) : FormLogicBase(name, context)
     {
-        root()->setBgColor(Color::DarkCyan);
-        root()->setAcceptEvent(true);
+        auto group = root()->createChild<Group>("group_bg");
+        group->setBgColor(Color::DarkCyan);
+        group->setAcceptEvent(true);
 
-        _progressBar = root()->createChild<ui::ProgressBar>("progress_loading");
+        _progressBar = group->createChild<ui::ProgressBar>("progress_loading");
         setProgress(0.0f);
 
-        _textTip = root()->createChild<ui::Label>("text_tip");
+        _textTip = group->createChild<ui::Label>("text_tip");
         _textTip->setText("loading...");
         _textTip->setFont("fonts/Vonwaon.ttf", 40);
         _textTip->setSize({ 300, 100 });

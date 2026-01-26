@@ -29,12 +29,12 @@ namespace game
     {
         if (e.type == FloatTextType::HP)
         {
-            return std::format("HP{}{}", e.val > 0 ? "+" : "-", e.val);
+            return std::format("HP{}{}", e.val > 0 ? "+" : "", e.val);
         }
 
         if (e.type == FloatTextType::LV)
         {
-            return std::format("LV{}{}", e.val > 0 ? "+" : "-", e.val);
+            return std::format("LV{}{}", e.val > 0 ? "+" : "", e.val);
         }
 
         return "OOO";

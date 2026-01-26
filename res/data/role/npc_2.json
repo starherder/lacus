@@ -50,7 +50,7 @@
   },
 
   "skills": [
-    "skill_poison"
+    "skill_lightning", "skill_poison"
   ],
 
   "dead_drop": {

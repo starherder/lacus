@@ -74,6 +74,13 @@ namespace game
 
     void PickupSystem::useItem(entt::entity actor, entt::entity obj)
     {
+        auto pActorComm = _context.registry().try_get<CompComm>(actor);
+        auto pObjComm = _context.registry().try_get<CompComm>(obj);
+        if(!pActorComm || pActorComm->type !=ObjectType::Npc || !pObjComm || pObjComm->type != ObjectType::Item)
+        {
+            return;
+        }
+
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
 
