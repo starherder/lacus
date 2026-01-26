@@ -32,11 +32,5 @@ namespace game
 
         void onSizeChanged() override;
 
-    private:
-        ui::Label* _lblTitle = nullptr;
-        ui::Button* _btnStart = nullptr;
-        ui::Button* _btnResume = nullptr;
-        ui::Button* _btnConfig = nullptr;
-        ui::Button* _btnExit = nullptr;
     };
 }

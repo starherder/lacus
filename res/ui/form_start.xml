@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form name="form_start" maximize="true" ground_color="#006666FF" border_color="#555555FF" border_size="1">
+    <vlayout name="vlay_bg" >
+        <widget />
+
+        <label text="lacus" size="500,300" text_color="#27cc27ff" font_name="fonts/Vonwaon.ttf" font_size="60"/>
+
+        <hlayout size="0,50" >
+            <widget />
+            <button name="btn_start" size="250,50" text="开始"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
+            <widget />
+        </hlayout>
+        <hlayout size="0,50" >
+            <widget />
+            <button name="btn_resume" size="250,50" text="继续"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
+            <widget />
+        </hlayout>
+        <hlayout size="0,50" >
+            <widget />
+            <button name="btn_config" size="250,50" text="配置"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
+            <widget />
+        </hlayout>
+        <hlayout size="0,50" >
+            <widget />
+            <button name="btn_exit" size="250,50" text="推出"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
+            <widget />
+        </hlayout>
+        <widget />
+    </vlayout>
+</form>

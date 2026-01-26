@@ -6,39 +6,27 @@ namespace game
 
 FormStart::FormStart(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-	auto group = root()->createChild<Group>("vlay_bg");
-	group->setBgColor(Color::Light);
+	load(_context.resPath() / "ui/form_start.xml");
 
-	_lblTitle = group->createChild<Label>("title");
-	_lblTitle->setFont("fonts/Vonwaon.ttf", 40);
-	_lblTitle->setBgColor(Color::Light);
-	_lblTitle->setBorderColor(Color::Light);
-	_lblTitle->setTextColor(Color::DarkGreen);
-	_lblTitle->setText("Lacus");
-	_lblTitle->setSize({ 300, 100 });
-	
-	_btnStart = group->createChild<ui::Button>("btn_start");
-	_btnStart->setText("start");
-	_btnStart->setSize({ 200, 50 });
-	_btnStart->on_click.connect([this](ui::Button* btn) { onStart(btn); });
+	auto btnStart = getWidget<ui::Button>("btn_start");
+	if (btnStart) {
+		btnStart->on_click.connect([this](ui::Button* btn) { onStart(btn); });
+	}
 
-	_btnResume = group->createChild<ui::Button>("btn_resume");
-	_btnResume->setText("resume");
-	_btnResume->setSize({ 200, 50 });
-	_btnResume->on_click.connect([this](ui::Button* btn) { onResume(btn); });
+	auto btnResume = getWidget<ui::Button>("btn_resume");
+	if (btnResume) {
+		btnResume->on_click.connect([this](ui::Button* btn) { onResume(btn); });
+	}
 
-	_btnConfig = group->createChild<ui::Button>("btn_config");
-	_btnConfig->setText("config");
-	_btnConfig->setSize({ 200, 50 });
-	_btnConfig->on_click.connect([this](ui::Button* btn) { onConfig(btn); });
+	auto btnConfig = getWidget<ui::Button>("btn_config");
+	if (btnConfig) {
+		btnConfig->on_click.connect([this](ui::Button* btn) { onConfig(btn); });
+	}
 
-	_btnExit = group->createChild<ui::Button>("btn_exit");
-	_btnExit->setText("exit");
-	_btnExit->setSize({ 200, 50 });
-	_btnExit->on_click.connect([this](ui::Button* btn) { onExit(btn); });
-
-	setMaximize(true);
-	setDragMovable(false);
+	auto btnExit = getWidget<ui::Button>("btn_exit");
+	if (btnExit) {
+		btnExit->on_click.connect([this](ui::Button* btn) { onExit(btn); });
+	}
 }
 
 FormStart::~FormStart()
@@ -72,27 +60,6 @@ void FormStart::onExit(Button* btn)
 
 void FormStart::onSizeChanged()
 {
-	SPDLOG_INFO("FormStart::onWindowResized");
-
-	auto x = size().x / 2 - _lblTitle->size().x / 2;
-	auto y = size().y / 2 - 160;
-	_lblTitle->setPos({ x, y });
-
-	x = size().x / 2 - _btnStart->size().x / 2;
-	y = _lblTitle->pos().y + _lblTitle->size().y + 50;
-	_btnStart->setPos({ x, y });
-
-	x = size().x / 2 - _btnResume->size().x / 2;
-	y = _btnStart->pos().y + _btnStart->size().y + 20;
-	_btnResume->setPos({ x, y });
-
-	x = size().x / 2 - _btnConfig->size().x / 2;
-	y = _btnResume->pos().y + _btnResume->size().y + 20;
-	_btnConfig->setPos({ x, y });
-
-	x = size().x / 2 - _btnExit->size().x / 2;
-	y = _btnConfig->pos().y + _btnConfig->size().y + 20;
-	_btnExit->setPos({ x, y });
 }
 
 }

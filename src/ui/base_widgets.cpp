@@ -597,6 +597,18 @@ namespace ui
             return false;
         }
 
+        auto getCoord = [](const std::string& str) {
+            if (str == "horizonal") return Coordinate::Horizonal;
+            if (str == "vertical") return Coordinate::Vertical;
+            return Coordinate::Horizonal;
+        };
+
+        auto direction = getCoord(node->Attribute("coordinate"));
+        setDirection(direction);
+
+        auto value = node->FloatAttribute("value");
+        setProgress(value);
+
         return true;
     }
 

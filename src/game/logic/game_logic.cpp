@@ -195,14 +195,11 @@ namespace game
 
     void GameLogic::onStartNewGame()
     {
-        ui::GuiManager::inst().closeForm("form_entry");
-
         startFirstScene();
     }
 
     void GameLogic::onResumeGame()
     {
-        ui::GuiManager::inst().closeForm("form_entry");
     }
 
     void GameLogic::onConfigGame()
@@ -217,6 +214,8 @@ namespace game
 
     void GameLogic::startFirstScene()
     {
+        closeAllForms();
+
         showLoadingForm(true);
 
         auto mapFile = _gameContext.resPath() / _gameConfig.scenes.first_scene;
