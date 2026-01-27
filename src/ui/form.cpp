@@ -34,11 +34,6 @@ bool Form::load(const fs::path& filepath)
         return false;
     }
 
-    auto defname = std::format("form_{}", ui::GuiManager::inst().generateId());
-
-    _name = ele->Attribute("name");
-    _name = _name.empty() ? defname : _name;
-    
     auto pos = ToVec2(ele->Attribute("pos"));
     setPos(pos);
 
@@ -114,16 +109,13 @@ Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
             if(ptr->isGroup())
             {
                 auto widget = getWidgetInGroup((Group*)ptr.get(), pos);
-                if(widget && widget->acceptEvent())
+                if(widget)
                 {
                     return widget;
                 }
             }
 
-            if (ptr->acceptEvent()) 
-            {
-                return ptr.get();
-            }
+            return ptr.get();
         }
     }
     return nullptr;
@@ -208,6 +200,11 @@ void Form::hide()
 void Form::close()
 {
     GuiManager::inst().closeForm(name());
+}
+
+void Form::moveToTop()
+{
+    GuiManager::inst().moveToTop(name());
 }
 
 void Form::onWindowResized(const Vec2& size)

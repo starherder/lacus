@@ -119,7 +119,6 @@ namespace ui
         if (addOK) 
         {
             widget->setParent(this);
-            SPDLOG_INFO("    addWidget: {} to {}", widget->name(), name());
             onChildAdded(widget.get());
         }
         else
@@ -468,6 +467,16 @@ namespace ui
         adjustContent();
     }
 
+    std::vector<Widget*> ExpandGroup::items()
+    {
+        std::vector<Widget*> result;
+        for(auto child : children()) {
+            if(child.get() != _horizonSlider && child.get() != _verticalSlider) {
+                result.push_back(child.get());
+            }
+        }
+        return result;
+    }
     ///////////////////////////////////////////////////////////////////////////////////////
 
 	HorizonalLayout::HorizonalLayout(const std::string& name, Widget* parent )

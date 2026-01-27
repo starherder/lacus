@@ -51,7 +51,7 @@ enum class Coordinate {
     Vertical,
 };
 
-class WigetUtils
+class WidgetUtils
 {
 public:
     static const WidgetStatus normalStatus;
@@ -60,6 +60,10 @@ public:
     static const WidgetStatus disabledStatus;
     static const WidgetStatus selectedStatus;
     static const WidgetStatus selectHoverStatus;
+
+    static Coordinate getCoord(const std::string& str);
+
+    static Align getAlign(const std::string& str);
 };
 
 

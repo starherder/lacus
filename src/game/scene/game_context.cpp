@@ -32,4 +32,9 @@ namespace game
 		return scene().camera(); 
 	}
 
+	GameData& GameContext::dataCenter()
+	{
+		return _currentScene->dataCenter(); 
+	}
+
 }

@@ -5,6 +5,7 @@
 #include "game/scene/game_context.h"
 #include "game/scene/object_factory.h"
 #include "game/ecs/comm_event.h"
+#include "game/scene/game_data.h"
 
 #include "game_camera.h"
 
@@ -54,6 +55,7 @@ namespace game {
         const tilemap::TileMap& mapInfo() { return _tileMap; }
 
         GameCamera& camera() { return _camera; }
+        GameData& dataCenter() { return _gameData; }
         entt::registry& registry() { return _registry;  }
 
         entt::entity createMapActor(const MapObject& obj);
@@ -126,6 +128,8 @@ namespace game {
         entt::registry _registry;
 
         GameCamera _camera;
+
+        GameData _gameData;
 
         GridEntityMap _gridObjects;
 

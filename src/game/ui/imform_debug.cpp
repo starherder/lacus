@@ -114,7 +114,7 @@ void ImFormDebug::draw()
         ImGui::SameLine();
 
         static int select_index = 0;
-        const auto& cfgs = ObjectFactory::inst().getAllObjectCfgIds();
+        const auto& cfgs = ObjectFactory::inst().getAllRoleCfgIds();
         _selectCfgId = cfgs[select_index];
 
         if (ImGui::BeginCombo("##combo_cfgs", cfgs[select_index].c_str()))

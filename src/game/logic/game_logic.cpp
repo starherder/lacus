@@ -50,20 +50,6 @@ namespace game
 
     void GameLogic::initEscSystem()
     {
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<MotionSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<RenderSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BevTreeSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<PickupSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<DeadSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SelectionSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SkillSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FightSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<BuffSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<SpawnerSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<NumericalSystem>(_gameContext) });
-        //_ecsSystems.insert({ EcsPriority::Middle, std::make_shared<FloatTextSystem>(_gameContext) });
-
         EcsSystemManager::inst().init(_gameContext);
     }
     
@@ -75,56 +61,60 @@ namespace game
         bool res = _gameConfig.load(gamecfg);
         if (!res) {
             SPDLOG_ERROR("load game config: {} failed.", gamecfg.string());
-            return;
         }
 
         auto btreePath =_gameContext.resPath() / "data/bevtree/";
         res = bevtree::BevTreeManager::inst().load(btreePath);
         if (!res) {
             SPDLOG_ERROR("load bevtree config: {} failed.", btreePath.string());
-            return;
         }
 
         auto roleCfgs =_gameContext.resPath() / "data/role/";
         res = ObjectFactory::inst().loadRoles(roleCfgs);
         if (!res) {
             SPDLOG_ERROR("load role config: {} failed.", roleCfgs.string());
-            return;
+        }
+
+        auto enemyCfgs = _gameContext.resPath() / "data/role/";
+        res = ObjectFactory::inst().loadEnemies(enemyCfgs);
+        if (!res) {
+            SPDLOG_ERROR("load enemy config: {} failed.", enemyCfgs.string());
+        }
+
+        auto otherCfgs = _gameContext.resPath() / "data/other/";
+        res = ObjectFactory::inst().loadOther(otherCfgs);
+        if (!res) {
+            SPDLOG_ERROR("load other config: {} failed.", otherCfgs.string());
         }
 
         auto itemCfgs =_gameContext.resPath() / "data/item/";
         res = ObjectFactory::inst().loadItems(itemCfgs);
         if (!res) {
             SPDLOG_ERROR("load item config: {} failed.", itemCfgs.string());
-            return;
         }
 
         auto skilldir =_gameContext.resPath() / "data/skill/";
         res = ObjectFactory::inst().loadSkills(skilldir);
         if (!res) {
             SPDLOG_ERROR("load skill config: {} failed.", skilldir.string());
-            return;
         }
 
         auto buffdir =_gameContext.resPath() / "data/buff/";
         res = ObjectFactory::inst().loadBuffs(buffdir);
         if (!res) {
             SPDLOG_ERROR("load buff config: {} failed.", buffdir.string());
-            return;
         }
 
         auto particleCfgs =_gameContext.resPath() / "particles/";
         res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
         if (!res) {
             SPDLOG_ERROR("load partiles config: {} failed.", particleCfgs.string());
-            return;
         }
 
         auto textdir =_gameContext.resPath() / "localized/CHS/";
         res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
         if (!res) {
             SPDLOG_ERROR("load translator file ({}) failed.", textdir.string());
-            return;
         }
 	}
 
@@ -148,11 +138,6 @@ namespace game
 
 
         EcsSystemManager::inst().update(delta);
-
-        //for (auto& [prio, sys] : _ecsSystems)
-        //{
-        //    sys->update(delta);
-        //}
     }
 
     void GameLogic::draw()
@@ -165,16 +150,11 @@ namespace game
         _scene->onDraw();
 
         EcsSystemManager::inst().draw();
-
-        //for (auto& [prio, sys] : _ecsSystems)
-        //{
-        //    sys->draw();
-        //}
     }
 
     void GameLogic::start()
     {
-        auto formStart = ui::GuiManager::inst().createForm<FormStart>("form_entry", _gameContext);
+        auto formStart = ui::GuiManager::inst().createForm<FormStart>("form_start", _gameContext);
         formStart->on_start_game.connect(this, &GameLogic::onStartNewGame);
         formStart->on_resume_game.connect(this, &GameLogic::onResumeGame);
         formStart->on_config_game.connect(this, &GameLogic::onConfigGame);
@@ -204,12 +184,10 @@ namespace game
 
     void GameLogic::onConfigGame()
     {
-        //ui::GuiManager::inst().closeForm("form_entry");
     }
 
     void GameLogic::onExitGame()
     {
-        //ui::GuiManager::inst().closeForm("form_entry");
     }
 
     void GameLogic::startFirstScene()
@@ -289,10 +267,7 @@ namespace game
     {
         if (eventId == Event_SelectScene)
         {
-            int index = varlist[0];
-            std::string name = varlist[1];
-
-            switchScene(name);
+            switchScene(varlist[0]);
         }
         else if (eventId == Event_ToggleMainForm)
         {

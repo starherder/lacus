@@ -48,7 +48,7 @@ namespace samples
 
 				ui::GuiManager::inst().closeAllForms();
 
-				ui::GuiManager::inst().loadForm(_application->resPath() / form_name);
+				ui::GuiManager::inst().loadForm(form_name, _application->resPath() / form_name);
 			}
 
 			if (ImGui::Button("reload all", { 200, 30 })) {
@@ -519,7 +519,7 @@ namespace samples
 					bool visible = btn->getData<bool>("load_xml");
 					if (!visible) 
 					{
-						auto form = ui::GuiManager::inst().loadForm(_application.resPath()/ "ui/form_test.xml");
+						auto form = ui::GuiManager::inst().loadForm("form_test", _application.resPath() / "ui/form_test.xml");
 						if (form)
 						{
 							auto btn = form->getWidget<ui::Button>("btn_close");

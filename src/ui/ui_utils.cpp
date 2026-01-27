@@ -3,46 +3,65 @@
 namespace ui {
 
 
-const WidgetStatus WigetUtils::normalStatus = WidgetStatus{
+const WidgetStatus WidgetUtils::normalStatus = WidgetStatus{
                                         .ground_color = Color::Light,
                                         .text_color = Color::Black,
                                         .border_color = Color::Gray,
                                         .texture = nullptr
 };
 
-const WidgetStatus WigetUtils::hoveredStatus = WidgetStatus{
+const WidgetStatus WidgetUtils::hoveredStatus = WidgetStatus{
                                         .ground_color = Color::Pale,
                                         .text_color = Color::Gray,
                                         .border_color = Color::DarkGreen,
                                         .texture = nullptr
 };
 
-const WidgetStatus WigetUtils::pressedStatus = WidgetStatus{
+const WidgetStatus WidgetUtils::pressedStatus = WidgetStatus{
                                         .ground_color = Color::Gray,
                                         .text_color = Color::Black,
                                         .border_color = Color::DarkGreen,
                                         .texture = nullptr
 };
 
-const WidgetStatus WigetUtils::disabledStatus = WidgetStatus{
+const WidgetStatus WidgetUtils::disabledStatus = WidgetStatus{
                                         .ground_color = Color::Dark,
                                         .text_color = Color::Black,
                                         .border_color = Color::Gray,
                                         .texture = nullptr
 };
 
-const WidgetStatus WigetUtils::selectedStatus = WidgetStatus{
+const WidgetStatus WidgetUtils::selectedStatus = WidgetStatus{
                                         .ground_color = Color::Gray,
                                         .text_color = Color::Yellow,
                                         .border_color = Color::Yellow,
                                         .texture = nullptr
 };
 
-const WidgetStatus WigetUtils::selectHoverStatus = WidgetStatus{
+const WidgetStatus WidgetUtils::selectHoverStatus = WidgetStatus{
                                         .ground_color = Color::Gray,
                                         .text_color = Color::Yellow,
                                         .border_color = Color::Green,
                                         .texture = nullptr
 };
+
+
+Coordinate WidgetUtils::getCoord(const std::string& str)
+{
+    if (str == "horizonal") return Coordinate::Horizonal;
+    if (str == "vertical") return Coordinate::Vertical;
+    return Coordinate::Horizonal;
+}
+
+Align WidgetUtils::getAlign(const std::string& str) 
+{
+    if (str == "left") return Align::Left;
+    else if (str == "right") return Align::Right;
+    else if (str == "center") return Align::Center;
+    else if (str == "top") return Align::Top;
+    else if (str == "bottom") return Align::Bottom;
+
+    return Align::Center;
+}
 
 }

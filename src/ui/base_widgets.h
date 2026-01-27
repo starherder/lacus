@@ -289,6 +289,8 @@ public:
 protected:
     bool onLoad(XmlNode* node);
 
+    void onSizeChanged(const Vec2& oldSz, const Vec2& newSz);
+
 private:
     Vec2 DefaultSize = {100, 20};
     Coordinate _direction = Coordinate::Horizonal;

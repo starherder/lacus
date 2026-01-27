@@ -42,6 +42,9 @@ public:
     auto canDragOut() const { return _canDragOut; }
     void setCanDragOut(bool d) { _canDragOut = d; }
 
+    auto canDropIn() const { return _canDropIn; }
+    void setCanDropIn(bool d) { _canDropIn = d; }
+
     auto& acceptEvent() const { return _acceptEvent; }
     void setAcceptEvent(bool noEvent) { _acceptEvent = noEvent; }
 
@@ -119,6 +122,7 @@ protected:
     bool _acceptEvent = false;
     bool _scaleInGroup = true;
     bool _canDragOut = false;
+    bool _canDropIn = false;
 
     float _borderSize = 1.0f;
     float _borderRound = 0.0f;
@@ -128,7 +132,7 @@ protected:
 
     Properties _properties;
 
-    WidgetStatus _normalStatus = WigetUtils::normalStatus;
+    WidgetStatus _normalStatus = WidgetUtils::normalStatus;
 };
 
 using WidgetPtr = Widget::SharedPtr;

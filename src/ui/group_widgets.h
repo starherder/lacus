@@ -93,6 +93,8 @@ public:
     ExpandGroup(const std::string& name, Widget* parent = nullptr);
     ~ExpandGroup();
 
+    std::vector<Widget*> items();
+
 protected:
     bool onLoad(XmlNode* node) override;
 
@@ -114,6 +116,7 @@ protected:
     void adjustScrollbar();
 
     void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+
 
 private:
     const int slider_bar_size = 25;

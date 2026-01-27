@@ -7,20 +7,18 @@ namespace ui
 {
     int GuiManager::_widgetId = 0;
 
-    Form* GuiManager::loadForm(const fs::path& filepath)
+    Form* GuiManager::loadForm(const std::string& name, const fs::path& filepath)
     {
-        auto def_name = std::format("form_{}", ui::GuiManager::inst().generateId());
-
-        auto form = createForm<Form>(def_name);
+        auto form = createForm<Form>(name);
         if (!form)
         {
-            SPDLOG_ERROR("create form : {} failed", def_name);
+            SPDLOG_ERROR("create form : {} failed", name);
             return nullptr;
         }
 
         if (!form->load(filepath))
         {
-            SPDLOG_ERROR("load form : {}, from file {} failed", def_name, filepath.string());
+            SPDLOG_ERROR("load form : {}, from file {} failed", name, filepath.string());
             return nullptr;
         }
 
@@ -184,7 +182,7 @@ namespace ui
         auto form = getFormAtPos(pos);
         if(form && form->visible())
         {
-            moveToTop(form->name());
+            //moveToTop(form->name());
 
             form->onMouseLeftClick(pos);
 
@@ -197,7 +195,7 @@ namespace ui
         auto form = getFormAtPos(pos);
         if(form && form->visible())
         {
-            moveToTop(form->name());
+            //moveToTop(form->name());
             form->onMouseRightClick(pos);
 
             checkEventBreak(form);
@@ -209,7 +207,7 @@ namespace ui
         auto form = getFormAtPos(pos);
         if (form && form->visible())
         {
-            moveToTop(form->name());
+            //moveToTop(form->name());
             form->onMouseLeftDown(pos);
 
             checkEventBreak(form);
@@ -341,7 +339,21 @@ namespace ui
     {
         auto pos = _app->eventDispatcher().mousePos();
         auto widget = getWidgetAtPos(pos);
-            
+        
+        while (widget) 
+        {
+            if (widget->canDropIn()) 
+            {
+                break;
+            }
+            widget = widget->parent();
+        }
+
+        if (!widget) 
+        {
+            return;
+        }
+
         _draggingData->dst_group = widget;
         _draggingData->drop_screen_pos = pos;
 

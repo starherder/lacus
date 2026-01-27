@@ -65,8 +65,6 @@ namespace ui
         std::map<WidgetState, WidgetStatus> _status;
     };
 
-
-
 	class CardGroup : public Group, public utility::sigslot::SlotHandler
 	{
     public:
@@ -81,9 +79,17 @@ namespace ui
         
         void draw() override;
 
+        bool isOverlap() { return _overlap; }
         void setOverlap(bool enable);
 
         const Vec2& padding() { return _padding; }
+        void setPadding(const Vec2& padding);
+
+        float spacing() { return _space; }
+        void setSpacing(float space);
+
+        Coordinate getCoordinate() { return _coord; }
+        void setCoordinate(Coordinate coord);
 
     private:
         void adjustChildren();
@@ -96,6 +102,8 @@ namespace ui
 
         void onChildRemoved(Widget* child) override;
 
+        void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+
         void onChildSelect(CardWidget* card, bool selected);
         
         void onChildDrag(CardWidget* card);
@@ -103,6 +111,7 @@ namespace ui
         void onChildMouseEnter(CardWidget* card);
 
         void onChildMouseLeave(CardWidget* card);
+
 
         bool onLoad(XmlNode* node);
 

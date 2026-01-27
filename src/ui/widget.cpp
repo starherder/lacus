@@ -7,6 +7,25 @@ namespace ui {
 
 DeclareWidgetType(Widget, "widget");
 
+static const std::map<std::string, std::string>& parseData(const std::string& str)
+{
+    static std::map<std::string, std::string> result;
+    result.clear();
+
+    auto sv = utility::StringUtil::split(str, ',');
+    for(auto& val : sv)
+    {
+        std::string str{val};
+        auto p = utility::StringUtil::split(str, ':');
+        if(p.size() == 2) {
+            std::string k{ p[0] };
+            std::string v{ p[1] };
+            result[k] = v;
+        }
+    }
+
+    return result;
+}
 
 Widget::Widget(const std::string& name, Widget* parent) 
     : _name(name), _parent(parent)
@@ -125,6 +144,58 @@ Rect Widget::getAbsRect() const
     return {getAbsPos(), _size};
 }
 
+#if 0
+    auto parseVector = [this](const std::string& sv) {
+        Vec2 result = {0,0};
+        try {
+            auto arr = utility::StringUtil::split(sv, ',');
+            if (arr.size() != 2) { 
+                return Vec2{ 0, 0 }; 
+            }
+
+            auto& sval0 = arr[0];
+            auto& sval1 = arr[1];
+
+            if(sval0.back() == '%') {
+                sval0 = sval0.substr(0, sval0.size()-1);
+                if(this->parent()) {
+                    result.x =  this->parent()->size().x * std::stof(sval0.data()) / 100.0f;
+                }
+                else {
+                    result.x = 100.0f;
+                }
+            }
+            else {
+                result.x = std::stof(sval0.data());
+            }
+
+            if (sval1.back() == '%') {
+                sval1 = sval1.substr(0, sval1.size() - 1);
+                if (this->parent()) {
+                    result.y = this->parent()->size().y * std::stof(sval1.data()) / 100.0f;
+                }
+                else {
+                    result.y = 100.0f;
+                }
+            }
+            else {
+                result.y = std::stof(sval1.data());
+            }
+            return result;
+        }
+        catch(...)
+        {
+            SPDLOG_ERROR("parseVector: sv = {} failed.", sv);
+            return result;
+        }
+    };
+
+    auto pos = parseVector(node->Attribute("pos"));
+    setPos(pos);
+
+    auto size = parseVector(node->Attribute("size"));
+    setSize(size);
+#endif
 
 bool Widget::load(XmlNode* node) 
 { 
@@ -154,12 +225,30 @@ bool Widget::load(XmlNode* node)
     auto canDragOut = node->BoolAttribute("drag_out");
     setCanDragOut(canDragOut);
 
+    auto acceptEvent = node->BoolAttribute("accept_event", true);
+    setAcceptEvent(acceptEvent);
+
+    auto texname = node->Attribute("texture");
+    auto tex = GuiManager::inst().resourceManager().textureManager().get(texname);
+    setTexture(tex);
+
+    auto canDrag = node->BoolAttribute("can_dragout", false);
+    setCanDragOut(canDrag);
+
+    auto canDrop = node->BoolAttribute("can_dropin", false);
+    setCanDropIn(canDrop);
+
+    auto data = node->Attribute("data");
+    if(strlen(data) > 0 ) {
+        auto& datamap = parseData(data);
+        for(auto& [k, v] : datamap) {
+            setData(k, v);
+        }
+    }
+
     _normalStatus.ground_color.fromHexString(node->Attribute("ground_color"));
     _normalStatus.border_color.fromHexString(node->Attribute("border_color"));
     _normalStatus.text_color.fromHexString(node->Attribute("text_color"));
-
-    SPDLOG_INFO("widget: name({}) pos({}) size({}) border_size({}) border_round({}) visible({}) ground_color({}), border_color({})",
-        _name, _pos, _size,_borderSize, _borderRound, _visible, _normalStatus.ground_color, _normalStatus.border_color);
 
     return onLoad(node); 
 }

@@ -13,10 +13,12 @@ namespace game
         FormEntry(const std::string& name, GameContext& context);
         ~FormEntry();
 
-        void selectScene(int index, const std::string& scene);
+        void selectScene(const std::string& scene);
         
     private:
         void onStart(Button* btn);
+        
+        void onCards(Button* btn);
 
         void onUpdate(float delta) override;
 
@@ -24,8 +26,13 @@ namespace game
 
         void onWindowResized(const Vec2& size);
 
+        void onDropCard(ui::GuiManager::DraggingPtr ptr);
+        
+        void loadCars();
+
+        void resize();
+
     private:
-        int _sceneIndex;
         std::string _sceneFile;
     };
 }

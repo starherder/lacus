@@ -6,23 +6,9 @@ namespace game
 
     FormLoading::FormLoading(const std::string& name, GameContext& context) : FormLogicBase(name, context)
     {
-        auto group = root()->createChild<Group>("group_bg");
-        group->setBgColor(Color::DarkCyan);
-        group->setAcceptEvent(true);
+        load(_context.resPath() / "ui/form_loading.xml");
 
-        _progressBar = group->createChild<ui::ProgressBar>("progress_loading");
-        setProgress(0.0f);
-
-        _textTip = group->createChild<ui::Label>("text_tip");
-        _textTip->setText("loading...");
-        _textTip->setFont("fonts/Vonwaon.ttf", 40);
-        _textTip->setSize({ 300, 100 });
-        _textTip->setTextColor(Color::Pale);
-        _textTip->setBgColor({ 0,0,0,0 });
-        _textTip->setBorderColor({ 0,0,0,0 });
-
-        setMaximize(true);
-        setDragMovable(false);
+        setProgress(0);
     }
 
     FormLoading::~FormLoading()
@@ -31,11 +17,12 @@ namespace game
 
     void FormLoading::setProgress(float progress)
     {
-        _progress = std::clamp(progress, 0.0f, 1.0f);
+        progress = std::clamp(progress, 0.0f, 1.0f);
 
-        if (_progressBar)
+        auto progressBar = getWidget<ProgressBar>("pro_loading");
+        if (progressBar)
         {
-            _progressBar->setProgress(_progress);
+            progressBar->setProgress(progress);
         }
     }
 
@@ -45,17 +32,5 @@ namespace game
 
     void FormLoading::onSizeChanged()
     {
-        if (_textTip)
-        {
-            auto x = size().x / 2 - _textTip->size().x / 2;
-            auto y = size().y / 2 - 160;
-            _textTip->setPos({ x, y });
-        }
-
-        if (_progressBar)
-        {
-            _progressBar->setSize({ size().x - 100, 20 });
-            _progressBar->setPos({ 50, size().y - 50 - 20 });
-        }
     }
 }

@@ -25,11 +25,7 @@ public:
     Widget* getWidgetAtPos(const Vec2& pos);
 
     template<typename WidgetType>
-    WidgetType* getWidget(const std::string& name)
-    {
-        auto widget = getWidgetInGroup(_rootGroup.get(), name);
-        return dynamic_cast<WidgetType*>(widget);
-    }
+    WidgetType* getWidget(const std::string& name);
 
     void update(float delta);
     void draw();
@@ -70,6 +66,8 @@ public:
     void setMaximize(bool v);
     bool isMaximize() { return _maximized; }
 
+    void moveToTop();
+
 public:
     virtual void onMouseLeftClick(const Vec2& pos);
     virtual void onMouseRightClick(const Vec2& pos);
@@ -105,6 +103,15 @@ private:
     Widget* _hoverWidget = nullptr;
 };
 
+
 using FormPtr = Form::SharedPtr;
+
+
+template<typename WidgetType>
+WidgetType* Form::getWidget(const std::string& name)
+{
+    auto widget = getWidgetInGroup(_rootGroup.get(), name);
+    return dynamic_cast<WidgetType*>(widget);
+}
 
 }

@@ -1,11 +1,11 @@
 ﻿#include "form_main.h"
 #include "form_scenes.h"
+#include "form_config.h"
+#include "form_start.h"
 
 #include "game/scene/object_factory.h"
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
-
-#include "game/ui/form_config.h"
 
 
 namespace game 
@@ -13,40 +13,39 @@ namespace game
 
 FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBase(name, context)
 {
-    auto group = root()->createChild<Group>("group_bg");
-    group->setBgColor({ 0,0,0,0 });
-    group->setMovable(false);
-    group->setAcceptEvent(false);
+    load(_context.resPath() / "ui/form_main.xml");
 
-    _btnScenes = group->createChild<ui::Button>("btn_scenes");
-    _btnScenes->setPos({size().x - 260, 50});
-    _btnScenes->setSize({100, 50});
-    _btnScenes->setText("scenes");
-    _btnScenes->on_click.connect([this](ui::Button* btn) {
-        ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _context);
-    });
+    auto btnClose = getWidget<Button>("btn_close");
+    if (btnClose)
+    {
+        btnClose->on_click.connect(this, &FormMain::onLeaveScene);
+    }
 
-    _btnConfig = group->createChild<ui::Button>("btn_config");
-    _btnConfig->setPos({ size().x - 150, 50 });
-    _btnConfig->setSize({ 100, 50 });
-    _btnConfig->setText("config");
-    _btnConfig->on_click.connect([this](ui::Button* btn) {
-        ui::GuiManager::inst().createForm<FormConfig>("form_config", _context);
-    });
+    auto btnScenes = getWidget<Button>("btn_scenes");
+    if (btnScenes)
+    {
+        btnScenes->on_click.connect(this, &FormMain::onShowScenes);
+    }
 
-    _cardGroup = group->createChild<CardGroup>("card_group");
+    _cardGroup = getWidget<CardGroup>("card_group");
+    assert(_cardGroup);
 
     ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
 
-    auto& roleCfgs = _context.objectFactory().getAllObjectCfgIds();
-    for(auto& cfg : roleCfgs)
+#if 0
+    auto& roleCfgs = _context.objectFactory().getAllRoleCfgIds();
+    for (auto& cfgid : roleCfgs)
+    {
+        _context.dataCenter().addHandCards(cfgid);
+    }
+#endif
+
+    auto& handCards = _context.dataCenter().getHandCards();
+    for(auto& cfg : handCards)
     {
         auto& props = _context.objectFactory().getObjectCfgProperties(cfg);
         _cardGroup->addCard(props);
     }
-
-    setMaximize(true);
-    setDragMovable(false);
 }
 
 FormMain::~FormMain()
@@ -58,10 +57,18 @@ void FormMain::onUpdate(float delta)
 }
 
 void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
-{    
-    if(!ptr)
+{   
+    if(!ptr || !ptr->dst_group)
     {
         SPDLOG_INFO("FormMain::onDropCard dragging data error.");
+        return;
+    }
+
+    auto wgt_name = ptr->dst_group->name();
+    auto wgtScene = getWidget<Widget>(wgt_name);
+    if (!wgtScene)
+    {
+        SPDLOG_INFO("FormMain::onDropCard not on form_main.");
         return;
     }
 
@@ -96,16 +103,24 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
 
 void FormMain::onSizeChanged()
 {
-    _btnScenes->setPos({ size().x - 260, 50 });
-    _btnConfig->setPos({ size().x - 150, 50 });
+}
 
-    Vec2 cardGroupSZ = { size().x / 2, 200 };
-    Vec2 cardGroupPos = { (size().x - cardGroupSZ.x) / 2, size().y - cardGroupSZ.y };
+void FormMain::onWindowResized(const Vec2& sz)
+{
+    FormLogicBase::onWindowResized(sz);
 
-    _cardGroup->setSize(cardGroupSZ);
-    _cardGroup->setPos(cardGroupPos);
-    _cardGroup->setOverlap(true);
-    
+}
+
+void FormMain::onLeaveScene(Button* btn)
+{
+    _context.scene().unload();
+
+    ui::GuiManager::inst().createForm<FormStart>("form_start", _context);
+}
+
+void FormMain::onShowScenes(Button* btn)
+{
+    ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _context);
 }
 
 

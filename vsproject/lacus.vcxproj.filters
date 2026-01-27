@@ -61,6 +61,12 @@
     <Filter Include="game\logic">
       <UniqueIdentifier>{17b0f7f6-ce89-4b74-bd12-255589e3ee82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{787e5000-2501-46ab-8f90-798b1199beae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\ui">
+      <UniqueIdentifier>{5c21e7c4-5064-4d2e-b972-9cd8479b4629}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -333,6 +339,12 @@
     </ClCompile>
     <ClCompile Include="..\src\game\ui\form_entry.cpp">
       <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_cards.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\scene\game_data.cpp">
+      <Filter>game\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -678,10 +690,42 @@
     <ClInclude Include="..\src\game\ui\form_entry.h">
       <Filter>game\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_cards.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\game_data.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md">
       <Filter>doc</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\res\ui\form_config.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_entry.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_loading.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_scenes.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_start.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_test.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_cards.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_main.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

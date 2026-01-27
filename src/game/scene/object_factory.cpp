@@ -17,32 +17,30 @@ namespace game
 	{
 		_context = context;
 
-		_objectCfgIds.clear();
-		_jsonObjectCfgs.clear();
-
+		_roleCfgIds.clear();
+		_enemyCfgIds.clear();
+		_otherCfgIds.clear();
 		_skillCfgIds.clear();
-		_jsonSkillCfgs.clear();
-
 		_buffCfgIds.clear();
+
+		_jsonObjectCfgs.clear();
+		_jsonSkillCfgs.clear();
 		_jsonBuffCfgs.clear();
 	}
 
 	void ObjectFactory::reloadAll()
 	{
-		_objectCfgIds.clear();
-		_jsonObjectCfgs.clear();
-
-		_skillCfgIds.clear();
-		_jsonSkillCfgs.clear();
-
-		_buffCfgIds.clear();
-		_jsonBuffCfgs.clear();
+		init(_context);
 
 		loadBuffs(_buffPath);
 
 		loadSkills(_skillPath);
 
 		loadRoles(_rolePath);
+
+		loadEnemies(_enemyPath);
+
+		loadOther(_otherPath);
 
 		loadItems(_itemPath);
 	}
@@ -83,6 +81,49 @@ namespace game
 		return true;
 	}
 
+	bool ObjectFactory::loadEnemies(const fs::path& cfgdir)
+	{
+		assert(_context);
+
+		_enemyPath = cfgdir;
+
+		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
+		{
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
+				auto cfgid = loadObjectCfg(filename);
+				if (!cfgid.empty()) 
+				{
+					_enemyCfgIds.push_back(cfgid);
+				}
+			}
+		}
+
+		return true;
+	}
+
+	bool ObjectFactory::loadOther(const fs::path& cfgdir)
+	{
+		assert(_context);
+
+		_otherPath = cfgdir;
+
+		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
+		{
+			if (entry.is_regular_file())
+			{
+				auto filename = entry.path();
+				auto cfgid = loadObjectCfg(filename);
+				if (!cfgid.empty())
+				{
+					_otherCfgIds.push_back(cfgid);
+				}
+			}
+		}
+
+		return true;
+	}
 	bool ObjectFactory::loadRoles(const fs::path& cfgdir)
 	{
 		assert(_context);
@@ -94,7 +135,11 @@ namespace game
 			if (entry.is_regular_file())
 			{
 				auto filename = entry.path();
-				loadObjectCfg(filename);
+				auto cfgid = loadObjectCfg(filename);
+				if (!cfgid.empty())
+				{
+					_roleCfgIds.push_back(cfgid);
+				}
 			}
 		}
 
@@ -118,7 +163,7 @@ namespace game
 		return true;
 	}
 	
-	bool ObjectFactory::loadObjectCfg(const fs::path& cfgfile)
+	std::string ObjectFactory::loadObjectCfg(const fs::path& cfgfile)
 	{
 		assert(_context);
 
@@ -127,7 +172,7 @@ namespace game
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
 			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
-			return false;
+			return "";
 		}
 
 		try {
@@ -136,22 +181,22 @@ namespace game
 		}
 		catch (const std::exception& e) {
 			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
-			return false;
+			return "";
 		}
 
 		std::string cfgid = jsonptr->value("id", "");
 		if (cfgid.empty())
 		{
 			SPDLOG_ERROR("role file({}) NOT found cfgid.", cfgfile.string());
-			return false;
+			return "";
 		}
 
-		_objectCfgIds.push_back(cfgid);
+		//_objectCfgIds.push_back(cfgid);
 		_jsonObjectCfgs[cfgid] = jsonptr;
-		return true;
+		return cfgid;
 	}
 
-	bool ObjectFactory::loadSkillCfg(const fs::path& cfgfile)
+	std::string ObjectFactory::loadSkillCfg(const fs::path& cfgfile)
 	{
 		assert(_context);
 		auto jsonptr = std::make_shared<nlohmann::json>();
@@ -159,7 +204,7 @@ namespace game
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
 			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
-			return false;
+			return "";
 		}
 
 		try {
@@ -168,23 +213,23 @@ namespace game
 		}
 		catch (const std::exception& e) {
 			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
-			return false;
+			return "";
 		}
 
 		std::string cfgid = jsonptr->value("cfgid", "");
 		if(cfgid.empty())
 		{
 			SPDLOG_ERROR("skill file({}) NOT found cfgid.", cfgfile.string());
-			return false;
+			return "";
 		}
 
 		_skillCfgIds.push_back(cfgid);
 
 		_jsonSkillCfgs[cfgid] = jsonptr;
-		return true;
+		return cfgid;
 	}
 
-	bool ObjectFactory::loadBuffCfg(const fs::path& cfgfile)
+	std::string ObjectFactory::loadBuffCfg(const fs::path& cfgfile)
 	{
 		assert(_context);
 
@@ -193,7 +238,7 @@ namespace game
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
 			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
-			return false;
+			return "";
 		}
 
 		try {
@@ -202,20 +247,20 @@ namespace game
 		}
 		catch (const std::exception& e) {
 			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
-			return false;
+			return "";
 		}
 
 		std::string cfgid = jsonptr->value("cfgid", "");
 		if (cfgid.empty())
 		{
 			SPDLOG_ERROR("buff file({}) NOT found cfgid.", cfgfile.string());
-			return false;
+			return "";
 		}
 
 		_buffCfgIds.push_back(cfgid);
 
 		_jsonBuffCfgs[cfgid] = jsonptr;
-		return true;
+		return cfgid;
 	}
 
 
@@ -829,6 +874,12 @@ namespace game
 		}
 
 		return std::nullopt;
+	}
+	
+	bool ObjectFactory::findObjectCfg(const std::string& cfgid)
+	{
+		auto it = _jsonObjectCfgs.find(cfgid);
+		return it != _jsonObjectCfgs.end();
 	}
 
 	const Properties& ObjectFactory::getObjectCfgProperties(const std::string& cfgid)

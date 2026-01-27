@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<form name="form_start" maximize="true" ground_color="#006666FF" border_color="#555555FF" border_size="1">
+<form maximize="true" ground_color="#006666FF" border_color="#555555FF" border_size="1">
     <vlayout name="vlay_bg" >
         <widget />
 

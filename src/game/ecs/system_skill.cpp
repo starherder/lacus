@@ -692,6 +692,11 @@ namespace game
 
 	void SkillSystem::onSkillHitPos(const EvtSkillHitPos& e)
 	{
+		if (!_context.registry().valid(e.source))
+		{
+			return;
+		}
+
 		auto& compSrcComm = _context.registry().get<CompComm>(e.source);
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
 		
@@ -714,6 +719,11 @@ namespace game
 
 	void SkillSystem::onSkillHitTarget(const EvtSkillHitTarget& e)
 	{
+		if (!_context.registry().valid(e.source))
+		{
+			return;
+		}
+
 		auto pCompDead = _context.registry().try_get<CompDead>(e.target);
 		if (pCompDead)
 		{

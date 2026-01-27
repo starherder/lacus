@@ -20,10 +20,10 @@ namespace ui
     {
         setState(WidgetState::Normal);
 
-        _status[WidgetState::Normal] = WigetUtils::normalStatus;
-        _status[WidgetState::Hover] = WigetUtils::hoveredStatus;
-        _status[WidgetState::Selected] = WigetUtils::selectedStatus;
-        _status[WidgetState::Disabled] = WigetUtils::disabledStatus;
+        _status[WidgetState::Normal] = WidgetUtils::normalStatus;
+        _status[WidgetState::Hover] = WidgetUtils::hoveredStatus;
+        _status[WidgetState::Selected] = WidgetUtils::selectedStatus;
+        _status[WidgetState::Disabled] = WidgetUtils::disabledStatus;
 
         setBorderRound(DefaultBorderRound);
 
@@ -130,13 +130,6 @@ namespace ui
     {
     }
 
-    void CardGroup::setOverlap(bool enable)
-    {
-        _overlap = enable;
-
-        adjustChildren();
-    }
-    
     CardWidget* CardGroup::addCard(const Properties& props)
     {
         auto cfgid = props["cfgid"].convert<std::string>();
@@ -292,13 +285,55 @@ namespace ui
         adjustChildren();
     }
 
+    void CardGroup::setOverlap(bool enable)
+    {
+        _overlap = enable;
+
+        adjustChildren();
+    }
+
+    void CardGroup::setPadding(const Vec2& padding)
+    {
+        _padding = padding;
+
+        adjustChildren();
+    }
+
+    void CardGroup::setSpacing(float space)
+    {
+        _space = space;
+
+        adjustChildren();
+    }
+
+    void CardGroup::setCoordinate(Coordinate coord)
+    {
+        _coord = coord;
+
+        adjustChildren();
+    }
+
+    void CardGroup::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        adjustChildren();
+    }
+
     bool CardGroup::onLoad(XmlNode* node)
     {
         if (!node) {
             return false;
         }
 
+        _coord = WidgetUtils::getCoord(node->Attribute("coordinate"));
+        
+        _padding = ToVec2(node->Attribute("pad"));
+
+        _space = node->FloatAttribute("space");
+
+        _overlap = node->BoolAttribute("overlap", true);
+        
         adjustChildren();
+
         return true;
     }
 }

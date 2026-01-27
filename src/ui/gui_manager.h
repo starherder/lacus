@@ -49,7 +49,7 @@ public:
     template<typename FormType, typename... Args>
     FormType* createForm(const std::string& name, Args&... args);
     
-    Form* loadForm(const fs::path& filepath);
+    Form* loadForm(const std::string& name, const fs::path& filepath);
 
     template<typename FormType>
     FormType* getForm(const std::string& name);
@@ -65,6 +65,8 @@ public:
     Widget* createWidget(const std::string& type, Widget* parent);
 
     int generateId() { return _widgetId++; }
+
+    void moveToTop(const std::string& formName);
 
 private:
     void onWindowResized(const Vec2& size);
@@ -87,8 +89,6 @@ private:
 
     Form* getFormAtPos(const Vec2& pos);
     Widget* getWidgetAtPos(const Vec2& pos);
-
-    void moveToTop(const std::string& formName);
 
     void drag(Widget* widget);
     void drop();

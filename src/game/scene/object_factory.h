@@ -25,6 +25,8 @@ namespace game
 
 		bool loadItems(const fs::path& itemdir);
 		bool loadRoles(const fs::path& roledir);
+		bool loadEnemies(const fs::path& roledir);
+		bool loadOther(const fs::path& roledir);
 		bool loadSkills(const fs::path& skilldif);
 		bool loadBuffs(const fs::path& buffdir);
 
@@ -45,15 +47,20 @@ namespace game
 
 		void destroyObject(entt::entity entityid);
 
-		const auto& getAllObjectCfgIds() { return _objectCfgIds; }
+		const auto& getAllRoleCfgIds() { return _roleCfgIds; }
+		const auto& getAllEnemyCfgIds() { return _enemyCfgIds; }
+
 		const auto& getAllSkillCfgIds() { return _skillCfgIds; }
+		const auto& getAllBuffCfgIds() { return _buffCfgIds; }
+
+		bool findObjectCfg(const std::string& cfgid);
 
 		const Properties& getObjectCfgProperties(const std::string& cfgid);
 
 	private:
-		bool loadObjectCfg(const fs::path& rolescfg);
-		bool loadSkillCfg(const fs::path& skillcfg);
-		bool loadBuffCfg(const fs::path& skillcfg);
+		std::string loadObjectCfg(const fs::path& rolescfg);
+		std::string loadSkillCfg(const fs::path& skillcfg);
+		std::string loadBuffCfg(const fs::path& skillcfg);
 
 		entt::entity createObject(const nJson& value);
 		entt::entity createRole(const nJson& json);
@@ -64,19 +71,22 @@ namespace game
 	private:
 		GameContext* _context = nullptr;
 
-		std::vector<std::string> _objectCfgIds;
-		ConfigJsonMap _jsonObjectCfgs;
-
+		std::vector<std::string> _roleCfgIds;
+		std::vector<std::string> _enemyCfgIds;
+		std::vector<std::string> _otherCfgIds;
 		std::vector<std::string> _skillCfgIds;
-		ConfigJsonMap _jsonSkillCfgs;
-
 		std::vector<std::string> _buffCfgIds;
+
+		ConfigJsonMap _jsonObjectCfgs;
+		ConfigJsonMap _jsonSkillCfgs;
 		ConfigJsonMap _jsonBuffCfgs;
 
 		fs::path _skillPath;
 		fs::path _buffPath;
 		fs::path _itemPath;
 		fs::path _rolePath;
+		fs::path _enemyPath;
+		fs::path _otherPath;
 	};
 
 

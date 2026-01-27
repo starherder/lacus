@@ -65,17 +65,7 @@ namespace ui
 
         _textPadding = ToVec2(node->Attribute("text_padding"));
 
-        auto getAlign = [](const std::string& str) {
-            if (str == "left") return Align::Left;
-            else if (str == "right") return Align::Right;
-            else if (str == "center") return Align::Center;
-            else if (str == "top") return Align::Top;
-            else if (str == "bottom") return Align::Bottom;
-            
-            return Align::Center;
-        };
-
-        _textAlign = getAlign(node->Attribute("align"));
+        _textAlign = WidgetUtils::getAlign(node->Attribute("align"));
 
         _fontName = node->Attribute("font_name");
         _fontName = _fontName.empty() ? DefaultFontName : _fontName;
@@ -185,10 +175,10 @@ namespace ui
         setState(WidgetState::Normal);
         setAcceptEvent(true);
 
-        _status[WidgetState::Normal] = WigetUtils::normalStatus;
-        _status[WidgetState::Hover] = WigetUtils::hoveredStatus;
-        _status[WidgetState::Pressed] = WigetUtils::pressedStatus;
-        _status[WidgetState::Disabled] = WigetUtils::disabledStatus;
+        _status[WidgetState::Normal] = WidgetUtils::normalStatus;
+        _status[WidgetState::Hover] = WidgetUtils::hoveredStatus;
+        _status[WidgetState::Pressed] = WidgetUtils::pressedStatus;
+        _status[WidgetState::Disabled] = WidgetUtils::disabledStatus;
     }
 
     Button::~Button()
@@ -248,8 +238,8 @@ namespace ui
     CheckBox::CheckBox(const std::string& name, Widget* parent) 
         : Button(name, parent)
     {
-        _status[WidgetState::Selected] = WigetUtils::selectedStatus;
-        _status[WidgetState::SelectedHover] = WigetUtils::selectHoverStatus;
+        _status[WidgetState::Selected] = WidgetUtils::selectedStatus;
+        _status[WidgetState::SelectedHover] = WidgetUtils::selectHoverStatus;
     }
 
     bool CheckBox::onLoad(XmlNode* node)
@@ -590,6 +580,11 @@ namespace ui
         _foreground->setSize(foreSize);
     }
 
+    void ProgressBar::onSizeChanged(const Vec2& oldSz, const Vec2& newSz)
+    {
+        setProgress(_progress);
+    }
+
     bool ProgressBar::onLoad(XmlNode* node)
     {
         if (!Group::onLoad(node))
@@ -597,16 +592,10 @@ namespace ui
             return false;
         }
 
-        auto getCoord = [](const std::string& str) {
-            if (str == "horizonal") return Coordinate::Horizonal;
-            if (str == "vertical") return Coordinate::Vertical;
-            return Coordinate::Horizonal;
-        };
-
         auto bgcolor = Color::parseHexString(node->Attribute("fore_color"));
         _foreground->setBgColor(bgcolor);
 
-        auto direction = getCoord(node->Attribute("coordinate"));
+        auto direction = WidgetUtils::getCoord(node->Attribute("coordinate"));
         setDirection(direction);
 
         auto value = node->FloatAttribute("value");
@@ -797,13 +786,7 @@ namespace ui
             return false;
         }
 
-        auto getCoord = [](const std::string& str) {
-            if (str == "horizonal") return Coordinate::Horizonal;
-            if (str == "vertical") return Coordinate::Vertical;
-            return Coordinate::Horizonal;
-        };
-
-        auto direction = getCoord(node->Attribute("coordinate"));
+        auto direction = WidgetUtils::getCoord(node->Attribute("coordinate"));
         setDirection(direction);
 
         auto maxValue = node->FloatAttribute("max_value", 100.0f);

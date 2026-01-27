@@ -20,6 +20,13 @@ namespace game {
 
         void onSizeChanged() override;
 
+        void onWindowResized(const Vec2& size);
+
+        void onLeaveScene(Button* btn);
+        
+        void onShowScenes(Button* btn);
+
+
     private:
         ui::Button* _btnScenes = nullptr;
         ui::Button* _btnConfig = nullptr;

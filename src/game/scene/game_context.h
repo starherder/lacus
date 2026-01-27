@@ -14,6 +14,7 @@ namespace game {
 
 	class GameScene;
 	class GameCamera;
+	class GameData;
 	class ObjectFactory;
 
 	class GameContext
@@ -56,6 +57,7 @@ namespace game {
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }
 
+
 		int64_t currentTicks() { return _application.frameTicker().ticks(); }
 		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
 
@@ -65,6 +67,8 @@ namespace game {
 		entt::dispatcher& dispatcher();
 
 		GameCamera& camera();
+		GameData& dataCenter();
+
 		PathFinder& pathFinder() { return _pathFinder; }
 
 		bool debugMode() { return _debugMode; }
