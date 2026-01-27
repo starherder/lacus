@@ -192,6 +192,13 @@ namespace ui
 
     void GuiManager::onMouseRightClick(const Vec2& pos)
     {
+        
+        if (_draggingData)
+        {
+            //int index = card->getData<int>("index");
+            //cardGroup->addWidget(ptr->widget, index);
+            drop();
+        }
         auto form = getFormAtPos(pos);
         if(form && form->visible())
         {
@@ -337,6 +344,11 @@ namespace ui
 
     void GuiManager::drop()
     {
+        if (!_draggingData || !_draggingData->widget) 
+        {
+            return;
+        }
+
         auto pos = _app->eventDispatcher().mousePos();
         auto widget = getWidgetAtPos(pos);
         
@@ -351,6 +363,14 @@ namespace ui
 
         if (!widget) 
         {
+            auto src_group = dynamic_cast<Group*>(_draggingData->src_group);
+            if (src_group)
+            {
+                int index = _draggingData->widget->getData<int>("index");
+                src_group->addWidget(_draggingData->widget, index);
+
+                _draggingData = nullptr;
+            }
             return;
         }
 

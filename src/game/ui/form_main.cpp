@@ -36,7 +36,7 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     auto& roleCfgs = _context.objectFactory().getAllRoleCfgIds();
     for (auto& cfgid : roleCfgs)
     {
-        _context.dataCenter().addHandCards(cfgid);
+        _context.dataCenter().addHandCard(cfgid);
     }
 #endif
 
@@ -97,8 +97,10 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
         pComm->side = CampSide::Gangster;
     }
 
-    int index = card->getData<int>("index");
-    cardGroup->addWidget(ptr->widget, index);
+    _context.dataCenter().removeHandCard(cfgid);
+
+    //int index = card->getData<int>("index");
+    //cardGroup->addWidget(ptr->widget, index);
 }
 
 void FormMain::onSizeChanged()

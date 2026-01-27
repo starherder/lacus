@@ -33,12 +33,6 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 		btnLeave->on_click.connect([this](ui::Button* btn) { close(); });
 	}
 
-	auto formCards = ui::GuiManager::inst().createForm<FormCards>("form_cards", _context);
-	if (formCards)
-	{
-		formCards->setVisible(false);
-	}
-
 	ui::GuiManager::inst().on_drop.connect(this, &FormEntry::onDropCard);
 }
 
@@ -67,7 +61,11 @@ void FormEntry::onCards(Button* btn)
 	auto formCards = ui::GuiManager::inst().getForm<FormCards>("form_cards");
 	if (formCards)
 	{
-		formCards->setVisible(!formCards->visible());
+		ui::GuiManager::inst().closeForm("form_cards");
+	}
+	else
+	{
+		ui::GuiManager::inst().createForm<FormCards>("form_cards", _context);
 	}
 
 	resize();
@@ -140,7 +138,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 	auto& props = _context.objectFactory().getObjectCfgProperties(cfgid);
 	dstCardGroup->addCard(props);
 
-	_context.dataCenter().addHandCards(cfgid);
+	_context.dataCenter().addHandCard(cfgid);
 
 	//int index = card->getData<int>("index");
 	//srcCardGroup->addWidget(ptr->widget, index);

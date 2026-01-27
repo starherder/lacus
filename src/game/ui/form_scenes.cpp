@@ -2,6 +2,7 @@
 #include "game/ui/ui_logic_events.h"
 #include "form_entry.h"
 #include "ui/gui_manager.h"
+#include "form_cards.h"
 
 
 namespace game 
@@ -19,10 +20,15 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
     }
 
     auto btnClose = getWidget<ui::Button>("btn_close");
-    if(btnClose)
+    if (btnClose)
     {
-        btnClose->setPos({size().x-100, 50});
         btnClose->on_click.connect([this](ui::Button* btn) { close(); });
+    }
+
+    auto btnCards = getWidget<ui::Button>("btn_cards");
+    if (btnCards)
+    {
+        btnCards->on_click.connect(this, &FormScenes::onShowCards);
     }
 
     auto exgroup = getWidget<ExpandGroup>("exgroup_scenes");
@@ -61,6 +67,12 @@ void FormScenes::onSizeChanged()
     {
         btnClose->setPos({ size().x - 100, 50 });
     }
+
+    auto btnCards = getWidget<ui::Button>("btn_cards");
+    if (btnCards)
+    {
+        btnCards->setPos({ size().x - 210, 50 });
+    }
 }
 
 void FormScenes::onSelectScene(ui::Button* btn)
@@ -73,4 +85,19 @@ void FormScenes::onSelectScene(ui::Button* btn)
         form->selectScene(name);
     }
 }
+
+void FormScenes::onShowCards(ui::Button* btn)
+{
+    auto formCards = ui::GuiManager::inst().getForm<FormCards>("form_cards");
+    if (formCards)
+    {
+        ui::GuiManager::inst().closeForm("form_cards");
+    }
+    else
+    {
+        ui::GuiManager::inst().createForm<FormCards>("form_cards", _context);
+    }
+}
+
+
 }

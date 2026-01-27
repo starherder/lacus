@@ -20,6 +20,8 @@ namespace game
 
         void onSelectScene(ui::Button* btn);
 
+        void onShowCards(ui::Button* btn);
+
     private:
         ui::Button* _btnClose = nullptr;
     };

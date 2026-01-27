@@ -6,12 +6,6 @@
 #include "game/scene/game_scene.h"
 #include "game/scene/object_factory.h"
 
-#include "game/ui/form_loading.h"
-#include "game/ui/form_start.h"
-#include "game/ui/form_main.h"
-#include "game/ui/form_scenes.h"
-#include "game/ui/ui_logic_events.h"
-
 #include "game/ecs/system_motion.h"
 #include "game/ecs/system_render.h"
 #include "game/ecs/system_bevtree.h"
@@ -25,8 +19,15 @@
 #include "game/ecs/system_numerical.h"
 #include "game/ecs/system_float_text.h"
 
-#include "../ui/form_main.h"
-#include "../ui/imform_debug.h"
+#include "game/ui/form_loading.h"
+#include "game/ui/form_start.h"
+#include "game/ui/form_main.h"
+#include "game/ui/form_scenes.h"
+#include "game/ui/ui_logic_events.h"
+#include "game/ui/form_main.h"
+#include "game/ui/imform_debug.h"
+#include "game/ui/form_result_fail.h"
+#include "game/ui/form_result_success.h"
 
 
 namespace game
@@ -136,6 +137,7 @@ namespace game
 
         _scene->onUpdate(delta);
 
+        checkGameState();
 
         EcsSystemManager::inst().update(delta);
     }
@@ -168,6 +170,37 @@ namespace game
         }
     }
 
+    void GameLogic::checkGameState()
+    {
+        if (_state != GameState::Running)
+        {
+            return;
+        }
+
+        int liveRole = 0;
+        auto views = _gameContext.registry().view<CompComm>();
+        for (auto& ent : views)
+        {
+            auto pdead = _gameContext.registry().try_get<CompDead>(ent);
+            if (pdead) {
+                continue;
+            }
+
+            auto& comp = views.get<CompComm>(ent);
+            if (comp.side == CampSide::Gangster) {
+                liveRole++;
+            }
+        }
+
+        int handCards = (int)_gameContext.scene().dataCenter().getHandCards().size();
+
+        if (liveRole == 0 && handCards == 0)
+        {
+            _state = GameState::Finish;
+            ui::GuiManager::inst().createForm<FormResultFail>("form_fail", _gameContext);
+        }
+    }
+
     void GameLogic::pause()
     {
         imgui::ImFormManager::inst().closeForm("ImFormDebug");
@@ -196,13 +229,16 @@ namespace game
 
         showLoadingForm(true);
 
+        ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _gameContext);
+
+#if 0
         auto mapFile = _gameContext.resPath() / _gameConfig.scenes.first_scene;
         auto res = _scene->load(mapFile);
         if (!res) {
             SPDLOG_ERROR("load level test: {} failed.", mapFile.string());
             return;
         }
-
+#endif
         _scene->onStart();
     }
 
@@ -240,7 +276,6 @@ namespace game
         }
         else
         {
-
             ui::GuiManager::inst().closeForm("form_loading");
         }
     }

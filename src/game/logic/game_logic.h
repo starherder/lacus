@@ -9,6 +9,11 @@
 
 namespace game
 {
+	enum GameState {
+		Running,
+		Pause,
+		Finish,
+	};
 
 	class GameLogic : public signals::SlotHandler
 	{
@@ -55,14 +60,16 @@ namespace game
 		void onDebugReloadResource();
 
 		void closeAllForms();
+		
+		void checkGameState();
 
 	private:
 		std::unique_ptr<GameScene> _scene = nullptr;
 
 		GameContext& _gameContext;
 
-		//EcsSystemMap _ecsSystems;
-
 		GameConfig _gameConfig;
+
+		GameState _state = GameState::Running;
 	};
 }

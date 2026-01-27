@@ -41,10 +41,10 @@
 
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level": 1,
+    "level": 10,
     "roll": 20,
     "str": 30,
-    "cst": 3000,
+    "cst": 30,
     "dex": 30,
     "met": 30
   },

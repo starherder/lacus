@@ -4,10 +4,12 @@
 #include "game/scene/object_factory.h"
 #include "game/ecs/comm_event.h"
 
+#include <set>
+
 namespace game
 {
 	using StringVector = std::vector<std::string>;
-
+	using CardSet = std::multiset<std::string>;
 
 	class GameData
 	{
@@ -16,11 +18,14 @@ namespace game
 		GameData(GameData&&) = delete;
 		GameData(const GameData&) = delete;
 
-		const StringVector& getHandCards() { return _handCards; }
-		void addHandCards(const std::string& cfgid) { _handCards.push_back(cfgid); }
+		const CardSet& getHandCards() { return _handCards; }
+		
+		void addHandCard(const std::string& cfgid) { _handCards.insert(cfgid); }
+
+		void removeHandCard(const std::string& cfgid) { _handCards.erase(cfgid); }
 
 	private:
-		StringVector _handCards;
+		CardSet _handCards;
 
 	};
 }

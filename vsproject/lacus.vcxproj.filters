@@ -346,6 +346,12 @@
     <ClCompile Include="..\src\game\scene\game_data.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_result_fail.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_result_success.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -696,6 +702,12 @@
     <ClInclude Include="..\src\game\scene\game_data.h">
       <Filter>game\scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_result_fail.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_result_success.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md">
@@ -725,6 +737,12 @@
       <Filter>res\ui</Filter>
     </Xml>
     <Xml Include="..\res\ui\form_main.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_result_fail.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_result_success.xml">
       <Filter>res\ui</Filter>
     </Xml>
   </ItemGroup>
