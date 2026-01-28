@@ -3,6 +3,14 @@
 #include "application.h"
 namespace engine 
 {
+    enum class SceneState {
+        None,
+        Loading,
+        Unloading,
+        Ready,
+    };
+
+
     class Scene 
     {
     public:
@@ -19,7 +27,7 @@ namespace engine
         void update();
         void draw();
 
-        bool ready() { return _ready; }
+        bool ready() { return _state == (int)SceneState::Ready; }
         
         virtual bool load(const engine::fs::path& filePath) = 0;
         virtual bool unload() = 0;
@@ -35,7 +43,7 @@ namespace engine
     protected:
         Application& _app;
 
-        bool _ready = false;;
+        std::atomic<int> _state = (int)SceneState::None;
     };
 
 }

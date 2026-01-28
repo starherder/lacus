@@ -309,6 +309,8 @@ void TileMap::bake(engine::ResourceManager& resourceMgr)
         {
             SPDLOG_WARN("layer: {} type {} NOT support.", layer->name, magic_enum::enum_name(layer->type));
         }
+
+        SPDLOG_INFO("layer: {} type {} bake OK.", layer->name, magic_enum::enum_name(layer->type));
     }
 }
 

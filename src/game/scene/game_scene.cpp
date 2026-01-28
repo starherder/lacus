@@ -65,7 +65,8 @@ bool GameScene::load(const engine::fs::path& mapPath)
 {
     _camera.setPos({ 0, 0 });
 
-    std::thread loadthread([this, mapPath]() {
+    std::thread loadthread([this, mapPath]() 
+    {
         loadInThread(mapPath);
     });
 
@@ -75,9 +76,10 @@ bool GameScene::load(const engine::fs::path& mapPath)
 
 bool GameScene::unload()
 {
-    _ready = false;
+    _state = (int)SceneState::Unloading;
 
-    std::thread unloadthread([this]() {
+    std::thread unloadthread([this]() 
+    {
         unloadInThread();
     });
 
@@ -87,7 +89,21 @@ bool GameScene::unload()
 
 void GameScene::loadInThread(const engine::fs::path& mapPath)
 {
-    std::lock_guard<std::mutex> lock(_threadMutex);
+    int loop_count = 0;
+    while (_state != (int)SceneState::None)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        if (loop_count++ > 20000)
+        {
+            SPDLOG_ERROR("LOOP wait tooo long. exit");
+            return;
+        }
+    }
+
+    _state = (int)SceneState::Loading;
+
+    SPDLOG_INFO("load in thread start:  map={}", mapPath.string());
 
     on_load_progress.emit(0.0f);
 
@@ -98,6 +114,7 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
     auto res = _tileMap.load(mapPath);
     if(!res)
     {
+        SPDLOG_ERROR("load map ({}) failed.", mapPath.string());
         return;
     }
 
@@ -123,33 +140,34 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(1.0f);
 
-    _ready = true;
+    _state = (int)SceneState::Ready;
+    SPDLOG_INFO("load scene (map={}) finished.", mapPath.string());
 }
 
 void GameScene::unloadInThread()
 {
-    std::lock_guard<std::mutex> lock(_threadMutex);
+    SPDLOG_INFO("unload in thread.");
 
     auto res = _tileMap.unload();
     if(!res)
     {
+        SPDLOG_ERROR("tile map unload failed.");
         return ;
     }
 
     unloadObjects();
+
+    _state = (int)SceneState::None;
+    SPDLOG_INFO("unload scene OK.");
 }
 
 void GameScene::onUpdate(float deltaTime)
 {
-    if (!_ready) return;
-
     _camera.update(deltaTime);
 }
 
 void GameScene::onDraw() 
 {
-    if (!_ready) return;
-
     auto& renderer = application().renderer();
 
     _tileMap.draw(renderer, _camera);
@@ -221,8 +239,6 @@ void GameScene::unloadObjects()
     _gridObjects.clear();
 
     _collisionDebugRects.clear();
-
-    _tileMap.unload();
 }
 
 entt::entity GameScene::selectObjectAtPos(const Vec2& pos)

@@ -16,7 +16,6 @@ namespace game {
 
     using namespace engine;
 
-
     class GameScene : public engine::Scene, public signals::SlotHandler
     {
         using EntitySet = std::set<entt::entity>;
@@ -132,8 +131,6 @@ namespace game {
         GameData _gameData;
 
         GridEntityMap _gridObjects;
-
-        std::mutex _threadMutex;
 
         entt::entity _selectEntity = entt::null;
 
