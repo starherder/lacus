@@ -32,10 +32,10 @@ namespace samples {
 		ImVec2 work_size = viewport->WorkSize;
 
 		ImVec2 window_pos, window_pos_pivot;
-		window_pos.x = work_pos.x + PAD;
-		window_pos.y = (work_pos.y + work_size.y - PAD) ;
-		window_pos_pivot.x = 0.0f;
-		window_pos_pivot.y = 1.0f ;
+        window_pos.x = work_pos.x + work_size.x - PAD;
+        window_pos.y = work_pos.y + work_size.y - PAD;
+        window_pos_pivot.x = 1.0f; 
+        window_pos_pivot.y = 1.0f; 
 		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 		ImGui::SetNextWindowSize({200, 0});
 

@@ -85,18 +85,6 @@
                 }, 
                 {
                  "height":0,
-                 "id":2,
-                 "name":"item_0",
-                 "point":true,
-                 "rotation":0,
-                 "type":"patrol_npc",
-                 "visible":true,
-                 "width":0,
-                 "x":300,
-                 "y":200
-                }, 
-                {
-                 "height":0,
                  "id":79,
                  "name":"npc_1",
                  "point":true,

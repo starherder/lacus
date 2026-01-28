@@ -101,21 +101,25 @@ Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
 {
     auto& children = group->children();
 
-    for(auto it=children.rbegin(); it!=children.rend(); it++)
+    for (auto it = children.rbegin(); it != children.rend(); it++)
     {
         auto& ptr = *it;
-        if(ptr && ptr->isPosInMe(pos))
+        if (ptr && ptr->isPosInMe(pos))
         {
-            if(ptr->isGroup())
+            if (ptr->isGroup())
             {
                 auto widget = getWidgetInGroup((Group*)ptr.get(), pos);
-                if(widget)
+                if (widget) return widget;
+
+                if (ptr->acceptEvent()) return ptr.get();
+            }
+            else
+            {
+                if (ptr->acceptEvent())
                 {
-                    return widget;
+                    return ptr.get();
                 }
             }
-
-            return ptr.get();
         }
     }
     return nullptr;

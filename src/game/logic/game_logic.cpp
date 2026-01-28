@@ -75,13 +75,13 @@ namespace game
         if (!res) {
             SPDLOG_ERROR("load role config: {} failed.", roleCfgs.string());
         }
-
+/*
         auto enemyCfgs = _gameContext.resPath() / "data/role/";
         res = ObjectFactory::inst().loadEnemies(enemyCfgs);
         if (!res) {
             SPDLOG_ERROR("load enemy config: {} failed.", enemyCfgs.string());
         }
-
+*/
         auto otherCfgs = _gameContext.resPath() / "data/other/";
         res = ObjectFactory::inst().loadOther(otherCfgs);
         if (!res) {
