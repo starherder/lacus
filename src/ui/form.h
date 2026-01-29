@@ -22,7 +22,7 @@ public:
 
     BackGroup* root() { return _rootGroup.get(); }
 
-    Widget* getWidgetAtPos(const Vec2& pos);
+    Widget* getWidgetAtPos(const Vec2& pos, bool must_accept_event=true);
 
     template<typename WidgetType>
     WidgetType* getWidget(const std::string& name);
@@ -85,7 +85,7 @@ public:
     virtual void onWindowResized(const Vec2& size);
 
 private:
-    Widget* getWidgetInGroup(Group* group, const Vec2& pos);
+    Widget* getWidgetInGroup(Group* group, const Vec2& pos, bool must_accept_event=true);
     Widget* getWidgetInGroup(Group* group, const std::string& name);
 
 private:

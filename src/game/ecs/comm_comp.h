@@ -119,9 +119,8 @@ namespace game
 
     struct CompSelection
     {
-        Color border_color = Color::Red;
-        Color ground_color = {255,255,255,128};
-        float border_size = 5.0f;
+        int ticks = 0;
+        int dir = 1;
     };
 
     struct CompBindParticle 

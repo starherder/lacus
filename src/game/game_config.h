@@ -40,6 +40,13 @@ namespace game
 			Color border_color_camp_civilian = Color::White;
 		}display;
 
+		struct Selection {
+			Color border_color = Color::Yellow;
+			Color ground_color = { 255,255,255,128 };
+			float border_size = 10.0f;
+			int period = 500;
+		} selection;
+
 		int dying_ticks = 1000;
 
 		int dead_drop_range = 130;

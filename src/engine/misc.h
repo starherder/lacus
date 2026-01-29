@@ -108,4 +108,4 @@ inline std::ostream& operator<<(std::ostream& os, const std::filesystem::path& p
 {
     return os << path.string();
 }
-template <> struct fmt::formatter<entt::entity> : fmt::ostream_formatter {};
+template <> struct fmt::formatter<std::filesystem::path> : fmt::ostream_formatter {};

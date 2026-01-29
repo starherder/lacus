@@ -88,7 +88,7 @@ private:
     void onMouseMotion(const Vec2& pos, const Vec2& offset);
 
     Form* getFormAtPos(const Vec2& pos);
-    Widget* getWidgetAtPos(const Vec2& pos);
+    Widget* getWidgetAtPos(const Vec2& pos, bool must_accept_event=true);
 
     void drag(Widget* widget);
     void drop();

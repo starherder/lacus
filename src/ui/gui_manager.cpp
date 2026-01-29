@@ -134,7 +134,7 @@ namespace ui
         return nullptr;
     }
 
-    Widget* GuiManager::getWidgetAtPos(const Vec2& pos)
+    Widget* GuiManager::getWidgetAtPos(const Vec2& pos, bool must_accept_event)
     {
         auto form = getFormAtPos(pos);
         if(!form)
@@ -142,7 +142,7 @@ namespace ui
             return nullptr;
         }
 
-        return form->getWidgetAtPos(pos);
+        return form->getWidgetAtPos(pos, must_accept_event);
     }
 
     void GuiManager::moveToTop(const std::string& formName)
@@ -350,7 +350,7 @@ namespace ui
         }
 
         auto pos = _app->eventDispatcher().mousePos();
-        auto widget = getWidgetAtPos(pos);
+        auto widget = getWidgetAtPos(pos, false);
         
         while (widget) 
         {

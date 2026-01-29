@@ -42,7 +42,7 @@ namespace game
             }
             else
             {
-                return;
+                continue;
             }
         }
     }

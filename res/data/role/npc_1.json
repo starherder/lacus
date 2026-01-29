@@ -4,7 +4,6 @@
   "type": "npc",
   "desc": "text_npc_desc_1",
 
-
   "motion": {
     "tween": "cubicIn",
     "speed": 150

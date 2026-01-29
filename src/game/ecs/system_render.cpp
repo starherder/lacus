@@ -22,11 +22,13 @@ namespace game
 
 void RenderSystem::update(float delta)
 {
-    auto parEnts = _context.registry().view<CompTransform, CompBindParticle>();
-    for (auto& ent : parEnts)
+    auto delta_tick = _context.frameTicker().deltaTicks();
+
+    auto par_view = _context.registry().view<CompTransform, CompBindParticle>();
+    for (auto& ent : par_view)
     {
-        auto& compTransform = parEnts.get<CompTransform>(ent);
-        auto& compParticle = parEnts.get<CompBindParticle>(ent);
+        auto& compTransform = par_view.get<CompTransform>(ent);
+        auto& compParticle = par_view.get<CompBindParticle>(ent);
         if (compParticle.particle)
         {
             compParticle.particle->SetPos(compTransform.position);
@@ -34,14 +36,26 @@ void RenderSystem::update(float delta)
         }
     }
 
-    auto ent_view = _context.registry().view<CompSkyEffect>();
-    for (auto ent : ent_view)
+    auto sky_view = _context.registry().view<CompSkyEffect>();
+    for (auto ent : sky_view)
     {
-        auto& skyEffect = _context.registry().get<CompSkyEffect>(ent);
+        auto& skyEffect = sky_view.get<CompSkyEffect>(ent);
 
-        auto delta = _context.frameTicker().deltaTicks();
         skyEffect.tween.step(delta);
     }
+
+    auto sel_view = _context.registry().view<CompSelection>();
+    for (auto ent : sel_view)
+    {
+        auto& select = sel_view.get<CompSelection>(ent);
+        if(select.ticks >= _context.gameConfig().selection.period || select.ticks <= 0)
+        {
+            select.ticks = std::clamp(select.ticks, 0, 255);
+            select.dir *= -1;
+        }
+        select.ticks += delta_tick * select.dir;
+    }
+
 }
 
 void RenderSystem::draw()
@@ -259,11 +273,18 @@ void RenderSystem::drawObjects()
         }
 
         // selection
-        auto selectComp = _context.registry().try_get<CompSelection>(ent);
-        if (selectComp)
+        auto pSelectComp = _context.registry().try_get<CompSelection>(ent);
+        if (pSelectComp)
         {
-            painter.fillRect(selectComp->ground_color, dstrect, corner);
-            painter.drawRect(selectComp->border_color, dstrect, corner, selectComp->border_size);
+            auto& selection = _context.gameConfig().selection;
+
+            float alpha = (float)pSelectComp->ticks / (float)selection.period;
+
+            auto border_color = selection.border_color;
+            border_color.a = (int8_t)(alpha * 255);
+
+            painter.fillRect(selection.ground_color, dstrect, corner);
+            painter.drawRect(border_color, dstrect, corner, selection.border_size);
         }
     }
 }

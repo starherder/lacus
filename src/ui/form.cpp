@@ -97,7 +97,7 @@ void Form::setRect(const Rect& rect)
     setSize(rect.size()); 
 }
 
-Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
+Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos, bool must_accept_event)
 {
     auto& children = group->children();
 
@@ -108,17 +108,16 @@ Widget* Form::getWidgetInGroup(Group* group, const Vec2& pos)
         {
             if (ptr->isGroup())
             {
-                auto widget = getWidgetInGroup((Group*)ptr.get(), pos);
+                auto widget = getWidgetInGroup((Group*)ptr.get(), pos, must_accept_event);
                 if (widget) return widget;
 
+                if (!must_accept_event) return ptr.get();
                 if (ptr->acceptEvent()) return ptr.get();
             }
             else
             {
-                if (ptr->acceptEvent())
-                {
-                    return ptr.get();
-                }
+                if (!must_accept_event) return ptr.get();
+                if (ptr->acceptEvent()) return ptr.get();
             }
         }
     }
@@ -154,9 +153,9 @@ Widget* Form::getWidgetInGroup(Group* group, const std::string& name)
     return nullptr;
 }
 
-Widget* Form::getWidgetAtPos(const Vec2& pos)
+Widget* Form::getWidgetAtPos(const Vec2& pos, bool must_accept_event)
 {
-    auto widget = getWidgetInGroup(_rootGroup.get(), pos);
+    auto widget = getWidgetInGroup(_rootGroup.get(), pos, must_accept_event);
     if(!widget) 
     {
         return _rootGroup.get();

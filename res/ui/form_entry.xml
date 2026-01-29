@@ -3,7 +3,11 @@
 <form name="form_entry" maximize="true" accept_event="false" >
     <hlayout accept_event="false" ground_color="#00558855" >
         <vlayout name="vlay_main" size="500, 0" pad="30,30" ground_color="#005588DD" border_color="#000000FF" border_size="2">
-            <label name="lbl_scene_icon" size="0,550" texture="textures/UI/tiger.svg" ground_color="#FF5555DD" border_color="#000000FF" border_size="2"/>
+          <hlayout accept_event="false" size="0,300" >
+            <widget />
+            <label name="lbl_scene_icon" size="300,0" texture="textures/UI/tiger.svg" ground_color="#FF5555DD" border_color="#000000FF" border_size="2"/>
+            <widget />
+          </hlayout>
             <text name="txt_scene_desc" size="0,300" text="dangerouse! keeep away!" text_color="#FFFFFFFF" font_size="30" border_size="1"/>
             <card_group name="card_group" can_dropin="true" border_color="#333333DD" border_round="5" border_size="2"/>
             <hlayout name="hlay_footer" size="0, 80" border_color="#000000DD" border_size="1" >

@@ -19,11 +19,6 @@
     "raduis": 100
   },
 
-  "selection": {
-    "border_color": "#FFFF00FF",
-    "border_size": 3.0
-  },
-
   "behavior": {
     "bevtree": "npc_patrol"
   },

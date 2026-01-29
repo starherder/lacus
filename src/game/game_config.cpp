@@ -43,6 +43,14 @@ namespace game
 			display.border_color_camp_civilian.fromHexString(displayJs.value("border_color_camp_civilian", "#FFFFFFFF"));
 		}
 
+		if (json.contains("selection"))
+		{
+			auto& selectJs = json["selection"];
+			selection.border_size = selectJs.value("border_size", 2.0f);
+			selection.border_color.fromHexString(selectJs.value("border_color", "#FF0000FF"));
+			selection.ground_color.fromHexString(selectJs.value("ground_color", "#FF0000FF"));
+		}
+
 		if(json.contains("motion"))
 		{
 			auto& motionJs = json["motion"];
