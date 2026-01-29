@@ -352,6 +352,9 @@
     <ClCompile Include="..\src\game\ui\form_result_success.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_chess_tip.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -706,6 +709,9 @@
       <Filter>game\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ui\form_result_success.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_chess_tip.h">
       <Filter>game\ui</Filter>
     </ClInclude>
   </ItemGroup>

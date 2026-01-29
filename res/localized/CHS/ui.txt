@@ -1,0 +1,10 @@
+LV=等级
+HPM=最大生命
+HPR=生命回复
+ATK=    攻击
+DEF=    防御
+MVS=移动速度
+ATS=攻击速度
+ATD=攻击距离
+CRT=  暴击率
+PAR=  闪避率

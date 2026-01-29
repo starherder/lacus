@@ -139,6 +139,11 @@ namespace ui
         }
     }
 
+    void Group::clear()
+    {
+        _children.clear();
+    }
+
     void Group::bringTop(Widget* child)
     {
         for (auto it = _children.begin(); it != _children.end(); it++)

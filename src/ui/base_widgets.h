@@ -198,6 +198,7 @@ public:
 
     int addItem(const std::string& text);
     void removeItem(int index);
+    void clearItems();
 
     size_t itemCount();
 
@@ -380,6 +381,7 @@ public:
 
     int addItem(const std::string& text);
     void removeItem(int index);
+    void clear();
 
     size_t itemCount();
 

@@ -33,6 +33,8 @@ public:
 
     void removeChild(const std::string& name);
 
+    void clear();
+
     void bringTop(Widget* child);
     void bringBottom(Widget* child);
 

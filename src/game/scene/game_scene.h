@@ -24,6 +24,11 @@ namespace game {
         using MapObject = tilemap::MapObject;
 
     public:
+        signals::Signal<entt::entity> on_hover_object;
+        signals::Signal<entt::entity> on_leave_object;
+        signals::Signal<entt::entity> on_select_object;
+
+    public:
         GameScene() = default;
         GameScene(const GameScene&) = delete;
         GameScene(GameScene&&) = delete;
@@ -62,7 +67,7 @@ namespace game {
 
         void destroyActor(entt::entity id);
 
-        entt::entity selectObjectAtPos(const Vec2& pos);
+        entt::entity findObjectAtPos(const Vec2& pos);
 
         void addObjectToGrid(entt::entity ent, const Vec2i& grid);
         void removeObjectFromGrid(entt::entity ent, const Vec2i& grid);
@@ -112,6 +117,11 @@ namespace game {
         void onMouseLeftClick(const Vec2& pos);
         void onMouseRightClick(const Vec2& pos);
 
+        void onMouseMotion(const Vec2& pos, const Vec2& offset);
+
+        void onHoverObject(entt::entity obj);
+        void onLeaveObject(entt::entity obj);
+
         void moveSelectActor(const Vec2& pos);
 
         bool dragSelectActor(const Vec2& pos);
@@ -133,6 +143,7 @@ namespace game {
         GridEntityMap _gridObjects;
 
         entt::entity _selectEntity = entt::null;
+        entt::entity _hoverEntity = entt::null;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

@@ -23,6 +23,8 @@ GameScene::GameScene(GameContext& context)
 
     _context.eventDispatcher().onMouseLeftClicked.connect(this, &GameScene::onMouseLeftClick, -1);
     _context.eventDispatcher().onMouseRightClicked.connect(this, &GameScene::onMouseRightClick, -1);
+
+    _context.eventDispatcher().onMouseMotion.connect(this, &GameScene::onMouseMotion, -1);
 }
 
 GameScene::~GameScene()
@@ -241,13 +243,12 @@ void GameScene::unloadObjects()
     _collisionDebugRects.clear();
 }
 
-entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
+entt::entity GameScene::findObjectAtPos(const Vec2& pos)
 {
     auto grid = getGridFromPos(pos);
     auto& objset = getObjectsInGrid(grid);
     if (objset.empty()) 
     {
-        _context.dispatcher().trigger(EvtObjectSelection{ entt::null });
         return entt::null;
     }
 
@@ -259,15 +260,11 @@ entt::entity GameScene::selectObjectAtPos(const Vec2& pos)
             auto rect = Rect{ transComp.position - transComp.size / 2.0f, transComp.size };
             if (rect.contains(pos)) 
             {
-                SPDLOG_INFO("object ({}) selected.", (int)obj);
-                _context.dispatcher().trigger(EvtObjectSelection{ obj });
                 return obj;
             }
         }
     }
 
-    //SPDLOG_INFO("object (null) selected.");
-    _context.dispatcher().trigger(EvtObjectSelection{ entt::null });
     return entt::null;
 }
 
@@ -524,7 +521,12 @@ SkyEffect GameScene::getSkyEffect()
 void GameScene::onMouseLeftPressed(const Vec2& pos)
 {
     auto scenePos = camera().screenToWorld(pos);
-    _selectEntity = selectObjectAtPos(scenePos);
+    _selectEntity = findObjectAtPos(scenePos);
+
+    SPDLOG_INFO("select object: {}", _selectEntity);
+    on_select_object(_selectEntity);
+
+    _context.dispatcher().trigger(EvtObjectSelection{ _selectEntity });
 }
 
 void GameScene::onMouseLeftRelease(const Vec2& pos)
@@ -566,7 +568,39 @@ void GameScene::onMouseRightClick(const Vec2& pos)
         auto scenePos = camera().screenToWorld(pos);
         moveSelectActor(scenePos);
     }
+}
 
+void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
+{
+    auto scenePos = camera().screenToWorld(pos);
+    auto hoverEntity = findObjectAtPos(scenePos);
+    if (hoverEntity == _hoverEntity)
+    {
+        return;
+    }
+
+    if (hoverEntity == entt::null) 
+    {
+        onLeaveObject(_hoverEntity);
+    }
+    else
+    {
+        onHoverObject(hoverEntity);
+    }
+
+    _hoverEntity = hoverEntity;
+}
+
+void GameScene::onHoverObject(entt::entity obj)
+{
+    SPDLOG_INFO("hover object: {}", obj);
+    on_hover_object.emit(obj);
+}
+
+void GameScene::onLeaveObject(entt::entity obj)
+{
+    SPDLOG_INFO("leave object: {}", obj);
+    on_leave_object.emit(obj);
 }
 
 void GameScene::moveSelectActor(const Vec2& pos)

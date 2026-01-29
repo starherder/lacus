@@ -197,6 +197,7 @@
     <ClCompile Include="..\src\game\scene\game_context.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
     <ClCompile Include="..\src\game\ui\form_cards.cpp" />
+    <ClCompile Include="..\src\game\ui\form_chess_tip.cpp" />
     <ClCompile Include="..\src\game\ui\form_config.cpp" />
     <ClCompile Include="..\src\game\ui\form_entry.cpp" />
     <ClCompile Include="..\src\game\ui\form_result_fail.cpp" />
@@ -302,6 +303,7 @@
     <ClInclude Include="..\src\game\scene\game_context.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />
     <ClInclude Include="..\src\game\ui\form_cards.h" />
+    <ClInclude Include="..\src\game\ui\form_chess_tip.h" />
     <ClInclude Include="..\src\game\ui\form_config.h" />
     <ClInclude Include="..\src\game\ui\form_entry.h" />
     <ClInclude Include="..\src\game\ui\form_result_fail.h" />

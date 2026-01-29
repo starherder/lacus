@@ -406,6 +406,20 @@ namespace ui
         }
     }
 
+    void RadioGroupImpl::clearItems()
+    {
+        for (auto it = _items.begin(); it != _items.end(); ) 
+        {
+            auto widget = *it;
+            if (widget) 
+            {
+                _group->removeChild(widget->name());
+            }
+
+            it = _items.erase(it);
+        }
+    }
+
     size_t RadioGroupImpl::itemCount() 
     {
         return _items.size(); 
@@ -854,6 +868,11 @@ namespace ui
         }
     }
 
+    void ListBox::clear()
+    {
+        _radioGroup->clearItems();
+    }
+
     int ListBox::getSelectIndex()
     {
         return _radioGroup->getSelectIndex();
@@ -870,6 +889,8 @@ namespace ui
         {
             return false;
         }
+
+        _itemHeight = node->FloatAttribute("item_height", 25.0f);
         return true;
     }
 

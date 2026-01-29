@@ -63,6 +63,10 @@ namespace game
 		
 		void checkGameState();
 
+		void onSceneObjectHover(entt::entity obj);
+		void onSceneObjectLeave(entt::entity obj);
+		void onSceneObjectSelect(entt::entity obj);
+
 	private:
 		std::unique_ptr<GameScene> _scene = nullptr;
 

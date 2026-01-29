@@ -28,6 +28,7 @@
 #include "game/ui/imform_debug.h"
 #include "game/ui/form_result_fail.h"
 #include "game/ui/form_result_success.h"
+#include "game/ui/form_chess_tip.h"
 
 
 namespace game
@@ -36,6 +37,9 @@ namespace game
 	{
 		_scene = std::make_unique<GameScene>(_gameContext);
         _scene->on_load_progress.connect(this, &GameLogic::onSceneLoadProgress);
+        _scene->on_hover_object.connect(this, &GameLogic::onSceneObjectHover);
+        _scene->on_leave_object.connect(this, &GameLogic::onSceneObjectLeave);
+        _scene->on_select_object.connect(this, &GameLogic::onSceneObjectSelect);
 
 		_gameContext.setScene(_scene.get());
 		_gameContext.setGameConfig(&_gameConfig);
@@ -117,6 +121,7 @@ namespace game
         if (!res) {
             SPDLOG_ERROR("load translator file ({}) failed.", textdir.string());
         }
+
 	}
 
     void GameLogic::init()
@@ -261,11 +266,19 @@ namespace game
         if (visible)
         {
             ui::GuiManager::inst().createForm<FormMain>("form_main", _gameContext);
+
+            auto form = ui::GuiManager::inst().createForm<FormChessTip>("form_chess_tip", _gameContext);
+            if (form)
+            {
+                form->setVisible(false);
+            }
         }
         else
         {
             ui::GuiManager::inst().closeForm("form_main");
+            ui::GuiManager::inst().closeForm("form_chess_tip");
         }
+
     }
 
     void GameLogic::showLoadingForm(bool visible)
@@ -319,4 +332,29 @@ namespace game
     {
         ui::GuiManager::inst().closeAllForms();
     }
+
+    void GameLogic::onSceneObjectHover(entt::entity obj)
+    {
+        auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
+        if (form)
+        {
+            form->setVisible(true);
+            form->showChessTip(obj);
+        }
+    }
+    
+    void GameLogic::onSceneObjectLeave(entt::entity obj)
+    {
+        auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
+        if (form)
+        {
+            form->setVisible(false);
+        }
+    }
+    
+    void GameLogic::onSceneObjectSelect(entt::entity obj)
+    {
+
+    }
+
 }

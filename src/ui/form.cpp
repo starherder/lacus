@@ -37,6 +37,9 @@ bool Form::load(const fs::path& filepath)
     auto pos = ToVec2(ele->Attribute("pos"));
     setPos(pos);
 
+    auto size = ToVec2(ele->Attribute("size"));
+    setSize(size);
+
     auto visible = ele->BoolAttribute("visible", true);
     setVisible(visible);
 
@@ -165,6 +168,11 @@ Widget* Form::getWidgetAtPos(const Vec2& pos, bool must_accept_event)
 
 void Form::update(float delta)
 {
+    if (!visible()) 
+    {
+        return;
+    }
+
     _rootGroup->setPos(_pos);
     _rootGroup->setSize(_size);
     _rootGroup->update(delta);
