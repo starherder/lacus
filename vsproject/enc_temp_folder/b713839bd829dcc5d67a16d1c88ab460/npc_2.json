@@ -1,12 +1,11 @@
 {
-  "id": "npc_1",
-  "name": "text_npc_name_1",
+  "id": "npc_2",
+  "name": "text_npc_name_2",
   "type": "npc",
-  "desc": "text_npc_desc_1",
+  "desc": "text_npc_desc_2",
 
   "motion": {
-    "speed": 150,
-    "swim_speed": 250
+    "speed": 150
   },
 
   "under_attack": {
@@ -25,7 +24,7 @@
 
   "display": {
     "size": "64,64",
-    "groud_color": "#FFFF00FF",
+    "groud_color": "#FFAAFFFF",
     "border_color": "#555555FF",
     "font_color": "#555555FF",
     "# texture": "textures/icon/sry1.png",
@@ -37,19 +36,23 @@
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
     "level": 1,
-    "roll": 10,
-    "str": 20,
-    "cst": 20,
-    "dex": 20,
-    "met": 20
+    "roll": 20,
+    "str": 30,
+    "cst": 30,
+    "dex": 30,
+    "met": 30
   },
 
   "skills": [
-    "skill_archery"
+    "skill_lightning", "skill_poison"
   ],
+
+  "dead_drop": {
+    "exp": 50,
+    "coin": 100
+  },
 
   "buffs": [],
 
-  "items": [ "item_coin",  "item_medicine" ]
-
+  "items": [ "item_coin", "item_coin", "item_poision" ]
 }

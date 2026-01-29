@@ -20,7 +20,6 @@ namespace game
 	
 	void NumericalSystem::update(float delta)
 	{
-
 	}
 
     void NumericalSystem::onRolePropAlter(const EvtRolePropAlter& e)

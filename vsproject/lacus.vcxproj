@@ -200,8 +200,7 @@
     <ClCompile Include="..\src\game\ui\form_chess_tip.cpp" />
     <ClCompile Include="..\src\game\ui\form_config.cpp" />
     <ClCompile Include="..\src\game\ui\form_entry.cpp" />
-    <ClCompile Include="..\src\game\ui\form_result_fail.cpp" />
-    <ClCompile Include="..\src\game\ui\form_result_success.cpp" />
+    <ClCompile Include="..\src\game\ui\form_result.cpp" />
     <ClCompile Include="..\src\game\ui\form_start.cpp" />
     <ClCompile Include="..\src\game\ui\form_loading.cpp" />
     <ClCompile Include="..\src\game\ui\form_main.cpp" />
@@ -306,8 +305,7 @@
     <ClInclude Include="..\src\game\ui\form_chess_tip.h" />
     <ClInclude Include="..\src\game\ui\form_config.h" />
     <ClInclude Include="..\src\game\ui\form_entry.h" />
-    <ClInclude Include="..\src\game\ui\form_result_fail.h" />
-    <ClInclude Include="..\src\game\ui\form_result_success.h" />
+    <ClInclude Include="..\src\game\ui\form_result.h" />
     <ClInclude Include="..\src\game\ui\form_start.h" />
     <ClInclude Include="..\src\game\ui\form_loading.h" />
     <ClInclude Include="..\src\game\ui\form_logic_base.h" />
@@ -370,8 +368,7 @@
     <Xml Include="..\res\ui\form_entry.xml" />
     <Xml Include="..\res\ui\form_loading.xml" />
     <Xml Include="..\res\ui\form_main.xml" />
-    <Xml Include="..\res\ui\form_result_fail.xml" />
-    <Xml Include="..\res\ui\form_result_success.xml" />
+    <Xml Include="..\res\ui\form_result.xml" />
     <Xml Include="..\res\ui\form_scenes.xml" />
     <Xml Include="..\res\ui\form_start.xml" />
     <Xml Include="..\res\ui\form_test.xml" />

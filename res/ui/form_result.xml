@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form maximize="true" accept_event="true">
+    <vlayout name="vlay_bg" ground_color="#00000088">
+        <widget />
+        <hlayout name="hlay_center" size="0, 300" >
+            <widget />
+            <vlayout size="500,0" ground_color="#AAAAAAFF" border_color="#000000FF" border_size="2">
+                <widget />
+                <label name="lbl_result" text="失败了！" text_color="#333333FF" font_name="fonts/Vonwaon.ttf" font_size="50" />
+                <widget />
+                <hlayout name="hlay_footer" pad="10,10" >
+                    <button name="btn_leave" text="重来" text_color="#008800FF" font_size="30" />
+                    <widget size="10,0" />
+                    <button name="btn_restart" text="退出" text_color="#000099FF" font_size="30" />
+                </hlayout>
+            </vlayout >
+            <widget />
+        </hlayout>
+        <widget />
+    </vlayout>
+</form>

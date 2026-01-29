@@ -346,10 +346,7 @@
     <ClCompile Include="..\src\game\scene\game_data.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\ui\form_result_fail.cpp">
-      <Filter>game\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\game\ui\form_result_success.cpp">
+    <ClCompile Include="..\src\game\ui\form_result.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\src\game\ui\form_chess_tip.cpp">
@@ -705,10 +702,7 @@
     <ClInclude Include="..\src\game\scene\game_data.h">
       <Filter>game\scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\ui\form_result_fail.h">
-      <Filter>game\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\game\ui\form_result_success.h">
+    <ClInclude Include="..\src\game\ui\form_result.h">
       <Filter>game\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ui\form_chess_tip.h">
@@ -745,10 +739,7 @@
     <Xml Include="..\res\ui\form_main.xml">
       <Filter>res\ui</Filter>
     </Xml>
-    <Xml Include="..\res\ui\form_result_fail.xml">
-      <Filter>res\ui</Filter>
-    </Xml>
-    <Xml Include="..\res\ui\form_result_success.xml">
+    <Xml Include="..\res\ui\form_result.xml">
       <Filter>res\ui</Filter>
     </Xml>
   </ItemGroup>

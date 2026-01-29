@@ -26,8 +26,7 @@
 #include "game/ui/ui_logic_events.h"
 #include "game/ui/form_main.h"
 #include "game/ui/imform_debug.h"
-#include "game/ui/form_result_fail.h"
-#include "game/ui/form_result_success.h"
+#include "game/ui/form_result.h"
 #include "game/ui/form_chess_tip.h"
 
 
@@ -202,7 +201,9 @@ namespace game
         if (liveRole == 0 && handCards == 0)
         {
             _state = GameState::Finish;
-            ui::GuiManager::inst().createForm<FormResultFail>("form_fail", _gameContext);
+            auto result = GameResult::Failed;
+
+            ui::GuiManager::inst().createForm<FormResult>("form_result", _gameContext, result);
         }
     }
 

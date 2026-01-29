@@ -47,10 +47,6 @@
     "skill_combat"
   ],
 
-  "dead_drop":{
-    "exp" : 50,
-    "coin" : 100
-  },
 
   "buffs": [],
 
