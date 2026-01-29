@@ -77,7 +77,7 @@ namespace game
         if (findPath)
         {
             // path find
-            auto path = _context.pathFinder().findPath(srcGrid, dstGrid);
+            auto path = _context.findPath(srcGrid, dstGrid, motion.swim_speed > 0.0f);
             if (!path)
             {
                 SPDLOG_INFO("path find failed.");

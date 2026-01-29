@@ -27,6 +27,7 @@ namespace tilemap {
         void draw(engine::Renderer& renderer, const engine::Camera& camera);
 
         const auto& collisionPoints() const { return _collisionPoints; }
+        const auto& waterPoints() const { return _waterPoints; }
         
         ImageLayer* getBkgroundLayer();
         TileLayer* getTileLayer();
@@ -83,6 +84,7 @@ namespace tilemap {
         std::multimap<int, std::shared_ptr<MapDrawCall>> _drawCalls;
 
         std::vector<Vec2i> _collisionPoints;
+        std::vector<Vec2i> _waterPoints;
 
         std::string _version;
         std::string _tiledVersion;

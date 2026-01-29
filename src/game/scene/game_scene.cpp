@@ -204,17 +204,31 @@ void GameScene::closeAllGui()
 
 void GameScene::initPathFind()
 {
-    auto& pathFinder = _context.pathFinder();
-    pathFinder.clear();
+    // 通用寻路
+    _context.pathFinder().clear();
+    _context.pathFinder().setWorldSize(_tileMap.mapSize());
+    _context.pathFinder().setHeuristic(AStar::Heuristic::euclidean);
+    _context.pathFinder().setDiagonalMovement(false);
 
-    pathFinder.setWorldSize(_tileMap.mapSize());
-    pathFinder.setHeuristic(AStar::Heuristic::euclidean);
-    pathFinder.setDiagonalMovement(false);
+    // 陆地寻路
+    _context.landPathFinder().clear();
+    _context.landPathFinder().setWorldSize(_tileMap.mapSize());
+    _context.landPathFinder().setHeuristic(AStar::Heuristic::euclidean);
+    _context.landPathFinder().setDiagonalMovement(false);
 
+    // 障碍物
     for(auto& grid : _tileMap.collisionPoints()) 
     {
-        pathFinder.addCollision(grid);
+        _context.pathFinder().addCollision(grid);
+        _context.landPathFinder().addCollision(grid);
     }
+
+    // 陆地寻路，水面也是障碍物
+    for (auto& grid : _tileMap.waterPoints())
+    {
+        _context.landPathFinder().addCollision(grid);
+    }
+
 
     // -------------- show collision info ------------------
     auto& tileSize = _tileMap.tileSize();

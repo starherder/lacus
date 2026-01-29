@@ -37,4 +37,16 @@ namespace game
 		return _currentScene->dataCenter(); 
 	}
 
+	GameContext::OptPathList GameContext::findPath(const Vec2i& srcGrid, const Vec2i& dstGrid, bool can_swim)
+	{
+		if (can_swim)
+		{
+			return pathFinder().findPath(srcGrid, dstGrid);
+		}
+		else
+		{
+			return landPathFinder().findPath(srcGrid, dstGrid);
+		}
+	}
+
 }

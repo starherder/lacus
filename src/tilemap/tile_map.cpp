@@ -400,8 +400,13 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
                     if(it != tileset.tiles.end() ) {
                         auto& tile = it->second;
                         auto optWalktype = tile.properties.get<int>("walktype");
-                        if(optWalktype && optWalktype.value() == (int)WalkType::Collision) {
-                            _collisionPoints.push_back({x, y});
+                        if(optWalktype){
+                            if (optWalktype.value() == (int)WalkType::Collision) {
+                                _collisionPoints.push_back({ x, y });
+                            }
+                            else if (optWalktype.value() == (int)WalkType::Swim) {
+                                _waterPoints.push_back({ x, y });
+                            }
                         }
                     }
                 }

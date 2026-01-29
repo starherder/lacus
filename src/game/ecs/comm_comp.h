@@ -104,6 +104,7 @@ namespace game
     struct CompMotion
     {
         float speed = 150.0f;
+        float swim_speed = 150.0f;
 
         MotionState state = MotionState::Resting;
         

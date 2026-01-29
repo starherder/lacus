@@ -424,6 +424,7 @@ namespace game
 			
 			CompMotion motion;
 			motion.speed = motionJs.value("speed", 0.0f);
+			motion.swim_speed = motionJs.value("swim_speed", 0.0f);
 			_context->registry().emplace<CompMotion>(role, motion);
 		}
 

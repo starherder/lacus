@@ -21,6 +21,7 @@ namespace game {
 	{
 	public:
 		using PathFinder = AStar::Generator;
+		using OptPathList = std::optional<AStar::CoordinateList>;
 
 	public:
 		GameContext() = delete;
@@ -57,7 +58,6 @@ namespace game {
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }
 
-
 		int64_t currentTicks() { return _application.frameTicker().ticks(); }
 		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
 
@@ -69,7 +69,10 @@ namespace game {
 		GameCamera& camera();
 		GameData& dataCenter();
 
+		OptPathList findPath(const Vec2i& srcGrid, const Vec2i& dstGrid, bool can_swim);
+
 		PathFinder& pathFinder() { return _pathFinder; }
+		PathFinder& landPathFinder() { return _landPathFinder; }
 
 		bool debugMode() { return _debugMode; }
 		void setDebugMode(bool debug) { _debugMode = debug; }
@@ -82,6 +85,8 @@ namespace game {
 		GameConfig* _gameConfig = nullptr;
 
 		PathFinder _pathFinder;
+
+		PathFinder _landPathFinder;
 
 		bool _debugMode = false;
 	};

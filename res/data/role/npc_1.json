@@ -5,8 +5,8 @@
   "desc": "text_npc_desc_1",
 
   "motion": {
-    "tween": "cubicIn",
-    "speed": 150
+    "speed": 150,
+    "swim_speed": 250
   },
 
   "under_attack": {
