@@ -38,7 +38,7 @@ namespace game
         auto pFightProps = _context.registry().try_get<CompFightProp>(obj);
         if (pFightProps)
         {
-            std::map<std::string, float> propsMap = {
+            std::vector<std::pair<std::string, float>> propsMap = {
                 {"HPM", pFightProps->hpm}, 
                 {"HPR", pFightProps->hpr},
                 {"ATK", pFightProps->atk},
