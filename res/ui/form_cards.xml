@@ -23,7 +23,7 @@
         <hlayout >
         </hlayout>
 
-        <card_group name="card_group" size="0,200" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" >
+        <card_group name="card_group" size="0,200" can_dropin="true" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" >
         </card_group >
     </vlayout>
 </form>

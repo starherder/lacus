@@ -4,7 +4,7 @@
     <vlayout ground_color="#5555FF80" pad="10,10">
         <hlayout name="hlay_head" size="0,30">
             <label name="lbl_name" text_color="#FF8800FF" font_name="fonts/Vonwaon.ttf" font_size="20" />
-            <widget size="30"/>
+            <widget size="10"/>
             <label name="lbl_lv" text_color="#FF8800FF" font_name="fonts/Vonwaon.ttf" font_size="20" />
         </hlayout>
       <list name="list_props" ground_color="#5555FFCC" >

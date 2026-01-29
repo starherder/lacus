@@ -11,10 +11,10 @@
       <widget name="wgt_scene" accept_event="false" can_dropin="true" />
 
         <hlayout name="hlay_tools" size="0,250" clip_children="false" accept_event="false">
-          <group size ="300,0" ground_color="#8888FFAA" border_color="#000000FF" border_size="1" />
-          <card_group name="card_group" ground_color="#8888FFAA" border_color="#000000FF" border_size="1" >
+          <group size ="300,0" ground_color="#8888FF00" border_color="#00000000" border_size="1" />
+          <card_group name="card_group" ground_color="#8888FFAA" border_color="#00000000" border_size="1" >
           </card_group >
-          <group size ="300,0" ground_color="#88FFFFAA" border_color="#000000FF" border_size="1" />
+          <group size ="300,0" ground_color="#88FFFF00" border_color="#00000000" border_size="1" />
         </hlayout>
     </vlayout>
   </form>
