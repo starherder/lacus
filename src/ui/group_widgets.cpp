@@ -34,7 +34,7 @@ namespace ui
             }
             else
             {
-                SPDLOG_ERROR("create widget: {} failed.", child->Name());
+                LogError("create widget: {} failed.", child->Name());
             }
 
             child = child->NextSiblingElement();
@@ -81,7 +81,7 @@ namespace ui
     {
         if(!widget)
         {
-            SPDLOG_ERROR("Group::addWidget widiget==nullptr.");
+            LogError("Group::addWidget widiget==nullptr.");
             return;
         }
 
@@ -123,7 +123,7 @@ namespace ui
         }
         else
         {
-            SPDLOG_ERROR("add widget ({}) to index {} failed. child_count = {}", widget->name(), index, _children.size());
+            LogError("add widget ({}) to index {} failed. child_count = {}", widget->name(), index, _children.size());
         }
     }
 

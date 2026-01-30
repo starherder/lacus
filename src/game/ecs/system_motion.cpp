@@ -1,6 +1,8 @@
 ﻿#include "system_motion.h"
 #include "comm_event.h"
 #include "tweeny/tweeny.h"
+#include "game/game_config.h"
+
 
 namespace game 
 {
@@ -57,7 +59,7 @@ namespace game
     {
         if (!_context.registry().valid(id))
         {
-            SPDLOG_ERROR("entity {} NOT found.", (uint32_t)id);
+            LogError("entity {} NOT found.", (uint32_t)id);
             return false;
         }
 
@@ -70,7 +72,7 @@ namespace game
         Vec2i srcGrid = _context.scene().getGridFromPos(srcPos);
         if(srcGrid == dstGrid)
         {
-            //SPDLOG_WARN("src_grid == dst_grid");
+            //LogWarn("src_grid == dst_grid");
             return false;
         }
 
@@ -80,7 +82,7 @@ namespace game
             auto path = _context.findPath(srcGrid, dstGrid, motion.swim_speed > 0.0f);
             if (!path)
             {
-                SPDLOG_INFO("path find failed.");
+                LogInfo("path find failed.");
                 motionStop(id);
                 return false;
             }
@@ -92,7 +94,7 @@ namespace game
 
         if(motion.path.size() < 2) 
         {
-            SPDLOG_WARN("path TOO short!,only {} grids", motion.path.size());
+            LogWarn("path TOO short!,only {} grids", motion.path.size());
             return false;
         }
 

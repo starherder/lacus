@@ -111,7 +111,7 @@ namespace samples {
         if (!_tween.isFinished() || _easeMode==EaseMode::Yoyo)
         {
             auto delta = application()->frameTicker().deltaTicks();
-            //SPDLOG_INFO("delta = {}, time_point = {}, point = {}", 
+            //LogInfo("delta = {}, time_point = {}, point = {}", 
             //    delta, _tween.currentTimePoint(), _tween.point());
 
             _tween.step(delta);    
@@ -144,7 +144,7 @@ namespace samples {
 
     void SamplePluginTweeny::onEaseModeSelect(const char* ease, EaseMode mode, int duration)
     {
-        SPDLOG_INFO("start: ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
+        LogInfo("start: ease = {}, mode = {}", ease, MagicEnumText(EaseMode, mode));
         
         _easeMode = mode;
 
@@ -164,7 +164,7 @@ namespace samples {
         uint16_t lstpoint = -1;
         _tween.onStep([this, &lstpoint] (auto& t, float x, float y) {
 
-            //SPDLOG_INFO("t.process = {} t.point = {}/{}, timePoint = {}", 
+            //LogInfo("t.process = {} t.point = {}/{}, timePoint = {}", 
             //    t.progress(), t.point(), t.point_count(), t.currentTimePoint());
     
             _rolePos.x = x;
@@ -175,7 +175,7 @@ namespace samples {
 
         _tween.onPoint([this](auto& t, float x, float y) {
             
-            SPDLOG_INFO("onPoint: current point = {} progress = {}", t.point(), t.progress());
+            LogInfo("onPoint: current point = {} progress = {}", t.point(), t.progress());
 
             _lights[t.point()] = true;
 
@@ -188,7 +188,7 @@ namespace samples {
         {
             _tween.onStep([ease, start_ticks](auto& t, int x, int y) {
                 if (t.progress() >= 1.0f) {
-                    SPDLOG_INFO("{} finish!,  ticks = {}", ease, SDL_GetTicks()-start_ticks);
+                    LogInfo("{} finish!,  ticks = {}", ease, SDL_GetTicks()-start_ticks);
                     return true;
                 }
                 return false;
@@ -199,7 +199,7 @@ namespace samples {
         {
             _tween.onStep([ease](auto& t, int x, int y) {  
                 if (t.progress() >= 1.0f) {
-                    SPDLOG_INFO("{} reward!", ease);
+                    LogInfo("{} reward!", ease);
                     t.seek(0); 
                 }
                 return false;
@@ -210,14 +210,14 @@ namespace samples {
         {
             _tween.onStep([ease](auto& t, int x, int y) 
                 {
-                    //SPDLOG_INFO("t.progress() = {}", t.progress());
+                    //LogInfo("t.progress() = {}", t.progress());
 
                     if (t.progress() <= 0.01f) { 
-                        SPDLOG_INFO("{} forward!", ease);
+                        LogInfo("{} forward!", ease);
                         t.forward(); 
                     }
                     if (t.progress() >= 1.0f) {
-                        SPDLOG_INFO("{} backward!", ease);
+                        LogInfo("{} backward!", ease);
                         t.backward(); 
                     }
                     return false;

@@ -27,7 +27,7 @@ namespace game
 
 			if(!_context.registry().valid(buff.owner))
 			{
-				SPDLOG_INFO("buff({}) owner({}) NOT valid, remove buff({}).", 
+				LogInfo("buff({}) owner({}) NOT valid, remove buff({}).", 
 							(uint32_t)buff.owner, (uint32_t)ent, buff.cfgid);
 				_context.registry().emplace_or_replace<CompDestroy>(ent);
 				continue;
@@ -66,14 +66,14 @@ namespace game
 		auto buff = _context.objectFactory().createBuff(e.target, e.cfgid);
 		if(!_context.registry().valid(buff))
 		{
-			//SPDLOG_ERROR("add buff ({}) failed.", e.cfgid);
+			//LogError("add buff ({}) failed.", e.cfgid);
 			return;
 		}
 
 		auto pbuffs = _context.registry().try_get<CompBuffs>(e.target);
 		if(!pbuffs)
 		{
-			//SPDLOG_ERROR("object ({}) can NOT hold buffs.", (uint32_t)e.target);
+			//LogError("object ({}) can NOT hold buffs.", (uint32_t)e.target);
 			return;
 		}
 
@@ -92,7 +92,7 @@ namespace game
 				buffComm.during_ticks += ticks;
 				if(buffComm.during_ticks > buffComm.duration)
 				{
-					//SPDLOG_INFO("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
+					//LogInfo("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
 					_context.registry().emplace_or_replace<CompDestroy>(buff);
 					return;
 				}
@@ -113,7 +113,7 @@ namespace game
 		auto pbuffs = _context.registry().try_get<CompBuffs>(e.target);
 		if (!pbuffs)
 		{
-			SPDLOG_ERROR("object ({}) can NOT hold buffs.", (uint32_t)e.target);
+			LogError("object ({}) can NOT hold buffs.", (uint32_t)e.target);
 			return;
 		}
 
@@ -142,7 +142,7 @@ namespace game
 		// 改造 FightSystem::onRoleUnderAttack，发消息过去处理伤害
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
-		//SPDLOG_INFO("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
+		//LogInfo("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
 
 		EvtExecPropFuncs func;
 		func.source = source;

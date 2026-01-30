@@ -22,16 +22,16 @@ bool JsonConfig::load(const fs::path& filepath)
 
     std::ifstream ifile(_filepath);
     if (!ifile.is_open()) {
-        SPDLOG_ERROR("open file '{}' failed.", _filepath.string());
+        LogError("open file '{}' failed.", _filepath.string());
         return false;
     }
 
     try {
         ifile >> (*_json);
 
-        SPDLOG_INFO("load json from '{}' OK.", _filepath.string());
+        LogInfo("load json from '{}' OK.", _filepath.string());
     } catch (const std::exception& e) {
-        SPDLOG_ERROR("load json form '{}' failed, err = '{}'", _filepath.string(), e.what());
+        LogError("load json form '{}' failed, err = '{}'", _filepath.string(), e.what());
         return false;
     }
     
@@ -43,18 +43,18 @@ bool JsonConfig::save()
     std::ofstream ofile(_filepath);
     if (!ofile.is_open()) 
     {
-        SPDLOG_ERROR("open file '{}' failed.", _filepath.string());
+        LogError("open file '{}' failed.", _filepath.string());
         return false;
     }
     
     try 
     {
         ofile << (*_json).dump(4);
-        SPDLOG_INFO("save json to '{}' OK.", _filepath.string());
+        LogInfo("save json to '{}' OK.", _filepath.string());
     }
     catch (const std::exception& e) 
     {
-        SPDLOG_ERROR("save json to '{}' failed, err = '{}'", _filepath.string(), e.what());
+        LogError("save json to '{}' failed, err = '{}'", _filepath.string(), e.what());
         return false;
     }
 
@@ -82,7 +82,7 @@ bool SystemConfig::load(const fs::path& filepath)
         }
         else 
         {
-            SPDLOG_ERROR("window NOT set.");
+            LogError("window NOT set.");
             return false;
         }
 
@@ -101,7 +101,7 @@ bool SystemConfig::load(const fs::path& filepath)
         }
         else 
         {
-            SPDLOG_ERROR("res path NOT set.");
+            LogError("res path NOT set.");
             return false;
         }
 
@@ -116,7 +116,7 @@ bool SystemConfig::load(const fs::path& filepath)
     }
     catch(const std::exception& e)
     {
-        SPDLOG_ERROR("load system config from '{}' failed, err = '{}'", filepath.string(), e.what());
+        LogError("load system config from '{}' failed, err = '{}'", filepath.string(), e.what());
         return false;
     }
 

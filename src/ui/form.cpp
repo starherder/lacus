@@ -51,7 +51,7 @@ bool Form::load(const fs::path& filepath)
 
     bool res = root()->load(ele);
     if (!res) {
-        SPDLOG_ERROR("load form {} failed.", _name);
+        LogError("load form {} failed.", _name);
         return false;
     }
 

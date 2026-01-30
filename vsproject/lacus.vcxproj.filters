@@ -460,6 +460,9 @@
     <ClCompile Include="..\ext\lua\src\lzio.c">
       <Filter>ext\lua</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\game_script.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -902,6 +905,9 @@
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lzio.h">
       <Filter>ext\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\game_script.h">
+      <Filter>game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

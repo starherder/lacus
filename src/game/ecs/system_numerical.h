@@ -22,9 +22,9 @@ namespace game
         void update(float delta) override;
 
     private:
-        int levelupExp(int level);
-        int totalExp(int level);
-        int enemyDeadDropExp(int enemy_level);
+        int getLevelupExp(int level);
+
+        int getKillAwardExp(int enemy_level);
     };
 
 

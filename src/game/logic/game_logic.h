@@ -6,6 +6,10 @@
 #include "game/ecs/comm_system.h"
 #include "game/ecs/comm_event.h"
 
+#include "game/game_config.h"
+#include "game/game_script.h"
+
+
 
 namespace game
 {
@@ -77,6 +81,8 @@ namespace game
 		GameContext& _context;
 
 		GameConfig _gameConfig;
+
+		GameScript _gameScript;
 
 		GameState _state = GameState::Running;
 	};

@@ -37,7 +37,7 @@ namespace game
         auto funcs = SystemUtils::parseFightFunc(e.funcs);
         if (!funcs)
         {
-            SPDLOG_ERROR("parse func config({}) error.", e.funcs);
+            LogError("parse func config({}) error.", e.funcs);
             return;
         }
 
@@ -51,7 +51,7 @@ namespace game
     {
         if (!_context.registry().valid(target)) 
         {
-            SPDLOG_ERROR("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
+            LogError("applyFuncToTarget: target ({}) NOT valid", (uint32_t)target);
             return;
         }
 
@@ -146,7 +146,7 @@ namespace game
 
     void FightSystem::addBuf(entt::entity source, entt::entity target, const std::string& buf)
     {
-        //SPDLOG_INFO("target({}) add buff {}", (uint32_t)target, buf);
+        //LogInfo("target({}) add buff {}", (uint32_t)target, buf);
 
         EvtAddBuff buff;
         buff.source = source;
@@ -157,7 +157,7 @@ namespace game
 
     void FightSystem::removeBuf(entt::entity target, const std::string& buf)
     {
-        //SPDLOG_INFO("target({}) remove buff {}", (uint32_t)target, buf);
+        //LogInfo("target({}) remove buff {}", (uint32_t)target, buf);
 
         EvtRemoveBuff buff;
         buff.target = target;

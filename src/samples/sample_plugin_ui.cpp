@@ -248,11 +248,11 @@ namespace samples
 		auto sourceGroup = dynamic_cast<ui::CardGroup*>(dragging->src_group);
 		if (!cardWidget || !sourceGroup)
 		{
-			SPDLOG_ERROR("dragging card widget is invalid.");
+			LogError("dragging card widget is invalid.");
 			return;
 		}
 
-		SPDLOG_INFO("drop card ({}) at widget ({}), at pos ({})",
+		LogInfo("drop card ({}) at widget ({}), at pos ({})",
 			cardWidget->name(), dstWidget ? dstWidget->name():"none", pos);
 
 		if (sourceGroup) 
@@ -439,7 +439,7 @@ namespace samples
 				item->setData("index", i);
 				item->on_click.connect([](ui::Button* btn) {
 					int index = btn->getData<int>("index");
-					SPDLOG_INFO("click: index = {}", index);
+					LogInfo("click: index = {}", index);
 				});
 			}
 		}
@@ -452,7 +452,7 @@ namespace samples
 			radioHGroup->addItem("belta");
 			radioHGroup->addItem("gama");
 			radioHGroup->on_item_select.connect([](int index) {
-				SPDLOG_INFO("radio horizonal group: index: {} selected", index);
+				LogInfo("radio horizonal group: index: {} selected", index);
 			});
 
 			auto radioVGroup = bk_group->createChild<ui::RadioVLayGroup>("radio_vlay_group");
@@ -462,7 +462,7 @@ namespace samples
 			radioVGroup->addItem("belta");
 			radioVGroup->addItem("gama");
 			radioVGroup->on_item_select.connect([](int index) {
-				SPDLOG_INFO("radio vertical group: index: {} selected", index);
+				LogInfo("radio vertical group: index: {} selected", index);
 			});
 
 			auto listbox = bk_group->createChild<ui::ListBox>("list_box");
@@ -553,12 +553,12 @@ namespace samples
 
 	void FormDemo::onButtonOneClick(ui::Button* btn)
 	{
-		SPDLOG_INFO("on button ({}) click !!", btn->name());
+		LogInfo("on button ({}) click !!", btn->name());
 	}
 
 	void FormDemo::onProgressChanged(ui::ProgressBar* pbar)
 	{
-		SPDLOG_INFO("on progress ({}) changed to {}", pbar->name(), pbar->progress());
+		LogInfo("on progress ({}) changed to {}", pbar->name(), pbar->progress());
 	}
 
 	void FormDemo::onSlideValueChanged(ui::SliderBar* bar)
@@ -583,7 +583,7 @@ namespace samples
 			cbox->setText("check me");
 		}
 
-		SPDLOG_INFO("on check ({}) changed to {}", cbox->name(), cbox->checked());
+		LogInfo("on check ({}) changed to {}", cbox->name(), cbox->checked());
 	}
 
 	void FormDemo::onClickListButton(ui::Button* btn)

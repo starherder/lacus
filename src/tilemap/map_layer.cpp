@@ -38,7 +38,7 @@ void LoaderUtils::loadProperties(const json& json, Properties& properties)
                 properties[name] = prop.value("value", 0);
             }
             else {
-                SPDLOG_WARN("unknown property type: {}", type);
+                LogWarn("unknown property type: {}", type);
             }
         }
     }
@@ -91,7 +91,7 @@ bool MapLayer::load(const json& json)
         type = MapLayerType::GroupLayer;
     }
     else  {
-        SPDLOG_ERROR("unknown layer type: {}", stype);
+        LogError("unknown layer type: {}", stype);
         return false;
     }   
 
@@ -133,7 +133,7 @@ bool TileLayer::load(const json& json)
     }
     else 
     {
-        SPDLOG_ERROR("tile layer encoding: {} NOT support yet.", encodeing);
+        LogError("tile layer encoding: {} NOT support yet.", encodeing);
     }
 
     return true;

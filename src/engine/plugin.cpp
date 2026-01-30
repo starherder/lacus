@@ -5,7 +5,7 @@ namespace engine {
     void Plugin::setEnable(bool enable)
     {
         _enabled = enable;
-        SPDLOG_INFO("plugin({}) {}. ", name(), _enabled?"enabled":"disabled");
+        LogInfo("plugin({}) {}. ", name(), _enabled?"enabled":"disabled");
 
         if(enable) 
         {
@@ -19,7 +19,7 @@ namespace engine {
 
     void Plugin::init()
     {
-        SPDLOG_INFO("plugin({}) init. ", name());
+        LogInfo("plugin({}) init. ", name());
         
         _initialized = true;
 
@@ -39,7 +39,7 @@ namespace engine {
             return;
         }
 
-        //SPDLOG_INFO("plugin({}) update. ", name());
+        //LogInfo("plugin({}) update. ", name());
         onUpdate();
     }
 
@@ -50,7 +50,7 @@ namespace engine {
             return;
         }
 
-        //SPDLOG_INFO("plugin({}) draw. ", name());
+        //LogInfo("plugin({}) draw. ", name());
         onDraw();
     }
 
@@ -61,7 +61,7 @@ namespace engine {
             return;
         }
 
-        //SPDLOG_INFO("plugin({}) draw. ", name());
+        //LogInfo("plugin({}) draw. ", name());
         onDrawUI();
     }
 
@@ -72,20 +72,20 @@ namespace engine {
             return;
         }
 
-        SPDLOG_INFO("plugin({}) closed. ", name());
+        LogInfo("plugin({}) closed. ", name());
         onClose();
     }
     
     void Plugin::install(Application* app) 
     {
-        SPDLOG_INFO("plugin({}) install. ", name());
+        LogInfo("plugin({}) install. ", name());
         _application = app;
         onInstall();
     }
 
     void Plugin::uninstall() 
     {
-        SPDLOG_INFO("plugin({}) uninstall. ", name());
+        LogInfo("plugin({}) uninstall. ", name());
         onUninstall();
         _application = nullptr;
     }

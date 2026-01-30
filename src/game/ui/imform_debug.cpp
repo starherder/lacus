@@ -228,7 +228,7 @@ void ImFormDebug::roleExecSkill(entt::entity skill)
     // 不需要目标
     if (compSkill.type == SkillType::Other)
     {
-        SPDLOG_INFO("skill ({}) need NO enmey.", compName.cfg_id);
+        LogInfo("skill ({}) need NO enmey.", compName.cfg_id);
         _context->dispatcher().trigger(EvtMotionSwitchState{ _selectEntity, MotionState::Paused });
         _context->dispatcher().trigger(EvtCastSkillToObject{ _selectEntity, entt::null, skill});
         return;
@@ -257,7 +257,7 @@ void ImFormDebug::roleExecSkill(entt::entity skill)
         }
     }
 
-    SPDLOG_INFO("skill ({}) find enemy faild.", compName.cfg_id);
+    LogInfo("skill ({}) find enemy faild.", compName.cfg_id);
 }
 
 void ImFormDebug::drawCameraWindow()

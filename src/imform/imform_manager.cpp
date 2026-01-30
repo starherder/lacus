@@ -112,7 +112,7 @@ namespace imgui
 #ifndef USE_IMGUI_AS_RENDER_ENGINE
 		if(!std::filesystem::exists(file))
 		{
-			SPDLOG_ERROR("font file({}) NOT found.", file.string());
+			LogError("font file({}) NOT found.", file.string());
 			return;
 		}
 
@@ -121,7 +121,7 @@ namespace imgui
 		auto font = fonts->AddFontFromFileTTF(file.string().c_str(), size, nullptr, fonts->GetGlyphRangesChineseFull());
         if(!font)
         {
-			SPDLOG_ERROR("load font {} failed. use default.", file.string());
+			LogError("load font {} failed. use default.", file.string());
             io.Fonts->AddFontDefault();
         }
 #endif

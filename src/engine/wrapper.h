@@ -35,6 +35,14 @@ using namespace entt::literals;
 #include "imgui/backends/imgui_impl_sdlrenderer3.h"
 #endif
 
+
+#define LogTrace SPDLOG_TRACE
+#define LogDebug SPDLOG_DEBUG
+#define LogInfo SPDLOG_INFO
+#define LogWarn SPDLOG_WARN
+#define LogError SPDLOG_ERROR
+#define LogCritical SPDLOG_CRITICAL
+
 namespace engine {
 
 using nJson = nlohmann::json; 

@@ -171,23 +171,23 @@ namespace game
 
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
-			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
+			LogError("open file '{}' failed.", cfgfile.string());
 			return "";
 		}
 
 		try {
 			ifile >> *jsonptr;
-			SPDLOG_INFO("load json from '{}' OK.", cfgfile.string());
+			LogInfo("load json from '{}' OK.", cfgfile.string());
 		}
 		catch (const std::exception& e) {
-			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			LogError("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
 			return "";
 		}
 
 		std::string cfgid = jsonptr->value("id", "");
 		if (cfgid.empty())
 		{
-			SPDLOG_ERROR("role file({}) NOT found cfgid.", cfgfile.string());
+			LogError("role file({}) NOT found cfgid.", cfgfile.string());
 			return "";
 		}
 
@@ -203,23 +203,23 @@ namespace game
 
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
-			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
+			LogError("open file '{}' failed.", cfgfile.string());
 			return "";
 		}
 
 		try {
 			ifile >> *jsonptr;
-			SPDLOG_INFO("load json from '{}' OK.", cfgfile.string());
+			LogInfo("load json from '{}' OK.", cfgfile.string());
 		}
 		catch (const std::exception& e) {
-			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			LogError("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
 			return "";
 		}
 
 		std::string cfgid = jsonptr->value("cfgid", "");
 		if(cfgid.empty())
 		{
-			SPDLOG_ERROR("skill file({}) NOT found cfgid.", cfgfile.string());
+			LogError("skill file({}) NOT found cfgid.", cfgfile.string());
 			return "";
 		}
 
@@ -237,23 +237,23 @@ namespace game
 
 		std::ifstream ifile(cfgfile.string());
 		if (!ifile.is_open()) {
-			SPDLOG_ERROR("open file '{}' failed.", cfgfile.string());
+			LogError("open file '{}' failed.", cfgfile.string());
 			return "";
 		}
 
 		try {
 			ifile >> *jsonptr;
-			SPDLOG_INFO("load json from '{}' OK.", cfgfile.string());
+			LogInfo("load json from '{}' OK.", cfgfile.string());
 		}
 		catch (const std::exception& e) {
-			SPDLOG_ERROR("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
+			LogError("load json form '{}' failed, err = '{}'", cfgfile.string(), e.what());
 			return "";
 		}
 
 		std::string cfgid = jsonptr->value("cfgid", "");
 		if (cfgid.empty())
 		{
-			SPDLOG_ERROR("buff file({}) NOT found cfgid.", cfgfile.string());
+			LogError("buff file({}) NOT found cfgid.", cfgfile.string());
 			return "";
 		}
 
@@ -271,7 +271,7 @@ namespace game
 		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
 		{
-			SPDLOG_ERROR("object ({}) cfg NOT found.", cfgid);
+			LogError("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
@@ -358,7 +358,7 @@ namespace game
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
-		//SPDLOG_INFO("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
+		//LogInfo("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
 		
 		return object;
 	}
@@ -524,14 +524,14 @@ namespace game
 	{
 		if (!_context)
 		{
-			SPDLOG_ERROR("ObjectFactory need Load first.");
+			LogError("ObjectFactory need Load first.");
 			return entt::null;
 		}
 
 		auto jsonptr = _jsonBuffCfgs[cfgid];
 		if (!jsonptr)
 		{
-			SPDLOG_ERROR("object ({}) cfg NOT found.", cfgid);
+			LogError("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
@@ -587,7 +587,7 @@ namespace game
 		auto jsonptr = _jsonSkillCfgs[cfgid];
 		if (!jsonptr)
 		{
-			SPDLOG_ERROR("object ({}) cfg NOT found.", cfgid);
+			LogError("object ({}) cfg NOT found.", cfgid);
 			return entt::null;
 		}
 
@@ -819,12 +819,12 @@ namespace game
 				}
 
 				if (t.isFinished()) {
-					SPDLOG_INFO("sky effect({}) finish", magic_enum::enum_name(effect).data());
+					LogInfo("sky effect({}) finish", magic_enum::enum_name(effect).data());
 					_context->registry().emplace<CompDestroy>(sky);
 					return true;
 				}
 
-				SPDLOG_INFO("sky.color.a = {}", a);
+				LogInfo("sky.color.a = {}", a);
 
 				auto& compSky = _context->registry().get<CompSkyEffect>(sky);
 				compSky.color.a = a;
@@ -861,17 +861,17 @@ namespace game
 			}
 			else if (value.is_array()) {
 				//auto arr = value.get<std::vector<int>>();
-				SPDLOG_ERROR("json value is array.");
+				LogError("json value is array.");
 			}
 			else if (value.is_object()) {
 				//std::cout << "Object with " << value.size() << " fields" << std::endl;
-				SPDLOG_ERROR("json value is object.");
+				LogError("json value is object.");
 			}
 			else {
-				SPDLOG_ERROR("json type unkonw: tpye = {}", value.type_name());
+				LogError("json type unkonw: tpye = {}", value.type_name());
 			}
 		} catch (const std::exception& e) {
-			SPDLOG_ERROR("type convert failed. e = {}", e.what());
+			LogError("type convert failed. e = {}", e.what());
 		}
 
 		return std::nullopt;
@@ -891,7 +891,7 @@ namespace game
 		auto jsonptr = _jsonObjectCfgs[cfgid];
 		if (!jsonptr)
 		{
-			SPDLOG_ERROR("getObjectCfgProperties: object ({}) cfg NOT found.", cfgid);
+			LogError("getObjectCfgProperties: object ({}) cfg NOT found.", cfgid);
 			return props;
 		}
 

@@ -1,9 +1,5 @@
 ﻿#include "bevtree.h"
-#include "spdlog/spdlog.h"
-
-
-
-
+#include "engine/wrapper.h"
 
 namespace bevtree 
 {
@@ -44,7 +40,7 @@ namespace bevtree
                 XMLError error = xmlDoc->LoadFile(filename.string().c_str());
                 if (error != XML_SUCCESS)
                 {
-                    SPDLOG_ERROR("load bevtree file({}) failed.", filename.string());
+                    LogError("load bevtree file({}) failed.", filename.string());
                     continue;
                 }
 
@@ -89,7 +85,7 @@ namespace bevtree
         bool res = bevtree->load(xmlNode);
         if (!res)
         {
-            SPDLOG_ERROR("load bevtree ({}) failed.", name);
+            LogError("load bevtree ({}) failed.", name);
             return nullptr;
         }
 
@@ -114,7 +110,7 @@ namespace bevtree
 
         auto rootnode = btnode->FirstChildElement();
         if (!rootnode) {
-            SPDLOG_ERROR("bevtree must have a root node");
+            LogError("bevtree must have a root node");
             return false; 
         }
 
@@ -135,7 +131,7 @@ namespace bevtree
 
         auto node = BevTreeManager::inst().createNode(type);
         if (!node) {
-            SPDLOG_ERROR("create node '{}' failed", type);
+            LogError("create node '{}' failed", type);
             return nullptr;
         }
 
@@ -178,7 +174,7 @@ namespace bevtree
         } 
         catch (std::exception& e ) 
         {
-            SPDLOG_WARN("load repeator count failed. err = {}", e.what());
+            LogWarn("load repeator count failed. err = {}", e.what());
         }
 
         return true;
@@ -194,7 +190,7 @@ namespace bevtree
         }
         catch (std::exception& e)
         {
-            SPDLOG_WARN("load repeator count failed. err = {}", e.what());
+            LogWarn("load repeator count failed. err = {}", e.what());
         }
 
         return true;

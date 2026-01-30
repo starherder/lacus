@@ -1,4 +1,5 @@
 ﻿#include "game_scene.h"
+#include "game/game_config.h"
 
 namespace game 
 {
@@ -98,14 +99,14 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
 
         if (loop_count++ > 20000)
         {
-            SPDLOG_ERROR("LOOP wait tooo long. exit");
+            LogError("LOOP wait tooo long. exit");
             return;
         }
     }
 
     _state = (int)SceneState::Loading;
 
-    SPDLOG_INFO("load in thread start:  map={}", mapPath.string());
+    LogInfo("load in thread start:  map={}", mapPath.string());
 
     on_load_progress.emit(0.0f);
 
@@ -116,7 +117,7 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
     auto res = _tileMap.load(mapPath);
     if(!res)
     {
-        SPDLOG_ERROR("load map ({}) failed.", mapPath.string());
+        LogError("load map ({}) failed.", mapPath.string());
         return;
     }
 
@@ -143,24 +144,24 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
     on_load_progress(1.0f);
 
     _state = (int)SceneState::Ready;
-    SPDLOG_INFO("load scene (map={}) finished.", mapPath.string());
+    LogInfo("load scene (map={}) finished.", mapPath.string());
 }
 
 void GameScene::unloadInThread()
 {
-    SPDLOG_INFO("unload in thread.");
+    LogInfo("unload in thread.");
 
     auto res = _tileMap.unload();
     if(!res)
     {
-        SPDLOG_ERROR("tile map unload failed.");
+        LogError("tile map unload failed.");
         return ;
     }
 
     unloadObjects();
 
     _state = (int)SceneState::None;
-    SPDLOG_INFO("unload scene OK.");
+    LogInfo("unload scene OK.");
 }
 
 void GameScene::onUpdate(float deltaTime)
@@ -177,12 +178,12 @@ void GameScene::onDraw()
 
 void GameScene::onStart()
 {
-    SPDLOG_INFO("========================= GameScene::onStart =========================");
+    LogInfo("========================= GameScene::onStart =========================");
 }
 
 void GameScene::onStop()
 {
-    SPDLOG_INFO("========================= GameScene::onStop =========================");
+    LogInfo("========================= GameScene::onStop =========================");
 }
 
 void GameScene::setDebugInfo(bool show)
@@ -305,7 +306,7 @@ entt::entity GameScene::createActor(const std::string& cfgid, const Vec2& pos)
     auto grid = getGridFromPos(pos);
     addObjectToGrid(ent, grid);
 
-    //SPDLOG_INFO("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
+    //LogInfo("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
     return ent;
 }
 
@@ -313,7 +314,7 @@ void GameScene::destroyActor(entt::entity id)
 {
     if (!_registry.valid(id))
     {
-        SPDLOG_WARN("entity {} not exist.", (int32_t)id);
+        LogWarn("entity {} not exist.", (int32_t)id);
         return;
     }
 
@@ -407,7 +408,7 @@ const std::multimap<float, Vec2i>& GameScene::getGridsInRing(const Vec2& center,
 
     if (min_radius >= max_radius)
     {
-        SPDLOG_ERROR("getGridsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
+        LogError("getGridsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
         return result;
     }
 
@@ -491,7 +492,7 @@ const std::multimap<float, entt::entity>& GameScene::getObjectsInRing(const Vec2
 
     if (min_radius >= max_radius)
     {
-        SPDLOG_ERROR("getObjectsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
+        LogError("getObjectsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
         return result;
     }
 
@@ -525,7 +526,7 @@ void GameScene::onMouseLeftPressed(const Vec2& pos)
     auto scenePos = camera().screenToWorld(pos);
     _selectEntity = findObjectAtPos(scenePos);
 
-    SPDLOG_INFO("select object: {}", _selectEntity);
+    LogInfo("select object: {}", _selectEntity);
     on_select_object(_selectEntity);
 
     _context.dispatcher().trigger(EvtObjectSelection{ _selectEntity });
@@ -595,13 +596,13 @@ void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
 
 void GameScene::onHoverObject(entt::entity obj)
 {
-    SPDLOG_INFO("hover object: {}", obj);
+    LogInfo("hover object: {}", obj);
     on_hover_object.emit(obj);
 }
 
 void GameScene::onLeaveObject(entt::entity obj)
 {
-    SPDLOG_INFO("leave object: {}", obj);
+    LogInfo("leave object: {}", obj);
     on_leave_object.emit(obj);
 }
 

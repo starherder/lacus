@@ -47,20 +47,20 @@ namespace engine {
     {
         auto it = _sounds.find(id);
         if (it != _sounds.end()) {
-            SPDLOG_WARN("sound {} already loaded", id);
+            LogWarn("sound {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            SPDLOG_ERROR("sound {}, path({}) NOT exist.", id, filepath);
+            LogError("sound {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
         auto chunk = Mix_LoadWAV(path.string().c_str());
         if (!chunk) {
-            SPDLOG_ERROR("Failed to load sound {}: {}", path.string(), SDL_GetError());
+            LogError("Failed to load sound {}: {}", path.string(), SDL_GetError());
             return nullptr;
         }
 
@@ -118,20 +118,20 @@ namespace engine {
     {
         auto it = _musics.find(id);
         if (it != _musics.end()) {
-            SPDLOG_WARN("music {} already loaded", id);
+            LogWarn("music {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            SPDLOG_ERROR("music {}, path({}) NOT exist.", id, filepath);
+            LogError("music {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
         auto music = Mix_LoadMUS(path.string().c_str());
         if (!music) {
-            SPDLOG_ERROR("Failed to load music {}: {}", path.string(), SDL_GetError());
+            LogError("Failed to load music {}: {}", path.string(), SDL_GetError());
             return nullptr;
         }
 

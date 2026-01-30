@@ -151,7 +151,7 @@ namespace samples {
 
     void SamplePluginDraw::onClose() 
     {
-        SPDLOG_INFO("Release sample plugin draw");
+        LogInfo("Release sample plugin draw");
     }
 
     void SamplePluginDraw::drawShape()
@@ -186,7 +186,7 @@ namespace samples {
         _texture = application()->resourceManager().textureManager().load(HashString{ imagename.c_str() });
         if (!_texture)
         {
-            SPDLOG_ERROR("load texture {} failed", imagename);
+            LogError("load texture {} failed", imagename);
             return;
         }
 

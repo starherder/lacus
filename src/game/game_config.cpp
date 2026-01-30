@@ -11,7 +11,7 @@ namespace game
 	{
 		bool res = _jsonConfig.load(filepath);
 		if(!res) {
-			SPDLOG_ERROR("GameConfig:load {} failed.", filepath.string());
+			LogError("GameConfig:load {} failed.", filepath.string());
 			return false;
 		}
 
@@ -56,6 +56,12 @@ namespace game
 			auto& motionJs = json["motion"];
 			motion.walk = motionJs.value("tween_walk_mode", "");
 			motion.swim = motionJs.value("tween_swim_mode", "");
+		}
+
+		if (json.contains("script"))
+		{
+			auto& scriptJs = json["script"];
+			script.entry = scriptJs.value("entry", "lua/main.lua");
 		}
 
 		if (json.contains("float_text")) {

@@ -36,13 +36,13 @@ bool Renderer::init(SDL_Window* window) {
 
     _renderer = SDL_CreateRenderer(window, nullptr);
     if(!_renderer){
-        SPDLOG_ERROR("create render failed");
+        LogError("create render failed");
         return false;
     }
 
     auto res = initTextRenderer();
     if(!res){
-        SPDLOG_ERROR("create text render failed");
+        LogError("create text render failed");
         return false;
     }
 

@@ -47,6 +47,10 @@ namespace game
 			int period = 500;
 		} selection;
 
+		struct Script {
+			std::string entry = "lua/main.lua";
+		} script;
+
 		int dying_ticks = 1000;
 
 		int dead_drop_range = 130;

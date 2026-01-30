@@ -42,8 +42,11 @@ namespace game
 
 		_context.setScene(_scene.get());
 		_context.setGameConfig(&_gameConfig);
+        _context.setGameScript(&_gameScript);
 
-        ui::GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
+        _gameScript.load(_context.resPath() / _gameConfig.script.entry);
+
+        GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
 
         initEscSystem();
 	}
@@ -64,61 +67,61 @@ namespace game
         auto gamecfg = _context.resPath() / "game_config.json";
         bool res = _gameConfig.load(gamecfg);
         if (!res) {
-            SPDLOG_ERROR("load game config: {} failed.", gamecfg.string());
+            LogError("load game config: {} failed.", gamecfg.string());
         }
 
         auto btreePath =_context.resPath() / "data/bevtree/";
         res = bevtree::BevTreeManager::inst().load(btreePath);
         if (!res) {
-            SPDLOG_ERROR("load bevtree config: {} failed.", btreePath.string());
+            LogError("load bevtree config: {} failed.", btreePath.string());
         }
 
         auto roleCfgs =_context.resPath() / "data/role/";
         res = ObjectFactory::inst().loadRoles(roleCfgs);
         if (!res) {
-            SPDLOG_ERROR("load role config: {} failed.", roleCfgs.string());
+            LogError("load role config: {} failed.", roleCfgs.string());
         }
 /*
         auto enemyCfgs = _context.resPath() / "data/role/";
         res = ObjectFactory::inst().loadEnemies(enemyCfgs);
         if (!res) {
-            SPDLOG_ERROR("load enemy config: {} failed.", enemyCfgs.string());
+            LogError("load enemy config: {} failed.", enemyCfgs.string());
         }
 */
         auto otherCfgs = _context.resPath() / "data/other/";
         res = ObjectFactory::inst().loadOther(otherCfgs);
         if (!res) {
-            SPDLOG_ERROR("load other config: {} failed.", otherCfgs.string());
+            LogError("load other config: {} failed.", otherCfgs.string());
         }
 
         auto itemCfgs =_context.resPath() / "data/item/";
         res = ObjectFactory::inst().loadItems(itemCfgs);
         if (!res) {
-            SPDLOG_ERROR("load item config: {} failed.", itemCfgs.string());
+            LogError("load item config: {} failed.", itemCfgs.string());
         }
 
         auto skilldir =_context.resPath() / "data/skill/";
         res = ObjectFactory::inst().loadSkills(skilldir);
         if (!res) {
-            SPDLOG_ERROR("load skill config: {} failed.", skilldir.string());
+            LogError("load skill config: {} failed.", skilldir.string());
         }
 
         auto buffdir =_context.resPath() / "data/buff/";
         res = ObjectFactory::inst().loadBuffs(buffdir);
         if (!res) {
-            SPDLOG_ERROR("load buff config: {} failed.", buffdir.string());
+            LogError("load buff config: {} failed.", buffdir.string());
         }
 
         auto particleCfgs =_context.resPath() / "particles/";
         res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
         if (!res) {
-            SPDLOG_ERROR("load partiles config: {} failed.", particleCfgs.string());
+            LogError("load partiles config: {} failed.", particleCfgs.string());
         }
 
         auto textdir =_context.resPath() / "localized/CHS/";
         res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
         if (!res) {
-            SPDLOG_ERROR("load translator file ({}) failed.", textdir.string());
+            LogError("load translator file ({}) failed.", textdir.string());
         }
 
 	}

@@ -182,7 +182,7 @@ namespace game
 	{
 		if (_context.registry().valid(e.skill) == false)
 		{
-			SPDLOG_WARN("skill ({}) is invalid", (uint32_t)e.skill);
+			LogWarn("skill ({}) is invalid", (uint32_t)e.skill);
 			return;
 		}
 
@@ -190,7 +190,7 @@ namespace game
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
 		if (skillComm.state != SkillState::OK)
 		{
-			SPDLOG_WARN("skill ({}) state is NOT OK", compName.cfg_id);
+			LogWarn("skill ({}) state is NOT OK", compName.cfg_id);
 			return;
 		}
 
@@ -212,7 +212,7 @@ namespace game
 
 		if (_context.registry().valid(e.skill) == false)
 		{
-			SPDLOG_WARN("skill ({}) is invalid", (uint32_t)e.skill);
+			LogWarn("skill ({}) is invalid", (uint32_t)e.skill);
 			return;
 		}
 
@@ -220,7 +220,7 @@ namespace game
 		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
 		if (skillComm.state != SkillState::OK)
 		{
-			SPDLOG_WARN("skill ({}) state is NOT OK", compName.cfg_id);
+			LogWarn("skill ({}) state is NOT OK", compName.cfg_id);
 			return;
 		}
 
@@ -361,7 +361,7 @@ namespace game
 										auto pSrcComm = _context.registry().try_get<CompComm>(srcid);
 										if (!pSrcSprint || !pSrcTrans || !pSrcComm) 
 										{
-											SPDLOG_ERROR("srcid ({}) transform or comm component not exist.", (uint64_t)srcid);
+											LogError("srcid ({}) transform or comm component not exist.", (uint64_t)srcid);
 											return true;
 										}
 
@@ -374,7 +374,7 @@ namespace game
 										if (_context.scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision) 
 										{
 											pSrcSprint->running = false;
-											SPDLOG_ERROR("next grid({}, {}) is collision.", grid.x, grid.y);
+											LogError("next grid({}, {}) is collision.", grid.x, grid.y);
 											return true;
 										}
 
@@ -492,7 +492,7 @@ namespace game
 		}
 		else
 		{
-			SPDLOG_ERROR("wavecfg.type {} NOT support", waveCfg.type);
+			LogError("wavecfg.type {} NOT support", waveCfg.type);
 		}
 	}
 
@@ -511,7 +511,7 @@ namespace game
 		auto lightning = _context.registry().create();
 		_context.registry().emplace<CompLightning>(lightning);
 
-		SPDLOG_INFO("create light: {}", lightning);
+		//LogInfo("create light: {}", lightning);
 
 		// set lightning
 		auto& compLightning = _context.registry().get<CompLightning>(lightning);
@@ -531,7 +531,7 @@ namespace game
 					e.target = target;
 					_context.dispatcher().trigger(e);
 
-					SPDLOG_INFO("execute light: {}", lightning);
+					//LogInfo("execute light: {}", lightning);
 
 					compDisplay.color = lightningCfg.color;
 					compLightning.cur_atk++;
@@ -542,7 +542,7 @@ namespace game
 
 					if (compLightning.cur_atk >= lightningCfg.attack_times)
 					{
-						SPDLOG_INFO("destroy light: {}", lightning);
+						//LogInfo("destroy light: {}", lightning);
 						_context.registry().emplace_or_replace<CompDestroy>(lightning);
 					}
 
@@ -740,7 +740,7 @@ namespace game
 
 	void SkillSystem::onSkillEvent(const EvtExecSkillEvent& e)
 	{
-		SPDLOG_INFO("onSkillEvent: event = source({}), skill({}), event({})", 
+		LogInfo("onSkillEvent: event = source({}), skill({}), event({})", 
 			(uint32_t)e.source, (uint32_t)e.skill, e.event);
 
 		const auto& views = utility::StringUtil::split(e.event, ',');
@@ -752,7 +752,7 @@ namespace game
 
 			int ticks = std::stoi(views[1].data());
 			if (ticks < 2000) {
-				SPDLOG_ERROR("sky_turn_dar time must greater than 2000");
+				LogError("sky_turn_dar time must greater than 2000");
 				ticks = 2000;
 			}
 
@@ -771,7 +771,7 @@ namespace game
 		auto& targetNameComp = _context.registry().get<CompNameId>(e.target);
 		auto& skillNameComp = _context.registry().get<CompNameId>(e.skill);
 
-		//SPDLOG_INFO("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
+		//LogInfo("object: id({}), cfg({}), name({}) On Attack !!! skill.cfg({}), skill.name({})", 
 		//	(uint32_t)targetNameComp.id, targetNameComp.cfg_id, targetNameComp.name, skillNameComp.cfg_id, skillNameComp.name);
 
 		auto& srcTrans = _context.registry().get<CompTransform>(e.source);
@@ -819,14 +819,14 @@ namespace game
 	{
 		if (!_context.registry().valid(skill) || !_context.registry().valid(trap))
 		{
-			SPDLOG_ERROR("src: {}, skill: {}, trap: {} NOT valid", srcid, skill, trap);
+			LogError("src: {}, skill: {}, trap: {} NOT valid", srcid, skill, trap);
 			return;
 		}
 
 		auto pCompTrans = _context.registry().try_get<CompTransform>(trap);
 		if (!pCompTrans)
 		{
-			SPDLOG_ERROR("trap.transform or skill.traps NOT exist.");
+			LogError("trap.transform or skill.traps NOT exist.");
 			return;
 		}
 

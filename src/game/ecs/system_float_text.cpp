@@ -1,5 +1,6 @@
 ﻿#include "system_float_text.h"
 #include "comp_fight.h"
+#include "game/game_config.h"
 
 namespace game 
 {

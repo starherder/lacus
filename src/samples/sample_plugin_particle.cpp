@@ -324,7 +324,7 @@ namespace samples
 
         bool res = ParticleManager::inst().LoadParticles(cfgfile);
         if (!res) {
-            SPDLOG_ERROR("load particles failed.");
+            LogError("load particles failed.");
             return;
         }
     }
@@ -387,7 +387,7 @@ namespace samples
         _particle = particle::ParticleManager::inst().CreateParticle(particle);
         if (!_particle)
         {
-            SPDLOG_ERROR("create particle ({}) failed.", particle);
+            LogError("create particle ({}) failed.", particle);
             return;
         }
 

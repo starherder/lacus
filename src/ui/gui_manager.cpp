@@ -12,13 +12,13 @@ namespace ui
         auto form = createForm<Form>(name);
         if (!form)
         {
-            SPDLOG_ERROR("create form : {} failed", name);
+            LogError("create form : {} failed", name);
             return nullptr;
         }
 
         if (!form->load(filepath))
         {
-            SPDLOG_ERROR("load form : {}, from file {} failed", name, filepath.string());
+            LogError("load form : {}, from file {} failed", name, filepath.string());
             return nullptr;
         }
 

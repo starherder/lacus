@@ -111,7 +111,7 @@ void SamplePluginEntt::onDraw()
 
 void SamplePluginEntt::onClose()  
 {
-    SPDLOG_INFO("Release sample plugin scene");
+    LogInfo("Release sample plugin scene");
 }
 
 void SamplePluginEntt::initEntities()
@@ -133,7 +133,7 @@ void SamplePluginEntt::initEntities()
             ComDisplay disp{ color };
             _registry.emplace<ComDisplay>(ent, disp);
 
-            SPDLOG_INFO("init ent:{} , pos: {}, size: {}", ent, trans.pos, trans.size);
+            LogInfo("init ent:{} , pos: {}, size: {}", ent, trans.pos, trans.size);
         }
     }
 }

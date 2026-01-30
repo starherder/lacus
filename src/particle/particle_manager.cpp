@@ -67,12 +67,12 @@ namespace particle
 		_name = name;
 		_emitter = std::make_unique<ParticleEmitter>();
 
-		//SPDLOG_INFO("Particle({}) construct.", _name);
+		//LogInfo("Particle({}) construct.", _name);
 	}
 
 	Particle::~Particle()
 	{
-		//SPDLOG_INFO("Particle({}) destruct.", _name);
+		//LogInfo("Particle({}) destruct.", _name);
 	}
 
 
@@ -83,7 +83,7 @@ namespace particle
 		m_Texture = textureMgr.get(HashString(file.c_str()));
 		if (!m_Texture)
 		{
-			SPDLOG_ERROR("Particle::SetTexture: {} failed. texture not found.", file);
+			LogError("Particle::SetTexture: {} failed. texture not found.", file);
 			return;
 		}
 	}
@@ -356,7 +356,7 @@ namespace particle
 		XMLError error = doc.LoadFile(fullpath.string().c_str());
 		if (error != XML_SUCCESS)
 		{
-			SPDLOG_ERROR("Particle::Save: open file {} failed. err = {}", fullpath.string(), (int)error);
+			LogError("Particle::Save: open file {} failed. err = {}", fullpath.string(), (int)error);
 			return;
 		}
 
@@ -460,7 +460,7 @@ namespace particle
 		if (pParticle)
 		{
 			const std::string& file = it->second;
-			//SPDLOG_INFO("create particle OK, name={}, file={}", name, file);
+			//LogInfo("create particle OK, name={}, file={}", name, file);
 
 			pParticle->Load(file);
 			pParticle->Stop();

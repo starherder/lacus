@@ -36,7 +36,7 @@ public:
     void moveCamera(const Vec2& dir)
     {
         auto pos = getPos();
-        //SPDLOG_INFO("move camera ({}, {}), pos = ({}, {})", dir.x, dir.y, pos.x, pos.y);
+        //LogInfo("move camera ({}, {}), pos = ({}, {})", dir.x, dir.y, pos.x, pos.y);
 
         _vec = dir;
         _vec *= _speed;
@@ -49,7 +49,7 @@ public:
 
     void stopCamera()
     {
-        //SPDLOG_INFO("stop camera.");
+        //LogInfo("stop camera.");
         _vec = {0, 0};
     }
 

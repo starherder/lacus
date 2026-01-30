@@ -29,7 +29,7 @@ bool MapLayer::create(const tmx::Map& map, std::uint32_t layerIndex, const std::
 
     if (tileSets.size() != textures.size())
     {
-        SPDLOG_ERROR("tilesets.size != textures.size");
+        LogError("tilesets.size != textures.size");
         return false;
     }
 

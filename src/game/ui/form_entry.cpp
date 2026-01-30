@@ -116,7 +116,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 {
 	if (!ptr || !ptr->dst_group)
 	{
-		SPDLOG_INFO("FormEntry::onDropCard dragging data error.");
+		LogInfo("FormEntry::onDropCard dragging data error.");
 		return;
 	}
 
@@ -124,7 +124,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 	auto srcCardGroup = dynamic_cast<CardGroup*>(ptr->src_group);
 	if (!card || !srcCardGroup)
 	{
-		SPDLOG_ERROR("FormEntry::onDropCard: drop item is NOT card.");
+		LogError("FormEntry::onDropCard: drop item is NOT card.");
 		return;
 	}
 
@@ -132,7 +132,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 	auto found = _context.objectFactory().findObjectCfg(cfgid);
 	if (!found)
 	{
-		SPDLOG_ERROR("FormEntry::onDropCard: drop item cfg({}) NOT found.", cfgid);
+		LogError("FormEntry::onDropCard: drop item cfg({}) NOT found.", cfgid);
 		return;
 	}
 
@@ -164,7 +164,7 @@ void FormEntry::showCardGroup()
 	auto cardGroup = getWidget<CardGroup>("card_group");
 	if (!cardGroup)
 	{
-		SPDLOG_INFO("FormEntry::loadCars card_group NOT found.");
+		LogInfo("FormEntry::loadCars card_group NOT found.");
 		return;
 	}
 

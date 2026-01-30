@@ -113,7 +113,7 @@ T* Application::addPlugin(PluginPriority priority, Args&&... args)
     auto plugin = getPlugin(name);
     if(plugin)
     {
-        SPDLOG_ERROR("plugin ({}) already exist.", name);
+        LogError("plugin ({}) already exist.", name);
         return dynamic_cast<T*>(plugin);
     }
 

@@ -70,7 +70,7 @@ namespace game
         {
             if (LoopCount++ > 20)
             {
-                SPDLOG_WARN("SpawnerSystem::spawnActor: loop time > {}, break;", LoopCount);
+                LogWarn("SpawnerSystem::spawnActor: loop time > {}, break;", LoopCount);
                 break;
             }
 

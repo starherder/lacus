@@ -203,7 +203,7 @@ namespace samples {
     void SamplePluginMain::onClose()
     {
         imgui::ImFormManager::inst().closeForm("ImGuiFormHUD");
-        SPDLOG_INFO("SamplePluginMain::onClose");
+        LogInfo("SamplePluginMain::onClose");
     }
 
     void SamplePluginMain::onUpdate()
@@ -223,7 +223,7 @@ namespace samples {
 
     void SamplePluginManager::init(engine::Application& app)
     {
-        SPDLOG_INFO("SamplePluginManager::init");
+        LogInfo("SamplePluginManager::init");
 
         _app = &app;
 
@@ -248,7 +248,7 @@ namespace samples {
 
     bool SamplePluginManager::removePlugin(const std::string& name)
     {
-        SPDLOG_INFO("SamplePluginManager::removePlugin {}", name);
+        LogInfo("SamplePluginManager::removePlugin {}", name);
         _app->removePlugin(name);
         return true;
     }
@@ -258,7 +258,7 @@ namespace samples {
         auto plugin = _app->getPlugin(name);
         if(!plugin)
         {
-            SPDLOG_ERROR("plugin ({}) NOT found.", name);
+            LogError("plugin ({}) NOT found.", name);
             return;
         }
 

@@ -107,19 +107,8 @@
                  "width":0,
                  "x":315.151515151515,
                  "y":990.909090909091
-                }, 
-                {
-                 "height":0,
-                 "id":94,
-                 "name":"spawner_2",
-                 "point":true,
-                 "rotation":0,
-                 "type":"spawner",
-                 "visible":true,
-                 "width":0,
-                 "x":451.515151515152,
-                 "y":1406.06060606061
-                }],
+                }
+               ],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,

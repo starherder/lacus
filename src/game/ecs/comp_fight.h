@@ -193,11 +193,11 @@ namespace game
 
 	struct CompSkillComm
 	{
+		SkillType type;
+
 		entt::entity owner;
 
 		SkillState state = SkillState::OK;
-
-		SkillType type;
 
 		std::string desc;
 
@@ -207,9 +207,6 @@ namespace game
 	struct CompBuffComm 
 	{
 		std::string cfgid;
-		//std::string name;
-		//std::string desc;
-
 		entt::entity owner;
 		
 		// 功能
@@ -217,18 +214,13 @@ namespace game
 		// buf:+stun,buf:-slow  加减buf
 		std::string func;
 
-		// 持续时间，ms， -1表示永久
-		int duration = 0; 
-
-		// 周期（定时触发）
-		int period = 0;
+		int duration = 0; // 持续时间，ms， -1表示永久
+		int period = 0;	// 周期（定时触发）
 
 		int64_t period_ticks = 0;
-
 		int64_t during_ticks = 0;
 
 		std::function<void(int64_t)> onUpdate = nullptr;
-		//tweeny::tween<float, float> tween;
 	};
 
 	// 基础属性
@@ -302,7 +294,7 @@ namespace game
 		if (type == "sprint") return SkillType::Sprint;
 		if (type == "lightning") return SkillType::Lightning;
 		if (type == "other") return SkillType::Other;
-		SPDLOG_ERROR("skill type ({}) NOT support", type);
+		LogError("skill type ({}) NOT support", type);
 		return SkillType::Other;
 	};
 
@@ -315,7 +307,7 @@ namespace game
 		if (target == "cross") return SkillTarget::CrossMe;
 		if (target == "around") return SkillTarget::AroundMe;
 		if (target == "other") return SkillTarget::Other;
-		SPDLOG_ERROR("skill target ({}) NOT support", target);
+		LogError("skill target ({}) NOT support", target);
 		return SkillTarget::Other;
 	};
 
@@ -325,7 +317,7 @@ namespace game
 		if (trans == "scale") return TweenTransform::Scale;
 		if (trans == "rotate") return TweenTransform::Rotate;
 		if (trans == "other") return TweenTransform::Other;
-		SPDLOG_ERROR("tween trans ({}) NOT support", trans);
+		LogError("tween trans ({}) NOT support", trans);
 		return TweenTransform::Other;
 	};
 }

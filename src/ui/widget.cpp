@@ -185,7 +185,7 @@ Rect Widget::getAbsRect() const
         }
         catch(...)
         {
-            SPDLOG_ERROR("parseVector: sv = {} failed.", sv);
+            LogError("parseVector: sv = {} failed.", sv);
             return result;
         }
     };

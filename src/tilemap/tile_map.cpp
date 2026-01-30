@@ -45,12 +45,12 @@ TileLayer* TileMap::getDecorateLayer()
     
 bool TileMap::load(const engine::fs::path& filepath)
 {
-    SPDLOG_INFO("load tilemap: {}", filepath.string());
+    LogInfo("load tilemap: {}", filepath.string());
 
     std::ifstream file(filepath);
     if (!file.is_open()) 
     {
-        SPDLOG_ERROR("tilemap open file {} failed.", filepath.string());
+        LogError("tilemap open file {} failed.", filepath.string());
         return false;
     }
 
@@ -62,7 +62,7 @@ bool TileMap::load(const engine::fs::path& filepath)
     } 
     catch (const nlohmann::json::parse_error& e) 
     {
-        SPDLOG_ERROR("parse json failed: {}", e.what());
+        LogError("parse json failed: {}", e.what());
         return false;
     }
 
@@ -206,7 +206,7 @@ bool TileMap::load_layers(const json& json)
         auto id = layer_json.value("id", 0);
         auto type = layer_json.value("type", "");
 
-        //SPDLOG_INFO("load layer: {}, type: {}", id, type);
+        //LogInfo("load layer: {}, type: {}", id, type);
 
         std::shared_ptr<MapLayer> layer = nullptr;
 
@@ -232,7 +232,7 @@ bool TileMap::load_layers(const json& json)
         }
         else 
         {
-            SPDLOG_ERROR("layer type: {} NOT support yet.", type);
+            LogError("layer type: {} NOT support yet.", type);
         }
 
         if(layer && layer->load(layer_json))
@@ -245,11 +245,11 @@ bool TileMap::load_layers(const json& json)
 
 bool TileMap::load_one_tileset(const fs::path& filepath, int firstgid)
 {
-    SPDLOG_INFO("load tileset: {}, firstgid: {}", filepath.string(), firstgid);
+    LogInfo("load tileset: {}, firstgid: {}", filepath.string(), firstgid);
 
     std::ifstream file(filepath);
     if (!file.is_open()) {
-        SPDLOG_ERROR("tileset open file {} failed.", filepath.string());
+        LogError("tileset open file {} failed.", filepath.string());
         return false;
     }
 
@@ -257,7 +257,7 @@ bool TileMap::load_one_tileset(const fs::path& filepath, int firstgid)
     try {
         file >> json_data;
     } catch (const nlohmann::json::parse_error& e) {
-        SPDLOG_ERROR("tilset parse json failed: {}", e.what());
+        LogError("tilset parse json failed: {}", e.what());
         return false;
     }
 
@@ -303,14 +303,14 @@ void TileMap::bake(engine::ResourceManager& resourceMgr)
         }
         else if (layer && layer->type == MapLayerType::GroupLayer)
         {
-            SPDLOG_INFO("layer: {} type <GroupLayer> do nothing...", layer->name);
+            LogInfo("layer: {} type <GroupLayer> do nothing...", layer->name);
         }
         else
         {
-            SPDLOG_WARN("layer: {} type {} NOT support.", layer->name, magic_enum::enum_name(layer->type));
+            LogWarn("layer: {} type {} NOT support.", layer->name, magic_enum::enum_name(layer->type));
         }
 
-        SPDLOG_INFO("layer: {} type {} bake OK.", layer->name, magic_enum::enum_name(layer->type));
+        LogInfo("layer: {} type {} bake OK.", layer->name, magic_enum::enum_name(layer->type));
     }
 }
 
@@ -322,7 +322,7 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
         {
             if(tileset->imageFile.empty())
             {
-                SPDLOG_WARN("tilset {} imageFile is empty, skip bake it.", tileset->name);
+                LogWarn("tilset {} imageFile is empty, skip bake it.", tileset->name);
                 continue;
             }
 
@@ -331,7 +331,7 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
             tileset->texture = resourceMgr.textureManager().get(HashString(imagePath.string().c_str()));
             if (!tileset->texture)
             {
-                SPDLOG_ERROR("load texture {} failed.", imagePath.string());
+                LogError("load texture {} failed.", imagePath.string());
             }
         }
     }
@@ -437,7 +437,7 @@ void TileMap::bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& l
     auto texture = resourceMgr.textureManager().get(HashString(imagePath.string().c_str()));
     if (!texture)
     {
-        SPDLOG_ERROR("bake image layer: load image failed, image = {}", imagePath.string());
+        LogError("bake image layer: load image failed, image = {}", imagePath.string());
         return;
     }
 

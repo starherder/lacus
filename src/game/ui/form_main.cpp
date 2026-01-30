@@ -61,7 +61,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
 {   
     if(!ptr || !ptr->dst_group)
     {
-        SPDLOG_INFO("FormMain::onDropCard dragging data error.");
+        LogInfo("FormMain::onDropCard dragging data error.");
         return;
     }
 
@@ -69,18 +69,18 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     auto wgtScene = getWidget<Widget>(wgt_name);
     if (!wgtScene)
     {
-        SPDLOG_INFO("FormMain::onDropCard not on form_main.");
+        LogInfo("FormMain::onDropCard not on form_main.");
         return;
     }
 
     auto pos = _context.camera().screenToWorld(ptr->drop_screen_pos);
-    SPDLOG_INFO("FormMain::onDropCard at ({},{})", pos.x, pos.y);
+    LogInfo("FormMain::onDropCard at ({},{})", pos.x, pos.y);
 
     auto card = dynamic_cast<CardWidget*>(ptr->widget.get());
     auto cardGroup = dynamic_cast<CardGroup*>(ptr->src_group);
     if(!card || !cardGroup)
     {
-        SPDLOG_ERROR("FormMain::onDropCard: drop item is NOT card.");
+        LogError("FormMain::onDropCard: drop item is NOT card.");
         return;
     }
 
@@ -88,7 +88,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     auto ent = _context.scene().createActor(cfgid, pos);
     if (!_context.registry().valid(ent))
     {
-        SPDLOG_ERROR("FormMain::onDropCard: create actor ({}) failed", cfgid);
+        LogError("FormMain::onDropCard: create actor ({}) failed", cfgid);
         return;
     }
 

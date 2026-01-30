@@ -35,7 +35,7 @@ namespace game {
 		auto pmotion = _context->registry().try_get<CompMotion>(_actor);
 		if(!ptrans || !pmotion)
 		{
-			SPDLOG_ERROR("actor {} Have NO transform nor motion.", (uint32_t)_actor);
+			LogError("actor {} Have NO transform nor motion.", (uint32_t)_actor);
 			return Status::Failure;
 		}
 
@@ -51,7 +51,7 @@ namespace game {
 			{
 				if (LoopCount++ > 20)
 				{
-					SPDLOG_WARN("BevNode_FindPatrolPos: loop time > {}, break;", LoopCount);
+					LogWarn("BevNode_FindPatrolPos: loop time > {}, break;", LoopCount);
 					break;
 				}
 
@@ -74,7 +74,7 @@ namespace game {
 
 				motion.targetGrid = dstGrid;
 
-				//SPDLOG_INFO("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
+				//LogInfo("BevNode_FindPatrolPos: path find success!  dest = ({}, {})", dest.x, dest.y);
 				return Status::Success;
 			}
 		}
@@ -87,12 +87,12 @@ namespace game {
 		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 
-		//SPDLOG_INFO("BevNode_FindPatrolPos: initialize");
+		//LogInfo("BevNode_FindPatrolPos: initialize");
 	}
 
 	void BevNode_FindPatrolPos::terminate(Status s)
 	{
-		//SPDLOG_INFO("BevNode_FindPatrolPos: terminate");
+		//LogInfo("BevNode_FindPatrolPos: terminate");
 	}
 
 
@@ -120,7 +120,7 @@ namespace game {
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 		if(!_context || _context->registry().valid(_actor) == false) 
 		{
-			SPDLOG_ERROR("actor NOT valid.");
+			LogError("actor NOT valid.");
 			return;
 		}
 
@@ -193,7 +193,7 @@ namespace game {
 	{
 		if (_pickOK)
 		{
-			//SPDLOG_INFO("BevNode_PickItem: finished.");
+			//LogInfo("BevNode_PickItem: finished.");
 			return Status::Success;
 		}
 
@@ -213,7 +213,7 @@ namespace game {
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 		if (!_context || _actor == entt::null)
 		{
-			SPDLOG_ERROR("actor NOT valid.");
+			LogError("actor NOT valid.");
 			return;
 		}
 
@@ -279,14 +279,14 @@ namespace game {
 		auto path = _context->pathFinder().findPath(srcGrid, dstGrid);
 		if (!path)
 		{
-			SPDLOG_WARN("find pickable item pos ({}, {}) unreachable, find again.", dstGrid.x, dstGrid.y);
+			LogWarn("find pickable item pos ({}, {}) unreachable, find again.", dstGrid.x, dstGrid.y);
 			return Status::Failure;
 		}
 
 		motion.path.swap(path.value());
 		motion.targetGrid = dstGrid;
 
-		//SPDLOG_INFO("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
+		//LogInfo("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
 
 		_context->dispatcher().trigger(EvtMoveToGrid{ _actor, motion.targetGrid, false });
 
@@ -297,7 +297,7 @@ namespace game {
 	{
 		if (e.actor == _actor) 
 		{
-			//SPDLOG_INFO("BevNode_PickItem: onRolePickItemStart.");
+			//LogInfo("BevNode_PickItem: onRolePickItemStart.");
 			_pickOK = true;
 		}
 	}
@@ -306,7 +306,7 @@ namespace game {
 	{
 		if (e.actor == _actor)
 		{
-			//SPDLOG_INFO("BevNode_PickItem: role grid change, need check.");
+			//LogInfo("BevNode_PickItem: role grid change, need check.");
 			_needCheck = true;
 		}
 	}
@@ -330,7 +330,7 @@ namespace game {
 		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
 		if (!_context || _actor == entt::null)
 		{
-			SPDLOG_ERROR("actor NOT valid.");
+			LogError("actor NOT valid.");
 			return;
 		}
 	}
@@ -345,14 +345,14 @@ namespace game {
 		auto& rolePos = trans.position;
 		if(std::isnan(rolePos.x) || std::isnan(rolePos.y))
 		{
-			SPDLOG_ERROR("rolepos ({}, {}) is nan!!", rolePos.x, rolePos.y);
+			LogError("rolepos ({}, {}) is nan!!", rolePos.x, rolePos.y);
 			return Status::Failure;
 		}
 
 		auto pNpcComm = _context->registry().try_get<CompComm>(_actor);
 		if (!pNpcComm)
 		{
-			SPDLOG_ERROR("role {} No CompComm found.", (uint32_t)_actor);
+			LogError("role {} No CompComm found.", (uint32_t)_actor);
 			return Status::Failure;
 		}
 

@@ -36,7 +36,7 @@ namespace engine {
      {
         if (!TTF_WasInit() && !TTF_Init()) {
             
-            SPDLOG_ERROR("ttf font init faild.");
+            LogError("ttf font init faild.");
             assert("ttf font init faild");
         }
      }
@@ -52,20 +52,20 @@ namespace engine {
     {
         auto it = _Fonts.find({id, size});
         if (it != _Fonts.end()) {
-            SPDLOG_WARN("Font {} already loaded", id);
+            LogWarn("Font {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            SPDLOG_ERROR("Font {}, path({}) NOT exist.", id, filepath);
+            LogError("Font {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
         
         auto ttfFont = TTF_OpenFont(path.string().c_str(), (float)size);
         if (!ttfFont) {
-            SPDLOG_ERROR("Failed to load Font {}: {}", path.string(), SDL_GetError());
+            LogError("Failed to load Font {}: {}", path.string(), SDL_GetError());
             return nullptr;
         }
 
@@ -79,7 +79,7 @@ namespace engine {
         auto imfont = imFonts->AddFontFromFileTTF(path.string().c_str(), (float)size, nullptr, imFonts->GetGlyphRangesChineseFull());
         if (!imfont)
         {
-            SPDLOG_ERROR("load font {} failed. use default.", path.string());
+            LogError("load font {} failed. use default.", path.string());
         }
 
         pFont->imFont = imfont;
@@ -123,17 +123,17 @@ namespace engine {
     {
         auto it = _Fonts.find({str.value(), size});
         if (it != _Fonts.end()) {
-            SPDLOG_INFO("Unloaded Font {}", str.data());
+            LogInfo("Unloaded Font {}", str.data());
             _Fonts.erase(it);
         }
         else {
-            SPDLOG_WARN("Font {} not found", str.data());
+            LogWarn("Font {} not found", str.data());
         }
     }
 
     void FontManager::clear()
     {
-        SPDLOG_INFO("Unloaded all Fonts");
+        LogInfo("Unloaded all Fonts");
         _Fonts.clear();
     }
 

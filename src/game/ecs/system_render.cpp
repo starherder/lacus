@@ -1,4 +1,5 @@
 ﻿#include "system_render.h"
+#include "game/game_config.h"
 
 namespace game 
 {

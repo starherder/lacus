@@ -4,7 +4,6 @@
 #include "bevtree/bevtree.h"
 #include "ui/gui_manager.h"
 #include "a_star/a_star.hpp"
-#include "game/game_config.h"
 
 namespace game {
 
@@ -12,6 +11,8 @@ namespace game {
 	using namespace engine;
 	using namespace bevtree;
 
+	class GameScript;
+	class GameConfig;
 	class GameScene;
 	class GameCamera;
 	class GameData;
@@ -58,6 +59,9 @@ namespace game {
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }
 
+		GameScript& gameScript() { return *_gameScript; }
+		void setGameScript(GameScript* script) { _gameScript = script; }
+
 		int64_t currentTicks() { return _application.frameTicker().ticks(); }
 		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
 
@@ -83,6 +87,8 @@ namespace game {
 		GameScene* _currentScene = nullptr;
 
 		GameConfig* _gameConfig = nullptr;
+
+		GameScript* _gameScript = nullptr;
 
 		PathFinder _pathFinder;
 

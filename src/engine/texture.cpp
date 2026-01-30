@@ -14,12 +14,12 @@ namespace engine {
 
         // 载入纹理时，设置纹理缩放模式为最邻近插值
         if (!SDL_SetTextureScaleMode(_texture, SDL_SCALEMODE_NEAREST)) {
-            SPDLOG_WARN("set texture scale mode to nearest failed");
+            LogWarn("set texture scale mode to nearest failed");
         }
         
         if (!SDL_GetTextureSize(_texture, &_size.x, &_size.y)) 
         {
-            SPDLOG_ERROR("SDL_GetTextureSize failed.");
+            LogError("SDL_GetTextureSize failed.");
         }
      }
 
@@ -40,20 +40,20 @@ namespace engine {
     {
         auto it = _textures.find(id);
         if (it != _textures.end()) {
-            SPDLOG_WARN("Texture {} already loaded", id);
+            LogWarn("Texture {} already loaded", id);
             return it->second.get();
         }
 
         auto path = resPath() / filepath;
         if(!fs::exists(path))
         {
-            SPDLOG_ERROR("texture {}, path({}) NOT exist.", id, filepath);
+            LogError("texture {}, path({}) NOT exist.", id, filepath);
             return nullptr;
         }
 
         SDL_Texture* texture = IMG_LoadTexture(_renderer.getSdlRenderer(), path.string().c_str());
         if (!texture) {
-            SPDLOG_ERROR("Failed to load texture {}", path.string());
+            LogError("Failed to load texture {}", path.string());
             return nullptr;
         }
 
@@ -81,11 +81,11 @@ namespace engine {
     {
         auto it = _textures.find(id);
         if (it != _textures.end()) {
-            SPDLOG_INFO("Unload texture {}", id);
+            LogInfo("Unload texture {}", id);
             _textures.erase(it);
         }
         else {
-            SPDLOG_WARN("Texture {} not found", id);
+            LogWarn("Texture {} not found", id);
         }
     }
 
@@ -111,7 +111,7 @@ namespace engine {
 
     void TextureManager::clear()
     {
-        SPDLOG_INFO("Unloaded all textures");
+        LogInfo("Unloaded all textures");
         _textures.clear();
     }
 

@@ -36,7 +36,7 @@ namespace tmx {
         tmx::Map map;
         if (!map.load(mapFileName.string()))
         {
-            SPDLOG_ERROR("load file ({}) failed.", mapFilePath.string());
+            LogError("load file ({}) failed.", mapFilePath.string());
             return false; 
         }
 
@@ -51,7 +51,7 @@ namespace tmx {
             auto texture = textureMgr.load(HashString(imagePath.string().c_str()));
             if(!texture)
             {
-                SPDLOG_ERROR("load tileset(name = {}, path = {}) failed. image_path = {}", ts.getName(), ts.getImagePath(), imagePath.string());
+                LogError("load tileset(name = {}, path = {}) failed. image_path = {}", ts.getName(), ts.getImagePath(), imagePath.string());
                 continue;
             }
 
@@ -72,7 +72,7 @@ namespace tmx {
         // 将当前位置设置回来
         fs::current_path(currentPathBak);
 
-        SPDLOG_INFO("load map OK. textures.size = {}, layer.size = {}", textures.size(), _layers.size());
+        LogInfo("load map OK. textures.size = {}, layer.size = {}", textures.size(), _layers.size());
         return true;
     }
 
