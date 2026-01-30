@@ -83,6 +83,14 @@ void ImFormDebug::draw()
             _showSkyWindow = !_showSkyWindow;
         }
 
+        ImGui::SameLine(0, 20);
+
+        if (ImGui::Button("camera")) {
+            _showCameraWindow = !_showCameraWindow;
+        }
+
+        ImGui::SameLine(0, 20);
+
         if (ImGui::Button("reload resource"))
         {
             on_reload_res.emit();
@@ -90,9 +98,11 @@ void ImFormDebug::draw()
 
         ImGui::SameLine(0, 20);
 
-        if (ImGui::Button("camera")) {
-            _showCameraWindow = !_showCameraWindow;
+        if (ImGui::Button("reload script"))
+        {
+            on_reload_script.emit();
         }
+
 
         ImGui::Separator();
 

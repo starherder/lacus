@@ -36,7 +36,14 @@ namespace game
 	{
 		LogInfo("GameScript::load: script = {}", filepath.string());
 
+		_entryPath = filepath;
+
 		return luaL_dofile(_luaState, filepath.string().c_str());
+	}
+
+	bool GameScript::reload()
+	{
+		return load(_entryPath);
 	}
 
 	void GameScript::exportAll()

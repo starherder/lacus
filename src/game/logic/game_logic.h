@@ -64,6 +64,8 @@ namespace game
 		void initEscSystem();
 
 		void onDebugReloadResource();
+		
+		void onDebugReloadScript();
 
 		void closeAllForms();
 		

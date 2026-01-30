@@ -174,6 +174,7 @@ namespace game
         {
             form_debug->init(&_context);
             form_debug->on_reload_res.connect(this, &GameLogic::onDebugReloadResource);
+            form_debug->on_reload_script.connect(this, &GameLogic::onDebugReloadScript);
         }
     }
 
@@ -361,6 +362,11 @@ namespace game
         {
         }
         }
+    }
+
+    void GameLogic::onDebugReloadScript()
+    {
+        _gameScript.reload();
     }
 
     void GameLogic::onDebugReloadResource()

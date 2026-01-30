@@ -25,6 +25,8 @@ namespace game
 
 		bool load(const fs::path& filepath);
 
+		bool reload();
+
 		template <typename ResultType, typename... ParamType>
 		ResultType call(const std::string& func, ParamType&... params);
 
@@ -34,6 +36,7 @@ namespace game
 		void exportAll();
 
 	private:
+		fs::path _entryPath;
 		lua_State* _luaState = nullptr;
 	};
 
@@ -41,7 +44,8 @@ namespace game
 	template <typename ResultType, typename... ParamType>
 	ResultType GameScript::call(const std::string& func, ParamType&... params)
 	{
-		try {
+		try 
+		{
 			auto greet_func = luabridge::getGlobal(_luaState, func.c_str());
 			if (greet_func.isNil() || !greet_func.isFunction())
 			{
