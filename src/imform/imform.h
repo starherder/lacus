@@ -34,6 +34,7 @@ namespace imgui
 
 		virtual void onInit();
 		virtual void onShow();
+		virtual void onClose();
 
 		virtual void draw() = 0;
 

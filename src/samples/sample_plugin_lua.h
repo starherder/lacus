@@ -4,22 +4,31 @@
 #include "imform/imform_manager.h"
 #include "imform/imform.h"
 
+struct lua_State;
+
 namespace samples {
 
 	class ImFormLuaSample : public imgui::ImForm
 	{
 	public:
         ImFormLuaSample() = delete;
-        ImFormLuaSample(engine::Application* app) : _application(app){}
-		~ImFormLuaSample() = default;
+        ImFormLuaSample(engine::Application* app);
+        ~ImFormLuaSample();
 
 	protected:
-		void onInit() override;
+        void onInit() override;
+        void onClose() override;
 
 		void draw() override;
 
+        void exportCppFunctions();
+
+        void greetingLuaBridget();
+
 	private:
-		engine::Application* _application = nullptr;
+		engine::Application* _app = nullptr;
+
+        lua_State* _luaState = nullptr;
 	};
 
 
@@ -46,7 +55,5 @@ namespace samples {
         void onDraw() override ;
 
         void onClose() override ;
-
-        void greetingLuaBridget();
     };
 }

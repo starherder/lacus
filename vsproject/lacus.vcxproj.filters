@@ -25,12 +25,6 @@
     <Filter Include="samples\tmxmap">
       <UniqueIdentifier>{709ad799-3223-4f31-b759-b47366378464}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imform\imgui">
-      <UniqueIdentifier>{b3a1c160-d7fe-4507-adab-807adf1d1edf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="imform\imgui\backends">
-      <UniqueIdentifier>{58ef801a-3996-4fd5-9645-c9ef6c7e319f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="gui">
       <UniqueIdentifier>{b3a293d9-5944-4f62-9e4c-964650f911b4}</UniqueIdentifier>
     </Filter>
@@ -67,8 +61,20 @@
     <Filter Include="res\ui">
       <UniqueIdentifier>{5c21e7c4-5064-4d2e-b972-9cd8479b4629}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lua">
+    <Filter Include="ext">
+      <UniqueIdentifier>{0460e3a4-0c86-4dd0-9674-d8f5f9a102fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\imgui">
+      <UniqueIdentifier>{b3a1c160-d7fe-4507-adab-807adf1d1edf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\imgui\backends">
+      <UniqueIdentifier>{58ef801a-3996-4fd5-9645-c9ef6c7e319f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ext\lua">
       <UniqueIdentifier>{25afdb9c-88d4-49ab-a4ce-60cb7adb3992}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\lua">
+      <UniqueIdentifier>{c5a7727c-0bb3-4617-8152-558dada3332e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -158,25 +164,25 @@
     </ClCompile>
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\ext\imgui\imgui.cpp">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\imgui\imgui_demo.cpp">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\imgui\imgui_draw.cpp">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\imgui\imgui_tables.cpp">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\imgui\imgui_widgets.cpp">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdl3.cpp">
-      <Filter>imform\imgui\backends</Filter>
+      <Filter>ext\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.cpp">
-      <Filter>imform\imgui\backends</Filter>
+      <Filter>ext\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="..\src\engine\event.cpp">
       <Filter>engine</Filter>
@@ -359,100 +365,100 @@
       <Filter>samples</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lapi.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lauxlib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lbaselib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lcode.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lcorolib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lctype.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ldblib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ldebug.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ldo.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ldump.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lfunc.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lgc.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\linit.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\liolib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\llex.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lmathlib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lmem.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\loadlib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lobject.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lopcodes.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\loslib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lparser.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lstate.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lstring.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lstrlib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ltable.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ltablib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\ltm.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lundump.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lutf8lib.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lvm.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\lua\src\lzio.c">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -574,28 +580,28 @@
       <Filter>samples\tmxmap</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\imconfig.h">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\imgui.h">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\imgui_internal.h">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\imstb_rectpack.h">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\imstb_textedit.h">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\imstb_truetype.h">
-      <Filter>imform\imgui</Filter>
+      <Filter>ext\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdl3.h">
-      <Filter>imform\imgui\backends</Filter>
+      <Filter>ext\imgui\backends</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\imgui\backends\imgui_impl_sdlrenderer3.h">
-      <Filter>imform\imgui\backends</Filter>
+      <Filter>ext\imgui\backends</Filter>
     </ClInclude>
     <ClInclude Include="..\src\engine\event.h">
       <Filter>engine</Filter>
@@ -814,93 +820,96 @@
       <Filter>samples</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lapi.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lauxlib.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lcode.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lctype.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\ldebug.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\ldo.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lfunc.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lgc.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\ljumptab.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\llex.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\llimits.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lmem.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lobject.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lopcodes.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lopnames.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lparser.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lprefix.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lstate.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lstring.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\ltable.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\ltm.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lua.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lua.hpp">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\luaconf.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lualib.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lundump.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lvm.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\lua\src\lzio.h">
-      <Filter>lua</Filter>
+      <Filter>ext\lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md">
       <Filter>doc</Filter>
+    </None>
+    <None Include="..\res\lua\test_1.lua">
+      <Filter>res\lua</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

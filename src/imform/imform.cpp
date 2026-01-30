@@ -46,6 +46,8 @@ namespace imgui
 	{
 		_visible = false;
 		_pending_destroy = true;
+
+		onClose();
 	}
 
 	void ImForm::onInit()
@@ -53,7 +55,11 @@ namespace imgui
 
 	}
 
-	void ImForm::onShow() 
+	void ImForm::onShow()
+	{
+	}
+
+	void ImForm::onClose()
 	{
 	}
 

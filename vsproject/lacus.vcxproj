@@ -423,6 +423,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md" />
+    <None Include="..\res\lua\test_1.lua" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\res\ui\form_cards.xml" />

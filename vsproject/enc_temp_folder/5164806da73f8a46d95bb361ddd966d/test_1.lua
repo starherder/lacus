@@ -1,6 +1,6 @@
 
 
-print("\n\t ------------- hello, this is lua -------------\n")
+print("\n\t hello, this is lua \n")
 
 function greeting_in_lua(name)
 	print("+++++ hello "..", welcome to lua +++++")

@@ -95,6 +95,7 @@ namespace samples
                 .addFunction("desc", &Warrior::desc)
                 .addFunction("attack", &Warrior::attack)
             .endClass();
+
     }
 
     void ImFormLuaSample::greetingLuaBridget()
