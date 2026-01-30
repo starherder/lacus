@@ -1,5 +1,6 @@
 ﻿#include "form_result.h"
 #include "utility/translator.h"
+#include "game/ui/ui_logic_events.h"
 
 namespace game
 {
@@ -51,11 +52,11 @@ namespace game
 
     void FormResult::onRestart(Button* btn)
     {
-
+        ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ReplayLevel, {});
     }
 
     void FormResult::onLeave(Button* btn)
     {
-
+        ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ShowScenes, {});
     }
 }

@@ -38,11 +38,12 @@ namespace game
 
 		void loadResource();
 
-		void startFirstScene();
-
 		bool switchScene(const std::string& sceneName);
+		bool restartScene();
 
 	private:
+		void startFirstScene();
+
 		void onSceneLoadProgress(float progress);
 
 		void onStartNewGame();
@@ -52,6 +53,7 @@ namespace game
 
 		void showLoadingForm(bool visible);
 		void showMainForm(bool visible);
+		void showScenesForm();
 
 		void onUICustomEvent(int eventId, const utility::VarList& varlist);
 
@@ -68,9 +70,11 @@ namespace game
 		void onSceneObjectSelect(entt::entity obj);
 
 	private:
+		std::string _currentScene;
+
 		std::unique_ptr<GameScene> _scene = nullptr;
 
-		GameContext& _gameContext;
+		GameContext& _context;
 
 		GameConfig _gameConfig;
 

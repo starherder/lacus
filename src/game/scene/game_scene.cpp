@@ -178,29 +178,17 @@ void GameScene::onDraw()
 void GameScene::onStart()
 {
     SPDLOG_INFO("========================= GameScene::onStart =========================");
-
-    showAllGui();
 }
 
 void GameScene::onStop()
 {
-    closeAllGui();
-    
     SPDLOG_INFO("========================= GameScene::onStop =========================");
-}
-
-void GameScene::showAllGui()
-{
 }
 
 void GameScene::setDebugInfo(bool show)
 {
     _context.setDebugMode(show);
 }
-
-void GameScene::closeAllGui()
-{
-}   
 
 void GameScene::initPathFind()
 {

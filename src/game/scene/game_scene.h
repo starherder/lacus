@@ -90,10 +90,6 @@ namespace game {
         entt::entity getSelectEntity() { return _selectEntity; }
 
     private:
-        void showAllGui();
-
-        void closeAllGui();
-
         void initPathFind();
 
         void loadObjects();

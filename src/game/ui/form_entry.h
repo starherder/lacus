@@ -18,7 +18,7 @@ namespace game
     private:
         void onStart(Button* btn);
         
-        void onCards(Button* btn);
+        void onShowCardDeck(Button* btn);
 
         void onUpdate(float delta) override;
 
@@ -28,7 +28,7 @@ namespace game
 
         void onDropCard(ui::GuiManager::DraggingPtr ptr);
         
-        void loadCars();
+        void showCardGroup();
 
         void resize();
 

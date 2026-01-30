@@ -32,16 +32,16 @@
 
 namespace game
 {
-	GameLogic::GameLogic(GameContext& context):_gameContext(context)
+	GameLogic::GameLogic(GameContext& context):_context(context)
 	{
-		_scene = std::make_unique<GameScene>(_gameContext);
+		_scene = std::make_unique<GameScene>(_context);
         _scene->on_load_progress.connect(this, &GameLogic::onSceneLoadProgress);
         _scene->on_hover_object.connect(this, &GameLogic::onSceneObjectHover);
         _scene->on_leave_object.connect(this, &GameLogic::onSceneObjectLeave);
         _scene->on_select_object.connect(this, &GameLogic::onSceneObjectSelect);
 
-		_gameContext.setScene(_scene.get());
-		_gameContext.setGameConfig(&_gameConfig);
+		_context.setScene(_scene.get());
+		_context.setGameConfig(&_gameConfig);
 
         ui::GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
 
@@ -54,68 +54,68 @@ namespace game
 
     void GameLogic::initEscSystem()
     {
-        EcsSystemManager::inst().init(_gameContext);
+        EcsSystemManager::inst().init(_context);
     }
     
 	void GameLogic::loadResource()
 	{
-        ObjectFactory::inst().init(&_gameContext);
+        ObjectFactory::inst().init(&_context);
 
-        auto gamecfg = _gameContext.resPath() / "game_config.json";
+        auto gamecfg = _context.resPath() / "game_config.json";
         bool res = _gameConfig.load(gamecfg);
         if (!res) {
             SPDLOG_ERROR("load game config: {} failed.", gamecfg.string());
         }
 
-        auto btreePath =_gameContext.resPath() / "data/bevtree/";
+        auto btreePath =_context.resPath() / "data/bevtree/";
         res = bevtree::BevTreeManager::inst().load(btreePath);
         if (!res) {
             SPDLOG_ERROR("load bevtree config: {} failed.", btreePath.string());
         }
 
-        auto roleCfgs =_gameContext.resPath() / "data/role/";
+        auto roleCfgs =_context.resPath() / "data/role/";
         res = ObjectFactory::inst().loadRoles(roleCfgs);
         if (!res) {
             SPDLOG_ERROR("load role config: {} failed.", roleCfgs.string());
         }
 /*
-        auto enemyCfgs = _gameContext.resPath() / "data/role/";
+        auto enemyCfgs = _context.resPath() / "data/role/";
         res = ObjectFactory::inst().loadEnemies(enemyCfgs);
         if (!res) {
             SPDLOG_ERROR("load enemy config: {} failed.", enemyCfgs.string());
         }
 */
-        auto otherCfgs = _gameContext.resPath() / "data/other/";
+        auto otherCfgs = _context.resPath() / "data/other/";
         res = ObjectFactory::inst().loadOther(otherCfgs);
         if (!res) {
             SPDLOG_ERROR("load other config: {} failed.", otherCfgs.string());
         }
 
-        auto itemCfgs =_gameContext.resPath() / "data/item/";
+        auto itemCfgs =_context.resPath() / "data/item/";
         res = ObjectFactory::inst().loadItems(itemCfgs);
         if (!res) {
             SPDLOG_ERROR("load item config: {} failed.", itemCfgs.string());
         }
 
-        auto skilldir =_gameContext.resPath() / "data/skill/";
+        auto skilldir =_context.resPath() / "data/skill/";
         res = ObjectFactory::inst().loadSkills(skilldir);
         if (!res) {
             SPDLOG_ERROR("load skill config: {} failed.", skilldir.string());
         }
 
-        auto buffdir =_gameContext.resPath() / "data/buff/";
+        auto buffdir =_context.resPath() / "data/buff/";
         res = ObjectFactory::inst().loadBuffs(buffdir);
         if (!res) {
             SPDLOG_ERROR("load buff config: {} failed.", buffdir.string());
         }
 
-        auto particleCfgs =_gameContext.resPath() / "particles/";
+        auto particleCfgs =_context.resPath() / "particles/";
         res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
         if (!res) {
             SPDLOG_ERROR("load partiles config: {} failed.", particleCfgs.string());
         }
 
-        auto textdir =_gameContext.resPath() / "localized/CHS/";
+        auto textdir =_context.resPath() / "localized/CHS/";
         res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
         if (!res) {
             SPDLOG_ERROR("load translator file ({}) failed.", textdir.string());
@@ -160,7 +160,7 @@ namespace game
 
     void GameLogic::start()
     {
-        auto formStart = ui::GuiManager::inst().createForm<FormStart>("form_start", _gameContext);
+        auto formStart = ui::GuiManager::inst().createForm<FormStart>("form_start", _context);
         formStart->on_start_game.connect(this, &GameLogic::onStartNewGame);
         formStart->on_resume_game.connect(this, &GameLogic::onResumeGame);
         formStart->on_config_game.connect(this, &GameLogic::onConfigGame);
@@ -169,7 +169,7 @@ namespace game
         auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
         if (form_debug)
         {
-            form_debug->init(&_gameContext);
+            form_debug->init(&_context);
             form_debug->on_reload_res.connect(this, &GameLogic::onDebugReloadResource);
         }
     }
@@ -182,10 +182,10 @@ namespace game
         }
 
         int liveRole = 0;
-        auto views = _gameContext.registry().view<CompComm>();
+        auto views = _context.registry().view<CompComm>();
         for (auto& ent : views)
         {
-            auto pdead = _gameContext.registry().try_get<CompDead>(ent);
+            auto pdead = _context.registry().try_get<CompDead>(ent);
             if (pdead) {
                 continue;
             }
@@ -196,14 +196,14 @@ namespace game
             }
         }
 
-        int handCards = (int)_gameContext.scene().dataCenter().getHandCards().size();
+        int handCards = (int)_context.scene().dataCenter().getHandCards().size();
 
         if (liveRole == 0 && handCards == 0)
         {
             _state = GameState::Finish;
             auto result = GameResult::Failed;
 
-            ui::GuiManager::inst().createForm<FormResult>("form_result", _gameContext, result);
+            ui::GuiManager::inst().createForm<FormResult>("form_result", _context, result);
         }
     }
 
@@ -235,40 +235,62 @@ namespace game
 
         showLoadingForm(true);
 
-        ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _gameContext);
+        showScenesForm();
 
-#if 0
-        auto mapFile = _gameContext.resPath() / _gameConfig.scenes.first_scene;
-        auto res = _scene->load(mapFile);
-        if (!res) {
-            SPDLOG_ERROR("load level test: {} failed.", mapFile.string());
-            return;
-        }
-#endif
         _scene->onStart();
+
     }
 
     bool GameLogic::switchScene(const std::string& sceneName)
     {
+        _currentScene = sceneName;
+        _state = GameState::Running;
+
         closeAllForms();
 
         showLoadingForm(true);
 
         _scene->unload();
 
-        auto mapFile = _gameContext.resPath() / sceneName;
+        auto mapFile = _context.resPath() / sceneName;
         _scene->load(mapFile);
 
         return true;
+    }
+
+    bool GameLogic::restartScene()
+    {
+        _context.dataCenter().clearHandCard();
+
+        auto& cardGroup = _context.dataCenter().getCardGroup();
+        for (auto& card : cardGroup)
+        {
+            _context.dataCenter().addHandCard(card);
+        }
+
+        return switchScene(_currentScene);
+    }
+
+    void GameLogic::showScenesForm()
+    {
+        auto form = GuiManager::inst().getForm<FormScenes>("form_scenes");
+        if (form)
+        {
+            form->setVisible(true);
+        }
+        else
+        {
+            ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _context);
+        }
     }
 
     void GameLogic::showMainForm(bool visible)
     {
         if (visible)
         {
-            ui::GuiManager::inst().createForm<FormMain>("form_main", _gameContext);
+            ui::GuiManager::inst().createForm<FormMain>("form_main", _context);
 
-            auto form = ui::GuiManager::inst().createForm<FormChessTip>("form_chess_tip", _gameContext);
+            auto form = ui::GuiManager::inst().createForm<FormChessTip>("form_chess_tip", _context);
             if (form)
             {
                 form->setVisible(false);
@@ -286,7 +308,7 @@ namespace game
     {
         if (visible)
         {
-            ui::GuiManager::inst().createForm<FormLoading>("form_loading", _gameContext);
+            ui::GuiManager::inst().createForm<FormLoading>("form_loading", _context);
         }
         else
         {
@@ -314,13 +336,27 @@ namespace game
 
     void GameLogic::onUICustomEvent(int eventId, const utility::VarList& varlist)
     {
-        if (eventId == Event_SelectScene)
+        switch (eventId)
+        {
+        case Event_SelectScene: 
         {
             switchScene(varlist[0]);
-        }
-        else if (eventId == Event_ToggleMainForm)
+        }break;
+        case Event_ToggleMainForm: 
         {
             showMainForm(varlist[0]);
+        }break;
+        case Event_ShowScenes: 
+        {
+            showScenesForm();
+        }break;
+        case Event_ReplayLevel: 
+        {
+            restartScene();
+        }break;
+        default: 
+        {
+        }
         }
     }
 

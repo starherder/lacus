@@ -6,7 +6,8 @@
 #include "game/scene/object_factory.h"
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
-
+#include "game/ui/form_scenes.h"
+#include "game/ui/ui_logic_events.h"
 
 namespace game 
 {
@@ -122,7 +123,7 @@ void FormMain::onLeaveScene(Button* btn)
 
 void FormMain::onShowScenes(Button* btn)
 {
-    ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _context);
+    ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ShowScenes, {});
 }
 
 

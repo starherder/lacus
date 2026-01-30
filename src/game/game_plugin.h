@@ -29,12 +29,12 @@ public:
     void onEnable() override;
     void onDisable() override;
 
-    GameContext& context() { return _gameContext; }
+    GameContext& context() { return _context; }
 
 private:
     std::unique_ptr<GameLogic> _gameLogic = nullptr;
 
-    GameContext _gameContext;
+    GameContext _context;
 
     engine::Application& _app;
 };

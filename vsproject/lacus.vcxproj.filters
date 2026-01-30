@@ -67,6 +67,9 @@
     <Filter Include="res\ui">
       <UniqueIdentifier>{5c21e7c4-5064-4d2e-b972-9cd8479b4629}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{25afdb9c-88d4-49ab-a4ce-60cb7adb3992}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -351,6 +354,105 @@
     </ClCompile>
     <ClCompile Include="..\src\game\ui\form_chess_tip.cpp">
       <Filter>game\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_lua.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lapi.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lauxlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lbaselib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lcode.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lcorolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lctype.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ldblib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ldebug.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ldo.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ldump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lfunc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lgc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\linit.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\liolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\llex.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lmathlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lmem.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\loadlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lobject.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lopcodes.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\loslib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lparser.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lstate.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lstring.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lstrlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ltable.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ltablib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\ltm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lundump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lutf8lib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lvm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\lua\src\lzio.c">
+      <Filter>lua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -708,6 +810,93 @@
     <ClInclude Include="..\src\game\ui\form_chess_tip.h">
       <Filter>game\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_lua.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lapi.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lauxlib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lcode.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lctype.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\ldebug.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\ldo.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lfunc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lgc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\ljumptab.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\llex.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\llimits.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lmem.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lobject.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lopcodes.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lopnames.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lparser.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lprefix.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lstate.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lstring.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\ltable.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\ltm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lua.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lua.hpp">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\luaconf.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lualib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lundump.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lvm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\lua\src\lzio.h">
+      <Filter>lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\doc\dev_doc.md">
@@ -740,6 +929,9 @@
       <Filter>res\ui</Filter>
     </Xml>
     <Xml Include="..\res\ui\form_result.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_chess_tip.xml">
       <Filter>res\ui</Filter>
     </Xml>
   </ItemGroup>

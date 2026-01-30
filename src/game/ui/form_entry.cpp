@@ -13,7 +13,7 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 {
 	load(_context.resPath() / "ui/form_entry.xml");
 	
-	loadCars();
+	showCardGroup();
 
 	auto btnEnter = getWidget<ui::Button>("btn_enter");
 	if (btnEnter)
@@ -24,7 +24,7 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 	auto btnCards = getWidget<ui::Button>("btn_cards");
 	if (btnCards)
 	{
-		btnCards->on_click.connect(this, &FormEntry::onCards);
+		btnCards->on_click.connect(this, &FormEntry::onShowCardDeck);
 	}
 
 	auto btnLeave = getWidget<ui::Button>("btn_leave");
@@ -54,9 +54,17 @@ void FormEntry::onUpdate(float delta)
 void FormEntry::onStart(Button* btn)
 {
 	ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, { _sceneFile });
+
+	_context.dataCenter().clearHandCard();
+
+	auto& cardGroup = _context.dataCenter().getCardGroup();
+	for (auto& card : cardGroup) 
+	{
+		_context.dataCenter().addHandCard(card);
+	}
 }
 
-void FormEntry::onCards(Button* btn)
+void FormEntry::onShowCardDeck(Button* btn)
 {
 	auto formCards = ui::GuiManager::inst().getForm<FormCards>("form_cards");
 	if (formCards)
@@ -112,13 +120,6 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 		return;
 	}
 
-	auto dstCardGroup = getWidget<CardGroup>("card_group");
-	if (ptr->dst_group != dstCardGroup)
-	{
-		SPDLOG_INFO("FormEntry::onDropCard not drop to card_group.");
-		return;
-	}
-
 	auto card = dynamic_cast<CardWidget*>(ptr->widget.get());
 	auto srcCardGroup = dynamic_cast<CardGroup*>(ptr->src_group);
 	if (!card || !srcCardGroup)
@@ -135,16 +136,30 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 		return;
 	}
 
-	auto& props = _context.objectFactory().getObjectCfgProperties(cfgid);
-	dstCardGroup->addCard(props);
+	auto handCardGroup = getWidget<CardGroup>("card_group");
 
-	_context.dataCenter().addHandCard(cfgid);
+	// remove from hand card group
+	if (ptr->src_group == handCardGroup && ptr->dst_group != handCardGroup)
+	{
+		handCardGroup->removeCard(card);
+		_context.dataCenter().removeFromCardGroup(card->getCfgid());
+		return;
+	}
 
-	//int index = card->getData<int>("index");
-	//srcCardGroup->addWidget(ptr->widget, index);
+	// add to hand card group
+	if (ptr->dst_group == handCardGroup)
+	{
+		auto& props = _context.objectFactory().getObjectCfgProperties(cfgid);
+		handCardGroup->addCard(props);
+
+		_context.dataCenter().addToCardGroup(cfgid);
+
+		int index = card->getData<int>("index");
+		srcCardGroup->addWidget(ptr->widget, index);
+	}
 }
 
-void FormEntry::loadCars()
+void FormEntry::showCardGroup()
 {
 	auto cardGroup = getWidget<CardGroup>("card_group");
 	if (!cardGroup)
@@ -153,11 +168,13 @@ void FormEntry::loadCars()
 		return;
 	}
 
-	auto& roleCfgs = _context.dataCenter().getHandCards();
+	auto& roleCfgs = _context.dataCenter().getCardGroup();
 	for (auto& cfg : roleCfgs)
 	{
 		auto& props = _context.objectFactory().getObjectCfgProperties(cfg);
 		cardGroup->addCard(props);
 	}
+
+	_context.dataCenter().clearHandCard();
 }
 }

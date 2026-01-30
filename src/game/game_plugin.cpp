@@ -5,7 +5,7 @@ namespace game
 {
 
 GamePlugin::GamePlugin(engine::Application& app) 
-    : _app(app), _gameContext(app)
+    : _app(app), _context(app)
 {
 }
 
@@ -13,7 +13,7 @@ void GamePlugin::onInit()
 {
     ui::GuiManager::inst().init(&_app);
 
-    _gameLogic = std::make_unique<GameLogic>(_gameContext);
+    _gameLogic = std::make_unique<GameLogic>(_context);
     _gameLogic->init();
 }
 
