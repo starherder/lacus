@@ -12,6 +12,7 @@
 #include "sample_plugin_particle.h"
 #include "sample_plugin_ui.h"
 #include "sample_plugin_lua.h"
+#include "sample_plugin_quadtree.h"
 
 #include "game/game_plugin.h"
 
@@ -166,6 +167,12 @@ namespace samples {
             SamplePluginManager::inst().setPluginEnable("sample_lua_plugin", lua_trigger);
         }
 
+        static bool quadtree_trigger = false;
+        if (ImGui::MenuItem("quadtree", nullptr, &quadtree_trigger))
+        {
+            SamplePluginManager::inst().setPluginEnable("sample_quadtree_plugin", quadtree_trigger);
+        }
+
         static bool game_trigger = false;
         if (ImGui::MenuItem("game", nullptr, &game_trigger))
         {
@@ -242,6 +249,7 @@ namespace samples {
         addNormalPlugin<SamplePluginParticle>();
         addNormalPlugin<SamplePluginUI>(app);
         addNormalPlugin<SamplePluginLua>();
+        addNormalPlugin<SamplePluginQuadTree>();
 
         addNormalPlugin<game::GamePlugin>(app);
     }

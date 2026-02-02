@@ -19,7 +19,7 @@ namespace game
 		Finish,
 	};
 
-	class GameLogic : public signals::SlotHandler
+	class GameLogic final : public signals::SlotHandler
 	{
 	public:
 		using EcsSystemMap = std::multimap<EcsPriority, std::shared_ptr<EcsSystem>>;

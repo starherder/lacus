@@ -8,13 +8,12 @@
 
 struct lua_State;
 
-using LuaNameSpace = luabridge::Namespace;
 
 namespace game
 {
 	using namespace engine;
 
-	class GameScript 
+	class GameScript final
 	{
 	public:
 		GameScript(GameScript&&) = delete;
@@ -30,8 +29,6 @@ namespace game
 		template <typename ResultType, typename... ParamType>
 		ResultType call(const std::string& func, ParamType&... params);
 
-		LuaNameSpace globalNamespace();
-
 	private:
 		void exportAll();
 
@@ -40,6 +37,8 @@ namespace game
 		lua_State* _luaState = nullptr;
 	};
 
+
+	//-----------------------------------------------------------------------
 
 	template <typename ResultType, typename... ParamType>
 	ResultType GameScript::call(const std::string& func, ParamType&... params)

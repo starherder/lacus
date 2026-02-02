@@ -15,6 +15,8 @@ namespace game
 	static void log_error(const char* str) { LogError(str); }
 	static void log_critical(const char* str) { LogCritical(str); }
 
+	//-----------------------------------------------------------------------
+
 	GameScript::GameScript() 
 	{
 		_luaState = luaL_newstate();
@@ -25,11 +27,6 @@ namespace game
 
 	GameScript::~GameScript() 
 	{
-	}
-
-	LuaNameSpace GameScript::globalNamespace()
-	{
-		return luabridge::getGlobalNamespace(_luaState);
 	}
 
 	bool GameScript::load(const fs::path& filepath)

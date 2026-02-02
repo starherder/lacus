@@ -8,7 +8,7 @@
 
 namespace game {
 
-class GamePlugin: public engine::Plugin 
+class GamePlugin final : public engine::Plugin
 {
 public:
     GamePlugin() = delete;

@@ -463,6 +463,9 @@
     <ClCompile Include="..\src\game\game_script.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\samples\sample_plugin_quadtree.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\engine\application.h">
@@ -908,6 +911,9 @@
     </ClInclude>
     <ClInclude Include="..\src\game\game_script.h">
       <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\samples\sample_plugin_quadtree.h">
+      <Filter>samples</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

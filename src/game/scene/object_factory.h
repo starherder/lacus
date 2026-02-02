@@ -9,7 +9,7 @@
 namespace game 
 {
 
-	class ObjectFactory  : public utility::ISingleton<ObjectFactory>
+	class ObjectFactory final : public utility::ISingleton<ObjectFactory>
 	{
 		using ConfigJsonMap = std::map<std::string, JsonPtr>;
 

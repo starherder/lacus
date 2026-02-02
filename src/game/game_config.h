@@ -6,7 +6,7 @@ namespace game
 {
 	using namespace engine;
 
-	class GameConfig 
+	class GameConfig final
 	{
 	public:
 		struct Motion {

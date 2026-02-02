@@ -256,6 +256,7 @@
     <ClCompile Include="..\src\samples\sample_plugin_lua.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_manager.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_particle.cpp" />
+    <ClCompile Include="..\src\samples\sample_plugin_quadtree.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_tilemap.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_tweeny.cpp" />
     <ClCompile Include="..\src\samples\sample_plugin_ui.cpp" />
@@ -395,6 +396,7 @@
     <ClInclude Include="..\src\samples\sample_plugin_lua.h" />
     <ClInclude Include="..\src\samples\sample_plugin_manager.h" />
     <ClInclude Include="..\src\samples\sample_plugin_particle.h" />
+    <ClInclude Include="..\src\samples\sample_plugin_quadtree.h" />
     <ClInclude Include="..\src\samples\sample_plugin_tilemap.h" />
     <ClInclude Include="..\src\samples\sample_plugin_tweeny.h" />
     <ClInclude Include="..\src\samples\sample_plugin_ui.h" />

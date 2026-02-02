@@ -18,7 +18,7 @@ namespace game {
 	class GameData;
 	class ObjectFactory;
 
-	class GameContext
+	class GameContext final
 	{
 	public:
 		using PathFinder = AStar::Generator;
