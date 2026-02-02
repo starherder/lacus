@@ -7,7 +7,6 @@
 #include <type_traits>
 #include <vector>
 
-
 namespace quadtree
 {
 
@@ -39,11 +38,70 @@ struct Box {
     constexpr bool contains(const Box<T>& box) const noexcept {
         return left <= box.left && box.getRight() <= getRight() && top <= box.top && box.getBottom() <= getBottom();
     }
+    constexpr bool containCenter(const Box<T>& box) const noexcept {
+        auto center = box.getCenter();
+        return center.x >= left && center.y >= top && center.x <= getRight() && center.y <= getBottom();
+    }
     constexpr bool intersects(const Box<T>& box) const noexcept {
         return !(left >= box.getRight() || getRight() <= box.left || top >= box.getBottom() || getBottom() <= box.top);
     }
 };
 
+template<typename T>
+struct Circle {
+    Vector2<T> center;
+    T radius;
+    constexpr Circle(const Vector2<T>& c, T r) noexcept
+        : center(c), radius(r) {}
+
+    constexpr bool contains(const Vector2<T>& point) const noexcept {
+        Vector2<T> offset = { point.x - center.x, point.y - center.y };
+        return (offset.x * offset.x + offset.y * offset.y) <= (radius * radius);
+    }
+    constexpr bool containCenter(const Box<T>& box) const noexcept {
+        return contains(box.getCenter());
+    }
+    
+    constexpr bool intersects(const Box<T>& box) const noexcept {
+        // 1. 寻找矩形上距离圆心最近的点
+        // 将圆心的x坐标“钳制”到矩形的x边界范围内
+        float closestX;
+        if (center.x < box.left) {
+            closestX = box.left;
+        }
+        else if (center.x > box.getRight()) {
+            closestX = box.getRight();
+        }
+        else {
+            closestX = center.x;
+        }
+
+        // 将圆心的y坐标“钳制”到矩形的y边界范围内
+        float closestY;
+        if (center.y < box.top) {
+            closestY = box.top;
+        }
+        else if (center.y > box.getBottom()) {
+            closestY = box.getBottom();
+        }
+        else {
+            closestY = center.y;
+        }
+
+        // 2. 计算圆心到最近点的距离平方（避免开方，优化性能）
+        float dx = center.x - closestX;
+        float dy = center.y - closestY;
+        float distanceSquared = dx * dx + dy * dy;
+
+        // 3. 判断：如果距离平方 <= 半径平方，则相交
+        return distanceSquared <= (radius * radius);
+    }
+};
+
+enum class QueryMode {
+    ContainCenter,
+    Intersect,
+};
 
 template<typename T, typename GetBox, typename Equal = std::equal_to<T>, typename Float = float>
 class Quadtree
@@ -78,10 +136,27 @@ public:
         return mCount;
     }
 
+    QueryMode getQueryMode() 
+    { 
+        return mQueryMode; 
+    }
+
+    void setQueryMode(QueryMode mode) 
+    { 
+        mQueryMode = mode; 
+    }
+
     std::vector<T> query(const Box<Float>& box) const
     {
         auto values = std::vector<T>();
         query(mRoot.get(), mBox, box, values);
+        return values;
+    }
+
+    std::vector<T> query(const Circle<Float>& circle) const
+    {
+        auto values = std::vector<T>();
+        query(mRoot.get(), mBox, circle, values);
         return values;
     }
 
@@ -128,6 +203,7 @@ private:
     GetBox mGetBox;
     Equal mEqual;
     size_t mCount;
+    QueryMode mQueryMode = QueryMode::Intersect;
 
 private:
     bool isLeaf(const Node* node) const
@@ -325,8 +401,20 @@ private:
         assert(queryBox.intersects(box));
         for (const auto& value : node->values)
         {
-            if (queryBox.intersects(mGetBox(value)))
-                values.push_back(value);
+            if (mQueryMode == QueryMode::ContainCenter)
+            {
+                if (queryBox.containCenter(mGetBox(value)))
+                {
+                    values.push_back(value);
+                }
+            }
+            else
+            {
+                if (queryBox.intersects(mGetBox(value)))
+                {
+                    values.push_back(value);
+                }
+            }
         }
         if (!isLeaf(node))
         {
@@ -339,6 +427,39 @@ private:
         }
     }
 
+    void query(Node* node, const Box<Float>& box, const Circle<Float>& queryCircle, std::vector<T>& values) const
+    {
+        assert(node != nullptr);
+        assert(queryCircle.intersects(box));
+
+        for (const auto& value : node->values)
+        {
+            if (mQueryMode == QueryMode::ContainCenter)
+            {
+                if (queryCircle.containCenter(mGetBox(value)))
+                {
+                    values.push_back(value);
+                }
+            }
+            else
+            {
+                if (queryCircle.intersects(mGetBox(value)))
+                {
+                    values.push_back(value);
+                }
+            }
+        }
+
+        if (!isLeaf(node))
+        {
+            for (auto i = std::size_t(0); i < node->children.size(); ++i)
+            {
+                auto childBox = computeBox(box, static_cast<int>(i));
+                if (queryCircle.intersects(childBox))
+                    query(node->children[i].get(), childBox, queryCircle, values);
+            }
+        }
+    }
     void findAllIntersections(Node* node, std::vector<std::pair<T, T>>& intersections) const
     {
         // Find intersections between values stored in this node

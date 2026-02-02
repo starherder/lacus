@@ -40,6 +40,10 @@ namespace samples
 
     enum OperatorMode
     {
+        OP_Select,
+        OP_SelectInRect,
+        OP_SelectInCircle,
+        
         OP_Add,
         OP_Del,
     };
@@ -62,6 +66,7 @@ namespace samples
         SamplePluginQuadTree* _plugin = nullptr;
 
         OperatorMode _opMode = OperatorMode::OP_Add;
+        quadtree::QueryMode _queryMode = quadtree::QueryMode::Intersect;
 	};
 
 
@@ -89,11 +94,15 @@ namespace samples
 
         void onClose() override ;
 
+        void onMouseLeftDown(const Vec2& pos);
+        void onMouseLeftUp(const Vec2& pos);
         void onMouseMotion(const Vec2& pos, const Vec2& offset);
-        
+        void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
+
         void onMouseLeftClick(const Vec2& pos);
 
         void drawQuadNode(QuadTreeType::Node* node);
+        void drawSelectGizmo();
 
         void addRandomObject(int id);
 
@@ -101,12 +110,15 @@ namespace samples
 
         void removeObject(Object* obj);
 
+        void unselectAll();
+
+        void setQueryMode(quadtree::QueryMode mode);
         void setOperatorMode(OperatorMode mode) { _opMode = mode; }
 
     private:
         QuadTreePtr _quadtree = nullptr;
 
-        OperatorMode _opMode = OperatorMode::OP_Add;
+        OperatorMode _opMode = OperatorMode::OP_Select;
 
         std::map<int, std::shared_ptr<Object>> _objects;
 
@@ -117,5 +129,7 @@ namespace samples
         Vec2 _worldSize = { 2048, 1024 };
 
         static const int ObjectCount = 100;
+
+        Rect _selectRange;
     };
 }

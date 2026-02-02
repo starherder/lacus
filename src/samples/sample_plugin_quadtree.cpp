@@ -25,6 +25,23 @@ namespace samples
 	{
         ImGui::Begin("quadtree");
         {
+
+            if (ImGui::RadioButton("contain center", _queryMode == quadtree::QueryMode::ContainCenter))
+            {
+                _queryMode = quadtree::QueryMode::ContainCenter;
+                _plugin->setQueryMode(_queryMode);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::RadioButton("intersect", _queryMode == quadtree::QueryMode::Intersect))
+            {
+                _queryMode = quadtree::QueryMode::Intersect;
+                _plugin->setQueryMode(_queryMode);
+            }
+
+            ImGui::Separator();
+
             if (ImGui::RadioButton("add", _opMode == OperatorMode::OP_Add))
             {
                 _opMode = OperatorMode::OP_Add;
@@ -34,6 +51,24 @@ namespace samples
             if (ImGui::RadioButton("del", _opMode == OperatorMode::OP_Del))
             {
                 _opMode = OperatorMode::OP_Del;
+                _plugin->setOperatorMode(_opMode);
+            }
+
+            if (ImGui::RadioButton("select", _opMode == OperatorMode::OP_Select))
+            {
+                _opMode = OperatorMode::OP_Select;
+                _plugin->setOperatorMode(_opMode);
+            }
+
+            if (ImGui::RadioButton("select_in_rect", _opMode == OperatorMode::OP_SelectInRect))
+            {
+                _opMode = OperatorMode::OP_SelectInRect;
+                _plugin->setOperatorMode(_opMode);
+            }
+
+            if (ImGui::RadioButton("select_in_circle", _opMode == OperatorMode::OP_SelectInCircle))
+            {
+                _opMode = OperatorMode::OP_SelectInCircle;
                 _plugin->setOperatorMode(_opMode);
             }
 
@@ -55,11 +90,21 @@ namespace samples
     SamplePluginQuadTree::~SamplePluginQuadTree()
     {
     }
-    
+
+    void SamplePluginQuadTree::setQueryMode(quadtree::QueryMode mode)
+    {
+        _quadtree->setQueryMode(mode);
+    }
+
     void SamplePluginQuadTree::onInit()  
     {
         application()->eventDispatcher().onMouseMotion.connect(this, &SamplePluginQuadTree::onMouseMotion, -1);
         application()->eventDispatcher().onMouseLeftClicked.connect(this, &SamplePluginQuadTree::onMouseLeftClick, -1);
+
+
+        application()->eventDispatcher().onMouseLeftDown.connect(this, &SamplePluginQuadTree::onMouseLeftDown, -1);
+        application()->eventDispatcher().onMouseLeftUp.connect(this, &SamplePluginQuadTree::onMouseLeftUp, -1);
+        application()->eventDispatcher().onMouseLeftDrag.connect(this, &SamplePluginQuadTree::onMouseLeftDrag, -1);
 
         auto scenebox = BoxType(0.0f, 0.0f, _worldSize.x, _worldSize.y);
 
@@ -145,7 +190,23 @@ namespace samples
         {
             drawQuadNode(child.get());
         }
-    };
+    }
+
+    void SamplePluginQuadTree::drawSelectGizmo()
+    {
+        if (_opMode == OP_SelectInCircle)
+        {
+            auto center = _selectRange.pos() + _selectRange.size() / 2.0f + _worldPos;
+            auto radius = glm::length(_selectRange.size()) / 2.0f;
+            ImGui::GetBackgroundDrawList()->AddCircle({ center.x, center.y }, radius, toImColor(Color::Red), 30);
+        }
+        else if (_opMode == OP_SelectInRect)
+        {
+            auto lt = _selectRange.pos() + _worldPos;
+            auto rb = _selectRange.pos() + _selectRange.size() + _worldPos;
+            ImGui::GetBackgroundDrawList()->AddRect({ lt.x, lt.y }, { rb.x, rb.y }, toImColor(Color::Red), 0, 0, 2.0f);
+        }
+    }
 
     void SamplePluginQuadTree::onDraw()  
     {
@@ -171,6 +232,8 @@ namespace samples
         }
 
         drawQuadNode(_quadtree->getRoot());
+
+        drawSelectGizmo();
     }
 
     void SamplePluginQuadTree::onClose()  
@@ -185,9 +248,15 @@ namespace samples
             return;
         }
 
-        for (auto& [id, obj] : _objects)
+        if (_opMode == OperatorMode::OP_Select)
         {
-            obj->select = false;
+            unselectAll();
+
+            auto objects = _quadtree->query({ scenePos.x, scenePos.y, 1,1 });
+            for (auto& obj : objects)
+            {
+                obj->select = true;
+            }
         }
 
         if (_opMode == OperatorMode::OP_Add)
@@ -205,24 +274,82 @@ namespace samples
         }
     }
 
-    void SamplePluginQuadTree::onMouseMotion(const Vec2& pos, const Vec2& offset)
+    void SamplePluginQuadTree::onMouseLeftDown(const Vec2& pos)
     {
-        auto scenePos = pos - _worldPos;
-        if (scenePos.x < 0 || scenePos.y < 0 || scenePos.x>_worldSize.x - 1 || scenePos.y>_worldSize.y - 1)
+        if (_opMode == OP_SelectInCircle || _opMode == OP_SelectInRect)
+        {
+            unselectAll();
+
+            auto beginPos = pos - _worldPos;
+            _selectRange.x = beginPos.x;
+            _selectRange.y = beginPos.y;
+            _selectRange.w = 0;
+            _selectRange.h = 0;
+        }
+    }
+    
+    void SamplePluginQuadTree::onMouseLeftUp(const Vec2& pos)
+    {
+        _selectRange = {0, 0, 0, 0};
+    }
+
+    void SamplePluginQuadTree::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+    {
+        if (_opMode != OP_SelectInCircle && _opMode != OP_SelectInRect)
         {
             return;
         }
+        
+        unselectAll();
 
+        auto endPos = pos - _worldPos;
+        _selectRange.w = endPos.x - _selectRange.x;
+        _selectRange.h = endPos.y - _selectRange.y;
+
+        if (_opMode == OP_SelectInCircle)
+        {
+            quadtree::Vector2 center = { _selectRange.x + _selectRange.w / 2, _selectRange.y + _selectRange.h / 2 };
+            auto radius = glm::length(_selectRange.size() ) / 2.0f;
+
+            quadtree::Circle<float> circle{center, radius};
+            auto objects = _quadtree->query(circle);
+            for (auto& obj : objects)
+            {
+                obj->select = true;
+            }
+        }
+
+        if (_opMode == OP_SelectInRect)
+        {
+            Rect range = _selectRange;
+            if (range.w < 0) {
+                range.x += range.w;
+                range.w *= -1;
+            }
+            if (range.h < 0) {
+                range.y += range.h;
+                range.h *= -1;
+            }
+
+            quadtree::Box<float> rect{range.x, range.y, range.w, range.h};
+
+            auto objects = _quadtree->query(rect);
+            for (auto& obj : objects)
+            {
+                obj->select = true;
+            }
+        }
+    }
+
+    void SamplePluginQuadTree::unselectAll()
+    {
         for (auto& [id, obj] : _objects)
         {
             obj->select = false;
         }
+    }
 
-
-        auto objects = _quadtree->query({ scenePos.x, scenePos.y, 1,1 });
-        for (auto& obj : objects)
-        {
-            obj->select = true;
-        }
+    void SamplePluginQuadTree::onMouseMotion(const Vec2& pos, const Vec2& offset)
+    {
     }
 }

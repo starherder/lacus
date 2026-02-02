@@ -526,7 +526,7 @@ void GameScene::onMouseLeftPressed(const Vec2& pos)
     auto scenePos = camera().screenToWorld(pos);
     _selectEntity = findObjectAtPos(scenePos);
 
-    LogInfo("select object: {}", _selectEntity);
+    //LogInfo("select object: {}", _selectEntity);
     on_select_object(_selectEntity);
 
     _context.dispatcher().trigger(EvtObjectSelection{ _selectEntity });
