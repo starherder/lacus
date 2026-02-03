@@ -16,6 +16,10 @@ GameScene::GameScene(GameContext& context)
     _context.dispatcher().sink<EvtRoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
     _context.dispatcher().sink<EvtRoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
 
+    _context.dispatcher().sink<EvtObjectSelection>().connect<&GameScene::onRoleSelect>(this);
+    _context.dispatcher().sink<EvtObjectUnselect>().connect<&GameScene::onRoleUnselect>(this);
+    
+
     _context.eventDispatcher().onMouseLeftDown.connect(this, &GameScene::onMouseLeftPressed, -1);
     _context.eventDispatcher().onMouseLeftDrag.connect(this, &GameScene::onMouseLeftDrag, -1);
 
@@ -137,6 +141,12 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(0.8f);
 
+    initQuadTree();
+
+    // TODO: remove this
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    on_load_progress(0.9f);
+
     loadObjects();
 
     // TODO: remove this
@@ -191,6 +201,27 @@ void GameScene::setDebugInfo(bool show)
     _context.setDebugMode(show);
 }
 
+void GameScene::initQuadTree()
+{
+    auto sceneSize = _tileMap.mapSize()* _tileMap.tileSize();
+    auto scenebox = BoxType(0.0f, 0.0f, sceneSize.x, sceneSize.y);
+
+    auto getAABB = [this](const entt::entity ent)
+    {
+        auto comp = _context.registry().try_get<CompTransform>(ent);
+        if (comp)
+        {
+            auto& pos = comp->position;
+            auto& sz = comp->size;
+            return BoxType{ pos.x, pos.y, sz.x, sz.y };
+        }
+
+        return BoxType{0, 0, 0, 0};
+    };
+
+    _quadtree = std::make_unique<QuadTreeType>(scenebox, getAABB);
+}
+
 void GameScene::initPathFind()
 {
     // 通用寻路
@@ -218,7 +249,6 @@ void GameScene::initPathFind()
         _context.landPathFinder().addCollision(grid);
     }
 
-
     // -------------- show collision info ------------------
     auto& tileSize = _tileMap.tileSize();
     for(auto& grid : _tileMap.collisionPoints())
@@ -241,15 +271,13 @@ void GameScene::unloadObjects()
 {
     _context.registry().clear();
 
-    _gridObjects.clear();
-
     _collisionDebugRects.clear();
 }
 
 entt::entity GameScene::findObjectAtPos(const Vec2& pos)
 {
     auto grid = getGridFromPos(pos);
-    auto& objset = getObjectsInGrid(grid);
+    const auto& objset = getObjectsInGrid(grid);
     if (objset.empty()) 
     {
         return entt::null;
@@ -273,12 +301,12 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
 
 entt::entity GameScene::createMapActor(const MapObject& obj)
 {
-    return createActor(obj.name, obj.pos);
+    return createObject(obj.name, obj.pos);
 }
 
-entt::entity GameScene::createActor(const std::string& cfgid, const Vec2& pos)
+entt::entity GameScene::createObject(const std::string& cfgid, const Vec2& pos)
 {
-    auto ent = ObjectFactory::inst().createActor(cfgid);
+    auto ent = ObjectFactory::inst().createObject(cfgid);
     if(ent==entt::null) 
     {
         return ent;
@@ -303,14 +331,11 @@ entt::entity GameScene::createActor(const std::string& cfgid, const Vec2& pos)
         btree->bevtree->getBlackboard()->set("actor", ent);
     }
 
-    auto grid = getGridFromPos(pos);
-    addObjectToGrid(ent, grid);
-
-    //LogInfo("createObject: id = {}, name = {}", (uint32_t)ent, cfgid);
+    addObjectToQuadtree(ent);
     return ent;
 }
 
-void GameScene::destroyActor(entt::entity id)
+void GameScene::destroyObject(entt::entity id)
 {
     if (!_registry.valid(id))
     {
@@ -318,44 +343,97 @@ void GameScene::destroyActor(entt::entity id)
         return;
     }
 
-    //_registry.destroy(id);
     _registry.emplace_or_replace<CompDestroy>(id);
 }
 
 void GameScene::onRoleDestroyed(const EvtRoleDestroyed& e)
 {
-    auto pTrans = _context.registry().try_get<CompTransform>(e.actor);
-    if(pTrans)
-    {
-        auto grid = getGridFromPos(pTrans->position);
+    removeObjectFromQuadtree(e.actor);
+}
 
-        auto& objset = _gridObjects[grid];
-        objset.erase(e.actor);
+Vec2i GameScene::getObjectGrid(entt::entity id)
+{
+    auto comp = _registry.try_get<CompTransform>(id);
+    assert(comp && "CompTransform NOT found.");
+
+    return getGridFromPos(comp->position);
+}
+
+Vec2 GameScene::getObjectPos(entt::entity id)
+{
+    auto comp = _registry.try_get<CompTransform>(id);
+    assert(comp && "CompTransform NOT found.");
+
+    return comp->position;
+}
+
+void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
+{
+    removeObjectFromQuadtree(id);
+
+    auto comp = _registry.try_get<CompTransform>(id);
+    if (comp)
+    {
+        comp->position = pos;
+        addObjectToQuadtree(id);
     }
 }
 
 void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
 {
-    auto& lstset = _gridObjects[e.lst_grid];
-    lstset.erase(e.actor);
-
-    auto& curset = _gridObjects[e.cur_grid];
-    curset.insert(e.actor);
 }
 
-void GameScene::addObjectToGrid(entt::entity ent, const Vec2i& grid)
+void GameScene::onRoleSelect(const EvtObjectSelection& e)
 {
-    _gridObjects[grid].insert(ent);
-}
+    auto bevComp = _context.registry().try_get<CompBehavior>(e.object);
+    if (bevComp && bevComp->bevtree)
+    {
+        bevComp->bevtree->stop();
+    }
 
-void GameScene::removeObjectFromGrid(entt::entity ent, const Vec2i& grid)
+    on_select_object(e.object);
+
+}
+void GameScene::onRoleUnselect(const EvtObjectUnselect& e)
 {
-    _gridObjects[grid].erase(ent);
+    auto bevComp = _context.registry().try_get<CompBehavior>(e.object);
+    if (bevComp && bevComp->bevtree)
+    {
+        bevComp->bevtree->start();
+    }
+
+    on_unselect_object(e.object);
 }
 
-const GameScene::EntitySet& GameScene::getObjectsInGrid(const Vec2i& grid)
+void GameScene::addObjectToQuadtree(entt::entity ent)
+{
+    if (_quadtree)
+    {
+        _quadtree->add(ent);
+    }
+}
+
+void GameScene::removeObjectFromQuadtree(entt::entity ent)
+{
+    if (_quadtree && _quadtree->has(ent))
+    {
+        _quadtree->remove(ent);
+    }
+}
+
+GameScene::EntityVector GameScene::getObjectsInGrid(const Vec2i& grid)
 { 
-    return _gridObjects[grid]; 
+    auto pos = getGridLeftTopPos(grid);
+    auto sz = _tileMap.tileSize();
+    
+    BoxType box = {pos.x, pos.y, (float)sz.x, (float)sz.y};
+
+    if (_quadtree)
+    {
+        return _quadtree->query(box);
+    }
+
+    return EntityVector{};
 }
 
 int GameScene::getGridWalkType(const Vec2i& grid)
@@ -370,59 +448,6 @@ int GameScene::getGridWalkType(const Vec2i& grid)
     if (!optType) return (int)tilemap::WalkType::Collision;
 
     return optType.value();
-}
-
-const std::multimap<float, Vec2i>& GameScene::getGridsInCircle(const Vec2& center, float radius)
-{
-    static std::multimap<float, Vec2i> grids;
-    grids.clear();
-
-    float l = center.x - radius;
-    float r = center.x + radius;
-    float t = center.y - radius;
-    float b = center.y + radius;
-
-    Vec2i gridLT = getGridFromPos({ l, t });
-    Vec2i gridRB = getGridFromPos({ r, b });
-    for (int x = gridLT.x; x <= gridRB.x; x++)
-    {
-        for (int y = gridLT.y; y <= gridRB.y; y++)
-        {
-            Vec2i grid = {x, y};
-            auto gridCenter = getGridCenterPos(grid);
-            float dis = glm::distance(gridCenter, center);
-            if (dis <= radius)
-            {
-                grids.insert({dis, grid});
-            }
-        }
-    }
-
-    return grids;
-}
-
-const std::multimap<float, Vec2i>& GameScene::getGridsInRing(const Vec2& center, float min_radius, float max_radius)
-{
-    static std::multimap<float, Vec2i> result;
-    result.clear();
-
-    if (min_radius >= max_radius)
-    {
-        LogError("getGridsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
-        return result;
-    }
-
-    auto& outerObjects = getGridsInCircle(center, max_radius);
-
-    for (auto& [dis, grid] : outerObjects)
-    {
-        if (dis > min_radius)
-        {
-            result.insert({dis, grid});
-        }
-    }
-
-    return result;
 }
 
 void GameScene::swichCoord(CompTransform& trans, CoordMode coordmode)
@@ -441,67 +466,29 @@ void GameScene::swichCoord(CompTransform& trans, CoordMode coordmode)
     trans.coord_mode = coordmode;
 }
 
-const std::multimap<float, entt::entity>& GameScene::getObjectsInCircle(const Vec2& center, float radius)
+const GameScene::EntityDisMap& GameScene::getObjectsInCircle(const Vec2& center, float radius)
 {
     static std::multimap<float, entt::entity> result;
     result.clear();
 
-    if (radius == 0) 
+    if (radius == 0)
     {
         auto grid = getGridFromPos(center);
         auto objects = getObjectsInGrid(grid);
         for (auto& obj : objects)
         {
-            result.insert({0, obj});
+            result.insert({ 0, obj });
         }
         return result;
     }
 
-    float l = center.x - radius;
-    float r = center.x + radius;
-    float t = center.y - radius;
-    float b = center.y + radius;
-
-    Vec2i gridLT = getGridFromPos({ l, t });
-    Vec2i gridRB = getGridFromPos({ r, b });
-    for (int x = gridLT.x; x <= gridRB.x; x++)
+    auto objects = _quadtree->query(quadtree::Circle<float>{ quadtree::Vector2{ center.x, center.y }, radius });
+    for (auto& obj : objects)
     {
-        for (int y = gridLT.y; y <= gridRB.y; y++)
+        auto trans = _registry.try_get<CompTransform>(obj);
+        if (trans)
         {
-            Vec2i grid = { x, y };
-            auto gridCenter = getGridCenterPos(grid);
-            float dis = glm::distance(gridCenter, center);
-            if (dis <= radius)
-            {
-                auto& gridobjs = getObjectsInGrid(grid);
-                for (auto& obj : gridobjs)
-                {
-                    result.insert({ dis, obj });
-                }
-            }
-        }
-    }
-
-    return result;
-}
-
-const std::multimap<float, entt::entity>& GameScene::getObjectsInRing(const Vec2& center, float min_radius, float max_radius)
-{
-    static std::multimap<float, entt::entity> result;
-    result.clear();
-
-    if (min_radius >= max_radius)
-    {
-        LogError("getObjectsInRing: min_dis({}) >= max_dis({})", min_radius, max_radius);
-        return result;
-    }
-
-    auto& outerObjects = getObjectsInCircle(center, max_radius);
-
-    for (auto& [dis, obj] : outerObjects)
-    {
-        if (dis >= min_radius)
-        {
+            float dis = glm::distance(trans->position, center);
             result.insert({ dis, obj });
         }
     }
@@ -524,11 +511,15 @@ SkyEffect GameScene::getSkyEffect()
 void GameScene::onMouseLeftPressed(const Vec2& pos)
 {
     auto scenePos = camera().screenToWorld(pos);
-    _selectEntity = findObjectAtPos(scenePos);
+    auto selobj = findObjectAtPos(scenePos);
+    if (selobj != _selectEntity && _selectEntity != entt::null)
+    {
+        _context.dispatcher().trigger(EvtObjectUnselect{ _selectEntity });
+    }
 
-    //LogInfo("select object: {}", _selectEntity);
-    on_select_object(_selectEntity);
+    _selectEntity = selobj;
 
+    _context.dispatcher().trigger(EvtRoleStopMotion{ _selectEntity });
     _context.dispatcher().trigger(EvtObjectSelection{ _selectEntity });
 }
 
@@ -648,7 +639,7 @@ bool GameScene::dragSelectActor(const Vec2& pos)
     auto dstpos = pTrans->position;
     _context.registry().emplace_or_replace<CompDragging>(_selectEntity, CompDragging{ dstpos, dstpos, pTrans->size });
 
-    removeObjectFromGrid(_selectEntity, getGridFromPos(pTrans->position));
+    removeObjectFromQuadtree(_selectEntity);
 
     auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
     if (bevComp && bevComp->bevtree)
@@ -721,13 +712,7 @@ bool GameScene::dropSelectActor(const Vec2& pos)
         dstpos = pDragging->origin_pos;
     }
 
-    pTrans->position = dstpos;
-
-    EvtRoleCrossGrid e;
-    e.actor = _selectEntity;
-    e.cur_grid = getGridFromPos(dstpos);
-    e.lst_grid = getGridFromPos(pDragging->origin_pos);
-    _context.dispatcher().trigger(e);
+    setObjectPos(_selectEntity, dstpos);
 
     _context.registry().remove<CompDragging>(_selectEntity);
 
@@ -736,6 +721,12 @@ bool GameScene::dropSelectActor(const Vec2& pos)
     {
         bevComp->bevtree->start();
     }
+
+    EvtRoleCrossGrid e;
+    e.actor = _selectEntity;
+    e.cur_grid = getObjectGrid(_selectEntity);
+    e.lst_grid = getObjectGrid(_selectEntity);
+    _context.dispatcher().trigger(e);
 
     return true;
 }

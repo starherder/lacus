@@ -387,19 +387,7 @@ void RenderSystem::drawSceneDebug()
 
     renderer.setDrawColor({ 0, 0, 255, 255 });
 
-    for (int x = 0; x <= mapSize.x; ++x)
-    {
-        for (int y = 0; y <= mapSize.y; ++y)
-        {
-            auto& objs = _context.scene().getObjectsInGrid({ x, y });
-            auto pos = _context.scene().getGridCenterPos({ x, y });
-
-            pos = _context.camera().projectPoint(pos);
-            renderer.drawDebugTextFormat(pos, "%d", (int)objs.size());
-        }
-    }
 }
-
 
 
 }

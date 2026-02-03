@@ -1,4 +1,7 @@
 ﻿#pragma once
+
+#include "quadtree/quad_tree.h"
+
 #include "engine/scene.h"
 #include "tilemap/tile_map.h"
 
@@ -19,14 +22,22 @@ namespace game {
     class GameScene : public engine::Scene, public signals::SlotHandler
     {
         using EntitySet = std::set<entt::entity>;
+        using EntityVector = std::vector<entt::entity>;
+        using EntityDisMap = std::multimap<float, entt::entity>;
+
         using GridEntityMap = std::map<Vec2i, EntitySet, Geometry::Vec2iComparator>;
         using NameEntityMap = std::unordered_map<std::string, entt::entity>;
         using MapObject = tilemap::MapObject;
+
+        using BoxType = quadtree::Box<float>;
+        using QuadTreeType = quadtree::Quadtree<entt::entity, std::function<BoxType(const entt::entity&)> >;
+        using QuadTreePtr = std::unique_ptr<QuadTreeType>;
 
     public:
         signals::Signal<entt::entity> on_hover_object;
         signals::Signal<entt::entity> on_leave_object;
         signals::Signal<entt::entity> on_select_object;
+        signals::Signal<entt::entity> on_unselect_object;
 
     public:
         GameScene() = default;
@@ -62,57 +73,57 @@ namespace game {
         GameData& dataCenter() { return _gameData; }
         entt::registry& registry() { return _registry;  }
 
-        entt::entity createMapActor(const MapObject& obj);
-        entt::entity createActor(const std::string& cfgid, const Vec2& pos);
+        entt::entity createObject(const std::string& cfgid, const Vec2& pos);
+        void destroyObject(entt::entity id);
 
-        void destroyActor(entt::entity id);
+        Vec2i getObjectGrid(entt::entity id);
+        Vec2 getObjectPos(entt::entity id);
+        void setObjectPos(entt::entity id, const Vec2& pos);
 
         entt::entity findObjectAtPos(const Vec2& pos);
+        EntityVector getObjectsInGrid(const Vec2i& grid);
+        const EntityDisMap& getObjectsInCircle(const Vec2& center, float radius);
 
-        void addObjectToGrid(entt::entity ent, const Vec2i& grid);
-        void removeObjectFromGrid(entt::entity ent, const Vec2i& grid);
-        const EntitySet& getObjectsInGrid(const Vec2i& grid);
+        void addObjectToQuadtree(entt::entity ent);
+        void removeObjectFromQuadtree(entt::entity ent);
 
         int getGridWalkType(const Vec2i& grid);
-
-        const std::multimap<float, Vec2i>& getGridsInCircle(const Vec2& center, float radius);
-        const std::multimap<float, Vec2i>& getGridsInRing(const Vec2& center, float min_radius, float max_radius);
-
-        const std::multimap<float, entt::entity>& getObjectsInCircle(const Vec2& center, float radius);
-        const std::multimap<float, entt::entity>& getObjectsInRing(const Vec2& center, float min_radius, float max_radius);
-
-        void setDebugInfo(bool show);
-        
-        auto& getCollisionDebugRects() { return _collisionDebugRects; }
 
         SkyEffect getSkyEffect();
 
         entt::entity getSelectEntity() { return _selectEntity; }
 
+        QuadTreeType* quadTree() { return _quadtree.get(); }
+
+        void setDebugInfo(bool show);
+
+        auto& getCollisionDebugRects() { return _collisionDebugRects; }
+
     private:
         void initPathFind();
+        void initQuadTree();
 
         void loadObjects();
-
         void unloadObjects();
+
+        entt::entity createMapActor(const MapObject& obj);
 
         void onRoleCrossGrid(const EvtRoleCrossGrid& e);
         void onRoleDestroyed(const EvtRoleDestroyed& e);
+
+        void onRoleSelect(const EvtObjectSelection& e);
+        void onRoleUnselect(const EvtObjectUnselect& e);
 
         void loadInThread(const engine::fs::path& mapPath);
         void unloadInThread();
 
         void onMouseLeftPressed(const Vec2& pos);
         void onMouseLeftRelease(const Vec2& pos);
-
         void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
-
         void onMouseLeftDragStart(const Vec2& pos);
         void onMouseLeftDragFinish(const Vec2& pos);
-
         void onMouseLeftClick(const Vec2& pos);
         void onMouseRightClick(const Vec2& pos);
-
         void onMouseMotion(const Vec2& pos, const Vec2& offset);
 
         void onHoverObject(entt::entity obj);
@@ -136,10 +147,12 @@ namespace game {
 
         GameData _gameData;
 
-        GridEntityMap _gridObjects;
+        //GridEntityMap _gridObjects;
 
         entt::entity _selectEntity = entt::null;
         entt::entity _hoverEntity = entt::null;
+
+        QuadTreePtr _quadtree = nullptr;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

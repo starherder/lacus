@@ -22,6 +22,7 @@ namespace game {
 
     private:
         void onEventMoveToGrid(const EvtMoveToGrid& e);
+        void onEventStopMotion(const EvtRoleStopMotion& e);
         void onEventMotionStateSwtich(const EvtMotionSwitchState& e);
 
         bool tweenNextGrid(entt::entity id);

@@ -79,6 +79,13 @@ namespace samples
                 _plugin->setOperatorMode(_opMode);
             }
 
+            ImGui::Separator();
+
+            static bool s_motion = false;
+            if (ImGui::Checkbox("motion", &s_motion))
+            {
+                _plugin->setMotion(s_motion);
+            }
         }
         ImGui::End();
 	}
@@ -107,8 +114,6 @@ namespace samples
     {
         application()->eventDispatcher().onMouseMotion.connect(this, &SamplePluginQuadTree::onMouseMotion, -1);
         application()->eventDispatcher().onMouseLeftClicked.connect(this, &SamplePluginQuadTree::onMouseLeftClick, -1);
-
-
         application()->eventDispatcher().onMouseLeftDown.connect(this, &SamplePluginQuadTree::onMouseLeftDown, -1);
         application()->eventDispatcher().onMouseLeftUp.connect(this, &SamplePluginQuadTree::onMouseLeftUp, -1);
         application()->eventDispatcher().onMouseLeftDrag.connect(this, &SamplePluginQuadTree::onMouseLeftDrag, -1);
@@ -135,6 +140,7 @@ namespace samples
         obj->size = { rand() % ObjectWidth, rand() % ObjectHeight };
         obj->pos = { rand() % (int)(_worldSize.x - ObjectWidth), rand() % (int)(_worldSize.y - ObjectHeight) };
         obj->color.fromHSV({ (float)(30 + rand() % 300), 1.0f, 1.0f, 1.0f });
+        obj->vel = { utility::RandomHelper::random_real(-ObjectSpeed, ObjectSpeed), utility::RandomHelper::random_real(-ObjectSpeed, ObjectSpeed) };
 
         if (_quadtree->getBox().contains(obj->getBox()))
         {
@@ -188,6 +194,27 @@ namespace samples
 
     void SamplePluginQuadTree::onUpdate()  
     {
+        if (!_motion) return;
+
+        float ts = application()->frameTicker().deltaSeconds();
+        for (auto& [id, obj] : _objects)
+        {
+            auto pos = obj->pos + obj->vel * ts;
+            if (!_quadtree->getBox().contains({ pos.x, pos.y, obj->size.x, obj->size.y }))
+            {
+                int flag = (rand()%2) == 0 ? -1 : 1;
+                obj->vel.x *= flag;
+                obj->vel.y *= (-flag);
+            }
+            else
+            {
+                _quadtree->remove(obj.get());
+                
+                obj->pos = pos;
+
+                _quadtree->add(obj.get());
+            }
+        }
     }
 
     void SamplePluginQuadTree::drawQuadNode(QuadTreeType::Node* node)
@@ -230,10 +257,16 @@ namespace samples
 
         auto drawObject = [this](Object* obj)
         {
-            float thickness = obj->select ? 5.0f : 1.0f;
-
-            ImGui::GetBackgroundDrawList()->AddRect({ obj->pos.x + _worldPos.x, obj->pos.y + _worldPos.y },
-                { obj->pos.x + obj->size.x + _worldPos.x, obj->pos.y + obj->size.y + _worldPos.y }, toImColor(obj->color), 0, 0, thickness);
+            if (obj->select)
+            {
+                ImGui::GetBackgroundDrawList()->AddRectFilled({ obj->pos.x + _worldPos.x, obj->pos.y + _worldPos.y },
+                    { obj->pos.x + obj->size.x + _worldPos.x, obj->pos.y + obj->size.y + _worldPos.y }, toImColor(obj->color));
+            }
+            else
+            {
+                ImGui::GetBackgroundDrawList()->AddRect({ obj->pos.x + _worldPos.x, obj->pos.y + _worldPos.y },
+                    { obj->pos.x + obj->size.x + _worldPos.x, obj->pos.y + obj->size.y + _worldPos.y }, toImColor(obj->color), 0, 0, 1.0f);
+            }
         };
 
         drawScene();

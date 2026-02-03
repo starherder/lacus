@@ -30,6 +30,17 @@ void ImFormDebug::init(GameContext* context)
     for (auto& [name, file] : particles) {
         _particleNames.push_back(name.c_str());
     }
+
+    _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick, -1);
+}
+
+void ImFormDebug::onMouseLeftClick(const Vec2& pos)
+{
+    if (_debugMode == DebugMode::PutObject)
+    {
+        auto scenePos = _context->camera().screenToWorld(pos);
+        _context->scene().createObject(_selectCfgId, scenePos);
+    }
 }
 
 void ImFormDebug::draw()
@@ -121,10 +132,11 @@ void ImFormDebug::draw()
         if (ImGui::RadioButton("put_obj##input", _debugMode == DebugMode::PutObject)) {
             _debugMode = DebugMode::PutObject;
         }
+
         ImGui::SameLine();
 
         static int select_index = 0;
-        const auto& cfgs = ObjectFactory::inst().getAllRoleCfgIds();
+        const auto& cfgs = ObjectFactory::inst().getAllObjectCfgIds();
         _selectCfgId = cfgs[select_index];
 
         if (ImGui::BeginCombo("##combo_cfgs", cfgs[select_index].c_str()))

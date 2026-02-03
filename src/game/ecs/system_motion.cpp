@@ -13,6 +13,8 @@ namespace game
     {
         context.dispatcher().sink<EvtMoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
         context.dispatcher().sink<EvtMotionSwitchState>().connect<&MotionSystem::onEventMotionStateSwtich>(this);
+
+        context.dispatcher().sink<EvtRoleStopMotion>().connect<&MotionSystem::onEventStopMotion>(this);
     }
 
     MotionSystem::~MotionSystem()
@@ -31,13 +33,12 @@ namespace game
             compTween.tween.step(delta);
         }
 
-        auto ent_view = _context.registry().view<CompTransform, CompMotion>();
+        auto ent_view = _context.registry().view<CompMotion>();
         for (auto& ent : ent_view)
         {
             auto pdead = _context.registry().try_get<CompDead>(ent);
             if (pdead) { continue; }
 
-            auto& transform = ent_view.get<CompTransform>(ent);
             auto& motion = ent_view.get<CompMotion>(ent);
 
             if (motion.state != MotionState::Moving)
@@ -115,7 +116,10 @@ namespace game
         motion.path_iterator++;
         if(motion.path_iterator == motion.path.rend())
         {
-            transform.position = _context.scene().getGridCenterPos(motion.targetGrid);
+            //transform.position = _context.scene().getGridCenterPos(motion.targetGrid);
+            auto pos = _context.scene().getGridCenterPos(motion.targetGrid);
+            _context.scene().setObjectPos(entid, pos);
+
             motionStop(entid);
             return false;
         }
@@ -142,7 +146,10 @@ namespace game
             .onStep([&transform, entid, this](auto& t, float x, float y)
                 {
                     checkEntityGrid(entid, transform.position, Vec2{x, y});
-                    transform.position = { x, y };
+
+                    //transform.position = { x, y };
+
+                    _context.scene().setObjectPos(entid, {x, y});
                     return false;
                 });
 
@@ -153,10 +160,13 @@ namespace game
     {
         if (_context.registry().valid(id))
         {
-            auto& motion = _context.registry().get<CompMotion>(id);
-            motion.state = MotionState::Resting;
-            motion.path.clear();
-            motion.path_iterator = motion.path.rbegin();
+            auto motion = _context.registry().try_get<CompMotion>(id);
+            if (motion)
+            {
+                motion->state = MotionState::Resting;
+                motion->path.clear();
+                motion->path_iterator = motion->path.rbegin();
+            }
         }
 
         _context.dispatcher().trigger(EvtMotionStop{ id });
@@ -183,6 +193,11 @@ namespace game
         }
     }
     
+    void MotionSystem::onEventStopMotion(const EvtRoleStopMotion& e)
+    {
+        motionStop(e.actor);
+    }
+
     void MotionSystem::onEventMotionStateSwtich(const EvtMotionSwitchState& e)
     {
         if (_context.registry().valid(e.actor))

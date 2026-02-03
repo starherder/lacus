@@ -45,7 +45,7 @@ namespace game
 			}
 			else if (compDead.ticks > _context.gameConfig().dying_ticks)
 			{
-				_context.registry().emplace_or_replace<CompDestroy>(ent);
+				_context.scene().destroyObject(ent);
 			}
 			compDead.ticks += _context.applicaton().frameTicker().deltaTicks();
 		}
@@ -102,10 +102,12 @@ namespace game
 				}
 			}
 
-			pItemTrans->position = dest_pos;
 			pItemDisplay->visible = true;
 
-			_context.scene().addObjectToGrid(item, _context.scene().getGridFromPos(dest_pos));
+			//pItemTrans->position = dest_pos;
+			_context.scene().setObjectPos(item, dest_pos);
+
+			//_context.scene().addObjectToGrid(item, _context.scene().getGridFromPos(dest_pos));
 		}
 	}
 

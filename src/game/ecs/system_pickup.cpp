@@ -34,6 +34,9 @@ namespace game
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
+        // ´ÓËÄ²æÊ÷ÒÆ³ý
+        _context.scene().removeObjectFromQuadtree(obj);
+
         // ÇÐ»»µ½ÆÁÄ»¿Õ¼ä
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
 
@@ -50,7 +53,8 @@ namespace game
                                     .via("quadraticIn")
                                     .during(pickableComp.use_ticks)
                                     .onStep([this, role, obj](auto& t, float x, float y) {
-                                        if (!_context.registry().valid(obj)) {
+                                        if (!_context.registry().valid(obj)) 
+                                        {
                                             return false;
                                         }
 
@@ -58,11 +62,9 @@ namespace game
                                         auto& transComp = _context.registry().get<CompTransform>(obj);
                                         transComp.position = {x,y };
 
-                                        if (t.isFinished()) {
-                                            //LogInfo("pickable object {} tween finish", nameComp.cfg_id);
-                                            
-                                            _context.registry().emplace_or_replace<CompDestroy>(obj);
-
+                                        if (t.isFinished()) 
+                                        {
+                                            _context.scene().destroyObject(obj);
                                             _context.dispatcher().trigger<EvtRolePickItemFinish>(EvtRolePickItemFinish{ role, obj });
                                         }
 
@@ -93,7 +95,7 @@ namespace game
                                     .onStep([this, obj](auto& t, float x, float y) {
                                         if (t.isFinished())
                                         {
-                                            _context.registry().emplace_or_replace<CompDestroy>(obj);
+                                            _context.scene().destroyObject(obj);
                                             return true;
                                         }
                                         auto& displayComp = _context.registry().get<CompDisplay>(obj);
@@ -112,7 +114,7 @@ namespace game
     {
         std::vector<entt::entity> pending_object;
 
-        auto& objects = _context.scene().getObjectsInGrid(e.cur_grid);
+        const auto& objects = _context.scene().getObjectsInGrid(e.cur_grid);
         for(auto& obj : objects) 
         {
             auto pickComp = _context.registry().try_get<CompPickable>(obj);
@@ -134,7 +136,8 @@ namespace game
 
         for (auto& obj : pending_object)
         {
-            _context.scene().removeObjectFromGrid(obj, e.cur_grid);
+            //_context.scene().removeObjectFromGrid(obj, e.cur_grid);
+            //_context.scene().removeObjectFromQuadtree(obj);
         }
     }
 

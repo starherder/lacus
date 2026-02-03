@@ -323,7 +323,7 @@ namespace game
 			
 			if (compWave.cur_wave >= waveCfg.grids)
 			{
-				_context.registry().emplace_or_replace<CompDestroy>(wave);
+				_context.scene().destroyObject(wave);
 				return;
 			}
 
@@ -384,7 +384,7 @@ namespace game
 										auto it = sprintComp.passed_grids.find(grid);
 										if (it == sprintComp.passed_grids.end())
 										{
-											auto objects = _context.scene().getObjectsInGrid(grid);
+											const auto& objects = _context.scene().getObjectsInGrid(grid);
 											for (auto& obj : objects)
 											{
 												auto pObjComm = _context.registry().try_get<CompComm>(obj);
@@ -542,8 +542,7 @@ namespace game
 
 					if (compLightning.cur_atk >= lightningCfg.attack_times)
 					{
-						//LogInfo("destroy light: {}", lightning);
-						_context.registry().emplace_or_replace<CompDestroy>(lightning);
+						_context.scene().destroyObject(lightning);
 					}
 
 					return;
@@ -594,7 +593,7 @@ namespace game
 
 			if (compTrapCfg.duration > 0 && compTraps.during_ticks >= compTrapCfg.duration)
 			{
-				_context.registry().emplace_or_replace<CompDestroy>(trap);
+				_context.scene().destroyObject(trap);
 				return;
 			}
 
@@ -680,7 +679,7 @@ namespace game
 			}
 
 			if (t.isFinished()) {
-				_context.registry().emplace_or_replace<CompDestroy>(object);
+				_context.scene().destroyObject(object);
 				return true;
 			}
 

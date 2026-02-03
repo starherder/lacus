@@ -45,6 +45,8 @@ namespace game
 
         void drawSkillWindow();
 
+        void onMouseLeftClick(const Vec2& pos);
+
     public:
         entt::entity _selectEntity = entt::null;
         std::string _selectCfgId;

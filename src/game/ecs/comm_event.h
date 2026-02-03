@@ -6,6 +6,10 @@
 
 namespace game 
 {
+	struct EvtRoleStopMotion {
+		entt::entity actor;
+	};
+
 	struct EvtRoleDead {
 		entt::entity actor;
 		entt::entity killer;
@@ -67,6 +71,9 @@ namespace game
 	};
 
 	struct EvtObjectSelection {
+		entt::entity object;
+	};
+	struct EvtObjectUnselect {
 		entt::entity object;
 	};
 

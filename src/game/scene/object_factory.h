@@ -30,7 +30,7 @@ namespace game
 		bool loadSkills(const fs::path& skilldif);
 		bool loadBuffs(const fs::path& buffdir);
 
-		entt::entity createActor(const std::string& cfgid);
+		entt::entity createObject(const std::string& cfgid);
 
 		entt::entity createSkill(entt::entity owner, const std::string& cfgid);
 
@@ -47,6 +47,7 @@ namespace game
 
 		void destroyObject(entt::entity entityid);
 
+		const auto& getAllObjectCfgIds() { return _objectCfgIds; }
 		const auto& getAllRoleCfgIds() { return _roleCfgIds; }
 		const auto& getAllEnemyCfgIds() { return _enemyCfgIds; }
 
@@ -76,6 +77,7 @@ namespace game
 		std::vector<std::string> _otherCfgIds;
 		std::vector<std::string> _skillCfgIds;
 		std::vector<std::string> _buffCfgIds;
+		std::vector<std::string> _objectCfgIds;
 
 		ConfigJsonMap _jsonObjectCfgs;
 		ConfigJsonMap _jsonSkillCfgs;

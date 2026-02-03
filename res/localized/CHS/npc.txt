@@ -12,12 +12,12 @@ text_npc_desc_3=可爱的一个小姑娘，外表美丽，内心善良。
 text_npc_desc_4=他自己都不知道自己是谁。
 text_npc_desc_5=村中恶霸，欺男霸女，人见狗嫌。
 
-text_npc_name_100=张散
-text_npc_name_101=李思
-text_npc_name_102=王巫
-text_npc_name_103=赵柳
-text_npc_name_104=陈奇
-text_npc_name_105=刘霸
+text_npc_name_100=张阿三
+text_npc_name_101=李阿四
+text_npc_name_102=王阿五
+text_npc_name_103=赵阿六
+text_npc_name_104=陈阿七
+text_npc_name_105=刘阿八
 
 text_npc_desc_100=可怜辜负好韶光，于国于家无望。天下无能第一，古今不肖无双。
 text_npc_desc_101=一个高尚的人，纯粹的人，脱离了低级趣味的人。

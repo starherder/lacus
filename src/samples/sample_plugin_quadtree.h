@@ -20,6 +20,7 @@ namespace samples
         
         Vec2 pos;
         Vec2 size;
+        Vec2 vel;
 
         Color color;
 
@@ -107,6 +108,7 @@ namespace samples
 
         void setQueryMode(quadtree::QueryMode mode);
         void setOperatorMode(OperatorMode mode) { _opMode = mode; }
+        void setMotion(bool motion) { _motion = motion; }
 
     private:
         QuadTreePtr _quadtree = nullptr;
@@ -115,6 +117,9 @@ namespace samples
 
         std::map<int, std::shared_ptr<Object>> _objects;
 
+        bool _motion = false;
+
+        float ObjectSpeed = 100.0f;
         const int ObjectWidth = 100;
         const int ObjectHeight = 100;
 

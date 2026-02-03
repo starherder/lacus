@@ -81,19 +81,20 @@ namespace game
             .via(tweenMode)
             .during(floatticks)
             .onStep([this, word](auto& t, float y, float a) {
-            if (t.isFinished()) {
-                _context.registry().emplace_or_replace<CompDestroy>(word);
-                return true;
-            }
+                if (t.isFinished()) 
+                {
+                    _context.scene().destroyObject(word);
+                    return true;
+                }
 
-            auto& compTrans = _context.registry().get<CompTransform>(word);
-            compTrans.position.y = y;
+                auto& compTrans = _context.registry().get<CompTransform>(word);
+                compTrans.position.y = y;
 
-            auto& compFightText = _context.registry().get<CompFightText>(word);
-            compFightText.color.a = (uint8_t)a;
+                auto& compFightText = _context.registry().get<CompFightText>(word);
+                compFightText.color.a = (uint8_t)a;
 
-            return false;
-        });
+                return false;
+            });
 
 
 	}

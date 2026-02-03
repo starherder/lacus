@@ -242,7 +242,6 @@ namespace game
         showScenesForm();
 
         _scene->onStart();
-
     }
 
     bool GameLogic::switchScene(const std::string& sceneName)
@@ -381,20 +380,31 @@ namespace game
 
     void GameLogic::onSceneObjectHover(entt::entity obj)
     {
-        auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
-        if (form)
+        auto comm = _context.registry().try_get<CompComm>(obj);
+        if (comm && comm->type == ObjectType::Npc)
         {
-            form->setVisible(true);
-            form->showChessTip(obj);
+            auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
+            if (form)
+            {
+                auto mousePos = _context.eventDispatcher().mousePos();
+                form->setPos(mousePos + Vec2{ 10, 10 });
+
+                form->setVisible(true);
+                form->showChessTip(obj);
+            }
         }
     }
     
     void GameLogic::onSceneObjectLeave(entt::entity obj)
     {
-        auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
-        if (form)
+        auto comm = _context.registry().try_get<CompComm>(obj);
+        if (comm && comm->type == ObjectType::Npc)
         {
-            form->setVisible(false);
+            auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
+            if (form)
+            {
+                form->setVisible(false);
+            }
         }
     }
     

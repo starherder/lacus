@@ -191,7 +191,7 @@ namespace game
 			return "";
 		}
 
-		//_objectCfgIds.push_back(cfgid);
+		_objectCfgIds.push_back(cfgid);
 		_jsonObjectCfgs[cfgid] = jsonptr;
 		return cfgid;
 	}
@@ -264,7 +264,7 @@ namespace game
 	}
 
 
-	entt::entity ObjectFactory::createActor(const std::string& cfgid)
+	entt::entity ObjectFactory::createObject(const std::string& cfgid)
 	{
 		assert(_context);
 
@@ -506,7 +506,7 @@ namespace game
 			for (auto& it : itemsJs)
 			{
 				auto item_name = it.get<std::string>();
-				auto item = createActor(item_name);
+				auto item = createObject(item_name);
 				auto pDisplay = _context->registry().try_get<CompDisplay>(item);
 				if(pDisplay) {
 					pDisplay->visible = false;

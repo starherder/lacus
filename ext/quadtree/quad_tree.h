@@ -6,6 +6,7 @@
 #include <memory>
 #include <type_traits>
 #include <vector>
+#include <set>
 
 namespace quadtree
 {
@@ -66,8 +67,6 @@ struct Circle {
         return contains(box.getCenter());
     }
     constexpr bool intersects(const Box<T>& box) const noexcept {
-        // 1. 寻找矩形上距离圆心最近的点
-        // 将圆心的x坐标“钳制”到矩形的x边界范围内
         float closestX;
         if (center.x < box.left) {
             closestX = box.left;
@@ -79,7 +78,6 @@ struct Circle {
             closestX = center.x;
         }
 
-        // 将圆心的y坐标“钳制”到矩形的y边界范围内
         float closestY;
         if (center.y < box.top) {
             closestY = box.top;
@@ -91,12 +89,10 @@ struct Circle {
             closestY = center.y;
         }
 
-        // 2. 计算圆心到最近点的距离平方（避免开方，优化性能）
         float dx = center.x - closestX;
         float dy = center.y - closestY;
         float distanceSquared = dx * dx + dy * dy;
 
-        // 3. 判断：如果距离平方 <= 半径平方，则相交
         return distanceSquared <= (radius * radius);
     }
 };
@@ -128,11 +124,21 @@ public:
     void add(const T& value)
     {
         add(mRoot.get(), 0, mBox, value);
+
+        mAllValues.insert(value);
     }
 
     void remove(const T& value)
     {
         remove(mRoot.get(), mBox, value);
+
+        mAllValues.erase(value);
+    }
+
+    bool has(const T& value)
+    {
+        auto it = mAllValues.find(value);
+        return it != mAllValues.end();
     }
 
     size_t count() const
@@ -153,6 +159,8 @@ public:
     std::vector<T> query(const Box<Float>& box) const
     {
         auto values = std::vector<T>();
+        if (!getBox().contains(box)) return values;
+
         query(mRoot.get(), mBox, box, values);
         return values;
     }
@@ -160,6 +168,7 @@ public:
     std::vector<T> query(const Circle<Float>& circle) const
     {
         auto values = std::vector<T>();
+
         query(mRoot.get(), mBox, circle, values);
         return values;
     }
@@ -208,6 +217,8 @@ private:
     Equal mEqual;
     size_t mCount;
     QueryMode mQueryMode = QueryMode::Intersect;
+
+    std::set<T> mAllValues;
 
 private:
     bool isLeaf(const Node* node) const
@@ -275,8 +286,8 @@ private:
 
     void add(Node* node, std::size_t depth, const Box<Float>& box, const T& value)
     {
-        assert(node != nullptr);
-        assert(box.contains(mGetBox(value)));
+        if (node == nullptr) return;
+        if (!box.contains(mGetBox(value))) return;
 
         mCount++;
 
@@ -332,8 +343,8 @@ private:
 
     bool remove(Node* node, const Box<Float>& box, const T& value)
     {
-        assert(node != nullptr);
-        assert(box.contains(mGetBox(value)));
+        if (node == nullptr) return false;
+        if (!box.contains(mGetBox(value))) return false;
 
         mCount--;
 
@@ -478,6 +489,7 @@ private:
             }
         }
     }
+ 
     void findAllIntersections(Node* node, std::vector<std::pair<T, T>>& intersections) const
     {
         // Find intersections between values stored in this node

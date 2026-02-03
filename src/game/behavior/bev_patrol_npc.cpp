@@ -256,18 +256,14 @@ namespace game {
 		Vec2i dstGrid{ -1,-1 };
 		auto radius = pbevCom->vision_dis;
 
-		auto& gridsmap = _context->scene().getGridsInCircle(gridCenter, radius);
-		for (auto& [dis, grid] : gridsmap)
+		auto objects = _context->scene().getObjectsInCircle(gridCenter, radius);
+		for (auto& [dis, obj] : objects)
 		{
-			auto& objects = _context->scene().getObjectsInGrid(grid);
-			for (auto& obj : objects)
+			auto pickable = _context->registry().try_get<CompPickable>(obj);
+			if (pickable && pickable->picked == false)
 			{
-				auto pickable = _context->registry().try_get<CompPickable>(obj);
-				if (pickable && pickable->picked == false)
-				{
-					dstGrid = grid;
-					break;
-				}
+				dstGrid = _context->scene().getObjectGrid(obj);
+				break;
 			}
 		}
 
@@ -285,8 +281,6 @@ namespace game {
 
 		motion.path.swap(path.value());
 		motion.targetGrid = dstGrid;
-
-		//LogInfo("move to item grid({}, {}).", dstGrid.x, dstGrid.y);
 
 		_context->dispatcher().trigger(EvtMoveToGrid{ _actor, motion.targetGrid, false });
 

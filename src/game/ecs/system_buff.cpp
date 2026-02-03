@@ -27,9 +27,7 @@ namespace game
 
 			if(!_context.registry().valid(buff.owner))
 			{
-				LogInfo("buff({}) owner({}) NOT valid, remove buff({}).", 
-							(uint32_t)buff.owner, (uint32_t)ent, buff.cfgid);
-				_context.registry().emplace_or_replace<CompDestroy>(ent);
+				_context.scene().destroyObject(ent);
 				continue;
 			}
 		
@@ -92,8 +90,7 @@ namespace game
 				buffComm.during_ticks += ticks;
 				if(buffComm.during_ticks > buffComm.duration)
 				{
-					//LogInfo("buff({}) expired, remove buf({})", (uint32_t)buff, buffComm.cfgid);
-					_context.registry().emplace_or_replace<CompDestroy>(buff);
+					_context.scene().destroyObject(buff);
 					return;
 				}
 			}
@@ -126,7 +123,7 @@ namespace game
 				auto& bufComm = _context.registry().get<CompBuffComm>(buff);
 				if(bufComm.cfgid == e.cfgid)
 				{
-					_context.registry().emplace_or_replace<CompDestroy>(buff);
+					_context.scene().destroyObject(buff);
 					it = buffs.erase(it);
 					continue;
 				}
