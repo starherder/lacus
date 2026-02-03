@@ -63,7 +63,7 @@ namespace game
     void FormChessTip::onUpdate(float delta)
     {
         auto mousePos = _context.eventDispatcher().mousePos();
-        setPos(mousePos);
+        setPos(mousePos + Vec2{10, 10});
     }
 
     void FormChessTip::onSizeChanged()

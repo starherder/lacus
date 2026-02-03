@@ -35,7 +35,7 @@ public:
     void close();
 
     auto& name() { return _name; }
-    
+
     bool visible() { return _visible; }
     void setVisible(bool visible) { _visible = visible; }
 
@@ -66,6 +66,9 @@ public:
     void setMaximize(bool v);
     bool isMaximize() { return _maximized; }
 
+    void setNoEvent(bool noEvent);
+    bool isNoEvent() { return _noEvent; }
+
     void moveToTop();
 
 public:
@@ -95,6 +98,7 @@ private:
     bool _visible = true;
     bool _focused = false;
     bool _dragMovable = true;
+    bool _noEvent = false;
 
     Vec2 _pos = {0, 0};
     Vec2 _size = {400, 300};

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<form size="200,300" ground_color="#5555FFCC" border_color="#555555FF" border_size="2">
+<form size="200,300" no_event="true" ground_color="#5555FFCC" border_color="#555555FF" border_size="2">
     <vlayout ground_color="#5555FF80" pad="10,10">
         <hlayout name="hlay_head" size="0,30">
             <label name="lbl_name" text_color="#FF8800FF" font_name="fonts/Vonwaon.ttf" font_size="20" />

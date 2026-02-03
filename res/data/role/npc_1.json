@@ -38,10 +38,10 @@
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
     "level": 1,
     "roll": 10,
-    "str": 20,
+    "str": 50,
     "cst": 20,
-    "dex": 20,
-    "met": 20
+    "dex": 40,
+    "met": 10
   },
 
   "skills": [

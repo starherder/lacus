@@ -118,7 +118,7 @@ protected:
 
     bool _visible = true;
     bool _focused = false;
-    bool _movable = false;
+    bool _movable = false;;
     bool _acceptEvent = false;
     bool _scaleInGroup = true;
     bool _canDragOut = false;

@@ -49,6 +49,9 @@ bool Form::load(const fs::path& filepath)
     auto dragMovable = ele->BoolAttribute("dragable", !maximized);
     setDragMovable(dragMovable);
 
+    auto noEvent = ele->BoolAttribute("no_event", false);
+    setNoEvent(noEvent);
+
     bool res = root()->load(ele);
     if (!res) {
         LogError("load form {} failed.", _name);
@@ -71,6 +74,11 @@ void Form::setMaximize(bool v)
         setPos({ 0, 0 });
         setSize(ui::GuiManager::inst().windowSize());
     }
+}
+
+void Form::setNoEvent(bool noEvent)
+{
+    _noEvent = noEvent;
 }
 
 void Form::setPos(const Vec2& pos)
@@ -229,6 +237,8 @@ void Form::onWindowResized(const Vec2& size)
 
 void Form::onMouseLeftClick(const Vec2& pos)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget; 
     if(widget && widget->focused() && widget->acceptEvent())
     {
@@ -238,6 +248,8 @@ void Form::onMouseLeftClick(const Vec2& pos)
 
 void Form::onMouseRightClick(const Vec2& pos)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if (widget && widget->focused() && widget->acceptEvent())
     {
@@ -247,6 +259,8 @@ void Form::onMouseRightClick(const Vec2& pos)
 
 void Form::onMouseLeftDown(const Vec2& pos)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if (widget && widget->acceptEvent())
     {
@@ -258,6 +272,8 @@ void Form::onMouseLeftDown(const Vec2& pos)
 
 void Form::onMouseLeftUp(const Vec2& pos)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if (widget && widget->acceptEvent())
     {
@@ -267,6 +283,8 @@ void Form::onMouseLeftUp(const Vec2& pos)
 
 void Form::onMouseRightDown(const Vec2& pos)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if (widget && widget->focused() && widget->acceptEvent())
     {
@@ -278,6 +296,8 @@ void Form::onMouseRightDown(const Vec2& pos)
 
 void Form::onMouseRightUp(const Vec2& pos)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if (widget && widget->focused())
     {
@@ -287,6 +307,8 @@ void Form::onMouseRightUp(const Vec2& pos)
 
 void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if(!widget) 
     {
@@ -309,6 +331,8 @@ void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 
 void Form::onMouseWheel(const Vec2& pos, float dir)
 {
+    if (isNoEvent()) return;
+
     auto widget = _hoverWidget;
     if (widget && widget->acceptEvent())
     {
@@ -319,6 +343,8 @@ void Form::onMouseWheel(const Vec2& pos, float dir)
 
 void Form::onMouseMotion(const Vec2& pos, const Vec2& offset)
 {
+    if (isNoEvent()) return;
+
     if(!getRect().contains(pos))
     {
         _hoverWidget = nullptr;

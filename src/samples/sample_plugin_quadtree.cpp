@@ -129,9 +129,11 @@ namespace samples
         obj->pos = { rand() % (int)(_worldSize.x - ObjectWidth), rand() % (int)(_worldSize.y - ObjectHeight) };
         obj->color.fromHSV({ (float)(30 + rand() % 300), 1.0f, 1.0f, 1.0f });
 
-        _objects.insert({ id, obj });
-
-        _quadtree->add(obj.get());
+        if (_quadtree->getBox().contains(obj->getBox()))
+        {
+            _quadtree->add(obj.get());
+            _objects.insert({ id, obj });
+        }
     }
 
     void SamplePluginQuadTree::addObjectAtPos(int id, const Vec2& pos)
@@ -144,8 +146,11 @@ namespace samples
         obj->pos = { pos.x-ObjSize.x/2, pos.y-ObjSize.y/2 };
         obj->color = Color::Cyan;
 
-        _objects.insert({ id, obj });
-        _quadtree->add(obj.get());
+        if (_quadtree->getBox().contains(obj->getBox()))
+        {
+            _quadtree->add(obj.get());
+            _objects.insert({ id, obj });
+        }
     }
 
     void SamplePluginQuadTree::removeObject(Object* obj)

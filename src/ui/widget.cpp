@@ -144,59 +144,6 @@ Rect Widget::getAbsRect() const
     return {getAbsPos(), _size};
 }
 
-#if 0
-    auto parseVector = [this](const std::string& sv) {
-        Vec2 result = {0,0};
-        try {
-            auto arr = utility::StringUtil::split(sv, ',');
-            if (arr.size() != 2) { 
-                return Vec2{ 0, 0 }; 
-            }
-
-            auto& sval0 = arr[0];
-            auto& sval1 = arr[1];
-
-            if(sval0.back() == '%') {
-                sval0 = sval0.substr(0, sval0.size()-1);
-                if(this->parent()) {
-                    result.x =  this->parent()->size().x * std::stof(sval0.data()) / 100.0f;
-                }
-                else {
-                    result.x = 100.0f;
-                }
-            }
-            else {
-                result.x = std::stof(sval0.data());
-            }
-
-            if (sval1.back() == '%') {
-                sval1 = sval1.substr(0, sval1.size() - 1);
-                if (this->parent()) {
-                    result.y = this->parent()->size().y * std::stof(sval1.data()) / 100.0f;
-                }
-                else {
-                    result.y = 100.0f;
-                }
-            }
-            else {
-                result.y = std::stof(sval1.data());
-            }
-            return result;
-        }
-        catch(...)
-        {
-            LogError("parseVector: sv = {} failed.", sv);
-            return result;
-        }
-    };
-
-    auto pos = parseVector(node->Attribute("pos"));
-    setPos(pos);
-
-    auto size = parseVector(node->Attribute("size"));
-    setSize(size);
-#endif
-
 bool Widget::load(XmlNode* node) 
 { 
     if (!node) return false;

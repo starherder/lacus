@@ -1,8 +1,8 @@
 {
-  "id": "npc_2",
-  "name": "text_npc_name_2",
+  "id": "npc_3",
+  "name": "text_npc_name_3",
   "type": "npc",
-  "desc": "text_npc_desc_2",
+  "desc": "text_npc_desc_3",
 
   "motion": {
     "speed": 150
@@ -24,9 +24,9 @@
 
   "display": {
     "size": "64,64",
-    "groud_color": "#FFAAFFFF",
+    "groud_color": "#FFAAAAFF",
     "border_color": "#555555FF",
-    "font_color": "#555555FF",
+    "font_color": "#FF5555FF",
     "# texture": "textures/icon/sry1.png",
     "# tex_rect": "0,0,0.25,0.5",
     "font_file": "fonts/msyh.ttf",
@@ -37,17 +37,18 @@
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
     "level": 1,
     "roll": 20,
-    "str": 10,
+    "str": 20,
     "cst": 20,
-    "dex": 40,
-    "met": 50
+    "dex": 20,
+    "met": 20
   },
 
   "skills": [
-    "skill_lightning", "skill_poison"
+    "skill_sprint"
   ],
+
 
   "buffs": [],
 
-  "items": [ "item_coin", "item_coin", "item_poision" ]
+  "items": [ "item_coin" ]
 }

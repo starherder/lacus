@@ -65,7 +65,7 @@ namespace samples
 		engine::Application* _app = nullptr;
         SamplePluginQuadTree* _plugin = nullptr;
 
-        OperatorMode _opMode = OperatorMode::OP_Add;
+        OperatorMode _opMode = OperatorMode::OP_Select;
         quadtree::QueryMode _queryMode = quadtree::QueryMode::Intersect;
 	};
 
