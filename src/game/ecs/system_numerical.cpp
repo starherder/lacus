@@ -45,6 +45,8 @@ namespace game
         }
 
         auto& base = _context.registry().get<CompBaseProp>(e.actor);
+        base.lv += e.level;
+
         base = _context.gameScript().call<CompBaseProp>("get_level_baseprop", base);
 
         _context.dispatcher().trigger(EvtRolePropAlter{ e.actor, true });
