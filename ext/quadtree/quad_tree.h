@@ -58,10 +58,13 @@ struct Circle {
         Vector2<T> offset = { point.x - center.x, point.y - center.y };
         return (offset.x * offset.x + offset.y * offset.y) <= (radius * radius);
     }
+    constexpr bool contains(const Box<T>& box) const noexcept {
+        auto l = box.left; auto r = box.getRight(); auto t = box.top; auto b = box.getBottom();
+        return contains(Vector2{ l,t }) && contains(Vector2{ l,b }) && contains(Vector2{ r,t }) && contains(Vector2{ r,b });
+    }
     constexpr bool containCenter(const Box<T>& box) const noexcept {
         return contains(box.getCenter());
     }
-    
     constexpr bool intersects(const Box<T>& box) const noexcept {
         // 1. 寻找矩形上距离圆心最近的点
         // 将圆心的x坐标“钳制”到矩形的x边界范围内
@@ -99,6 +102,7 @@ struct Circle {
 };
 
 enum class QueryMode {
+    Contain,
     ContainCenter,
     Intersect,
 };
@@ -401,7 +405,14 @@ private:
         assert(queryBox.intersects(box));
         for (const auto& value : node->values)
         {
-            if (mQueryMode == QueryMode::ContainCenter)
+            if (mQueryMode == QueryMode::Contain)
+            {
+                if (queryBox.contains(mGetBox(value)))
+                {
+                    values.push_back(value);
+                }
+            }
+            else if (mQueryMode == QueryMode::ContainCenter)
             {
                 if (queryBox.containCenter(mGetBox(value)))
                 {
@@ -434,7 +445,14 @@ private:
 
         for (const auto& value : node->values)
         {
-            if (mQueryMode == QueryMode::ContainCenter)
+            if (mQueryMode == QueryMode::Contain)
+            {
+                if (queryCircle.contains(mGetBox(value)))
+                {
+                    values.push_back(value);
+                }
+            }
+            else if (mQueryMode == QueryMode::ContainCenter)
             {
                 if (queryCircle.containCenter(mGetBox(value)))
                 {

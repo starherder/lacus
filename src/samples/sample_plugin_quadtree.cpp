@@ -25,6 +25,13 @@ namespace samples
 	{
         ImGui::Begin("quadtree");
         {
+            if (ImGui::RadioButton("contain", _queryMode == quadtree::QueryMode::Contain))
+            {
+                _queryMode = quadtree::QueryMode::Contain;
+                _plugin->setQueryMode(_queryMode);
+            }
+
+            ImGui::SameLine();
 
             if (ImGui::RadioButton("contain center", _queryMode == quadtree::QueryMode::ContainCenter))
             {

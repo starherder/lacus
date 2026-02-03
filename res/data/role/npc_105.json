@@ -1,8 +1,8 @@
 {
-  "id": "npc_5",
-  "name": "text_npc_name_5",
+  "id": "npc_105",
+  "name": "text_npc_name_105",
   "type": "npc",
-  "desc": "text_npc_desc_5",
+  "desc": "text_npc_desc_105",
 
   "motion": {
     "speed": 150,

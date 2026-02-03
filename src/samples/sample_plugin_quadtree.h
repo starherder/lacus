@@ -78,36 +78,29 @@ namespace samples
 
         const char* name() override { return "sample_quadtree_plugin"; }
 
-        void onInit() override ;
+        void onInit() override;
+        void onClose() override;
 
-        void onInstall() override ;
-
-        void onUninstall() override ;
+        void onInstall() override;
+        void onUninstall() override;
 
         void onEnable() override;
-
         void onDisable() override;
 
-        void onUpdate() override ;
-
-        void onDraw() override ;
-
-        void onClose() override ;
+        void onUpdate() override;
+        void onDraw() override;
 
         void onMouseLeftDown(const Vec2& pos);
         void onMouseLeftUp(const Vec2& pos);
         void onMouseMotion(const Vec2& pos, const Vec2& offset);
         void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
-
         void onMouseLeftClick(const Vec2& pos);
 
         void drawQuadNode(QuadTreeType::Node* node);
         void drawSelectGizmo();
 
         void addRandomObject(int id);
-
         void addObjectAtPos(int id, const Vec2& pos);
-
         void removeObject(Object* obj);
 
         void unselectAll();
