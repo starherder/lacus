@@ -46,13 +46,13 @@ function get_fight_prop(base)
     fight.hpm = base.cst * 10; -- hp max
     fight.hpr = base.dex / 10; -- hp increase ratio
 
-    fight.atk = base.cst / 3 + base.str;
-    fight.def = base.cst + base.str / 3;
-    fight.mvs = base.dex;
+    fight.atk = base.cst / 3 + base.str + base.met;
+    fight.def = base.cst + base.str/3;
+    fight.mvs = base.dex + base.met/2;
     fight.ats = base.dex;
-    fight.atd = base.dex + base.str;
-    fight.crt = base.dex / 10000;
-    fight.par = base.dex / 10000;
+    fight.atd = base.dex + base.str + base.met/2;
+    fight.crt = base.dex / 1000;
+    fight.par = base.dex / 1000;
 
     --fight.xxx += buf.xxx // buf
     --fight.xxx += equip.xxx // ×°±¸

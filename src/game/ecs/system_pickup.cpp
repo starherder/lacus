@@ -1,5 +1,5 @@
 #include "system_pickup.h"
-
+#include "game/game_config.h"
 
 namespace game 
 {
@@ -112,10 +112,23 @@ namespace game
 
     void PickupSystem::onEventMoveToGrid(const EvtRoleCrossGrid& e)
     {
-        std::vector<entt::entity> pending_object;
+        auto compComm = _context.registry().try_get<CompComm>(e.actor);
+        auto compTrans = _context.registry().try_get<CompTransform>(e.actor);
+        if (!compComm || !compTrans)
+        {
+            return;
+        }
 
-        const auto& objects = _context.scene().getObjectsInGrid(e.cur_grid);
-        for(auto& obj : objects) 
+        if (compComm->type != ObjectType::Npc || compComm->side != CampSide::Gangster)
+        {
+            return;
+        }
+
+        auto center = compTrans->position;
+        auto radius = glm::length(compTrans->size) + _context.gameConfig().pick_range;
+
+        const auto& objects = _context.scene().getObjectsInCircle(center, radius);
+        for(auto& [dis, obj] : objects) 
         {
             auto pickComp = _context.registry().try_get<CompPickable>(obj);
             if (pickComp && pickComp->picked == false)
@@ -128,16 +141,7 @@ namespace game
                 {
                     pickUp(e.actor, obj);
                 }
-
-                pending_object.push_back(obj);
-                continue;
             }
-        }
-
-        for (auto& obj : pending_object)
-        {
-            //_context.scene().removeObjectFromGrid(obj, e.cur_grid);
-            //_context.scene().removeObjectFromQuadtree(obj);
         }
     }
 
