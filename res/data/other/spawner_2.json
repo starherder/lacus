@@ -3,10 +3,10 @@
 	"name": "text_spawner_name_2",
 	"desc": "text_spawner_desc_2",
 	"type": "spawner",
+		"side": "official",
 
 	"spawner": {
 		"npc": "npc_102",
-		"side": "official",
 		"radius": 200,
 		"interval": 1000,
 		"min_count": 1,

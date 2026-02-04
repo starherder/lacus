@@ -106,8 +106,7 @@ namespace game
 
 			//pItemTrans->position = dest_pos;
 			_context.scene().setObjectPos(item, dest_pos);
-
-			//_context.scene().addObjectToGrid(item, _context.scene().getGridFromPos(dest_pos));
+			_context.scene().addObjectToScene(item);
 		}
 	}
 

@@ -39,7 +39,13 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     if (_debugMode == DebugMode::PutObject)
     {
         auto scenePos = _context->camera().screenToWorld(pos);
-        _context->scene().createObject(_selectCfgId, scenePos);
+        auto ent = _context->scene().createObjectInScene(_selectCfgId, scenePos);
+
+        auto pcomm = _context->registry().try_get<CompComm>(ent);
+        if (pcomm)
+        {
+            pcomm->side = _campSide;
+        }
     }
 }
 
@@ -51,6 +57,8 @@ void ImFormDebug::draw()
     {
         auto ent_num = _context->registry().storage<entt::entity>().size();
         ImGui::Text("entt::entities: %lu", ent_num);
+
+        ImGui::Text("scene objects: %lu", _context->scene().sceneObjectCount());
 
         ImGui::Separator();
 
@@ -114,7 +122,6 @@ void ImFormDebug::draw()
             on_reload_script.emit();
         }
 
-
         ImGui::Separator();
 
         ImGui::Text("input");
@@ -135,19 +142,40 @@ void ImFormDebug::draw()
 
         ImGui::SameLine();
 
-        static int select_index = 0;
+        static int select_obj_index = 0;
         const auto& cfgs = ObjectFactory::inst().getAllObjectCfgIds();
-        _selectCfgId = cfgs[select_index];
+        _selectCfgId = cfgs[select_obj_index];
 
-        if (ImGui::BeginCombo("##combo_cfgs", cfgs[select_index].c_str()))
+        ImGui::SetNextItemWidth(150);
+        if (ImGui::BeginCombo("##combo_cfgs", cfgs[select_obj_index].c_str()))
         {
             for (int n = 0; n < cfgs.size(); n++)
             {
-                bool is_selected = (select_index == n);
+                bool is_selected = (select_obj_index == n);
                 if (ImGui::Selectable(cfgs[n].c_str(), is_selected))
                 {
                     _selectCfgId = cfgs[n];
-                    select_index = n;
+                    select_obj_index = n;
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::SameLine();
+
+        static int select_camp_index = 0;
+        StringVector campstr = {"official", "rebel", "gangster", "civilian"};
+
+        ImGui::SetNextItemWidth(150);
+        if (ImGui::BeginCombo("##camp_cfgs", campstr[select_camp_index].c_str()))
+        {
+            for (int n = 0; n < campstr.size(); n++)
+            {
+                bool is_selected = (select_camp_index == n);
+                if (ImGui::Selectable(campstr[n].c_str(), is_selected))
+                {
+                    _campSide = getCampSide(campstr[n]);
+                    select_camp_index = n;
                 }
             }
             ImGui::EndCombo();

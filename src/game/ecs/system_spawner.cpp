@@ -64,6 +64,8 @@ namespace game
     void SpawnerSystem::spawnActor(entt::entity spawner, const CompSpawner& compSpawner, const CompTransform& compTrans)
     {
         std::optional<Vec2> optSpawnPos = compTrans.position;
+        auto pSpawnerComm = _context.registry().try_get<CompComm>(spawner);
+        if (!pSpawnerComm) return;
 
         int LoopCount = 0;
         while (true)
@@ -99,13 +101,13 @@ namespace game
 
         if (optSpawnPos)
         {
-            auto npc = _context.scene().createObject(compSpawner.npc, optSpawnPos.value());
+            auto npc = _context.scene().createObjectInScene(compSpawner.npc, optSpawnPos.value());
             if (_context.registry().valid(npc))
             {
                 auto compComm = _context.registry().try_get<CompComm>(npc);
                 if (compComm)
                 {
-                    compComm->side = compSpawner.side;
+                    compComm->side = pSpawnerComm->side;
                 }
 
                 auto compSpawner = _context.registry().try_get<CompSpawner>(spawner);

@@ -19,23 +19,23 @@ namespace game
 	void BuffSystem::update(float delta)
 	{
 		auto views = _context.registry().view<CompTransform, CompBuffComm, CompDisplay>();
-		for(auto& ent : views)
+		for(auto& buff : views)
 		{
-			auto& trans = views.get<CompTransform>(ent);
-			auto& buff = views.get<CompBuffComm>(ent);
-			auto& display = views.get<CompDisplay>(ent);
+			auto& trans = views.get<CompTransform>(buff);
+			auto& bufCom = views.get<CompBuffComm>(buff);
+			auto& display = views.get<CompDisplay>(buff);
 
-			if(!_context.registry().valid(buff.owner))
+			if(!_context.registry().valid(bufCom.owner))
 			{
-				_context.scene().destroyObject(ent);
+				_context.scene().destroyObject(buff);
 				continue;
 			}
 		
 			// TODO: multi buff, arrange the pos
-			auto& ownerTrans = _context.registry().get<CompTransform>(buff.owner);
+			auto& ownerTrans = _context.registry().get<CompTransform>(bufCom.owner);
 			trans.position = ownerTrans.position + Vec2{ownerTrans.size.x/2, -ownerTrans.size.y/2} + trans.size/2.0f;
 
-			buff.onUpdate(_context.applicaton().frameTicker().deltaTicks());
+			bufCom.onUpdate(_context.applicaton().frameTicker().deltaTicks());
 		}
 
 		//-----------------------------------------------------------------------------

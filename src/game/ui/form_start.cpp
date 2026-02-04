@@ -1,5 +1,6 @@
 ﻿#include "form_start.h"
 #include "form_config.h"
+#include "game/ui/ui_logic_events.h"
 
 namespace game 
 {
@@ -44,7 +45,11 @@ void FormStart::onStart(Button* btn)
 
 void FormStart::onResume(Button* btn)
 {
-	on_resume_game.emit();
+	ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_SelectScene, 
+		{ std::string{"scenes/demos/four.tmj"}, (int)SceneGameMode::GameMode_Test
+});
+
+	//on_resume_game.emit();
 }
 
 void FormStart::onConfig(Button* btn)

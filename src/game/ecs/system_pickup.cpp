@@ -34,11 +34,10 @@ namespace game
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
-        // ´ÓËÄ²æÊ÷ÒÆ³ý
-        _context.scene().removeObjectFromQuadtree(obj);
-
         // ÇÐ»»µ½ÆÁÄ»¿Õ¼ä
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
+
+        _context.scene().removeObjectFromScene(obj);
 
         const auto& curpos = transComp.position;
         const Vec2 uipos = { 0, 0 };
@@ -60,7 +59,8 @@ namespace game
 
                                         auto& nameComp = _context.registry().get<CompNameId>(obj);
                                         auto& transComp = _context.registry().get<CompTransform>(obj);
-                                        transComp.position = {x,y };
+                                        //transComp.position = {x,y };
+                                        _context.scene().setObjectPos(obj, { x, y });
 
                                         if (t.isFinished()) 
                                         {

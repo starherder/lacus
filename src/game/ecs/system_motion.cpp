@@ -13,7 +13,6 @@ namespace game
     {
         context.dispatcher().sink<EvtMoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
         context.dispatcher().sink<EvtMotionSwitchState>().connect<&MotionSystem::onEventMotionStateSwtich>(this);
-
         context.dispatcher().sink<EvtRoleStopMotion>().connect<&MotionSystem::onEventStopMotion>(this);
     }
 
@@ -143,11 +142,9 @@ namespace game
             .to(nextPos.x, nextPos.y)
             .during(ticks)
             .via(mode.c_str())
-            .onStep([&transform, entid, this](auto& t, float x, float y)
+            .onStep([entid, this](auto& t, float x, float y)
                 {
-                    checkEntityGrid(entid, transform.position, Vec2{x, y});
-
-                    //transform.position = { x, y };
+                    checkEntityGrid(entid, Vec2{x, y});
 
                     _context.scene().setObjectPos(entid, {x, y});
                     return false;
@@ -207,9 +204,11 @@ namespace game
         }
     }
 
-    void MotionSystem::checkEntityGrid(entt::entity ent, const Vec2& lstpos, const Vec2& curpos)
+    void MotionSystem::checkEntityGrid(entt::entity ent, const Vec2& curpos)
     {
-        auto lstgrid = _context.scene().getGridFromPos(lstpos);
+        auto& transform = _context.registry().get<CompTransform>(ent);
+
+        auto lstgrid = _context.scene().getGridFromPos(transform.position);
         auto curgrid = _context.scene().getGridFromPos(curpos);
         if(curgrid != lstgrid) 
         {

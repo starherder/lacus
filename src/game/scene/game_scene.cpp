@@ -177,6 +177,12 @@ void GameScene::unloadInThread()
 void GameScene::onUpdate(float deltaTime)
 {
     _camera.update(deltaTime);
+
+    _quadtree->clear();
+    for (auto& obj : _sceneObjects)
+    {
+        _quadtree->add(obj);
+    }
 }
 
 void GameScene::onDraw() 
@@ -203,7 +209,7 @@ void GameScene::setDebugInfo(bool show)
 
 void GameScene::initQuadTree()
 {
-    auto sceneSize = _tileMap.mapSize()* _tileMap.tileSize();
+    auto sceneSize = (_tileMap.mapSize() + Vec2i{1,1})*_tileMap.tileSize();
     auto scenebox = BoxType(0.0f, 0.0f, sceneSize.x, sceneSize.y);
 
     auto getAABB = [this](const entt::entity ent)
@@ -301,10 +307,10 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
 
 entt::entity GameScene::createMapActor(const MapObject& obj)
 {
-    return createObject(obj.name, obj.pos);
+    return createObjectInScene(obj.name, obj.pos);
 }
 
-entt::entity GameScene::createObject(const std::string& cfgid, const Vec2& pos)
+entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos)
 {
     auto ent = ObjectFactory::inst().createObject(cfgid);
     if(ent==entt::null) 
@@ -330,8 +336,8 @@ entt::entity GameScene::createObject(const std::string& cfgid, const Vec2& pos)
         btree->bevtree->getBlackboard()->set("context", &_context);
         btree->bevtree->getBlackboard()->set("actor", ent);
     }
-
-    addObjectToQuadtree(ent);
+    
+    _sceneObjects.insert(ent);
     return ent;
 }
 
@@ -346,9 +352,20 @@ void GameScene::destroyObject(entt::entity id)
     _registry.emplace_or_replace<CompDestroy>(id);
 }
 
+
+void GameScene::addObjectToScene(entt::entity id)
+{
+    _sceneObjects.insert(id);
+}
+
+void GameScene::removeObjectFromScene(entt::entity id)
+{
+    _sceneObjects.erase(id);
+}
+
 void GameScene::onRoleDestroyed(const EvtRoleDestroyed& e)
 {
-    removeObjectFromQuadtree(e.actor);
+    _sceneObjects.erase(e.actor);
 }
 
 Vec2i GameScene::getObjectGrid(entt::entity id)
@@ -369,13 +386,10 @@ Vec2 GameScene::getObjectPos(entt::entity id)
 
 void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 {
-    removeObjectFromQuadtree(id);
-
     auto comp = _registry.try_get<CompTransform>(id);
     if (comp)
     {
         comp->position = pos;
-        addObjectToQuadtree(id);
     }
 }
 
@@ -403,22 +417,6 @@ void GameScene::onRoleUnselect(const EvtObjectUnselect& e)
     }
 
     on_unselect_object(e.object);
-}
-
-void GameScene::addObjectToQuadtree(entt::entity ent)
-{
-    if (_quadtree)
-    {
-        _quadtree->add(ent);
-    }
-}
-
-void GameScene::removeObjectFromQuadtree(entt::entity ent)
-{
-    if (_quadtree && _quadtree->has(ent))
-    {
-        _quadtree->remove(ent);
-    }
 }
 
 GameScene::EntityVector GameScene::getObjectsInGrid(const Vec2i& grid)
@@ -639,13 +637,13 @@ bool GameScene::dragSelectActor(const Vec2& pos)
     auto dstpos = pTrans->position;
     _context.registry().emplace_or_replace<CompDragging>(_selectEntity, CompDragging{ dstpos, dstpos, pTrans->size });
 
-    removeObjectFromQuadtree(_selectEntity);
-
     auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
     if (bevComp && bevComp->bevtree)
     {
         bevComp->bevtree->stop();
     }
+
+    removeObjectFromScene(_selectEntity);
 
     return true;
 }
@@ -711,6 +709,8 @@ bool GameScene::dropSelectActor(const Vec2& pos)
     {
         dstpos = pDragging->origin_pos;
     }
+
+    addObjectToScene(_selectEntity);
 
     setObjectPos(_selectEntity, dstpos);
 

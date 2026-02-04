@@ -25,6 +25,10 @@ namespace samples
 	{
         ImGui::Begin("quadtree");
         {
+            ImGui::Text("objects: %d", _plugin->objectCount());
+
+            ImGui::Separator();
+
             if (ImGui::RadioButton("contain", _queryMode == quadtree::QueryMode::Contain))
             {
                 _queryMode = quadtree::QueryMode::Contain;
@@ -86,6 +90,16 @@ namespace samples
             {
                 _plugin->setMotion(s_motion);
             }
+
+            ImGui::SameLine();
+
+            static bool s_add_del = false;
+            if (ImGui::Checkbox("+/-", &s_add_del))
+            {
+                _plugin->setAutoAddDel(s_add_del);
+            }
+
+
         }
         ImGui::End();
 	}
@@ -129,7 +143,7 @@ namespace samples
 
         for (int i = 0; i < ObjectCount; i++)
         {
-            addRandomObject(i);
+            addRandomObject(_randIndex++);
         }
     }
 
@@ -194,26 +208,44 @@ namespace samples
 
     void SamplePluginQuadTree::onUpdate()  
     {
-        if (!_motion) return;
-
+        const int ChangePerSecond = 10;
         float ts = application()->frameTicker().deltaSeconds();
+
+        static int passed_ms = 0;
+        passed_ms += application()->frameTicker().deltaTicks();
+        if(passed_ms > 10)
+        {
+            if(_addDel)
+            {
+                removeObject(_objects.begin()->second.get());
+                addRandomObject(_randIndex++);
+            }
+            passed_ms = 0;
+        }
+
+        if (_motion)
+        {
+            for (auto& [id, obj] : _objects)
+            {
+                auto pos = obj->pos + obj->vel * ts;
+                if (!_quadtree->getBox().contains({ pos.x, pos.y, obj->size.x, obj->size.y }))
+                {
+                    int flag = (rand()%2) == 0 ? -1 : 1;
+                    obj->vel.x *= flag;
+                    obj->vel.y *= (-flag);
+                }
+                else
+                {
+                    obj->pos = pos;
+                }
+            }
+        }
+
+        _quadtree->clear();
+
         for (auto& [id, obj] : _objects)
         {
-            auto pos = obj->pos + obj->vel * ts;
-            if (!_quadtree->getBox().contains({ pos.x, pos.y, obj->size.x, obj->size.y }))
-            {
-                int flag = (rand()%2) == 0 ? -1 : 1;
-                obj->vel.x *= flag;
-                obj->vel.y *= (-flag);
-            }
-            else
-            {
-                _quadtree->remove(obj.get());
-                
-                obj->pos = pos;
-
-                _quadtree->add(obj.get());
-            }
+            _quadtree->add(obj.get());
         }
     }
 
@@ -306,7 +338,7 @@ namespace samples
 
         if (_opMode == OperatorMode::OP_Add)
         {
-            addObjectAtPos((int)_quadtree->count(), scenePos);
+            addObjectAtPos(_randIndex++, scenePos);
         }
 
         if (_opMode == OperatorMode::OP_Del)

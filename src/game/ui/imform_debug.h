@@ -3,6 +3,7 @@
 #include "imform/imform.h"
 #include "imform/imform_manager.h"
 #include "engine/wrapper.h"
+#include "game/ecs/comm_comp.h"
 
 namespace game 
 {
@@ -50,6 +51,7 @@ namespace game
     public:
         entt::entity _selectEntity = entt::null;
         std::string _selectCfgId;
+        CampSide _campSide = CampSide::Officer;
 
         GameContext* _context = nullptr;
 

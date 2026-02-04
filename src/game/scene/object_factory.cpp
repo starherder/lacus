@@ -381,7 +381,6 @@ namespace game
 		auto& spawnerJs = json["spawner"];
 
 		CompSpawner spawner;
-		spawner.side = getCampSide(spawnerJs.value("side", ""));
 		spawner.radius = spawnerJs.value("radius", 100.0f);
 		spawner.interval = spawnerJs.value("interval", 1000);
 		spawner.npc = spawnerJs.value("npc", "");

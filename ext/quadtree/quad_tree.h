@@ -114,7 +114,7 @@ class Quadtree
 
 public:
     Quadtree(const Box<Float>& box, const GetBox& getBox = GetBox(), const Equal& equal = Equal()) 
-        : mBox(box), mRoot(std::make_unique<Node>()), mGetBox(getBox), mEqual(equal), mCount(0)
+        : mBox(box), mRoot(std::make_unique<Node>()), mGetBox(getBox), mEqual(equal)
     {
 #ifdef _DEBUG
         mRoot->box = box;
@@ -135,6 +135,12 @@ public:
         mAllValues.erase(value);
     }
 
+    void clear()
+    {
+        mAllValues.clear();
+        mRoot = std::make_unique<Node>();
+    }
+
     bool has(const T& value)
     {
         auto it = mAllValues.find(value);
@@ -143,7 +149,7 @@ public:
 
     size_t count() const
     {
-        return mCount;
+        return mAllValues.size();
     }
 
     QueryMode getQueryMode() 
@@ -215,7 +221,6 @@ private:
     std::unique_ptr<Node> mRoot;
     GetBox mGetBox;
     Equal mEqual;
-    size_t mCount;
     QueryMode mQueryMode = QueryMode::Intersect;
 
     std::set<T> mAllValues;
@@ -289,8 +294,6 @@ private:
         if (node == nullptr) return;
         if (!box.contains(mGetBox(value))) return;
 
-        mCount++;
-
         if (isLeaf(node))
         {
             // Insert the value in this node if possible
@@ -345,8 +348,6 @@ private:
     {
         if (node == nullptr) return false;
         if (!box.contains(mGetBox(value))) return false;
-
-        mCount--;
 
         if (isLeaf(node))
         {

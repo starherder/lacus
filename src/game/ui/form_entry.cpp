@@ -53,7 +53,8 @@ void FormEntry::onUpdate(float delta)
 
 void FormEntry::onStart(Button* btn)
 {
-	ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, { _sceneFile });
+	ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, 
+		{ _sceneFile, (int)SceneGameMode::GameMode_AutoChess });
 
 	_context.dataCenter().clearHandCard();
 

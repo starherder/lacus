@@ -73,8 +73,13 @@ namespace game {
         GameData& dataCenter() { return _gameData; }
         entt::registry& registry() { return _registry;  }
 
-        entt::entity createObject(const std::string& cfgid, const Vec2& pos);
+        entt::entity createObjectInScene(const std::string& cfgid, const Vec2& pos);
         void destroyObject(entt::entity id);
+
+        void addObjectToScene(entt::entity id);
+        void removeObjectFromScene(entt::entity id);
+
+        size_t sceneObjectCount() { return _sceneObjects.size(); }
 
         Vec2i getObjectGrid(entt::entity id);
         Vec2 getObjectPos(entt::entity id);
@@ -83,9 +88,6 @@ namespace game {
         entt::entity findObjectAtPos(const Vec2& pos);
         EntityVector getObjectsInGrid(const Vec2i& grid);
         const EntityDisMap& getObjectsInCircle(const Vec2& center, float radius);
-
-        void addObjectToQuadtree(entt::entity ent);
-        void removeObjectFromQuadtree(entt::entity ent);
 
         int getGridWalkType(const Vec2i& grid);
 
@@ -145,12 +147,13 @@ namespace game {
 
         GameCamera _camera;
 
-        GameData _gameData;
-
-        //GridEntityMap _gridObjects;
+        GameData _gameData;;
 
         entt::entity _selectEntity = entt::null;
         entt::entity _hoverEntity = entt::null;
+
+        // 场景对象：在场景中有位置、碰撞、会加入到四叉树中的对象
+        std::set<entt::entity> _sceneObjects;
 
         QuadTreePtr _quadtree = nullptr;
 

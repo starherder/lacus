@@ -147,7 +147,8 @@ namespace game
 				.onStep([e, this](auto& t, float x, float y) {
 						if (_context.registry().valid(e.source)) {
 							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-							srcTrans.position = { x, y };
+							//srcTrans.position = { x, y };
+							_context.scene().setObjectPos(e.source, { x, y });
 						}
 						return false;
 					});
@@ -170,6 +171,7 @@ namespace game
 						if (_context.registry().valid(e.source)) {
 							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
 							srcTrans.size = { x, y };
+							//_context.scene().setObjectPos(e.source, srcTrans.position);
 						}
 						return false;
 					});
@@ -378,7 +380,8 @@ namespace game
 											return true;
 										}
 
-										pSrcTrans->position = Vec2{x, y};
+										//pSrcTrans->position = Vec2{x, y};
+										_context.scene().setObjectPos(srcid, { x,y });
 
 										auto sprintComp = _context.registry().get<CompSprint>(skill);
 										auto it = sprintComp.passed_grids.find(grid);
@@ -531,8 +534,6 @@ namespace game
 					e.target = target;
 					_context.dispatcher().trigger(e);
 
-					//LogInfo("execute light: {}", lightning);
-
 					compDisplay.color = lightningCfg.color;
 					compLightning.cur_atk++;
 				}
@@ -549,7 +550,6 @@ namespace game
 				}
 
 				compDisplay.color. a = (int)(255*(1.0f - (float)compLightning.atk_ticks/(float)lightningCfg.during));
-
 				compLightning.atk_ticks += (int)tick;
 			};
 
@@ -636,21 +636,21 @@ namespace game
 		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
 		int during = static_cast<int>((glm::distance(source, target) / speed) * 1000);
 
-		auto object = _context.objectFactory().createProjectile(source, target, compProjectile.particle);
-		if (!_context.registry().valid(object))
+		auto projectile = _context.objectFactory().createProjectile(source, target, compProjectile.particle);
+		if (!_context.registry().valid(projectile))
 		{
 			return;
 		}
 
-		auto& compTrans = _context.registry().get<CompTransform>(object);
+		auto& compTrans = _context.registry().get<CompTransform>(projectile);
 		compTrans.position = source;
 		compTrans.size = {10, 10};
 		compTrans.rotation = {0, 0};
 		compTrans.scale = { 1, 1 };
 
-		_context.registry().emplace<CompShoot>(object);
+		_context.registry().emplace<CompShoot>(projectile);
 
-		auto& compShoot = _context.registry().get<CompShoot>(object);
+		auto& compShoot = _context.registry().get<CompShoot>(projectile);
 		compShoot.tween = tweeny::from(source.x, source.y)
 			.to(target.x, target.y)
 			.via(tweentype)
@@ -673,17 +673,17 @@ namespace game
 			return false;
 		});
 
-		compShoot.tween.onStep([this, object](auto& t, float x, float y) {
-			if (!_context.registry().valid(object)) {
+		compShoot.tween.onStep([this, projectile](auto& t, float x, float y) {
+			if (!_context.registry().valid(projectile)) {
 				return false;
 			}
 
 			if (t.isFinished()) {
-				_context.scene().destroyObject(object);
+				_context.scene().destroyObject(projectile);
 				return true;
 			}
 
-			auto& compTrans = _context.registry().get<CompTransform>(object);
+			auto& compTrans = _context.registry().get<CompTransform>(projectile);
 			compTrans.position = { x, y };
 			return false;
 		});
@@ -798,8 +798,9 @@ namespace game
 			{
 				if (_context.registry().valid(e.target)) 
 				{
-					auto& dstTrans = _context.registry().get<CompTransform>(e.target);
-					dstTrans.position = { x, y };
+					//auto& dstTrans = _context.registry().get<CompTransform>(e.target);
+					//dstTrans.position = { x, y };
+					_context.scene().setObjectPos(e.target, { x, y });
 
 					if(t.isFinished())
 					{

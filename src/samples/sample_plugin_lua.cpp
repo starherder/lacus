@@ -128,7 +128,7 @@ namespace samples
 
     void ImFormLuaSample::greetingLuaBridget()
     {
-        auto test_file = _app->resPath() / "lua/test_1.lua";
+        auto test_file = _app->resPath() / "lua/test.lua";
         luaL_dofile(_luaState, test_file.string().c_str());
 
         auto greet_func = luabridge::getGlobal(_luaState, "greeting_in_lua");

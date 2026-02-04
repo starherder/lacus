@@ -6,6 +6,7 @@
             <button name="btn_scene_1" pos="100,100" size="100,60" text="scene_1" data="scene:scenes/demos/one.tmj"/>
             <button name="btn_scene_2" pos="300,100" size="100,60" text="scene_2" data="scene:scenes/demos/two.tmj"/>
             <button name="btn_scene_3" pos="500,300" size="100,60" text="scene_3" data="scene:scenes/demos/three.tmj"/>
+            <button name="btn_scene_4" pos="600,500" size="100,60" text="scene_4" data="scene:scenes/demos/four.tmj"/>
         </exgroup>
        <button name="btn_cards" pos="500,50" size="100,50" text="cards"/>
        <button name="btn_close" pos="500,50" size="100,50" text="close"/>

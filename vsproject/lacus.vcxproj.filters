@@ -76,6 +76,12 @@
     <Filter Include="res\lua">
       <UniqueIdentifier>{c5a7727c-0bb3-4617-8152-558dada3332e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res\bev">
+      <UniqueIdentifier>{8a7c2e47-f564-4d90-9daa-905ac7e0d5c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\data">
+      <UniqueIdentifier>{e9f80ea9-a10d-4317-bdcc-6f4a14454a79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -920,8 +926,65 @@
     <None Include="..\doc\dev_doc.md">
       <Filter>doc</Filter>
     </None>
-    <None Include="..\res\lua\test_1.lua">
+    <None Include="..\res\lua\test.lua">
       <Filter>res\lua</Filter>
+    </None>
+    <None Include="..\res\lua\main.lua">
+      <Filter>res\lua</Filter>
+    </None>
+    <None Include="..\res\data\other\spawner_0.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\other\spawner_1.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\other\spawner_2.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\item\item_coin.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\item\item_medicine.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\item\item_poison.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_0.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_1.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_2.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_3.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_4.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_5.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_100.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_101.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_102.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_103.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_104.json">
+      <Filter>res\data</Filter>
+    </None>
+    <None Include="..\res\data\role\npc_105.json">
+      <Filter>res\data</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -954,6 +1017,12 @@
     </Xml>
     <Xml Include="..\res\ui\form_chess_tip.xml">
       <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\data\bevtree\bev_battle_royale.xml">
+      <Filter>res\bev</Filter>
+    </Xml>
+    <Xml Include="..\res\data\bevtree\bev_common_npc.xml">
+      <Filter>res\bev</Filter>
     </Xml>
   </ItemGroup>
 </Project>

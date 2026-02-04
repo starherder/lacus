@@ -210,11 +210,11 @@ namespace game
 
     struct CompSpawner
     {
-        CampSide side;
-
         std::string npc;
+
         float radius = 100.0f;
         int interval = 1000;
+
         int min_count = 1; // spawn immediately when npc_count < min_count
         int max_count = 3; // stop spawn where npc_count >= max_count
 

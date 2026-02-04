@@ -180,6 +180,11 @@ namespace game
 
     void GameLogic::checkGameState()
     {
+        if (gameMode() == SceneGameMode::GameMode_Test)
+        {
+            return;
+        }
+
         if (_state != GameState::Running)
         {
             return;
@@ -344,6 +349,8 @@ namespace game
         case Event_SelectScene: 
         {
             switchScene(varlist[0]);
+            int mode = varlist[1];
+            setGameMode((SceneGameMode)mode);
         }break;
         case Event_ToggleMainForm: 
         {

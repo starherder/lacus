@@ -9,7 +9,7 @@
 #include "game/game_config.h"
 #include "game/game_script.h"
 
-
+#include "game/ui/ui_logic_events.h"
 
 namespace game
 {
@@ -75,6 +75,9 @@ namespace game
 		void onSceneObjectLeave(entt::entity obj);
 		void onSceneObjectSelect(entt::entity obj);
 
+		SceneGameMode gameMode() { return _gameMode; }
+		void setGameMode(SceneGameMode mode) { _gameMode = mode; }
+
 	private:
 		std::string _currentScene;
 
@@ -87,5 +90,8 @@ namespace game
 		GameScript _gameScript;
 
 		GameState _state = GameState::Running;
+
+		SceneGameMode _gameMode = SceneGameMode::GameMode_AutoChess;
+
 	};
 }

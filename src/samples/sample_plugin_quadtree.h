@@ -109,6 +109,8 @@ namespace samples
         void setQueryMode(quadtree::QueryMode mode);
         void setOperatorMode(OperatorMode mode) { _opMode = mode; }
         void setMotion(bool motion) { _motion = motion; }
+        void setAutoAddDel(bool adddel) { _addDel = adddel; }
+        size_t objectCount() { return _quadtree->count(); }
 
     private:
         QuadTreePtr _quadtree = nullptr;
@@ -118,8 +120,9 @@ namespace samples
         std::map<int, std::shared_ptr<Object>> _objects;
 
         bool _motion = false;
+        bool _addDel = false;
 
-        float ObjectSpeed = 100.0f;
+        float ObjectSpeed = 300.0f;
         const int ObjectWidth = 100;
         const int ObjectHeight = 100;
 
@@ -127,6 +130,8 @@ namespace samples
         Vec2 _worldSize = { 2048, 1024 };
 
         static const int ObjectCount = 100;
+
+        int _randIndex = 0;
 
         Rect _selectRange;
     };
