@@ -95,7 +95,8 @@ namespace game {
 
         entt::entity getSelectEntity() { return _selectEntity; }
 
-        QuadTreeType* quadTree() { return _quadtree.get(); }
+        bool objectDragable() { return _objectDragable; }
+        void setObjectDragable(bool dragable) { _objectDragable = dragable; }
 
         void setDebugInfo(bool show);
 
@@ -108,10 +109,9 @@ namespace game {
         void loadObjects();
         void unloadObjects();
 
-        entt::entity createMapActor(const MapObject& obj);
-
         void onRoleCrossGrid(const EvtRoleCrossGrid& e);
         void onRoleDestroyed(const EvtRoleDestroyed& e);
+        void onRoleMotionStop(const EvtMotionStop& e);
 
         void onRoleSelect(const EvtObjectSelection& e);
         void onRoleUnselect(const EvtObjectUnselect& e);
@@ -156,6 +156,8 @@ namespace game {
         std::set<entt::entity> _sceneObjects;
 
         QuadTreePtr _quadtree = nullptr;
+
+        bool _objectDragable = false;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

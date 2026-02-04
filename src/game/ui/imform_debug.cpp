@@ -89,6 +89,14 @@ void ImFormDebug::draw()
 
         ImGui::SameLine();
 
+        static bool drag_object = false;
+        if (ImGui::Checkbox("drag object", &drag_object))
+        {
+            _context->scene().setObjectDragable(drag_object);
+        }
+
+        ImGui::SameLine();
+
         static bool camera_ctrl = false;
         if (ImGui::Checkbox("camera_control", &camera_ctrl))
         {

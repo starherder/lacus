@@ -168,7 +168,7 @@ namespace game
         formStart->on_resume_game.connect(this, &GameLogic::onResumeGame);
         formStart->on_config_game.connect(this, &GameLogic::onConfigGame);
         formStart->on_exit_game.connect(this, &GameLogic::onExitGame);
-
+        
         auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
         if (form_debug)
         {

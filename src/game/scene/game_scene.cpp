@@ -19,6 +19,7 @@ GameScene::GameScene(GameContext& context)
     _context.dispatcher().sink<EvtObjectSelection>().connect<&GameScene::onRoleSelect>(this);
     _context.dispatcher().sink<EvtObjectUnselect>().connect<&GameScene::onRoleUnselect>(this);
     
+    _context.dispatcher().sink<EvtMotionStop>().connect<&GameScene::onRoleMotionStop>(this);
 
     _context.eventDispatcher().onMouseLeftDown.connect(this, &GameScene::onMouseLeftPressed, -1);
     _context.eventDispatcher().onMouseLeftDrag.connect(this, &GameScene::onMouseLeftDrag, -1);
@@ -266,9 +267,11 @@ void GameScene::initPathFind()
 void GameScene::loadObjects()
 {
     auto layer = _tileMap.getObjectLayer();
-    if (layer) {
-        for (auto& [id, obj] : layer->objects) {
-            createMapActor(obj);
+    if (layer) 
+    {
+        for (auto& [id, obj] : layer->objects) 
+        {
+            createObjectInScene(obj.name, obj.pos);
         }
     }
 }
@@ -303,11 +306,6 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
     }
 
     return entt::null;
-}
-
-entt::entity GameScene::createMapActor(const MapObject& obj)
-{
-    return createObjectInScene(obj.name, obj.pos);
 }
 
 entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos)
@@ -419,6 +417,10 @@ void GameScene::onRoleUnselect(const EvtObjectUnselect& e)
     on_unselect_object(e.object);
 }
 
+void GameScene::onRoleMotionStop(const EvtMotionStop& e)
+{
+}
+
 GameScene::EntityVector GameScene::getObjectsInGrid(const Vec2i& grid)
 { 
     auto pos = getGridLeftTopPos(grid);
@@ -527,7 +529,7 @@ void GameScene::onMouseLeftRelease(const Vec2& pos)
 
 void GameScene::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
-    if (dragSelectActorInProgress(pos))
+    if (objectDragable() && dragSelectActorInProgress(pos))
     {
         slot_context().setBreak(true);
     }
@@ -555,11 +557,17 @@ void GameScene::onMouseLeftClick(const Vec2& pos)
 
 void GameScene::onMouseRightClick(const Vec2& pos)
 {
-    if (_context.registry().valid(_selectEntity))
-    {
-        auto scenePos = camera().screenToWorld(pos);
-        moveSelectActor(scenePos);
+    if (!_context.registry().valid(_selectEntity)) {
+        return;
     }
+
+    auto pcomm = _context.registry().try_get<CompComm>(_selectEntity);
+    if (!pcomm || pcomm->side != CampSide::Gangster) {
+        return;
+    }
+
+    auto scenePos = camera().screenToWorld(pos);
+    moveSelectActor(scenePos);
 }
 
 void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
@@ -617,7 +625,7 @@ void GameScene::moveSelectActor(const Vec2& pos)
 
 bool GameScene::dragSelectActor(const Vec2& pos)
 {
-    if (!_context.registry().valid(_selectEntity))
+    if (!_context.registry().valid(_selectEntity) || !objectDragable())
     {
         return false;
     }
@@ -650,7 +658,7 @@ bool GameScene::dragSelectActor(const Vec2& pos)
 
 bool GameScene::dragSelectActorInProgress(const Vec2& pos)
 {
-    if (!_context.registry().valid(_selectEntity))
+    if (!_context.registry().valid(_selectEntity) || !objectDragable())
     {
         return false;
     }
@@ -687,7 +695,7 @@ bool GameScene::dragSelectActorInProgress(const Vec2& pos)
 
 bool GameScene::dropSelectActor(const Vec2& pos)
 {
-    if (!_context.registry().valid(_selectEntity))
+    if (!_context.registry().valid(_selectEntity) || !objectDragable())
     {
         return false;
     }
