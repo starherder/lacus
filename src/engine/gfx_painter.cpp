@@ -155,6 +155,11 @@ namespace engine
 		// TODO: 
 	}
 
+	void GfxPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float round, const Color& color)
+	{
+		drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
+	}
+
 	void GfxPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)
 	{
 		fail_return(pTexture);

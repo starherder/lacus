@@ -263,7 +263,6 @@ namespace game
 		return cfgid;
 	}
 
-
 	entt::entity ObjectFactory::createObject(const std::string& cfgid)
 	{
 		assert(_context);

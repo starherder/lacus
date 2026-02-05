@@ -6,6 +6,7 @@ namespace engine
 {
 	class Application;
 	class Texture;
+	class TexTile;
 	class Font;
 
 	class IPainter
@@ -40,7 +41,9 @@ namespace engine
 		 
 		virtual void drawLine(const Color& color, const Vec2& beginPos, const Vec2& endPos, float thickness = 1) = 0;
 		virtual void drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f) = 0;
-		 
+		
+		virtual void drawTexTile(TexTile* pTexTile, const Rect& dst, float round = 0.0f, const Color& color = Color::White) = 0;
+
 		virtual void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White) = 0;
 		virtual void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White) = 0;
 		 

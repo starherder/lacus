@@ -18,6 +18,7 @@ public:
     Texture() = delete;
     Texture(Texture&& other) = delete;
     Texture(const Texture& other) = delete;
+
     Texture(SDL_Texture* texture);
     ~Texture();
 
@@ -30,6 +31,23 @@ private:
 
     Vec2 _size;
 };
+
+class TexTile
+{
+public:
+    TexTile() {}
+    TexTile(Texture* texture, const Rect& rect)
+        : _texture(texture), _rect(rect) {}
+    ~TexTile() {}
+
+    Texture* texture() const { return _texture; }
+    Rect rect() const { return _rect; };
+
+private:
+    Texture* _texture = nullptr;
+    Rect _rect;
+};
+
 
 
 // 材质管理器
@@ -51,6 +69,9 @@ public:
     Texture* load(const HashString& file);
     void unload(const HashString& file);
 
+    bool loadTexSet(const std::string& file);
+    TexTile* getTexTile(const std::string& tileset, const std::string& tile);
+
     void clear();
 
 private:
@@ -62,6 +83,14 @@ private:
 private:
     Renderer& _renderer;
     TextureMap _textures;
+
+    struct TexSet {
+        std::string name;
+        fs::path cfgfile;
+        std::map<std::string, TexTile> tileset;
+    };
+
+    std::map<std::string, TexSet> _texSetMap;
 };
 
 

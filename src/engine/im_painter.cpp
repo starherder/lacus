@@ -119,6 +119,12 @@ namespace engine
 		ImGui::GetBackgroundDrawList()->AddText(font->imFont, (float)font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
 	}
 
+	void ImPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float round, const Color& color)
+	{
+		assert(pTexTile);
+		drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
+	}
+
 	void ImPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)
 	{
 		assert(pTexture);
@@ -194,7 +200,6 @@ namespace engine
 			io.Fonts->AddFontDefault();
 		}
 	}
-
 
 	void ImPainter::drawLightning(const Color& color, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace, float thickness)
 	{

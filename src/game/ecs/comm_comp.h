@@ -31,6 +31,23 @@ namespace game
         Civilian
     };
 
+    enum class ArmRank {
+        Leader, // 头领
+        Soldier, // 士兵
+    };
+
+    enum class ArmProfession
+    {
+        Commander, // 指挥
+        Adviser, // 军师
+        Medic, // 医生
+        Rider, // 骑兵
+        Foot, // 步兵
+        Archer, // 弓箭手
+        Wizard, // 法师
+        Artisan, // 技工
+    };
+
     enum class MotionState 
     {
         Moving,
@@ -89,6 +106,8 @@ namespace game
         ObjectType type;
         std::string desc;
         CampSide side;
+        ArmRank rank;
+        //ArmProfession pro;
     };
 
     struct CompTransform

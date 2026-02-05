@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <spdlog/spdlog.h>
+#include <tinyxml2/tinyxml2.h>
 
 namespace engine {
 
@@ -114,6 +115,78 @@ namespace engine {
         LogInfo("Unloaded all textures");
         _textures.clear();
     }
+
+    bool TextureManager::loadTexSet(const std::string& file)
+    {
+        using namespace tinyxml2;
+
+        auto path = resPath() / file;
+        if (!fs::exists(path))
+        {
+            LogError("texture tileset path({}) NOT exist.", file);
+            return false;
+        }
+
+        auto xmlDoc = std::make_shared<XMLDocument>();
+        XMLError error = xmlDoc->LoadFile(path.string().c_str());
+        if (error != XML_SUCCESS)
+        {
+            LogError("load texture tileset({}) failed.", path.string());
+            return false;
+        }
+
+        auto root = xmlDoc->RootElement();
+        auto texsetName = root->Attribute("name");
+
+        TexSet texset;
+        texset.name = texsetName;
+        texset.cfgfile = path;
+
+        auto texnode = root->FirstChildElement("texture");
+        while (texnode) 
+        {
+            auto texturename = texnode->Attribute("file");
+            auto texture = get(texturename);
+            if (!texture)
+            {
+                continue;
+            }
+
+            auto tilenode = texnode->FirstChildElement("tile");
+            while (tilenode)
+            {
+                auto tilename = tilenode->Attribute("name");
+                auto rect = ToRect(tilenode->Attribute("rect"));
+
+                texset.tileset[tilename] = TexTile{texture, rect};
+                tilenode = tilenode->NextSiblingElement("tile");
+            }
+            texnode = texnode->NextSiblingElement("texture");
+        }
+
+        _texSetMap.insert({texsetName, texset});
+    }
+
+    TexTile* TextureManager::getTexTile(const std::string& tileset, const std::string& tile)
+    {
+        auto it = _texSetMap.find(tileset);
+        if (it == _texSetMap.end())
+        {
+            LogError("texture set ({}) NOT found.", tileset);
+            return nullptr;
+        }
+
+        auto& tilset = it->second.tileset;
+        auto iter = tilset.find(tile);
+        if (iter == tilset.end())
+        {
+            LogError("texture tile ({}) NOT found in tileset ({})", tile, tileset);
+            return nullptr;
+        }
+
+        return &(iter->second);
+    }
+
 
 }
 

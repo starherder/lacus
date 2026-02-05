@@ -49,7 +49,6 @@ namespace ui
         void setState(WidgetState state);
 
     protected:
-
         float DefaultBorderRound = 10.0f;
         float DfaultBorderSize = 5.0f;
 
@@ -111,7 +110,6 @@ namespace ui
         void onChildMouseEnter(CardWidget* card);
 
         void onChildMouseLeave(CardWidget* card);
-
 
         bool onLoad(XmlNode* node);
 

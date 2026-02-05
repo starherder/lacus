@@ -96,6 +96,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     if (pComm)
     {
         pComm->side = CampSide::Gangster;
+        pComm->rank = (ArmRank)card->getData<int>("rank");
     }
 
     _context.dataCenter().removeHandCard(cfgid);

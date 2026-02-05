@@ -95,6 +95,8 @@ namespace samples {
 
     void SamplePluginDraw::onInit() 
     {
+        application()->resourceManager().textureManager().loadTexSet("textures/ts_icon.xml");
+
         initGeometry();
     }
 
@@ -301,6 +303,7 @@ namespace samples {
         }
 
         auto& painter = application()->painter();
+        auto& textureMgr = application()->resourceManager().textureManager();
         //application()->renderer().setClearColor(Color::White);
 
         Vec2 pos = {600, 300};
@@ -356,6 +359,16 @@ namespace samples {
         {
             painter.drawLightningData(Color::PaleBlue, {0,0}, data, 2.0f);
         }
+
+
+        auto t1 = textureMgr.getTexTile("icon", "one-0");
+        painter.drawTexTile(t1, Rect{ pos + Vec2{ 600, 100 },  {100, 100} });
+
+        auto t5 = textureMgr.getTexTile("icon", "five-0");
+        painter.drawTexTile(t5, Rect{ pos + Vec2{ 600, 300 },  {100, 100} });
+
+        auto t11 = textureMgr.getTexTile("icon", "eleven-0");
+        painter.drawTexTile(t11, Rect{ pos + Vec2{ 600, 500 },  {100, 100} });
 
     }
 
