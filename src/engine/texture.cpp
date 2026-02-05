@@ -126,7 +126,7 @@ namespace engine {
         _textures.clear();
     }
 
-    bool TextureManager::loadTexSet(const std::string& file)
+    TexSet* TextureManager::loadTexSet(const std::string& file)
     {
         using namespace tinyxml2;
 
@@ -134,7 +134,7 @@ namespace engine {
         if (!fs::exists(path))
         {
             LogError("texture tileset path({}) NOT exist.", file);
-            return false;
+            return nullptr;
         }
 
         auto xmlDoc = std::make_shared<XMLDocument>();
@@ -142,7 +142,7 @@ namespace engine {
         if (error != XML_SUCCESS)
         {
             LogError("load texture tileset({}) failed.", path.string());
-            return false;
+            return nullptr;
         }
 
         auto root = xmlDoc->RootElement();
@@ -157,25 +157,30 @@ namespace engine {
         {
             auto texturename = texnode->Attribute("file");
             auto texture = get(texturename);
-            if (!texture)
+            if (texture)
             {
-                continue;
+                auto tilenode = texnode->FirstChildElement("tile");
+                while (tilenode)
+                {
+                    auto tilename = tilenode->Attribute("name");
+                    auto rect = ToRect(tilenode->Attribute("rect"));
+
+                    texset.tileset[tilename] = TexTile{texture, rect};
+                    tilenode = tilenode->NextSiblingElement("tile");
+                }
             }
 
-            auto tilenode = texnode->FirstChildElement("tile");
-            while (tilenode)
-            {
-                auto tilename = tilenode->Attribute("name");
-                auto rect = ToRect(tilenode->Attribute("rect"));
-
-                texset.tileset[tilename] = TexTile{texture, rect};
-                tilenode = tilenode->NextSiblingElement("tile");
-            }
             texnode = texnode->NextSiblingElement("texture");
         }
 
-        _texSetMap.insert({texsetName, texset});
-        return true;
+        auto [it, res] =_texSetMap.insert({texsetName, texset});
+        if (!res) 
+        {
+            LogError("add tileset({}) to map failed.", path.string());
+            nullptr; 
+        }
+
+        return &(it->second);
     }
 
     TexTile* TextureManager::getTexTile(const std::string& tile, const std::string& tileset)

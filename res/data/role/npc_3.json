@@ -3,6 +3,7 @@
   "name": "text_npc_name_3",
   "type": "npc",
   "desc": "text_npc_desc_3",
+  "icon":"role:3-0",
 
   "motion": {
     "speed": 150

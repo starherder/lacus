@@ -410,4 +410,15 @@ namespace ui
 
         return widget.get();
     }
+
+    bool GuiManager::loadTextureSet(const std::string& xmlcfg)
+    {
+        auto texset = _app->resourceManager().textureManager().loadTexSet(xmlcfg);
+        return texset != nullptr;
+    }
+
+    TexTile* GuiManager::getTexTile(const std::string& texTile, const std::string& texset)
+    {
+        return _app->resourceManager().textureManager().getTexTile(texTile, texset);
+    }
 }

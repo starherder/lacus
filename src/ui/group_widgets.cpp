@@ -504,10 +504,6 @@ namespace ui
         return true;
     }
 
-    void HorizonalLayout::update(float delta) 
-    {
-    }
-
     void HorizonalLayout::adjustLayout()
     {
         float width_used = _padding.x * 2;
@@ -625,10 +621,6 @@ namespace ui
         return true;
     }
 
-    void VerticalLayout::update(float delta)
-    {
-    }
-    
     void VerticalLayout::adjustLayout()
     {
         float height_used = _padding.y * 2;

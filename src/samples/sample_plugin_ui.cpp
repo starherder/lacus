@@ -314,13 +314,13 @@ namespace samples
 			ctl_red->setSize({ 300, 50 });
 			ctl_red->setBgColor({ 255, 125, 125, 255 });
 
-			auto texture = ui::GuiManager::inst().textureManager().get("textures/UI/emote.png"_hs);
+			auto texture = ui::GuiManager::inst().textureManager().getTexTile("textures/UI/emote.png");
 			auto ctl_txt = grp_right->createChild<ui::Widget>("ctl_txt");
 			ctl_txt->setPos({ 50, 150 });
 			ctl_txt->setSize({ 300, 50 });
 			ctl_txt->setBgColor({ 255, 255, 255, 255 });
 			ctl_txt->setBorderColor({ 255, 0, 0, 255 });
-			ctl_txt->setTexture(texture, { 0.0f, 0.0f, 1.0f, 0.333f });
+			ctl_txt->setTexTile(texture);
 
 			auto lbl_txt = grp_right->createChild<ui::Label>("lbl_txt");
 			lbl_txt->setPos({ 50, 250 });

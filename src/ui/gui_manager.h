@@ -46,6 +46,9 @@ public:
     auto& eventDispatcher() { return _app->eventDispatcher(); }
     auto& frameTicker() { return _app->frameTicker(); }
 
+    bool loadTextureSet(const std::string& xmlcfg);
+    TexTile* getTexTile(const std::string& texTile, const std::string& texset="");
+
     template<typename FormType, typename... Args>
     FormType* createForm(const std::string& name, Args&... args);
     

@@ -51,8 +51,9 @@ public:
     auto focused() const { return _focused; }
     void setFocused(bool focus) { _focused = focus; }
 
-    Texture* texture() { return status().texture; }
-    void setTexture(Texture* tex, const Rect& uv_rect={0,0,1,1});
+    TexTile* texTile() { return status().texture; }
+    void setTexTile(TexTile* tex);
+    void setTexTile(const std::string& textile);
 
     const Color& bgColor() { return status().ground_color; }
     void setBgColor(const Color& c) { status().ground_color = c; }

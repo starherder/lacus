@@ -900,6 +900,7 @@ namespace game
 		props["desc"] = Trans(json.value("desc", ""));
 		props["type"] = (int)getNpcType(json.value("type", ""));
 		props["side"] = (int)getCampSide(json.value("side", ""));
+		props["icon"] = json.value("icon", "");
 
 		return props;
 	}

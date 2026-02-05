@@ -27,7 +27,7 @@ public:
     WidgetType* createChild(const std::string& name);
 
     template<typename WidgetType>
-    WidgetType* getChild(const std::string& name);
+    WidgetType* getChild(const std::string& name, bool recursion=false);
 
     void addWidget(WidgetPtr widget, int index=-1);
 
@@ -119,7 +119,6 @@ protected:
 
     void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
 
-
 private:
     const int slider_bar_size = 25;
 
@@ -138,8 +137,6 @@ public:
     HorizonalLayout() = delete;
     ~HorizonalLayout() = default;
 	HorizonalLayout(const std::string& name, Widget* parent = nullptr);
-
-    void update(float delta) override;
 
     const Vec2& padding() { return _padding; }
     void setPadding(const Vec2& padding) { _padding = padding; }
@@ -177,8 +174,6 @@ public:
     ~VerticalLayout() = default;
 	VerticalLayout(const std::string& name, Widget* parent = nullptr);
 
-    void update(float delta) override;
-
 protected:
     bool onLoad(XmlNode* node) override;
 
@@ -207,13 +202,25 @@ WidgetType* Group::createChild(const std::string& name)
 }
 
 template<typename WidgetType>
-WidgetType* Group::getChild(const std::string& name)
+WidgetType* Group::getChild(const std::string& name, bool recursion)
 {
     for(auto& child : _children)
     {
         if(child->name() == name)
         {
             return dynamic_cast<WidgetType*>(child.get());
+        }
+
+        if (recursion && child->isGroup())
+        {
+            if (auto group = dynamic_cast<Group*>(child.get()))
+            {
+                auto widget = group->getChild<WidgetType>(name, true);
+                if (widget)
+                {
+                    return widget;
+                }
+            }
         }
     }
 

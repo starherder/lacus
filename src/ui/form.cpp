@@ -23,13 +23,12 @@ bool Form::load(const fs::path& filepath)
 {
     using namespace tinyxml2;
 
-    XMLDocument doc;
-    XMLError error = doc.LoadFile(filepath.string().c_str());
+    XMLError error = _doc.LoadFile(filepath.string().c_str());
     if (error != XML_SUCCESS) {
         return false;
     }
 
-    XMLElement* ele = doc.RootElement();
+    XMLElement* ele = _doc.RootElement();
     if (!ele) {
         return false;
     }

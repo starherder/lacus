@@ -8,22 +8,15 @@ namespace ui
 
     using namespace engine;
 
-    const Vec2 CardTitlePos = {30, 30};
-    const float CardTitleFontSize = 20;
-    const Color CardTitleColor = Color::Dark;
-
-    const Vec2 CardDescPos = { 50, 100 };
-    const float CardDescFontSize = 14;
-    const Color CardDescColor = Color::Light;
 
     CardWidget::CardWidget(const std::string& name, Widget* parent) : Group(name, parent)
     {
-        setState(WidgetState::Normal);
-
         _status[WidgetState::Normal] = WidgetUtils::normalStatus;
         _status[WidgetState::Hover] = WidgetUtils::hoveredStatus;
         _status[WidgetState::Selected] = WidgetUtils::selectedStatus;
         _status[WidgetState::Disabled] = WidgetUtils::disabledStatus;
+
+        setState(WidgetState::Normal);
 
         setBorderRound(DefaultBorderRound);
 
@@ -36,39 +29,32 @@ namespace ui
         setAcceptEvent(true);
 
         setCanDragOut(true);
-
-        _info = createChild<Button>("_info_");
-        _info->setSize({30, 30});
-        _info->setPos({200, 10});
-
-        _title = createChild<Label>("_title_");
-        _title->setPos({20, 50});
-        _title->setSize({140, 50});
-        _title->setFont("fonts/msyh.ttf", 25);
-        _title->setTextAlign(Align::Left);
-        _title->setTextColor(Color::Dark);
-
-        _level = createChild<Label>("_level_");
-        _level->setPos({170, 50});
-        _level->setSize({60, 50});
-
-        _desc = createChild<TextBox>("_desc_");
-        _desc->setPos({20, 110});
-        _desc->setSize({210, 180});
     }
 
     CardWidget::~CardWidget()
     {
     }
 
-    void CardWidget::update(float delta)
+    bool CardWidget::onLoad(XmlNode* node)
     {
-        Group::update(delta);
-    }
+        if (!node) 
+        { 
+            return false; 
+        }
 
-    void CardWidget::draw()
-    {
-        Group::draw();
+        if (!Group::onLoad(node))
+        {
+            return false;
+        }
+
+        adjust();
+
+        _title = getChild<Label>("lbl_name", true);
+        _level = getChild<Label>("lbl_level", true);
+        _icon = getChild<Label>("lbl_icon", true);
+        _desc = getChild<TextBox>("txt_desc", true);
+
+        return true;
     }
 
     void CardWidget::setState(WidgetState state)
@@ -112,12 +98,71 @@ namespace ui
     {
     }
 
+    void CardWidget::adjust()
+    {
+        if (!children().empty())
+        {
+            auto& child = children().front();
+            if (child)
+            {
+                child->rawSetPos({ 0, 0 });
+                child->rawSetSize(size());
+            }
+        }
+    }
+
     WidgetStatus& CardWidget::status()
     {
         if (_state < WidgetState::Normal || _state >= WidgetState::Max)
             return Widget::status();
         return _status[_state];
     }
+
+    void CardWidget::setTitle(const std::string& title) 
+    {
+        if(_title) _title->setText(title); 
+    }
+    
+    void CardWidget::setDesc(const std::string& desc) 
+    { 
+        if(_desc) _desc->setText(desc); 
+    }
+    
+    void CardWidget::setLevel(int level) 
+    { 
+        if(_level) _level->setText(std::to_string(level)); 
+    }
+    
+    void CardWidget::setIcon(const std::string& icon) 
+    { 
+        if (_icon) _icon->setTexTile(icon);
+    }
+
+    std::string CardWidget::getCfgid() 
+    { 
+        return getData<std::string>("cfgid"); 
+    }
+
+    std::string CardWidget::getTitle() 
+    { 
+        return _title ? _title->text() : "";
+    }
+
+    std::string CardWidget::getDesc() 
+    { 
+        return _desc ? _desc->text() : "";
+    }
+    
+    int CardWidget::getLevel() 
+    { 
+        return _level ? std::stoi(_level->text()) : 0; 
+    }
+    
+    void CardWidget::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        adjust();
+    }
+
 
     /////////////////////////////////////////////////////////////////
 
@@ -135,17 +180,20 @@ namespace ui
         auto cfgid = props["cfgid"].convert<std::string>();
         auto name = props["name"].convert<std::string>();
         auto desc = props["desc"].convert<std::string>();
+        auto icon = props["icon"].convert<std::string>();
 
         auto lvopt = props.get<int>("level");
         int level = lvopt ? lvopt.value() : 0;
 
-        int index = (int)children().size();
         auto widget = createChild<CardWidget>(name);
+        widget->load(_tempCardNode);
+        
         widget->setTitle(name);
         widget->setLevel(level);
         widget->setDesc(desc);
+        widget->setIcon(icon);
         widget->setData("cfgid", cfgid);
-        widget->setData("index", index);
+        widget->setData("index", (int)children().size());
      
         widget->on_drag.connect(this, &CardGroup::onChildDrag);
         widget->on_select.connect(this, &CardGroup::onChildSelect);
@@ -167,16 +215,6 @@ namespace ui
                 return;
             }
         }
-    }
-
-    void CardGroup::update(float delta)
-    {
-        Group::update(delta);
-    }
-
-    void CardGroup::draw()
-    {
-        Group::draw();
     }
 
     void CardGroup::onChildSelect(CardWidget* card, bool selected)
@@ -320,9 +358,12 @@ namespace ui
 
     bool CardGroup::onLoad(XmlNode* node)
     {
-        if (!node) {
+        if (!node || !Widget::onLoad(node)) 
+        {
             return false;
         }
+
+        _tempCardNode = node->FirstChildElement("card");
 
         _coord = WidgetUtils::getCoord(node->Attribute("coordinate"));
         

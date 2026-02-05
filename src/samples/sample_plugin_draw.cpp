@@ -95,7 +95,7 @@ namespace samples {
 
     void SamplePluginDraw::onInit() 
     {
-        application()->resourceManager().textureManager().loadTexSet("textures/ts_icon.xml");
+        application()->resourceManager().textureManager().loadTexSet("textures/ts_role.xml");
 
         initGeometry();
     }

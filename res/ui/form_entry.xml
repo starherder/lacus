@@ -5,11 +5,31 @@
         <vlayout name="vlay_main" size="500, 0" pad="30,30" ground_color="#005588DD" border_color="#000000FF" border_size="2">
           <hlayout accept_event="false" size="0,300" >
             <widget />
-            <label name="lbl_scene_icon" size="300,0" texture="textures/UI/tiger.svg" ground_color="#FF5555DD" border_color="#000000FF" border_size="2"/>
+            <label name="lbl_scene_icon" size="250,0" ground_color="#FFFFFFFF" texture="textures/UI/tiger.svg" border_color="#000000FF" border_size="2"/>
             <widget />
           </hlayout>
             <text name="txt_scene_desc" text="dangerouse! keeep away!" text_color="#FFFFFFFF" font_size="30" border_size="1"/>
-            <card_group name="card_group" size="0,200" can_dropin="true" border_color="#333333DD" border_round="5" border_size="2"/>
+            <card_group name="card_group" size="0,200" can_dropin="true" border_color="#333333DD" border_round="5" border_size="2">
+                <card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
+                    <vlayout name="cards-test" pad="10,10" accept_event="false">
+                        <hlayout size="0,50" accept_event="false">
+                            <label name="lbl_name" size="100,0" text="zhangsan" text_color="#222222FF" font_name="fonts/Vonwaon.ttf" font_size="25" accept_event="false"/>
+                            <widget  accept_event="false"/>
+                            <label name="lbl_level" size="100,0" text="lv.43" text_color="#008800FF" font_name="fonts/Vonwaon.ttf" font_size="20" accept_event="false"/>
+                        </hlayout>
+                        <hlayout size="0,200" accept_event="false">
+                            <widget  accept_event="false"/>
+                            <label name="lbl_icon" size="200,0" texture="ui:one-0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
+                            <widget  accept_event="false"/>
+                        </hlayout>
+                        <hlayout>
+                            <widget size="10,0"/>
+                            <text name="txt_desc" text="zhangsan is a good man" ground_color="#AAAAAAFF" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="20"  accept_event="false"/>
+                            <widget size="10,0"/>
+                        </hlayout>
+                    </vlayout>
+                </card>
+            </card_group>
             <hlayout name="hlay_footer" size="0, 50" ground_color="#005588FF" border_color="#000000DD" border_size="1" >
                 <button name="btn_enter" text="enter" />
                 <button name="btn_cards" text="cards" />

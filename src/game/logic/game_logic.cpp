@@ -124,6 +124,8 @@ namespace game
             LogError("load translator file ({}) failed.", textdir.string());
         }
 
+        GuiManager::inst().loadTextureSet("textures/ts_ui.xml");
+        GuiManager::inst().loadTextureSet("textures/ts_role.xml");
 	}
 
     void GameLogic::init()

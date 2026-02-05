@@ -117,17 +117,30 @@ bool Widget::isPosInMe(const Vec2& pos)
                     && pos.y >= realPos.y && pos.y <= realPos.y+_size.y;
 }
 
-void Widget::setTexture(Texture* tex, const Rect& uv)
+void Widget::setTexTile(const std::string& texname)
 {
-    if(!tex)
+    if (texname.empty())
     {
         return;
     }
 
-    auto sz = tex->size();
+    std::string texset = "";
+    std::string textile = texname;
+    
+    const auto& texarr = utility::StringUtil::split(texname, ':');
+    if (texarr.size() == 2) 
+    {
+        texset = texarr[0];
+        textile = texarr[1];
+    }
 
-    status().texture = tex; 
-    status().tex_rect = Rect{uv.x*sz.x, uv.y*sz.y, uv.w*sz.x, uv.h*sz.y};
+    auto tex = GuiManager::inst().getTexTile(textile, texset);
+    setTexTile(tex);
+}
+
+void Widget::setTexTile(TexTile* tex)
+{
+    status().texture = tex;
 }
 
 Vec2 Widget::getAbsPos() const
@@ -163,7 +176,7 @@ bool Widget::load(XmlNode* node)
     auto borderSize = node->FloatAttribute("border_size");
     setBorderSize(borderSize);
 
-    auto borderRound = node->FloatAttribute("broder_round");
+    auto borderRound = node->FloatAttribute("border_round");
     setBorderRound(borderRound);
 
     auto visible = node->BoolAttribute("visible", true);
@@ -176,8 +189,7 @@ bool Widget::load(XmlNode* node)
     setAcceptEvent(acceptEvent);
 
     auto texname = node->Attribute("texture");
-    auto tex = GuiManager::inst().resourceManager().textureManager().get(texname);
-    setTexture(tex);
+    setTexTile(texname);
 
     auto canDrag = node->BoolAttribute("can_dragout", false);
     setCanDragOut(canDrag);
@@ -220,20 +232,20 @@ void Widget::draw()
 
     if(state.texture)
     {
-        painter.drawTexture(state.texture, state.tex_rect, bksize, _borderRound);
+        painter.drawTexTile(state.texture, bksize, borderRound(), state.ground_color);
     }
     else
     {
         if(state.ground_color.isValid())
         {
-            painter.fillRect(state.ground_color, bksize, _borderRound);
+            painter.fillRect(state.ground_color, bksize, borderRound());
         }
     }
             
     if(state.border_color.isValid())
     {
         auto& painter = GuiManager::inst().painter();
-        painter.drawRect(state.border_color, bksize, _borderRound);
+        painter.drawRect(state.border_color, bksize, borderRound(), borderSize());
     }
 }
 

@@ -18,19 +18,19 @@ namespace ui
         CardWidget(const std::string& name, Widget* parent = nullptr);
         ~CardWidget();
 
+        bool onLoad(XmlNode* node) override;
+
         bool selected() { return _state == WidgetState::Selected; }
 
-        void setTitle(const std::string& title) { _title->setText(title); }
-        void setDesc(const std::string& desc) { _desc->setText(desc); }
-        void setLevel(int level) { _level->setText(std::to_string(level)); }
+        void setTitle(const std::string& title);
+        void setDesc(const std::string& desc);
+        void setLevel(int level);
+        void setIcon(const std::string& icon);
 
-        auto getCfgid() { return getData<std::string>("cfgid"); }
-        auto getTitle() { return _title->text(); }
-        auto getDesc() { return _desc->text(); }
-        auto getLevel() { return std::stoi(_level->text()); }
-
-        virtual void update(float delta);
-        virtual void draw();
+        std::string getCfgid();
+        std::string getTitle();
+        std::string getDesc();
+        int getLevel();
 
     private:
         void onMouseEnter(const Vec2& pos) override;
@@ -42,11 +42,15 @@ namespace ui
         void onMouseLeftClick(const Vec2& pos) override;
         void onMouseLeftDrag(const Vec2& pos, const Vec2& offset) override;
 
+        void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+
         WidgetState state() { return _state; }
 
         virtual WidgetStatus& status() override;
 
         void setState(WidgetState state);
+
+        void adjust();
 
     protected:
         float DefaultBorderRound = 10.0f;
@@ -56,8 +60,8 @@ namespace ui
 
         Label* _title = nullptr;
         Label* _level = nullptr;
+        Label* _icon = nullptr;
         TextBox* _desc = nullptr;
-        Button* _info = nullptr;
 
         WidgetState _state = WidgetState::Normal;
 
@@ -71,12 +75,7 @@ namespace ui
         ~CardGroup();
 
         CardWidget* addCard(const Properties& props);
-
         void removeCard(CardWidget*);
-
-        void update(float delta) override;
-        
-        void draw() override;
 
         bool isOverlap() { return _overlap; }
         void setOverlap(bool enable);
@@ -92,23 +91,18 @@ namespace ui
 
     private:
         void adjustChildren();
-
         void overlapChildren();
-
         void tileChildren();
 
         void onChildAdded(Widget* child) override;
-
         void onChildRemoved(Widget* child) override;
 
         void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
 
         void onChildSelect(CardWidget* card, bool selected);
-        
         void onChildDrag(CardWidget* card);
 
         void onChildMouseEnter(CardWidget* card);
-
         void onChildMouseLeave(CardWidget* card);
 
         bool onLoad(XmlNode* node);
@@ -121,6 +115,8 @@ namespace ui
         float _space = 10.0f;
 
         bool _overlap = false;
+
+        XmlNode* _tempCardNode = nullptr;
 	};
 
 

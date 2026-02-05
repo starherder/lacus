@@ -94,6 +94,8 @@ private:
 private:
     std::string _name;
 
+    tinyxml2::XMLDocument _doc;
+
     bool _maximized = false;
     bool _visible = true;
     bool _focused = false;

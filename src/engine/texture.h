@@ -46,6 +46,11 @@ private:
     Rect _rect;
 };
 
+struct TexSet {
+    std::string name;
+    fs::path cfgfile;
+    std::map<std::string, TexTile> tileset;
+};
 
 
 // 材质管理器
@@ -68,7 +73,7 @@ public:
     void unload(const HashString& file);
 
     // load tileset config
-    bool loadTexSet(const std::string& xml_config);
+    TexSet* loadTexSet(const std::string& xml_config);
 
     // get tile in tileset
     // if tileset is empty, use get(...) to get whole Texture as TexTile
@@ -87,12 +92,6 @@ private:
 private:
     Renderer& _renderer;
     TextureMap _textures;
-
-    struct TexSet {
-        std::string name;
-        fs::path cfgfile;
-        std::map<std::string, TexTile> tileset;
-    };
 
     std::map<std::string, TexSet> _texSetMap;
 };
