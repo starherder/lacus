@@ -360,15 +360,17 @@ namespace samples {
             painter.drawLightningData(Color::PaleBlue, {0,0}, data, 2.0f);
         }
 
-
-        auto t1 = textureMgr.getTexTile("icon", "one-0");
+        auto t1 = textureMgr.getTexTile("one-0", "icon");
         painter.drawTexTile(t1, Rect{ pos + Vec2{ 600, 100 },  {100, 100} });
 
-        auto t5 = textureMgr.getTexTile("icon", "five-0");
-        painter.drawTexTile(t5, Rect{ pos + Vec2{ 600, 300 },  {100, 100} });
+        auto t5 = textureMgr.getTexTile("five-0", "icon");
+        painter.drawTexTile(t5, Rect{ pos + Vec2{ 600, 300 },  {150, 150} });
 
-        auto t11 = textureMgr.getTexTile("icon", "eleven-0");
-        painter.drawTexTile(t11, Rect{ pos + Vec2{ 600, 500 },  {100, 100} });
+        auto t11 = textureMgr.getTexTile("eleven-0", "icon");
+        painter.drawTexTile(t11, Rect{ pos + Vec2{ 600, 500 },  {150, 150} });
+
+        auto tsk = textureMgr.getTexTile("textures/sticker/skeleton.png");
+        painter.drawTexTile(tsk, Rect{ pos + Vec2{ 600, 700 },  tsk->rect().size()});
 
     }
 

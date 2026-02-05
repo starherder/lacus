@@ -19,16 +19,14 @@ public:
     Texture(Texture&& other) = delete;
     Texture(const Texture& other) = delete;
 
-    Texture(SDL_Texture* texture);
+    Texture(SDL_Texture* texture, const Vec2& size);
     ~Texture();
 
     const Vec2& size() const { return _size; }
-
     SDL_Texture* texture() const { return _texture; }
 
 private:
     SDL_Texture* _texture = nullptr;
-
     Vec2 _size;
 };
 
@@ -53,7 +51,7 @@ private:
 // 材质管理器
 class TextureManager : public IResManager
 {
-    using TexturePtr = std::unique_ptr<Texture>;
+    using TexturePtr = std::shared_ptr<Texture>;
     using TextureMap = std::unordered_map<IdType, TexturePtr>;
 
 public:
@@ -69,8 +67,12 @@ public:
     Texture* load(const HashString& file);
     void unload(const HashString& file);
 
-    bool loadTexSet(const std::string& file);
-    TexTile* getTexTile(const std::string& tileset, const std::string& tile);
+    // load tileset config
+    bool loadTexSet(const std::string& xml_config);
+
+    // get tile in tileset
+    // if tileset is empty, use get(...) to get whole Texture as TexTile
+    TexTile* getTexTile(const std::string& tile, const std::string& tileset="");
 
     void clear();
 
@@ -79,6 +81,8 @@ private:
 
     Texture* load(IdType id, const std::string_view& filepath);
     Texture* get(IdType id, const std::string_view& filepath="");
+
+    TexTile* loadTextureAsTile(const std::string& filepath);
 
 private:
     Renderer& _renderer;

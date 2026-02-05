@@ -9,19 +9,10 @@
 namespace engine {
 
 
-     Texture::Texture(SDL_Texture* texture)
+     Texture::Texture(SDL_Texture* texture, const Vec2& size)
      {
         _texture = texture;
-
-        // 载入纹理时，设置纹理缩放模式为最邻近插值
-        if (!SDL_SetTextureScaleMode(_texture, SDL_SCALEMODE_NEAREST)) {
-            LogWarn("set texture scale mode to nearest failed");
-        }
-        
-        if (!SDL_GetTextureSize(_texture, &_size.x, &_size.y)) 
-        {
-            LogError("SDL_GetTextureSize failed.");
-        }
+        _size = size;
      }
 
      Texture::~Texture()
@@ -35,6 +26,7 @@ namespace engine {
 
      TextureManager::TextureManager(Renderer& renderer) : _renderer(renderer)
      {
+         _texSetMap.insert({ "", TexSet{} });
      }
 
     Texture* TextureManager::load(IdType id, const std::string_view& filepath)
@@ -58,8 +50,26 @@ namespace engine {
             return nullptr;
         }
 
-        auto [iter, res] = _textures.insert({id, std::make_unique<Texture>(texture)});
-        return res ? iter->second.get() : nullptr;
+        if (!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
+            LogWarn("set texture scale mode to nearest failed");
+            return nullptr;
+        }
+
+        Vec2 size = {0,0};
+        if (!SDL_GetTextureSize(texture, &size.x, &size.y))
+        {
+            LogError("SDL_GetTextureSize failed.");
+            return nullptr;
+        }
+
+        auto texturePtr = std::make_shared<Texture>(texture, size);
+        auto [iter, res] = _textures.insert({id, texturePtr });
+        if (!res) { 
+            LogError("intser texture {} to map failed.", path.string());
+            return nullptr; 
+        }
+
+        return texturePtr.get();
     }
 
     Texture* TextureManager::get(IdType id, const std::string_view& filepath)
@@ -165,9 +175,10 @@ namespace engine {
         }
 
         _texSetMap.insert({texsetName, texset});
+        return true;
     }
 
-    TexTile* TextureManager::getTexTile(const std::string& tileset, const std::string& tile)
+    TexTile* TextureManager::getTexTile(const std::string& tile, const std::string& tileset)
     {
         auto it = _texSetMap.find(tileset);
         if (it == _texSetMap.end())
@@ -180,6 +191,11 @@ namespace engine {
         auto iter = tilset.find(tile);
         if (iter == tilset.end())
         {
+            if (tileset.empty())
+            {
+                return loadTextureAsTile(tile);
+            }
+
             LogError("texture tile ({}) NOT found in tileset ({})", tile, tileset);
             return nullptr;
         }
@@ -187,6 +203,26 @@ namespace engine {
         return &(iter->second);
     }
 
+    TexTile* TextureManager::loadTextureAsTile(const std::string& filepath)
+    {
+        auto texture = get(filepath);
+        if (texture) 
+        {
+            // add to default texture tileset
+            TexTile textile{ texture, Rect{Vec2{0,0}, texture->size()} };
+            auto [it, res] = _texSetMap[""].tileset.insert({ filepath.data(), textile });
+            if (!res) 
+            {
+                LogError("insert texture ({}) to map failed.", filepath);
+                return nullptr;
+            }
+
+            return &(it->second);
+        }
+
+        LogError("load texture ({}) failed.", filepath);
+        return nullptr;
+    }
 
 }
 
