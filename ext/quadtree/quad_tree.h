@@ -116,9 +116,7 @@ public:
     Quadtree(const Box<Float>& box, const GetBox& getBox = GetBox(), const Equal& equal = Equal()) 
         : mBox(box), mRoot(std::make_unique<Node>()), mGetBox(getBox), mEqual(equal)
     {
-#ifdef _DEBUG
         mRoot->box = box;
-#endif
     }
 
     void add(const T& value)
@@ -191,11 +189,7 @@ public:
         return mBox;
     }
 
-#ifdef _DEBUG
 public: 
-#else
-private:
-#endif
     static constexpr auto Threshold = std::size_t(16);
     static constexpr auto MaxDepth = std::size_t(8);
 
@@ -204,17 +198,13 @@ private:
         std::array<std::unique_ptr<Node>, 4> children;
         std::vector<T> values;
 
-#ifdef _DEBUG
         Box<float> box;
-#endif
     };
 
-#ifdef _DEBUG
     Node* getRoot() 
     { 
         return mRoot.get(); 
     }
-#endif
 
 private:
     Box<Float> mBox;
@@ -317,9 +307,7 @@ private:
                 node->values.push_back(value);
         }
 
-#ifdef _DEBUG
         node->box = box;
-#endif
     }
 
     void split(Node* node, const Box<Float>& box)
