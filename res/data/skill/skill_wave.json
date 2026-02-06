@@ -30,7 +30,7 @@
     "type": 1,
     "grids": 3,
     "duration": 500,
-    "interval":50,
+    "interval":500,
     "func": "hp-",
     "color": "#FF000088",
     "particle": "",

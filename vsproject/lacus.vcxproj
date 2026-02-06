@@ -445,8 +445,20 @@
     <None Include="..\res\data\role\npc_3.json" />
     <None Include="..\res\data\role\npc_4.json" />
     <None Include="..\res\data\role\npc_5.json" />
+    <None Include="..\res\data\skill\skill_archery.json" />
+    <None Include="..\res\data\skill\skill_combat.json" />
+    <None Include="..\res\data\skill\skill_darkness.json" />
+    <None Include="..\res\data\skill\skill_earthquake.json" />
+    <None Include="..\res\data\skill\skill_lightning.json" />
+    <None Include="..\res\data\skill\skill_poison.json" />
+    <None Include="..\res\data\skill\skill_sprint.json" />
+    <None Include="..\res\data\skill\skill_wave.json" />
+    <None Include="..\res\data\skill\skill_wave_cross.json" />
+    <None Include="..\res\data\skill\skill_wave_range.json" />
+    <None Include="..\res\game_config.json" />
     <None Include="..\res\lua\main.lua" />
     <None Include="..\res\lua\test.lua" />
+    <None Include="..\res\system.json" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\res\data\bevtree\bev_battle_royale.xml" />

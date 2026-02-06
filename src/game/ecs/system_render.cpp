@@ -155,8 +155,8 @@ void RenderSystem::drawMarker()
                 auto center = camera.projectPoint(transform.position);
                 float radius = transform.size.x;
 
-                painter.fillCircle(ground_color, center, radius, 20);
-                painter.drawCircle(border_color, center, radius, 20);
+                painter.fillCircle(ground_color, center, radius, 50);
+                painter.drawCircle(border_color, center, radius, 50);
             }
             else
             {

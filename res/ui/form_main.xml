@@ -13,6 +13,25 @@
         <hlayout name="hlay_tools" size="0,250" clip_children="false" accept_event="false">
           <group size ="300,0" ground_color="#8888FF00" border_color="#00000000" border_size="1" />
           <card_group name="card_group" ground_color="#8888FFAA" border_color="#00000000" border_size="1" >
+            <card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
+              <vlayout name="cards-test" pad="10,10" accept_event="false">
+                <hlayout size="0,50" accept_event="false">
+                  <label name="lbl_name" size="100,0" text="zhangsan" text_color="#222222FF" font_size="25" accept_event="false"/>
+                  <widget  accept_event="false"/>
+                  <label name="lbl_level" size="100,0" text="lv.43" text_color="#008800FF" font_size="20" accept_event="false"/>
+                </hlayout>
+                <hlayout size="0,200" accept_event="false">
+                  <widget  accept_event="false"/>
+                  <label name="lbl_icon" size="200,0" texture="ui:one-0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
+                  <widget  accept_event="false"/>
+                </hlayout>
+                <hlayout>
+                  <widget size="10,0"/>
+                  <text name="txt_desc" text="zhangsan is a good man" ground_color="#AAAAAAFF" text_color="#FFFFFFFF" font_size="20"  accept_event="false"/>
+                  <widget size="10,0"/>
+                </hlayout>
+              </vlayout>
+            </card>
           </card_group >
           <group size ="300,0" ground_color="#88FFFF00" border_color="#00000000" border_size="1" />
         </hlayout>
