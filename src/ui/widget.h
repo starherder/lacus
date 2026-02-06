@@ -12,7 +12,6 @@ public:
     using SharedPtr = std::shared_ptr<Widget>;
 
 public:
-    //Widget();
     Widget() = delete;
     Widget(const std::string& name, Widget* parent=nullptr);
     virtual ~Widget();

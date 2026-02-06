@@ -124,8 +124,8 @@ namespace game
             LogError("load translator file ({}) failed.", textdir.string());
         }
 
-        GuiManager::inst().loadTextureSet("textures/ts_ui.xml");
-        GuiManager::inst().loadTextureSet("textures/ts_role.xml");
+        auto texturedir = _context.resPath() / "textures";
+        _context.textureMgr().loadAllTexSets(texturedir);
 	}
 
     void GameLogic::init()
@@ -244,7 +244,7 @@ namespace game
     {
         closeAllForms();
 
-        showLoadingForm(true);
+        //showLoadingForm(true);
 
         showScenesForm();
 

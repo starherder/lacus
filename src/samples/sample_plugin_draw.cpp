@@ -360,13 +360,13 @@ namespace samples {
             painter.drawLightningData(Color::PaleBlue, {0,0}, data, 2.0f);
         }
 
-        auto t1 = textureMgr.getTexTile("one-0", "icon");
+        auto t1 = textureMgr.getTexTile("1-0", "role");
         painter.drawTexTile(t1, Rect{ pos + Vec2{ 600, 100 },  {100, 100} });
 
-        auto t5 = textureMgr.getTexTile("five-0", "icon");
+        auto t5 = textureMgr.getTexTile("5-0", "role");
         painter.drawTexTile(t5, Rect{ pos + Vec2{ 600, 300 },  {150, 150} });
 
-        auto t11 = textureMgr.getTexTile("eleven-0", "icon");
+        auto t11 = textureMgr.getTexTile("house1g", "scene");
         painter.drawTexTile(t11, Rect{ pos + Vec2{ 600, 500 },  {150, 150} });
 
         auto tsk = textureMgr.getTexTile("textures/sticker/skeleton.png");

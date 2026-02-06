@@ -47,7 +47,6 @@ protected:
 
 protected:
     std::string _text;
-    Color _text_color = Color::Black;
 
     Vec2 _textPadding = {0, 0};
     Align _textAlign = Align::Center;
@@ -115,9 +114,11 @@ protected:
     void onMouseLeftDown(const Vec2& pos) override;
     void onMouseLeftUp(const Vec2& pos) override;
 
+    bool disabled() { return state() == WidgetState::Disabled; }
+
     WidgetState state() { return _state; }
 
-    virtual WidgetStatus& status() override;
+    WidgetStatus& status() override;
 
     void setState(WidgetState state);
 

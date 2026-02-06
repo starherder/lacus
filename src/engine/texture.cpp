@@ -126,22 +126,42 @@ namespace engine {
         _textures.clear();
     }
 
+    bool TextureManager::loadAllTexSets(const fs::path& path)
+    {
+        for (const auto& entry : std::filesystem::directory_iterator(path))
+        {
+            if (entry.is_regular_file())
+            {
+                auto& file = entry.path();
+                if (file.extension() == ".xml") 
+                {
+                    loadTexSetFile(file);
+                }
+            }
+        }
+        return true;
+    }
+
     TexSet* TextureManager::loadTexSet(const std::string& file)
+    {
+        return loadTexSetFile( resPath() / file);
+    }
+
+    TexSet* TextureManager::loadTexSetFile(const fs::path& cfgpath)
     {
         using namespace tinyxml2;
 
-        auto path = resPath() / file;
-        if (!fs::exists(path))
+        if (!fs::exists(cfgpath))
         {
-            LogError("texture tileset path({}) NOT exist.", file);
+            LogError("texture tileset path({}) NOT exist.", cfgpath);
             return nullptr;
         }
 
         auto xmlDoc = std::make_shared<XMLDocument>();
-        XMLError error = xmlDoc->LoadFile(path.string().c_str());
+        XMLError error = xmlDoc->LoadFile(cfgpath.string().c_str());
         if (error != XML_SUCCESS)
         {
-            LogError("load texture tileset({}) failed.", path.string());
+            LogError("load texture tileset({}) failed.", cfgpath.string());
             return nullptr;
         }
 
@@ -150,7 +170,7 @@ namespace engine {
 
         TexSet texset;
         texset.name = texsetName;
-        texset.cfgfile = path;
+        texset.cfgfile = cfgpath;
 
         auto texnode = root->FirstChildElement("texture");
         while (texnode) 
@@ -176,7 +196,7 @@ namespace engine {
         auto [it, res] =_texSetMap.insert({texsetName, texset});
         if (!res) 
         {
-            LogError("add tileset({}) to map failed.", path.string());
+            LogError("add tileset({}) to map failed.", cfgpath.string());
             nullptr; 
         }
 

@@ -11,7 +11,7 @@ const WidgetStatus WidgetUtils::normalStatus = WidgetStatus{
 };
 
 const WidgetStatus WidgetUtils::hoveredStatus = WidgetStatus{
-                                        .ground_color = Color::Pale,
+                                        .ground_color = Color::White,
                                         .text_color = Color::Gray,
                                         .border_color = Color::DarkGreen,
                                         .texture = nullptr
@@ -62,6 +62,12 @@ Align WidgetUtils::getAlign(const std::string& str)
     else if (str == "bottom") return Align::Bottom;
 
     return Align::Center;
+}
+
+void WidgetUtils::parseColorIfValid(Color& color, const char* hex)
+{
+    auto c = Color::parseHexString(hex);
+    if (c.isValid()) color = c;
 }
 
 }

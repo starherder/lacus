@@ -63,6 +63,8 @@ public:
     static Coordinate getCoord(const std::string& str);
 
     static Align getAlign(const std::string& str);
+
+    static void parseColorIfValid(Color& color, const char* hex);
 };
 
 

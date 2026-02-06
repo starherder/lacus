@@ -2,13 +2,29 @@
 
 <form maximize="true" size="600,500" ground_color="#005555FF" border_color="#555555FF" border_size="1">
    <group>
-        <exgroup name="exgroup_scenes" ground_color="#005555FF" size="100%,100%" >
-            <button name="btn_scene_1" pos="100,100" size="100,60" text="scene_1" data="scene:scenes/demos/one.tmj"/>
-            <button name="btn_scene_2" pos="300,100" size="100,60" text="scene_2" data="scene:scenes/demos/two.tmj"/>
-            <button name="btn_scene_3" pos="500,300" size="100,60" text="scene_3" data="scene:scenes/demos/three.tmj"/>
-            <button name="btn_scene_4" pos="600,500" size="100,60" text="scene_4" data="scene:scenes/demos/four.tmj"/>
+        <exgroup name="exgroup_scenes" ground_color="#005555FF" size="1000,1000" >
+  
+            <button name="btn_scene_1" pos="100,100" size="100,100" text="scene_1" data="scene:scenes/demos/one.tmj"
+                texture="scene:house1" texture_hover="scene:house1" texture_press="scene:house1" texture_disable="scene:house1g" 
+                text_color="#008800FF" text_color_hover="#00FF00FF" text_color_press="#005500FF" text_color_disable="#555555FF"  
+                ground_color="#DDDDDDFF" ground_color_hover="#FFFFFFFF" ground_color_press="#888888FF" ground_color_disable="#888888FF"/>
+   
+            <button name="btn_scene_2" pos="600,300" size="100,100" text="scene_2" data="scene:scenes/demos/two.tmj"
+                texture="scene:house1" texture_hover="scene:house1" texture_press="scene:house1" texture_disable="scene:house1g" 
+                text_color="#008800FF" text_color_hover="#00FF00FF" text_color_press="#005500FF" text_color_disable="#555555FF"  
+                ground_color="#DDDDDDFF" ground_color_hover="#FFFFFFFF" ground_color_press="#888888FF" ground_color_disable="#888888FF" />
+   
+            <button name="btn_scene_3" pos="900,700" size="100,100" text="scene_3" data="scene:scenes/demos/three.tmj"
+                texture="scene:house1" texture_hover="scene:house1" texture_press="scene:house1" texture_disable="scene:house1g" 
+                text_color="#008800FF" text_color_hover="#00FF00FF" text_color_press="#005500FF" text_color_disable="#555555FF"  
+                ground_color="#DDDDDDFF" ground_color_hover="#FFFFFFFF" ground_color_press="#888888FF" ground_color_disable="#888888FF" disable="true" />
+   
+   
+            <button name="btn_scene_4" pos="400,500" size="100,100" text="scene_4" data="scene:scenes/demos/four.tmj"
+                texture="scene:house1" texture_hover="scene:house1" texture_press="scene:house1" texture_disable="scene:house1g" 
+                text_color="#008800FF" text_color_hover="#00FF00FF" text_color_press="#005500FF" text_color_disable="#555555FF"  
+                ground_color="#DDDDDDFF" ground_color_hover="#FFFFFFFF" ground_color_press="#888888FF" ground_color_disable="#888888FF" />
+
         </exgroup>
-       <button name="btn_cards" pos="500,50" size="100,50" text="cards"/>
-       <button name="btn_close" pos="500,50" size="100,50" text="close"/>
     </group>
 </form>

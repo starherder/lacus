@@ -53,18 +53,15 @@ namespace ui
 
     bool Label::onLoad(XmlNode* node)
     {
-        if (!node) {
+        if (!node) 
+        {
             return false;
         }
 
         _text = node->Attribute("text");
-        _text_color.fromHexString(node->Attribute("text_color"));
-        if (_text_color.a <= 0) {
-            _text_color.a = 255;
-        }
+        WidgetUtils::parseColorIfValid(status().text_color, node->Attribute("text_color"));
 
         _textPadding = ToVec2(node->Attribute("text_padding"));
-
         _textAlign = WidgetUtils::getAlign(node->Attribute("align"));
 
         _fontName = node->Attribute("font_name");
@@ -120,7 +117,8 @@ namespace ui
 
     bool TextBox::onLoad(XmlNode* node)
     {
-        if (!node)  { 
+        if (!node)  
+        { 
             return false; 
         }
 
@@ -129,11 +127,7 @@ namespace ui
         _fontSize = node->IntAttribute("font_size", 20);
 
         _text = node->Attribute("text");
-        _text_color.fromHexString(node->Attribute("text_color"));
-        
-        if (_text_color.a <= 0)  {
-            _text_color.a = 255;
-        }
+        WidgetUtils::parseColorIfValid(_text_color, node->Attribute("text_color"));
 
         adjust();
         return true;
@@ -187,11 +181,40 @@ namespace ui
 
     bool Button::onLoad(XmlNode* node)
     {
-        if (!Label::onLoad(node)) {
+        if (!Label::onLoad(node)) 
+        {
             return false;
         }
 
-        return false;
+        auto& normal = _status[WidgetState::Normal];
+        auto& hover = _status[WidgetState::Hover];
+        auto& press = _status[WidgetState::Pressed];
+        auto& disable = _status[WidgetState::Disabled];
+
+        WidgetUtils::parseColorIfValid(normal.text_color,   node->Attribute("text_color"));
+        WidgetUtils::parseColorIfValid(hover.text_color,    node->Attribute("text_color_hover"));
+        WidgetUtils::parseColorIfValid(press.text_color,    node->Attribute("text_color_press"));
+        WidgetUtils::parseColorIfValid(disable.text_color,  node->Attribute("text_color_disable"));
+       
+        WidgetUtils::parseColorIfValid(normal.border_color,  node->Attribute("border_color"));
+        WidgetUtils::parseColorIfValid(hover.border_color,   node->Attribute("border_color_hover"));
+        WidgetUtils::parseColorIfValid(press.border_color,   node->Attribute("border_color_press"));
+        WidgetUtils::parseColorIfValid(disable.border_color, node->Attribute("border_color_disable"));
+     
+        WidgetUtils::parseColorIfValid(normal.ground_color,  node->Attribute("ground_color"));
+        WidgetUtils::parseColorIfValid(hover.ground_color,   node->Attribute("ground_color_hover"));
+        WidgetUtils::parseColorIfValid(press.ground_color,   node->Attribute("ground_color_press"));
+        WidgetUtils::parseColorIfValid(disable.ground_color, node->Attribute("ground_color_disable"));
+      
+        normal.texture  = GuiManager::inst().getCfgTexTile(node->Attribute("texture"));
+        hover.texture   = GuiManager::inst().getCfgTexTile(node->Attribute("texture_hover"));
+        press.texture   = GuiManager::inst().getCfgTexTile(node->Attribute("texture_press"));
+        disable.texture = GuiManager::inst().getCfgTexTile(node->Attribute("texture_disable"));
+
+        bool disabled = node->BoolAttribute("disable", false);
+        setState(disabled ? WidgetState::Disabled : WidgetState::Normal);
+
+        return true;
     }
 
     void Button::setState(WidgetState state)
@@ -201,27 +224,42 @@ namespace ui
 
     void Button::onMouseEnter(const Vec2& pos) 
     {
+        if (disabled()) {
+            return;
+        }
         setState(WidgetState::Hover);
     }
 
     void Button::onMouseLeave(const Vec2& pos) 
     {
+        if (disabled()) {
+            return;
+        }
         setState(WidgetState::Normal);
     }
 
     void Button::onMouseLeftClick(const Vec2& pos)
     {
+        if (disabled()) {
+            return;
+        }
         on_click.emit(this);
         setState(WidgetState::Hover);
     }
 
     void Button::onMouseLeftDown(const Vec2& pos) 
     {
+        if (disabled()) {
+            return;
+        }
         setState(WidgetState::Pressed);
     }
 
     void Button::onMouseLeftUp(const Vec2& pos) 
     {
+        if (disabled()) {
+            return;
+        }
         setState(WidgetState::Normal);
     }
 
@@ -606,7 +644,9 @@ namespace ui
             return false;
         }
 
-        auto bgcolor = Color::parseHexString(node->Attribute("fore_color"));
+        Color bgcolor = Color::LightBlue;
+        WidgetUtils::parseColorIfValid(bgcolor, node->Attribute("fore_color"));
+
         _foreground->setBgColor(bgcolor);
 
         auto direction = WidgetUtils::getCoord(node->Attribute("coordinate"));

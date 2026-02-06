@@ -421,4 +421,24 @@ namespace ui
     {
         return _app->resourceManager().textureManager().getTexTile(texTile, texset);
     }
+
+    TexTile* GuiManager::getCfgTexTile(const std::string& cfgTexTile)
+    {
+        if (cfgTexTile.empty())
+        {
+            return nullptr;
+        }
+
+        std::string texset = "";
+        std::string textile = cfgTexTile;
+
+        const auto& texarr = utility::StringUtil::split(cfgTexTile, ':');
+        if (texarr.size() == 2)
+        {
+            texset = texarr[0];
+            textile = texarr[1];
+        }
+
+        return getTexTile(textile, texset);
+    }
 }

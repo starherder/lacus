@@ -30,6 +30,11 @@ static const std::map<std::string, std::string>& parseData(const std::string& st
 Widget::Widget(const std::string& name, Widget* parent) 
     : _name(name), _parent(parent)
 {
+    _normalStatus = WidgetUtils::normalStatus;
+    _normalStatus.border_color = Color::Invalid;
+    _normalStatus.ground_color = Color::Invalid;
+    _normalStatus.text_color = Color::Invalid;
+    _normalStatus.texture = nullptr;
 }
         
 Widget::~Widget()
@@ -205,9 +210,9 @@ bool Widget::load(XmlNode* node)
         }
     }
 
-    _normalStatus.ground_color.fromHexString(node->Attribute("ground_color"));
-    _normalStatus.border_color.fromHexString(node->Attribute("border_color"));
-    _normalStatus.text_color.fromHexString(node->Attribute("text_color"));
+    WidgetUtils::parseColorIfValid(_normalStatus.ground_color, node->Attribute("ground_color"));
+    WidgetUtils::parseColorIfValid(_normalStatus.border_color, node->Attribute("border_color"));
+    WidgetUtils::parseColorIfValid(_normalStatus.text_color, node->Attribute("text_color"));
 
     return onLoad(node); 
 }

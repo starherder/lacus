@@ -17,10 +17,6 @@ namespace particle
 #define fail_continue(exp) if(!(exp)) continue;
 #define fail_break(exp) if(!(exp)) break;
 
-#define safe_new new
-#define safe_delete(ptr) if((ptr)) {delete (ptr);(ptr)=nullptr;}
-#define safe_free(p) if(p){free(p);p=nullptr;}
-
 
 #define DefineGetter(vtype, name, mem) \
 vtype Get##name() {return mem;}							

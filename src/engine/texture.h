@@ -74,6 +74,7 @@ public:
 
     // load tileset config
     TexSet* loadTexSet(const std::string& xml_config);
+    bool loadAllTexSets(const fs::path& path);
 
     // get tile in tileset
     // if tileset is empty, use get(...) to get whole Texture as TexTile
@@ -88,6 +89,8 @@ private:
     Texture* get(IdType id, const std::string_view& filepath="");
 
     TexTile* loadTextureAsTile(const std::string& filepath);
+
+    TexSet* loadTexSetFile(const fs::path& cfgpath);
 
 private:
     Renderer& _renderer;

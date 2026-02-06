@@ -46,7 +46,7 @@ namespace ui
 
         WidgetState state() { return _state; }
 
-        virtual WidgetStatus& status() override;
+        WidgetStatus& status() override;
 
         void setState(WidgetState state);
 

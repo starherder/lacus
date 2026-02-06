@@ -47,7 +47,8 @@ public:
     auto& frameTicker() { return _app->frameTicker(); }
 
     bool loadTextureSet(const std::string& xmlcfg);
-    TexTile* getTexTile(const std::string& texTile, const std::string& texset="");
+    TexTile* getTexTile(const std::string& texTile, const std::string& texset = "");
+    TexTile* getCfgTexTile(const std::string& cfgTexTile); // tileset:tilename
 
     template<typename FormType, typename... Args>
     FormType* createForm(const std::string& name, Args&... args);

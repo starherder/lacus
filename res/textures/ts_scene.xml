@@ -1,0 +1,32 @@
+<tilset name="scene">
+    <texture file="scenes/test/monster_war/textures/Buildings/House1.png" >
+        <tile name="house1" rect="0,0,128,192" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/House1g.png" >
+        <tile name="house1g" rect="0,0,128,192" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/House2.png" >
+        <tile name="house2" rect="0,0,128,192" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/House2g.png" >
+        <tile name="house2g" rect="0,0,128,192" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/House3.png" >
+        <tile name="house3" rect="0,0,128,192" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/House3g.png" >
+        <tile name="house3g" rect="0,0,128,192" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/castle.png" >
+        <tile name="castle" rect="0,0,320,256" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/castle_g.png" >
+        <tile name="castle_g" rect="0,0,320,256" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/tower.png" >
+        <tile name="tower" rect="0,0,128,256" />
+    </texture>
+    <texture file="scenes/test/monster_war/textures/Buildings/tower_g.png" >
+        <tile name="tower_g" rect="0,0,128,256" />
+    </texture>
+</tilset>
