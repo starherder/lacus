@@ -28,12 +28,12 @@
   <bt name="npc_patrol">
       <sequence>
           <parallel fail_on_all="false" success_on_all="false" >
+            <pick_item/>
             <sequence>
               <patrol_findpath />
               <patrol_move />
             </sequence>
             <defend_attack />
-            <pick_item/>
           </parallel>
           <patrol_idle time="2.0" />
       </sequence>

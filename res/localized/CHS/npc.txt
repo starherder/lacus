@@ -35,6 +35,15 @@ text_spawner_desc_1="产生射手的刷怪器"
 text_spawner_name_2=法
 text_spawner_desc_2="产生法师的刷怪器"
 
+text_spawner_name_3=骑
+text_spawner_desc_3="产生骑士的刷怪器"
+
+text_spawner_name_4=萨
+text_spawner_desc_4="产生萨满的刷怪器"
+
+text_spawner_name_5=仙
+text_spawner_desc_5="产生神仙的刷怪器"
+
 text_item_name_coin=金币
 text_item_name_poision=毒药
 text_item_name_medicine=解药

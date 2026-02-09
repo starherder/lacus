@@ -6,7 +6,7 @@
 
   "distance" : 350,
   "cd_ticks": 1000,
-  "sound" :  "audio/battle_of_tiles/arrow.wav",
+  "sound" :  "audio/bot/arrow.wav",
 
   "affect" : {
     "prev_ticks" : 200,

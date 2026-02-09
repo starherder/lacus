@@ -85,7 +85,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     }
 
     auto cfgid = card->getCfgid();
-    auto ent = _context.scene().createObjectInScene(cfgid, pos);
+    auto ent = _context.scene().createObjectInScene(cfgid, pos, CampSide::Gangster);
     if (!_context.registry().valid(ent))
     {
         LogError("FormMain::onDropCard: create actor ({}) failed", cfgid);
@@ -95,7 +95,6 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     auto pComm = _context.registry().try_get<CompComm>(ent);
     if (pComm)
     {
-        pComm->side = CampSide::Gangster;
         pComm->rank = (ArmRank)card->getData<int>("rank");
     }
 

@@ -6,7 +6,7 @@
 
   "distance": 300,
   "cd_ticks": 5000,
-  "sound": "audio/battle_of_tiles/slime.wav",
+  "sound": "audio/bot/slime.wav",
 
   "affect": {
     "prev_ticks": 200,

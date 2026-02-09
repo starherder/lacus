@@ -37,10 +37,14 @@ namespace game
 			display.ground_color_drag_error.fromHexString(displayJs.value("ground_color_drag_error", "#FF808080"));
 			display.border_color_drag_error.fromHexString(displayJs.value("border_color_drag_error", "#FF8080F0"));
 
-			display.border_color_camp_officer.fromHexString(displayJs.value("border_color_camp_officer", "#FF0000FF"));
-			display.border_color_camp_ganster.fromHexString(displayJs.value("border_color_camp_ganster", "#00FF00FF"));
-			display.border_color_camp_rebel.fromHexString(displayJs.value("border_color_camp_rebel", "#FF00FFFF"));
-			display.border_color_camp_civilian.fromHexString(displayJs.value("border_color_camp_civilian", "#FFFFFFFF"));
+			display.chess_gangster_ground_color.fromHexString(displayJs.value("chess_gangster_ground_color", "#88FF88FF"));
+			display.chess_officer_ground_color.fromHexString(displayJs.value("chess_officer_ground_color", "#FF8888FF"));
+			display.chess_rebel_ground_color.fromHexString(displayJs.value("chess_rebel_ground_color", "#FFFF88FF"));
+			display.chess_civil_ground_color.fromHexString(displayJs.value("chess_civil_ground_color", "#888888FF"));
+
+			display.chess_font_color.fromHexString(displayJs.value("chess_font_color", "#8888FFFF"));
+			display.chess_border_color.fromHexString(displayJs.value("chess_border_color", "#555555FF"));
+			display.chess_border_size = displayJs.value("chess_border_size", 2.0f);
 		}
 
 		if (json.contains("selection"))
@@ -72,6 +76,14 @@ namespace game
 			float_text.color_dec.fromHexString(floattxtJs.value("color_dec", "#FF0000FF"));
 			float_text.tween_mode = floattxtJs.value("tween_mode", "cubicIn");
 			float_text.float_ticks = floattxtJs.value("float_ticks", 1000);
+		}
+
+		if (json.contains("pickup"))
+		{
+			auto& pickupJs = json["pickup"];
+			pickup.pick_range = pickupJs.value("pickup", 30);
+			pickup.pick_period = pickupJs.value("period", 1000);
+			pickup.dead_drop_range = pickupJs.value("dead_drop_range", 130);
 		}
 
 		return true;

@@ -8,6 +8,8 @@
 #include "imgui/backends/imgui_impl_sdlrenderer3.h"
 
 
+#define fail_return(p) if(!p) {return;}
+
 namespace engine
 {
 	static ImColor toImColor(const Color& color)
@@ -115,19 +117,19 @@ namespace engine
 
 	void ImPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_width)
 	{
-		assert(font);
+		fail_return(font);
 		ImGui::GetBackgroundDrawList()->AddText(font->imFont, (float)font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
 	}
 
 	void ImPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float round, const Color& color)
 	{
-		assert(pTexTile);
+		fail_return(pTexTile);
 		drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
 	}
 
 	void ImPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)
 	{
-		assert(pTexture);
+		fail_return(pTexture);
 
 		Vec2 srcSize = pTexture->size();
 		Rect uv = { src.pos()/srcSize, src.size()/srcSize };
@@ -152,7 +154,7 @@ namespace engine
 
 	void ImPainter::drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round, const Color& color)
 	{
-		assert(pTexture);
+		fail_return(pTexture);
 
 		Vec2 lt = dst.pos();
 		Vec2 rb = dst.pos() + dst.size();

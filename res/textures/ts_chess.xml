@@ -1,0 +1,17 @@
+<tilset name="chess">
+  <texture file="textures/bot/characters.png" >
+    <tile name="leader" rect="0,0,80,80" />
+    <tile name="arm_guard" rect="80,0,80,80" />
+    <tile name="arm_archer" rect="160,0,80,80" />
+    <tile name="guard" rect="240,0,80,80" />
+    <tile name="archer" rect="320,0,80,80" />
+
+    <tile name="stone" rect="0,80,80,80" />
+    <tile name="strik" rect="320,80,80,80" />
+    <tile name="arm_axe" rect="320,160,80,80" />
+    <tile name="wizzard" rect="0,240,80,80" />
+  </texture>
+  <texture file="textures/bot/etc.png" >
+    <tile name="chess_bg" rect="3,3,74,74" />
+  </texture>
+</tilset>

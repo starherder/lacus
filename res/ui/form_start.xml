@@ -23,7 +23,7 @@
         </hlayout>
         <hlayout size="0,50" >
             <widget />
-            <button name="btn_exit" size="250,50" text="退出" text_font="fonts/msyh.ttf" font_size="20" />
+            <button name="btn_exit" size="250,50" text="退出" text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
             <widget />
         </hlayout>
         <widget />

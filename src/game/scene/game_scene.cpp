@@ -37,6 +37,16 @@ GameScene::~GameScene()
 {
 }
 
+Vec2 GameScene::sceneSize()
+{
+    return mapSize() * tileSize();
+}
+
+Vec2 GameScene::scenePos()
+{
+    return {0, 0};
+}
+
 Vec2 GameScene::mapSize()
 {
     return _tileMap.mapSize();
@@ -271,7 +281,10 @@ void GameScene::loadObjects()
     {
         for (auto& [id, obj] : layer->objects) 
         {
-            createObjectInScene(obj.name, obj.pos);
+            auto optSide = _tileMap.getObjectProperty<int>(obj.id, "side");
+            auto side = optSide ? (CampSide)optSide.value() : CampSide::None;
+
+            createObjectInScene(obj.name, obj.pos, side);
         }
     }
 }
@@ -308,7 +321,7 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
     return entt::null;
 }
 
-entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos)
+entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side)
 {
     auto ent = ObjectFactory::inst().createObject(cfgid);
     if(ent==entt::null) 
@@ -334,7 +347,18 @@ entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2
         btree->bevtree->getBlackboard()->set("context", &_context);
         btree->bevtree->getBlackboard()->set("actor", ent);
     }
-    
+
+    auto pcomm = _context.registry().try_get<CompComm>(ent);
+    if (pcomm)
+    {
+        pcomm->side = side;
+
+        if (pcomm->side == CampSide::Gangster)
+        {
+            _context.registry().emplace<CompAutoPick>(ent);
+        }
+    }
+
     _sceneObjects.insert(ent);
     return ent;
 }

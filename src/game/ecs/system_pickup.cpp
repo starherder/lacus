@@ -20,11 +20,24 @@ namespace game
         auto views = _context.registry().view<CompPickable>();
         for(auto& ent : views) 
         {
-            auto& pickComp = _context.registry().get<CompPickable>(ent);
+            auto& pickComp = views.get<CompPickable>(ent);
             if(pickComp.picked)
             {
                 auto delta = _context.frameTicker().deltaTicks();
                 pickComp.tween.step(delta);
+            }
+        }
+
+        auto roleViews = _context.registry().view<CompAutoPick>();
+        for(auto& ent : roleViews)
+        {
+            auto& pickComp = roleViews.get<CompAutoPick>(ent);
+            pickComp.ticks += _context.frameTicker().deltaTicks();
+
+            if(pickComp.ticks > _context.gameConfig().pickup.pick_period)
+            {
+                pickRange(ent);
+                pickComp.ticks = 0;
             }
         }
     }
@@ -112,20 +125,21 @@ namespace game
 
     void PickupSystem::onEventMoveToGrid(const EvtRoleCrossGrid& e)
     {
-        auto compComm = _context.registry().try_get<CompComm>(e.actor);
-        auto compTrans = _context.registry().try_get<CompTransform>(e.actor);
-        if (!compComm || !compTrans)
-        {
-            return;
-        }
+        pickRange(e.actor);
+    }
 
-        if (compComm->type != ObjectType::Npc || compComm->side != CampSide::Gangster)
+    void PickupSystem::pickRange(entt::entity role)
+    {
+        auto compComm = _context.registry().try_get<CompComm>(role);
+        auto compPick = _context.registry().try_get<CompAutoPick>(role);
+        auto compTrans = _context.registry().try_get<CompTransform>(role);
+        if (!compComm || !compPick || !compTrans)
         {
             return;
         }
 
         auto center = compTrans->position;
-        auto radius = glm::length(compTrans->size) + _context.gameConfig().pick_range;
+        auto radius = glm::length(compTrans->size) + _context.gameConfig().pickup.pick_range;
 
         const auto& objects = _context.scene().getObjectsInCircle(center, radius);
         for(auto& [dis, obj] : objects) 
@@ -135,11 +149,11 @@ namespace game
             {
                 if (pickComp->pick_use)
                 {
-                    useItem(e.actor, obj);
+                    useItem(role, obj);
                 }
                 else
                 {
-                    pickUp(e.actor, obj);
+                    pickUp(role, obj);
                 }
             }
         }

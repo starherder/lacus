@@ -343,7 +343,7 @@ namespace samples {
 
             src = Rect{ 83.0f, 163.0f, 74.0f, 74.0f };
             dst = Rect{ pos + Vec2{200, 750}, Vec2{148, 147} };
-            auto etc = resourceMgr.textureManager().get("textures/battle_of_tiles/etc.png"_hs);
+            auto etc = resourceMgr.textureManager().get("textures/bot/etc.png"_hs);
             painter.drawTexture(etc, src, dst, 20.0f, Color::Green);
         }
 
@@ -366,12 +366,28 @@ namespace samples {
         auto t5 = textureMgr.getTexTile("5-0", "role");
         painter.drawTexTile(t5, Rect{ pos + Vec2{ 600, 300 },  {150, 150} });
 
-        auto t11 = textureMgr.getTexTile("house1g", "scene");
-        painter.drawTexTile(t11, Rect{ pos + Vec2{ 600, 500 },  {150, 150} });
+        auto th1 = textureMgr.getTexTile("house1g", "scene");
+        painter.drawTexTile(th1, Rect{ pos + Vec2{ 600, 500 },  {150, 150} });
 
         auto tsk = textureMgr.getTexTile("textures/sticker/skeleton.png");
         painter.drawTexTile(tsk, Rect{ pos + Vec2{ 600, 700 },  tsk->rect().size()});
 
+        // -----------------------------------------------------------------------------------
+
+        auto t11 = textureMgr.getTexTile("leader", "chess");
+        painter.drawTexTile(t11, Rect{ pos + Vec2{ 800, 100 },  t11->rect().size() });
+       
+       auto t12 = textureMgr.getTexTile("arm_guard", "chess");
+        painter.drawTexTile(t12, Rect{ pos + Vec2{ 800, 200 },  t12->rect().size() });
+        
+        auto t13 = textureMgr.getTexTile("arm_archer", "chess");
+        painter.drawTexTile(t13, Rect{ pos + Vec2{ 800, 300 },  t13->rect().size() });
+        
+        auto t14 = textureMgr.getTexTile("guard", "chess");
+        painter.drawTexTile(t14, Rect{ pos + Vec2{ 800, 400 },  t14->rect().size() });
+        
+        auto t15 = textureMgr.getTexTile("archer", "chess");
+        painter.drawTexTile(t15, Rect{ pos + Vec2{ 800, 500 },  t15->rect().size() });
     }
 
     void SamplePluginDraw::paint()

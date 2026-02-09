@@ -48,6 +48,9 @@ namespace game {
         GameScene(GameContext& context);
         ~GameScene();
 
+        Vec2 sceneSize();
+        Vec2 scenePos();
+
         Vec2 mapSize();
         Vec2 tileSize();
 
@@ -73,7 +76,7 @@ namespace game {
         GameData& dataCenter() { return _gameData; }
         entt::registry& registry() { return _registry;  }
 
-        entt::entity createObjectInScene(const std::string& cfgid, const Vec2& pos);
+        entt::entity createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side);
         void destroyObject(entt::entity id);
 
         void addObjectToScene(entt::entity id);

@@ -13,6 +13,9 @@ namespace game
         assert(app && "app is null");
         _application = app;
 
+        setSize(_application->window().getSize());
+
+        app->eventDispatcher().onWindowResized.connect(this, &GameCamera::onWindowResize);
         app->eventDispatcher().onKeyDown.connect(this, &GameCamera::onKeyDown);
         app->eventDispatcher().onKeyUp.connect(this, &GameCamera::onKeyUp);
         app->eventDispatcher().onMouseLeftDrag.connect(this, &GameCamera::onMouseLeftDrag);
@@ -89,6 +92,11 @@ namespace game
         //    pos.x, pos.y, dir);
     }
 
+    void GameCamera::onWindowResize(const Vec2& sz)
+    {
+        setSize(sz);
+    }
+
     void GameCamera::onUpdate(float deltaTime)
     {
         if (_vec.length() < 1e-8)
@@ -109,15 +117,10 @@ namespace game
         {
             _vec *= 10;
         }
-
-        auto& pos = getPos();
-        //LogInfo("move camera ({}, {}), pos = ({}, {}), vec = ({}, {})", 
-        //    dir.x, dir.y, pos.x, pos.y, _vec.x, _vec.y);
     }
 
     void GameCamera::stopCamera()
     {
-        //LogInfo("stop camera.");
         _vec = { 0, 0 };
     }
 

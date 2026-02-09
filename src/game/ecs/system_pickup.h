@@ -16,6 +16,9 @@ namespace game {
 
     private:
         void onEventMoveToGrid(const EvtRoleCrossGrid& e);
+
+        void pickRange(entt::entity role);
+
         void pickUp(entt::entity role, entt::entity obj);
         void useItem(entt::entity actor, entt::entity obj);
     };

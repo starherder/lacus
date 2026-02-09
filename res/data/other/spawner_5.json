@@ -1,0 +1,25 @@
+{
+	"id": "spawner_5",
+	"name": "text_spawner_name_5",
+	"desc": "text_spawner_desc_5",
+	"type": "spawner",
+		"side": "official",
+
+	"spawner": {
+		"npc": "npc_105",
+		"radius": 200,
+		"interval": 1000,
+		"min_count": 1,
+		"max_count": 5
+	},
+
+	"display": {
+		"comment": "this is for debug show.",
+		"size": "32,32",
+		"groud_color": "#00000000",
+		"border_color": "#FF55FFFF",
+		"font_color": "#555555FF",
+		"font_file": "fonts/msyh.ttf",
+		"font_size": 18
+	}
+}

@@ -3,7 +3,7 @@
   "name": "text_npc_name_104",
   "type": "npc",
   "desc": "text_npc_desc_104",
-  "icon":"role:4-0",
+  "icon": "role:4-0",
 
   "motion": {
     "speed": 150
@@ -25,11 +25,9 @@
 
   "display": {
     "size": "64,64",
-    "groud_color": "#AAFFAAFF",
-    "border_color": "#555555FF",
+    "#groud_color": "#AAFFAAFF",
+    "#border_color": "#555555FF",
     "font_color": "#FF5555FF",
-    "# texture": "textures/icon/sry1.png",
-    "# tex_rect": "0,0,0.25,0.5",
     "font_file": "fonts/msyh.ttf",
     "font_size": 18
   },

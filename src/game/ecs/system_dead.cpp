@@ -65,7 +65,7 @@ namespace game
 			return;
 		}
 
-		auto drop_range = _context.gameConfig().dead_drop_range;
+		auto drop_range = _context.gameConfig().pickup.dead_drop_range;
 
 		auto& item_list = pItemComp->items;
 

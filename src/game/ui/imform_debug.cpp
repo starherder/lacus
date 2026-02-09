@@ -39,13 +39,7 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     if (_debugMode == DebugMode::PutObject)
     {
         auto scenePos = _context->camera().screenToWorld(pos);
-        auto ent = _context->scene().createObjectInScene(_selectCfgId, scenePos);
-
-        auto pcomm = _context->registry().try_get<CompComm>(ent);
-        if (pcomm)
-        {
-            pcomm->side = _campSide;
-        }
+        auto ent = _context->scene().createObjectInScene(_selectCfgId, scenePos, _campSide);
     }
 }
 
@@ -101,6 +95,12 @@ void ImFormDebug::draw()
         if (ImGui::Checkbox("camera_control", &camera_ctrl))
         {
             _context->scene().camera().setDragMode(camera_ctrl);
+        }
+        static bool camera_limit = false;
+        if (ImGui::Checkbox("camera_limit", &camera_limit))
+        {
+            Rect area = {_context->scene().scenePos(), _context->scene().sceneSize()  };
+            _context->scene().camera().setLimitArea(camera_limit, area);
         }
 
         ImGui::Separator();

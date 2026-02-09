@@ -3,7 +3,7 @@
   "name": "text_npc_name_101",
   "type": "npc",
   "desc": "text_npc_desc_101",
-  "icon":"role:1-0",
+  "icon": "role:1-0",
 
   "motion": {
     "speed": 150,
@@ -26,13 +26,12 @@
 
   "display": {
     "size": "64,64",
-    "groud_color": "#FFFF00FF",
-    "border_color": "#555555FF",
-    "font_color": "#555555FF",
-    "# texture": "textures/icon/sry1.png",
-    "# tex_rect": "0,0,0.25,0.5",
+    "#groud_color": "#FFFF00FF",
+    "#border_color": "#555555FF",
+    "#font_color": "#555555FF",
     "font_file": "fonts/msyh.ttf",
-    "font_size": 18
+    "font_size": 18,
+    "texture": "chess:archer"
   },
 
   "base_prop": {
@@ -51,6 +50,6 @@
 
   "buffs": [],
 
-  "items": [ "item_coin",  "item_medicine" ]
+  "items": [ "item_coin", "item_medicine" ]
 
 }

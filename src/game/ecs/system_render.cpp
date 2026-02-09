@@ -8,17 +8,32 @@ namespace game
 
     Color RenderSystem::getBorderColor(CampSide side)
     {
+        return _context.gameConfig().display.chess_border_color;
+    }
+
+    Color RenderSystem::getFontColor(CampSide side)
+    {
+        return _context.gameConfig().display.chess_font_color;
+    }
+
+    Color RenderSystem::getGroundColor(CampSide side)
+    {
         switch (side)
         {
-        case CampSide::Officer: return _context.gameConfig().display.border_color_camp_officer;
-        case CampSide::Rebel: return _context.gameConfig().display.border_color_camp_rebel;
-        case CampSide::Gangster: return _context.gameConfig().display.border_color_camp_ganster;
-        case CampSide::Civilian: return _context.gameConfig().display.border_color_camp_civilian;
-        default:
-            return Color::Black;
+        case CampSide::Officer: return _context.gameConfig().display.chess_officer_ground_color;
+        case CampSide::Rebel: return _context.gameConfig().display.chess_rebel_ground_color;
+        case CampSide::Gangster: return _context.gameConfig().display.chess_gangster_ground_color;
+        case CampSide::Civilian: return _context.gameConfig().display.chess_civil_ground_color;
+        default: return Color::White;
         }
 
-        return Color::Black;
+        return Color::White;
+    }
+
+
+    Color RenderSystem::getForeColor(CampSide side)
+    {
+        return Color::White;
     }
 
 void RenderSystem::update(float delta)
@@ -178,14 +193,21 @@ void RenderSystem::drawObjects()
     auto ent_view = _context.registry().view<CompNameId, CompTransform, CompDisplay>();
     for (auto& ent : ent_view)
     {
-        auto& nameid = ent_view.get<CompNameId>(ent);
-        auto& transform = ent_view.get<CompTransform>(ent);
-        auto& display = ent_view.get<CompDisplay>(ent);
+        auto pCompComm = _context.registry().try_get<CompComm>(ent);
+        if (!pCompComm)
+        {
+            continue;
+        }
         
+        const auto& nameid = ent_view.get<CompNameId>(ent);
+        const auto& transform = ent_view.get<CompTransform>(ent);
+        const auto& display = ent_view.get<CompDisplay>(ent);
         if (!display.visible) 
         {
             continue;
         }
+
+        float corner = _context.gameConfig().display.chess_corner;
 
         auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
         if(transform.coord_mode == CoordMode::WorldSpace)
@@ -194,11 +216,8 @@ void RenderSystem::drawObjects()
         }
 
         int alpha = 255;
-        float corner = _context.gameConfig().display.chess_corner;
-
-        // is dead
         auto pdead = _context.registry().try_get<CompDead>(ent);
-        if (pdead)
+        if(pdead)
         {
             auto total = _context.gameConfig().dying_ticks;
             auto half = total / 2.0f;
@@ -222,37 +241,50 @@ void RenderSystem::drawObjects()
             painter.drawRect(dragComp->border_color, dstrect, corner, dragComp->border_size);
         }
 
-        // display
-        if (display.texture != nullptr)
+        auto dead_ground_color = _context.gameConfig().display.chess_dead_ground_color;
+        auto dead_border_color = _context.gameConfig().display.chess_dead_border_color;
+        auto dead_font_color = _context.gameConfig().display.chess_dead_font_color;
+
+        Color ground_color = pdead ? dead_ground_color : getGroundColor(pCompComm->side);
+        Color border_color = pdead ? dead_border_color : getBorderColor(pCompComm->side);
+        Color font_color = pdead ? dead_font_color : getFontColor(pCompComm->side);
+
+        // draw back_ground
         {
-            auto srcrect = display.tex_rect;
-            painter.drawTexture(display.texture, srcrect, dstrect, corner, { 255, 255, 255, alpha });
+            ground_color.a = alpha;
+            border_color.a = alpha;
+
+            if (display.ground_texture != nullptr)
+            { 
+                painter.drawTexTile(display.ground_texture, dstrect, corner, ground_color);
+            }
+            else
+            {
+                painter.fillRect(ground_color, dstrect, corner);
+
+                // draw border
+                {
+                    painter.drawRect(border_color, dstrect, corner);
+                }
+            }
         }
-        else
+
+        // draw fore_ground
         {
-            auto ground_color = display.ground_color;
-            auto border_color = display.border_color;
-            auto font_color = display.font_color;
-
-            auto pCompComm = _context.registry().try_get<CompComm>(ent);
-            if (pCompComm)
+            auto fore_color = getForeColor(pCompComm->side);
+            if (display.texture != nullptr)
             {
-                border_color = getBorderColor(pCompComm->side);
+                painter.drawTexTile(display.texture, dstrect, corner, fore_color);
             }
-
-            if(pdead)
+            else
             {
-                ground_color = _context.gameConfig().display.chess_dead_ground_color; ground_color.a = alpha;
-                font_color = _context.gameConfig().display.chess_dead_font_color; font_color.a = alpha;
-
-                //border_color = _context.gameConfig().display.chess_dead_border_color; border_color.a = alpha;
-                border_color = {border_color.r/2, border_color.g/2, border_color.b/2, border_color.a};
+                // draw text
+                {
+                    painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, font_color);
+                }
             }
-
-            painter.fillRect(ground_color, dstrect, corner);
-            painter.drawRect(border_color, dstrect, corner);
-            painter.drawText(nameid.name.c_str(), display.font, dstrect.pos() + Vec2{ 10,10 }, font_color);
         }
+
 
         // fight hp
         auto pFight = _context.registry().try_get<CompFightProp>(ent);

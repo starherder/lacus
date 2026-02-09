@@ -33,6 +33,9 @@ private:
     void drawFightText();
 
     Color getBorderColor(CampSide side);
+    Color getGroundColor(CampSide side);
+    Color getForeColor(CampSide side);
+    Color getFontColor(CampSide side);
 };
 
 

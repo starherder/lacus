@@ -58,6 +58,7 @@ class TextureManager : public IResManager
 {
     using TexturePtr = std::shared_ptr<Texture>;
     using TextureMap = std::unordered_map<IdType, TexturePtr>;
+    using TextureSetMap = std::map<std::string, TexSet>;
 
 public:
     TextureManager() = delete;
@@ -80,6 +81,12 @@ public:
     // if tileset is empty, use get(...) to get whole Texture as TexTile
     TexTile* getTexTile(const std::string& tile, const std::string& tileset="");
 
+    // get tile in tileset
+    // cfgtile : formate "tileset:tile"
+    TexTile* getCfgTexTile(const std::string& cfgtile);
+
+    const TextureSetMap& getTexSets() const { return _texSetMap; }
+
     void clear();
 
 private:
@@ -96,7 +103,7 @@ private:
     Renderer& _renderer;
     TextureMap _textures;
 
-    std::map<std::string, TexSet> _texSetMap;
+    TextureSetMap _texSetMap;
 };
 
 

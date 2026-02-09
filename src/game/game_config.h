@@ -34,10 +34,15 @@ namespace game
 			Color ground_color_drag_error = Color::LightRed;
 			Color border_color_drag_error = Color::Red;
 
-			Color border_color_camp_officer = Color::Red;
-			Color border_color_camp_ganster = Color::Green;
-			Color border_color_camp_rebel = Color::Pink;
-			Color border_color_camp_civilian = Color::White;
+			Color chess_gangster_ground_color = Color::LightGreen;
+			Color chess_officer_ground_color = Color::LightRed;
+			Color chess_rebel_ground_color = Color::LightYellow;
+			Color chess_civil_ground_color = Color::Light;
+
+			Color chess_font_color = Color::Blue;
+
+			Color chess_border_color = Color::Dark;
+			float chess_border_size = 2.0f;
 		}display;
 
 		struct Selection {
@@ -53,8 +58,11 @@ namespace game
 
 		int dying_ticks = 1000;
 
-		int dead_drop_range = 130;
-		int pick_range = 30;
+		struct Pickup {
+			int dead_drop_range = 130;
+			int pick_range = 30;
+			int pick_period = 1000;
+		}pickup;
 
 		struct Scenes {
 			std::string first_scene;

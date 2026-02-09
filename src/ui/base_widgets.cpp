@@ -179,6 +179,13 @@ namespace ui
     {
     }
 
+    TexTile* getTextureIfValid(const char* tile, TexTile* def_textile)
+    {
+        auto tex_tile = GuiManager::inst().getCfgTexTile(tile);
+        if(tex_tile) return tex_tile;
+        return def_textile;
+    }
+
     bool Button::onLoad(XmlNode* node)
     {
         if (!Label::onLoad(node)) 
@@ -191,25 +198,41 @@ namespace ui
         auto& press = _status[WidgetState::Pressed];
         auto& disable = _status[WidgetState::Disabled];
 
-        WidgetUtils::parseColorIfValid(normal.text_color,   node->Attribute("text_color"));
+        WidgetUtils::parseColorIfValid(normal.text_color,  node->Attribute("text_color"));
+        WidgetUtils::parseColorIfValid(hover.text_color,   node->Attribute("text_color"));
+        WidgetUtils::parseColorIfValid(press.text_color,   node->Attribute("text_color"));
+        WidgetUtils::parseColorIfValid(disable.text_color, node->Attribute("text_color"));
+
         WidgetUtils::parseColorIfValid(hover.text_color,    node->Attribute("text_color_hover"));
         WidgetUtils::parseColorIfValid(press.text_color,    node->Attribute("text_color_press"));
         WidgetUtils::parseColorIfValid(disable.text_color,  node->Attribute("text_color_disable"));
-       
+
         WidgetUtils::parseColorIfValid(normal.border_color,  node->Attribute("border_color"));
+        WidgetUtils::parseColorIfValid(hover.border_color,   node->Attribute("border_color"));
+        WidgetUtils::parseColorIfValid(press.border_color,   node->Attribute("border_color"));
+        WidgetUtils::parseColorIfValid(disable.border_color, node->Attribute("border_color"));
+
         WidgetUtils::parseColorIfValid(hover.border_color,   node->Attribute("border_color_hover"));
         WidgetUtils::parseColorIfValid(press.border_color,   node->Attribute("border_color_press"));
         WidgetUtils::parseColorIfValid(disable.border_color, node->Attribute("border_color_disable"));
-     
+
         WidgetUtils::parseColorIfValid(normal.ground_color,  node->Attribute("ground_color"));
+        WidgetUtils::parseColorIfValid(hover.ground_color,   node->Attribute("ground_color"));
+        WidgetUtils::parseColorIfValid(press.ground_color,   node->Attribute("ground_color"));
+        WidgetUtils::parseColorIfValid(disable.ground_color, node->Attribute("ground_color"));
+
         WidgetUtils::parseColorIfValid(hover.ground_color,   node->Attribute("ground_color_hover"));
         WidgetUtils::parseColorIfValid(press.ground_color,   node->Attribute("ground_color_press"));
         WidgetUtils::parseColorIfValid(disable.ground_color, node->Attribute("ground_color_disable"));
-      
+
         normal.texture  = GuiManager::inst().getCfgTexTile(node->Attribute("texture"));
-        hover.texture   = GuiManager::inst().getCfgTexTile(node->Attribute("texture_hover"));
-        press.texture   = GuiManager::inst().getCfgTexTile(node->Attribute("texture_press"));
-        disable.texture = GuiManager::inst().getCfgTexTile(node->Attribute("texture_disable"));
+        hover.texture   = GuiManager::inst().getCfgTexTile(node->Attribute("texture"));
+        press.texture   = GuiManager::inst().getCfgTexTile(node->Attribute("texture"));
+        disable.texture = GuiManager::inst().getCfgTexTile(node->Attribute("texture"));
+
+        hover.texture   = getTextureIfValid(node->Attribute("texture_hover"), hover.texture);
+        press.texture   = getTextureIfValid(node->Attribute("texture_press"), press.texture);
+        disable.texture = getTextureIfValid(node->Attribute("texture_disable"), disable.texture);
 
         bool disabled = node->BoolAttribute("disable", false);
         setState(disabled ? WidgetState::Disabled : WidgetState::Normal);

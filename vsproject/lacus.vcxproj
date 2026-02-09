@@ -433,6 +433,9 @@
     <None Include="..\res\data\other\spawner_0.json" />
     <None Include="..\res\data\other\spawner_1.json" />
     <None Include="..\res\data\other\spawner_2.json" />
+    <None Include="..\res\data\other\spawner_3.json" />
+    <None Include="..\res\data\other\spawner_4.json" />
+    <None Include="..\res\data\other\spawner_5.json" />
     <None Include="..\res\data\role\npc_0.json" />
     <None Include="..\res\data\role\npc_1.json" />
     <None Include="..\res\data\role\npc_100.json" />

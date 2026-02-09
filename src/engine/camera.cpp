@@ -1,9 +1,49 @@
 ﻿#include "camera.h"
-#include "tweeny/tweeny.h"
 
 namespace engine {
 
-    tweeny::tween<float, float> g_cameraTween;
+    Camera::Camera(const Vec2& pos, const Vec2& size)
+    { 
+        _pos = pos; 
+        _size = size; 
+
+        _limitInArea = false;
+        _limitArea = Rect{_pos, _size};
+    }
+
+    void Camera::setPos(const Vec2& pos)
+    {
+        if(_limitInArea)
+        {
+            if(!_limitArea.contains(Rect{ pos, _size }))
+            {
+                return;
+            }
+        }
+
+        _pos = pos;
+    }
+
+    void Camera::setSize(const Vec2& size)
+    {
+        if (_limitInArea)
+        {
+            if (!_limitArea.contains(Rect{ _pos, size }))
+            {
+                return;
+            }
+        }
+
+        _size = size;
+    }
+
+    void Camera::setLimitArea(bool limit, const Rect& area)
+    {
+        _limitInArea = limit;
+        _limitArea = area;
+
+        setPos(_pos);
+    }
 
     Vec2 Camera::worldToScreen(const Vec2& pos) const 
     { 
@@ -19,7 +59,7 @@ namespace engine {
     {
         if (_shaking)
         {
-            g_cameraTween.step((int)(delta*1000));
+            _cameraTween.step((int)(delta*1000));
         }
 
         onUpdate(delta);
@@ -37,7 +77,8 @@ namespace engine {
 
     void Camera::projectVertexies(std::vector<Vertex>& verts) const 
     {
-        for (auto& vert : verts) {
+        for (auto& vert : verts) 
+        {
             auto pos = worldToScreen({vert.position.x, vert.position.y});
             vert.position.x = pos.x;
             vert.position.y = pos.y;
@@ -46,7 +87,6 @@ namespace engine {
 
     Rect Camera::projectRect(const Rect& rect) const
     {
-        // auto sz = rect.size() * _scale;
         auto sz = rect.size();
         auto pos = worldToScreen(rect.pos());
         return {pos, sz};
@@ -71,15 +111,15 @@ namespace engine {
         int count = static_cast<int>(frequency * (fduration / 1000.0f));
         int period = static_cast<int>(fduration / count);
 
-        g_cameraTween = tweeny::from(_pos.x, _pos.y);
+        _cameraTween = tweeny::from(_pos.x, _pos.y);
 
         for (int i = 0; i < count; i++)
         {
             Vec2 pos = _pos + Vec2{ utility::rand_minus1_1(), utility::rand_minus1_1() } * (float)ampl;
-            g_cameraTween.to(pos.x, pos.y).via("linear").during(period);
+            _cameraTween.to(pos.x, pos.y).via("linear").during(period);
         }
 
-        g_cameraTween.onStep([this, origin_pos=_pos](auto& t, auto x, auto y)
+        _cameraTween.onStep([this, origin_pos=_pos](auto& t, auto x, auto y)
         {
             if (t.isFinished())
             {

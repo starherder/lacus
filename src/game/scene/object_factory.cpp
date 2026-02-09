@@ -6,6 +6,7 @@
 #include "game/ecs/comp_fight.h"
 #include "game/ecs/comm_event.h"
 #include "game/scene/game_scene.h"
+#include "game/game_config.h"
 
 #include "utility/translator.h"
 #include "magic_enum/magic_enum.h"
@@ -324,22 +325,23 @@ namespace game
 			auto& trans = _context->registry().get<CompTransform>(object);
 			trans.size = ToVec2(display.value("size", "64,64"));
 
-			Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
-			Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
-			Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
+			//Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
+			//Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
+			//Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
 
 			auto texture = display.value("texture", "");
-			auto tex_rect = ToRect(display.value("tex_rect", "0,0,0,0"));
+			auto bg_texture = display.value("ground_texture", "");
+
 			auto font_file = display.value("font_file", "fonts/msyh.ttf");
 			auto font_size = display.value("font_size", 12);
 
 			CompDisplay comdis;
 			comdis.visible = true;
-			comdis.ground_color = bg;
-			comdis.border_color = bd;
-			comdis.font_color = fc;
-			comdis.texture = _context->textureMgr().get(HashString(texture.c_str()));
-			comdis.tex_rect = tex_rect;
+			//comdis.ground_color = bg;
+			//comdis.border_color = bd;
+			//comdis.font_color = fc;
+			comdis.texture = _context->textureMgr().getCfgTexTile(texture.c_str());
+			comdis.ground_texture = _context->textureMgr().getCfgTexTile(bg_texture.c_str());
 			comdis.font = _context->fontMgr().get(HashString(font_file.c_str()), font_size);
 			_context->registry().emplace<CompDisplay>(object, comdis);
 		}
@@ -393,7 +395,8 @@ namespace game
 	entt::entity ObjectFactory::createRole(const nJson& json)
 	{
 		auto role = createObject(json);
-		if(role == entt::null) {
+		if(role == entt::null) 
+		{
 			return role;
 		}
 
@@ -514,7 +517,7 @@ namespace game
 			}
 			_context->registry().emplace<CompItems>(role, compItems);
 		}
-		
+
 		return role;
 	}
 
@@ -555,22 +558,24 @@ namespace game
 			auto& trans = _context->registry().get<CompTransform>(buff);
 			trans.size = ToVec2(display.value("size", "16,16"));
 
-			Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
-			Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
-			Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
+			//Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
+			//Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
+			//Color fc; fc.fromHexString(display.value("font_color", "0,0,0,0"));
 
 			auto texture = display.value("texture", "");
-			auto tex_rect = ToRect(display.value("tex_rect", "0,0,0,0"));
+			auto bg_texture = display.value("bg_texture", "");
+
 			auto font_file = display.value("font_file", "fonts/msyh.ttf");
 			auto font_size = display.value("font_size", 12);
 
 			CompDisplay comdis;
 			comdis.visible = true;
-			comdis.ground_color = bg;
-			comdis.border_color = bd;
-			comdis.font_color = fc;
-			comdis.texture = _context->textureMgr().get(HashString(texture.c_str()));
-			comdis.tex_rect = tex_rect;
+			//comdis.ground_color = bg;
+			//comdis.border_color = bd;
+			//comdis.font_color = fc;
+			comdis.texture = _context->textureMgr().getCfgTexTile(texture.c_str());
+			comdis.ground_texture = _context->textureMgr().getCfgTexTile(bg_texture.c_str());
+
 			comdis.font = _context->fontMgr().get(HashString(font_file.c_str()), font_size);
 			_context->registry().emplace<CompDisplay>(buff, comdis);
 		}

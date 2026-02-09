@@ -4,15 +4,27 @@
 		"tween_swim_mode": "linear"
 	},
 
-	"display" : {
-		"chess_corner" : 5.0,
-		"chess_dead_ground_color":"#808080FF",
+	"display": {
+		"chess_size": "64,64",
+		"chess_corner": 5.0,
+
+		"chess_dead_ground_color": "#808080FF",
 		"chess_dead_border_color": "#505050FF",
 		"chess_dead_font_color": "#000000FF",
-		"ground_color_drag_ok" : "#80FF8080",
-		"border_color_drag_ok" : "#80FF80F0",
-		"ground_color_drag_error" : "#FF808080",
-		"border_color_drag_error" : "#FF8080F0"
+
+		"ground_color_drag_ok": "#80FF8080",
+		"border_color_drag_ok": "#80FF80F0",
+		"ground_color_drag_error": "#FF808080",
+		"border_color_drag_error": "#FF8080F0",
+
+		"chess_gangster_ground_color": "#88FF88FF",
+		"chess_officer_ground_color": "#FF8888FF",
+		"chess_rebel_ground_color": "#FFFF88FF",
+		"chess_civil_ground_color": "#DDDDDDFF",
+
+		"chess_font_color": "#333333FF",
+		"chess_border_color": "#666666FF",
+		"chess_border_size": 2
 	},
 
 	"float_text": {

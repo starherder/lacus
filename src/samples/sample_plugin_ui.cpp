@@ -612,7 +612,7 @@ namespace samples
 		auto form = ui::GuiManager::inst().createForm<FormDemo>("form_sample_demo", _application);
 		form->on_list_select.connect(this, &SamplePluginUI::onSelectBackGroud);
 
-		auto tex = _application.resourceManager().textureManager().get("textures/battle_of_tiles/etc.png"_hs);
+		auto tex = _application.resourceManager().textureManager().get("textures/bot/etc.png"_hs);
 
 		_textures.clear();
 		_textures.push_back({ tex, {240, 0, 80, 80} });

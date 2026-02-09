@@ -25,10 +25,11 @@ namespace game
     };
 
     enum class CampSide {
+        None,
         Officer,
         Rebel,
         Gangster,
-        Civilian
+        Civilian,
     };
 
     enum class ArmRank {
@@ -143,6 +144,11 @@ namespace game
         int dir = 1;
     };
 
+    struct CompAutoPick
+    {
+        int ticks = 0;
+    };
+
     struct CompBindParticle 
     {
         particle::ParticlePtr particle = nullptr;
@@ -157,8 +163,8 @@ namespace game
         Color font_color = Color::Dark;
 
         Font* font = nullptr;
-        Texture* texture = nullptr;
-        Rect tex_rect;
+        TexTile* texture = nullptr;
+        TexTile* ground_texture = nullptr;
     };
 
     struct CompMarkDisplay
@@ -264,7 +270,7 @@ namespace game
         if (side == "rebel") return CampSide::Rebel;
         if (side == "gangster") return CampSide::Gangster;
 
-        return CampSide::Officer;
+        return CampSide::None;
     };
 
 

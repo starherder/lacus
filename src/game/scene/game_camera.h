@@ -30,6 +30,8 @@ private:
 
     void onMouseWheel(const Vec2& pos, float dir);
 
+    void onWindowResize(const Vec2& sz);
+
     void moveCamera(const Vec2& dir);
 
     void stopCamera();

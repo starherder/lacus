@@ -203,6 +203,26 @@ namespace engine {
         return &(it->second);
     }
 
+    TexTile* TextureManager::getCfgTexTile(const std::string& cfgTexTile)
+    {
+        if (cfgTexTile.empty())
+        {
+            return nullptr;
+        }
+
+        std::string texset = "";
+        std::string textile = cfgTexTile;
+
+        const auto& texarr = utility::StringUtil::split(cfgTexTile, ':');
+        if (texarr.size() == 2)
+        {
+            texset = texarr[0];
+            textile = texarr[1];
+        }
+
+        return getTexTile(textile, texset);
+    }
+
     TexTile* TextureManager::getTexTile(const std::string& tile, const std::string& tileset)
     {
         auto it = _texSetMap.find(tileset);

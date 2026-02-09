@@ -101,15 +101,9 @@ namespace game
 
         if (optSpawnPos)
         {
-            auto npc = _context.scene().createObjectInScene(compSpawner.npc, optSpawnPos.value());
+            auto npc = _context.scene().createObjectInScene(compSpawner.npc, optSpawnPos.value(), pSpawnerComm->side);
             if (_context.registry().valid(npc))
             {
-                auto compComm = _context.registry().try_get<CompComm>(npc);
-                if (compComm)
-                {
-                    compComm->side = pSpawnerComm->side;
-                }
-
                 auto compSpawner = _context.registry().try_get<CompSpawner>(spawner);
                 if (compSpawner)
                 {
