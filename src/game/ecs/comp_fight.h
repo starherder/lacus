@@ -68,10 +68,20 @@ namespace game
 		int current_tick = 0;
 	};
 
+	struct CompProjectileDisplay
+	{
+		TexTile* texture = nullptr;
+		float orient = 0.0f;
+		Color color = Color::White;
+	};
+
 	struct CompProjectileCfg
 	{
 		std::string name;
 		float speed = 100.0f;
+
+		std::string texture;
+		float texorient = 0.0f;
 
 		std::string particle;
 		std::string tween;

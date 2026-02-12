@@ -127,11 +127,22 @@ void RenderSystem::drawSkillEffect()
     auto& painter = _context.painter();
     auto& camera = _context.camera();
     
-    auto ent_view = _context.registry().view<CompLightningDisplay>();
-    for(auto& ent : ent_view)
+    auto lightning_view = _context.registry().view<CompLightningDisplay>();
+    for(auto& ent : lightning_view)
     {
-        auto& disp = ent_view.get<CompLightningDisplay>(ent);
+        auto& disp = lightning_view.get<CompLightningDisplay>(ent);
         painter.drawLightningData(disp.color, -_context.camera().getPos(), disp.data, disp.thickness);
+    }
+
+    auto projectile_view = _context.registry().view<CompTransform, CompProjectileDisplay>();
+    for (auto& ent : projectile_view)
+    {
+        auto& trans = projectile_view.get<CompTransform>(ent);
+        auto& disp = projectile_view.get<CompProjectileDisplay>(ent);
+
+        Rect dstrect = { trans.position, disp.texture->rect().size()};
+
+        painter.drawTexTile(disp.texture, dstrect, disp.color);
     }
 }
 

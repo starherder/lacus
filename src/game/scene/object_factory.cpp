@@ -650,13 +650,15 @@ namespace game
 		{
 			auto& projectJs = json["projectile"];
 
-			CompProjectileCfg compParticle;
-			compParticle.name = projectJs.value("name", "");
-			compParticle.speed = projectJs.value("speed", 10.0f);
-			compParticle.tween = projectJs.value("tween", "linear");
-			compParticle.particle = projectJs.value("particle", "");
+			CompProjectileCfg compProjectile;
+			compProjectile.name = projectJs.value("name", "");
+			compProjectile.speed = projectJs.value("speed", 10.0f);
+			compProjectile.tween = projectJs.value("tween", "linear");
+			compProjectile.particle = projectJs.value("particle", "");
+			compProjectile.texture = projectJs.value("texture", "");
+			compProjectile.texorient = projectJs.value("texorient", 90.0f);
 
-			_context->registry().emplace<CompProjectileCfg>(skill, compParticle);
+			_context->registry().emplace<CompProjectileCfg>(skill, compProjectile);
 		}
 
 		if (json.contains("sprint"))
@@ -744,7 +746,7 @@ namespace game
 		return nullptr;
 	}
 
-	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, const std::string& particle)
+	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, const CompProjectileCfg& cfg)
 	{
 		assert(_context);
 
@@ -759,7 +761,12 @@ namespace game
 		CompTransform compTrans;
 		_context->registry().emplace<CompTransform>(bullet, compTrans);
 
-		createParticleOnObject(bullet, particle);
+		CompProjectileDisplay compDisplay;
+		compDisplay.texture = _context->textureMgr().getCfgTexTile(cfg.texture);
+		compDisplay.orient = -cfg.texorient;
+		_context->registry().emplace<CompProjectileDisplay>(bullet, compDisplay);
+
+		createParticleOnObject(bullet, cfg.particle);
 	
 		return bullet;
 	}

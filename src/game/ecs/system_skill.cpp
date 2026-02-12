@@ -636,7 +636,7 @@ namespace game
 		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
 		int during = static_cast<int>((glm::distance(source, target) / speed) * 1000);
 
-		auto projectile = _context.objectFactory().createProjectile(source, target, compProjectile.particle);
+		auto projectile = _context.objectFactory().createProjectile(source, target, compProjectile);
 		if (!_context.registry().valid(projectile))
 		{
 			return;

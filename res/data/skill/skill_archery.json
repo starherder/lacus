@@ -29,7 +29,8 @@
   "projectile": {
     "name": "",
     "particle": "trail",
-    "texture" : "",
+    "texture": "skill:arrow",
+    "texorient" :  90,
     "speed": 1000,
     "tween": "cubicIn"
   }

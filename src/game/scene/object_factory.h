@@ -36,7 +36,7 @@ namespace game
 
 		entt::entity createBuff(entt::entity owner, const std::string& cfgid);
 
-		entt::entity createProjectile(const Vec2& source, const Vec2& target, const std::string& particle);
+		entt::entity createProjectile(const Vec2& source, const Vec2& target, const struct CompProjectileCfg& cfg);
 
 		entt::entity createTrap(const Vec2& target, float range, const Color& color, 
 			const std::string& texture, const std::string& particle, ShapeType shape_type);
