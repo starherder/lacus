@@ -29,6 +29,7 @@
   "projectile": {
     "name": "",
     "particle": "trail",
+    "texture" : "",
     "speed": 1000,
     "tween": "cubicIn"
   }

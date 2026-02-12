@@ -1,0 +1,7 @@
+<tilset name="skill">
+    <texture file="textures/bot/etc.png" >
+      <tile name="array" rect="0,388,16,120" />
+      <tile name="gold_array" rect="24,385,24,125" />
+      <tile name="fire_array" rect="54,350,30,160" />
+    </texture>
+</tilset>

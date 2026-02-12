@@ -213,6 +213,7 @@ namespace samples
 				props["cfgid"] = std::format("cfg-{}", i);
 				props["name"] = std::format("role-{}", i);
 				props["desc"] = std::format("desc-{}", i);
+				props["icon"] = std::format("role:{}-0", i);
 				props["level"] = i;
 				group->addCard(props);
 			}
@@ -597,6 +598,8 @@ namespace samples
 
     void SamplePluginUI::onInit() 
     {
+		auto texturedir = _application.resPath() / "textures";
+		_application.resourceManager().textureManager().loadAllTexSets(texturedir);
     }
 
     void SamplePluginUI::onInstall() 

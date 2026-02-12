@@ -7,6 +7,96 @@
 
 namespace samples {
 
+    void ImFormTexSet::onInit()
+    {
+        auto& textureSets = _application->resourceManager().textureManager().getTexSets();
+        for (auto& [setname, texset] : textureSets)
+        {
+            _texSets.push_back(setname.c_str());
+        }
+    }
+
+    void ImFormTexSet::draw()
+    {
+        int PickerFlag = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel;
+
+        ImGui::Begin("textures");
+
+        static bool showBorder = false;
+        ImGui::Checkbox("border##texset", &showBorder);
+
+        ImGui::SameLine();
+
+        static float borderColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };;
+        ImGui::ColorEdit4("##texset_border_color", (float*)&borderColor, PickerFlag);
+  
+        static bool showGround = false;
+        ImGui::Checkbox("ground##texset", &showGround);
+
+        ImGui::SameLine();
+
+        static float groundColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+        ImGui::ColorEdit4("##texset_ground_color", (float*)&groundColor, PickerFlag);
+
+        static int texset_select_index = 0;
+        if (ImGui::ListBox("tex_sets##texset_list", &texset_select_index, _texSets.data(), (int)_texSets.size()))
+        {
+            _selectTexSet = _texSets[texset_select_index];
+
+            auto& textureSets = _application->resourceManager().textureManager().getTexSets();
+            auto it = textureSets.find(_selectTexSet);
+            if (it == textureSets.end())
+            {
+                return;
+            }
+
+            _texTiles.clear();
+
+            auto& texset = it->second;
+            for (auto& [name, textile] : texset.tileset)
+            {
+                _texTiles.push_back(name.c_str());
+            }
+        }
+
+        static int textile_select_index = 0;
+        if (ImGui::ListBox("tex_tiles##textile_list", &textile_select_index, _texTiles.data(), (int)_texTiles.size()))
+        {
+            auto selectTile = _texTiles[textile_select_index];
+            _selectTile = _application->resourceManager().textureManager().getTexTile(selectTile, _selectTexSet);
+        }
+
+        if (ImGui::Button("reset##texset")) 
+        {
+            _scale = 1.0f;
+        }
+
+        ImGui::SameLine();
+
+        ImGui::SliderFloat("scale##texset", &_scale, 0.1f, 10.0f);
+
+        ImGui::End();
+
+        if (_selectTile)
+        {
+            Rect rect = Rect{ 100.0f, 100.0f, _selectTile->rect().w * _scale, _selectTile->rect().h * _scale };
+
+            if (showGround)
+            {
+                _application->painter().fillRect(Color{ groundColor[0], groundColor[1], groundColor[2], groundColor[3] }, rect);
+            }
+
+            _application->painter().drawTexTile(_selectTile, rect);
+
+            if (showBorder)
+            {
+                _application->painter().drawRect(Color{ borderColor[0], borderColor[1], borderColor[2], borderColor[3] }, rect);
+            }
+        }
+    }
+
+    // ============================================================================
+
     void ImGuiFormDraw::onInit()
     {
     }
@@ -15,87 +105,96 @@ namespace samples {
     {
         ImGuiIO& io = ImGui::GetIO();
 
-        ImGui::Begin("drawlist");
-
         static bool im_visible = false;
-        if (ImGui::Checkbox("im_paint", &im_visible))
+        ImGui::Begin("drawlist");
         {
-            _plugin->setImDraw(im_visible);
+            if (ImGui::Checkbox("im_paint", &im_visible))
+            {
+                _plugin->setImDraw(im_visible);
+            }
+
+            ImGui::SameLine();
+
+            static bool sdl_visible = false;
+            if (ImGui::Checkbox("sdl_paint", &sdl_visible))
+            {
+                _plugin->setSdlDraw(sdl_visible);
+            }
+
+            ImGui::SameLine();
+
+            static bool paint_visible = false;
+            if (ImGui::Checkbox("base_paint", &paint_visible))
+            {
+                _plugin->setPaintDraw(paint_visible);
+            }
+
+            ImGui::SameLine();
+
+            static bool gfx_visible = false;
+            if (ImGui::Checkbox("gfx_paint", &gfx_visible))
+            {
+                _plugin->setGfxDraw(gfx_visible);
+            }
+
+            if (im_visible)
+            {
+                ImVec2 pos = ImGui::GetWindowPos();
+
+                // 注意ImGUI中的ImU32格式的颜色顺序是ABGR，见ImGui::ColorConvertFloat4ToU32
+
+                ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+                ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+                ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 150, 240, 255), 10);
+                //ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, 0x0000FFFF, 10); // ABGR,  A==0, 绘制不出来
+                ImGui::GetWindowDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
+
+                ImGui::GetWindowDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+                ImGui::GetWindowDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+                ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+                ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 240, 150, 255 }, 20);
+            }
         }
-
-        ImGui::SameLine();
-
-        static bool sdl_visible = false;
-        if (ImGui::Checkbox("sdl_paint", &sdl_visible))
-        {
-            _plugin->setSdlDraw(sdl_visible);
-        }
-
-        ImGui::SameLine();
-
-        static bool paint_visible = false;
-        if (ImGui::Checkbox("base_paint", &paint_visible))
-        {
-            _plugin->setPaintDraw(paint_visible);
-        }
-
-        ImGui::SameLine();
-
-        static bool gfx_visible = false;
-        if (ImGui::Checkbox("gfx_paint", &gfx_visible))
-        {
-            _plugin->setGfxDraw(gfx_visible);
-        }
-
-        ImVec2 pos = ImGui::GetWindowPos();
-
-        // 注意ImGUI中的ImU32格式的颜色顺序是ABGR，见ImGui::ColorConvertFloat4ToU32
-
-        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
-        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 150, 240, 255), 10);
-        //ImGui::GetWindowDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, 0x0000FFFF, 10); // ABGR,  A==0, 绘制不出来
-        ImGui::GetWindowDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255),10, ImDrawFlags_RoundCornersAll, 10);
-
-        ImGui::GetWindowDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
-        ImGui::GetWindowDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
-        ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
-        ImGui::GetWindowDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 240, 150, 255 }, 20);
-
         ImGui::End();
 
         // ------------------------------------------------------------
 
-        pos = ImVec2{ 1900, 200 };
+        if (im_visible)
+        {
+            ImVec2 pos = ImVec2{ 1900, 200 };
 
-        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
-        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 150, 240, 255), 10);
-        ImGui::GetBackgroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
+            ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+            ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+            ImGui::GetBackgroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 150, 240, 255), 10);
+            ImGui::GetBackgroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
 
-        ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
-        ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
-        ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
-        ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 140, 250, 255 }, 20);
+            ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+            ImGui::GetBackgroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+            ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+            ImGui::GetBackgroundDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 140, 250, 255 }, 20);
 
-        // ------------------------------------------------------------
+            // ------------------------------------------------------------
 
-        pos = ImVec2{ 1400, 600 };
+            pos = ImVec2{ 1400, 600 };
 
-        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
-        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
-        ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 250, 255), 10);
-        ImGui::GetForegroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
+            ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 100 }, { pos.x + 300, pos.y + 200 }, ImColor(40, 240, 50, 255));
+            ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 100, pos.y + 210 }, { pos.x + 300, pos.y + 310 }, ImColor(140, 240, 150, 255), 10);
+            ImGui::GetForegroundDrawList()->AddRectFilled({ pos.x + 310, pos.y + 100 }, { pos.x + 510, pos.y + 200 }, ImColor(140, 240, 250, 255), 10);
+            ImGui::GetForegroundDrawList()->AddRect({ pos.x + 310, pos.y + 210 }, { pos.x + 510, pos.y + 310 }, ImColor(40, 240, 50, 255), 10, ImDrawFlags_RoundCornersAll, 10);
 
-        ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
-        ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
-        ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
-        ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 140, 250, 255 }, 20);
+            ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 200, pos.y + 450 }, 80, ImColor{ 240, 40, 50, 255 }, 10);
+            ImGui::GetForegroundDrawList()->AddCircle({ pos.x + 420, pos.y + 450 }, 80, ImColor{ 240, 140, 150, 255 }, 50, 10.0f);
+            ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 200, pos.y + 660 }, 80, ImColor{ 240, 140, 150, 255 }, 20);
+            ImGui::GetForegroundDrawList()->AddCircleFilled({ pos.x + 420, pos.y + 660 }, 80, ImColor{ 240, 140, 250, 255 }, 20);
+        }
     }
+
+    // ============================================================================
 
     void SamplePluginDraw::onInit() 
     {
-        application()->resourceManager().textureManager().loadTexSet("textures/ts_role.xml");
+        auto texturedir = application()->resPath() / "textures";
+        application()->resourceManager().textureManager().loadAllTexSets(texturedir);
 
         initGeometry();
     }
@@ -111,11 +210,13 @@ namespace samples {
     void SamplePluginDraw::onEnable()
     {
         imgui::ImFormManager::inst().showForm<ImGuiFormDraw>("form_draw", application(), this);
+        imgui::ImFormManager::inst().showForm<ImFormTexSet>("form_texset", application(), this);
     }
 
     void SamplePluginDraw::onDisable()
     {
         imgui::ImFormManager::inst().closeForm("form_draw");
+        imgui::ImFormManager::inst().closeForm("form_texset");
     }
 
     void SamplePluginDraw::onUpdate() 
@@ -222,7 +323,6 @@ namespace samples {
                 _vertexData.indices.push_back((x * _xcount + y) * 4 + 3);
             }
         }
-
 
         auto& painter = application()->painter();
 

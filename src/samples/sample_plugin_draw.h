@@ -26,6 +26,32 @@ namespace samples {
     };
 
 
+    class ImFormTexSet : public imgui::ImForm
+    {
+    public:
+        ImFormTexSet() = delete;
+        ImFormTexSet(engine::Application* app, class SamplePluginDraw* plugin)
+            : _application(app), _plugin(plugin) {}
+        ~ImFormTexSet() = default;
+
+    protected:
+        void onInit() override;
+
+        void draw() override;
+
+    private:
+        engine::Application* _application = nullptr;
+        class SamplePluginDraw* _plugin = nullptr;
+
+        std::string _selectTexSet;
+        TexTile* _selectTile = nullptr;
+
+        float _scale = 1.0f;
+
+        std::vector<const char*> _texSets;
+        std::vector<const char*> _texTiles;
+    };
+
 
 
     class SamplePluginDraw final : public engine::Plugin 
