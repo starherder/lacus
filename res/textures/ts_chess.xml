@@ -13,5 +13,6 @@
   </texture>
   <texture file="textures/bot/etc.png" >
     <tile name="chess_bg" rect="3,3,74,74" />
+    <tile name="grass" rect="243,3,74,74" />
   </texture>
 </tilset>

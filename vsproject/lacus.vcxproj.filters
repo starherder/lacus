@@ -82,6 +82,12 @@
     <Filter Include="res\data">
       <UniqueIdentifier>{e9f80ea9-a10d-4317-bdcc-6f4a14454a79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res\data\obj">
+      <UniqueIdentifier>{23b14bbb-a202-4bf1-b7be-b77c031e2b72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\data\skill">
+      <UniqueIdentifier>{ae5b2bac-7b34-4dc2-8ba9-6bf01c37ba5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\engine\application.cpp">
@@ -932,80 +938,104 @@
     <None Include="..\res\lua\main.lua">
       <Filter>res\lua</Filter>
     </None>
-    <None Include="..\res\data\other\spawner_0.json">
-      <Filter>res\data</Filter>
-    </None>
-    <None Include="..\res\data\other\spawner_1.json">
-      <Filter>res\data</Filter>
-    </None>
-    <None Include="..\res\data\other\spawner_2.json">
-      <Filter>res\data</Filter>
-    </None>
     <None Include="..\res\data\item\item_coin.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\item\item_medicine.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\item\item_poison.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_0.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_1.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_2.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_3.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_4.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_5.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_100.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_101.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_102.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_103.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_104.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\role\npc_105.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
-    <None Include="..\res\data\skill\skill_archery.json" />
-    <None Include="..\res\data\skill\skill_combat.json" />
-    <None Include="..\res\data\skill\skill_darkness.json" />
-    <None Include="..\res\data\skill\skill_earthquake.json" />
-    <None Include="..\res\data\skill\skill_lightning.json" />
-    <None Include="..\res\data\skill\skill_poison.json" />
-    <None Include="..\res\data\skill\skill_sprint.json" />
-    <None Include="..\res\data\skill\skill_wave.json" />
-    <None Include="..\res\data\skill\skill_wave_cross.json" />
-    <None Include="..\res\data\skill\skill_wave_range.json" />
-    <None Include="..\res\game_config.json" />
-    <None Include="..\res\system.json" />
+    <None Include="..\res\data\other\spawner_0.json">
+      <Filter>res\data\obj</Filter>
+    </None>
+    <None Include="..\res\data\other\spawner_1.json">
+      <Filter>res\data\obj</Filter>
+    </None>
+    <None Include="..\res\data\other\spawner_2.json">
+      <Filter>res\data\obj</Filter>
+    </None>
     <None Include="..\res\data\other\spawner_3.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\other\spawner_4.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
     </None>
     <None Include="..\res\data\other\spawner_5.json">
-      <Filter>res\data</Filter>
+      <Filter>res\data\obj</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_archery.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_combat.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_darkness.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_earthquake.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_lightning.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_poison.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_sprint.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_wave.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_wave_cross.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\data\skill\skill_wave_range.json">
+      <Filter>res\data\skill</Filter>
+    </None>
+    <None Include="..\res\system.json">
+      <Filter>res</Filter>
+    </None>
+    <None Include="..\res\game_config.json">
+      <Filter>res</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

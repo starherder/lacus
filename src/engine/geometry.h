@@ -105,29 +105,30 @@ inline Rect ToRect(const std::string& s) {
 }
 
 
-
 class Geometry
 {
 public:
-
-// 随便的排序函数，顺序不重要
-template<typename VecType>
-struct Vec2Comparator {
-    bool operator()(const VecType& lval, const VecType& rval) const {
-        if (lval.x == rval.x) {
-            return lval.y < rval.y;
+    // 随便的排序函数，顺序不重要
+    template<typename VecType>
+    struct Vec2Comparator {
+        bool operator()(const VecType& lval, const VecType& rval) const {
+            if (lval.x == rval.x) {
+                return lval.y < rval.y;
+            }
+            else {
+                return lval.x < rval.x;
+            }
         }
-        else {
-            return lval.x < rval.x;
-        }
-    }
-};
+    };
 
-using Vec2fComparator = Vec2Comparator<Vec2>;
-using Vec2iComparator = Vec2Comparator<Vec2i>;
+    using Vec2fComparator = Vec2Comparator<Vec2>;
+    using Vec2iComparator = Vec2Comparator<Vec2i>;
 
 public:
     static std::vector<Vec2i> bresenhamLine(const Vec2i src, const Vec2i& dst);
+
+    // p 绕着 c 点旋转 r 弧度
+    static Vec2 RotatePoint(const Vec2& p, const Vec2 c, float r);
 };
 
 }

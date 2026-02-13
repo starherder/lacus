@@ -41,9 +41,14 @@ public:
     Texture* texture() const { return _texture; }
     Rect rect() const { return _rect; };
 
+    const Vec2& center() { return _center; }
+    void setCenter(const Vec2& center) { _center = center; }
+
 private:
     Texture* _texture = nullptr;
     Rect _rect;
+
+    Vec2 _center = {0.5f, 0.5f}; // [0, 1]
 };
 
 struct TexSet {

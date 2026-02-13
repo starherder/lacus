@@ -155,7 +155,7 @@ namespace engine
 		// TODO: 
 	}
 
-	void GfxPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float round, const Color& color)
+	void GfxPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float radian, float round, const Color& color)
 	{
 		drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
 	}

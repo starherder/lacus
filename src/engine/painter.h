@@ -44,7 +44,7 @@ namespace engine
 		void drawLine(const Color& color, const Vec2& beginPos, const Vec2& endPos, float thickness = 1) override;
 		void drawLines(const Color& color, const Vec2* points, int point_count, bool closed, float thickness = 1.0f) override;
 
-		void drawTexTile(TexTile* pTexTile, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
+		void drawTexTile(TexTile* pTexTile, const Rect& dst, float radian = 0.0f, float round = 0.0f, const Color& color = Color::White) override;
 
 		void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
 		void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;

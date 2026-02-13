@@ -12,9 +12,16 @@
 
 namespace engine
 {
-	static ImColor toImColor(const Color& color)
+	static inline ImColor toImColor(const Color& color)
 	{
 		return ImColor{ color.r, color.g, color.b, color.a };
+	}
+
+	static inline ImVec2 RotateImVec2(const ImVec2& p, const ImVec2& c, float r)
+	{
+		Vec2 pp { p.x, p.y }, cc { c.x, c.y };
+		Vec2 res = Geometry::RotatePoint(pp, cc, r);
+		return ImVec2{res.x, res.y};
 	}
 
 	ImPainter::ImPainter(Application& app) : IPainter(app)
@@ -121,10 +128,61 @@ namespace engine
 		ImGui::GetBackgroundDrawList()->AddText(font->imFont, (float)font->size, {pos.x, pos.y}, toImColor(color), text.c_str(), (const char*)0, wrap_width);
 	}
 
-	void ImPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float round, const Color& color)
+	void ImPainter::drawTexTile(TexTile* pTexTile, const Rect& dst, float radian, float round, const Color& color)
 	{
 		fail_return(pTexTile);
-		drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
+
+		if(radian > 0)
+		{
+			drawRotateTexTile(pTexTile, dst, radian, color);
+		}
+		else
+		{
+			drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
+		}
+	}
+
+	void ImPainter::drawRotateTexTile(TexTile* pTexTile, const Rect& rect, float radian, const Color& color)
+	{
+		fail_return(pTexTile);
+
+		Vec2 dstpos = rect.pos();
+		Vec2 dstsz = rect.size();
+		Vec2 dstc = dstpos + dstsz * pTexTile->center();
+		ImVec2 center = { dstc.x, dstc.y };
+
+		ImVec2 p[4];
+		p[0] = {dstpos.x,           dstpos.y};
+		p[1] = {dstpos.x + dstsz.x, dstpos.y};
+		p[2] = {dstpos.x + dstsz.x, dstpos.y + dstsz.y};
+		p[3] = {dstpos.x,           dstpos.y + dstsz.y};
+
+		ImVec2 pp[4];
+		for (int i = 0; i < 4; i++)
+		{
+			pp[i] = RotateImVec2(p[i], center, radian);
+		}
+
+		Vec2 srcpos = pTexTile->rect().pos();
+		Vec2 srcsz = pTexTile->rect().size();
+		Vec2 texSize = pTexTile->texture()->size();
+		Rect uvrect = { srcpos / texSize, srcsz / texSize };
+
+		auto uvlt = uvrect.pos();
+		auto uvrb = uvrect.pos() + uvrect.size();
+
+		ImVec2 uv[4];
+		uv[0] = { uvlt.x, uvlt.y };
+		uv[1] = { uvrb.x, uvlt.y };
+		uv[2] = { uvrb.x, uvrb.y };
+		uv[3] = { uvlt.x, uvrb.y };
+
+		// 绘制
+		ImGui::GetBackgroundDrawList()->AddImageQuad(
+			(void*)pTexTile->texture()->texture(),
+			pp[0], pp[1], pp[2], pp[3], uv[0], uv[1], uv[2], uv[3],
+			toImColor(color)
+		);
 	}
 
 	void ImPainter::drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round, const Color& color)

@@ -47,6 +47,8 @@ namespace samples {
         TexTile* _selectTile = nullptr;
 
         float _scale = 1.0f;
+        float _rotate = 0.0f;
+        float _round = 0.0f;
 
         std::vector<const char*> _texSets;
         std::vector<const char*> _texTiles;

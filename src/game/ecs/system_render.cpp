@@ -142,7 +142,7 @@ void RenderSystem::drawSkillEffect()
 
         Rect dstrect = { trans.position, disp.texture->rect().size()};
 
-        painter.drawTexTile(disp.texture, dstrect, disp.color);
+        painter.drawTexTile(disp.texture, dstrect, 0.0f, 0.0f, disp.color);
     }
 }
 
@@ -267,7 +267,7 @@ void RenderSystem::drawObjects()
 
             if (display.ground_texture != nullptr)
             { 
-                painter.drawTexTile(display.ground_texture, dstrect, corner, ground_color);
+                painter.drawTexTile(display.ground_texture, dstrect, 0.0f, corner, ground_color);
             }
             else
             {
@@ -285,7 +285,7 @@ void RenderSystem::drawObjects()
             auto fore_color = getForeColor(pCompComm->side);
             if (display.texture != nullptr)
             {
-                painter.drawTexTile(display.texture, dstrect, corner, fore_color);
+                painter.drawTexTile(display.texture, dstrect, 0.0f, corner, fore_color);
             }
             else
             {

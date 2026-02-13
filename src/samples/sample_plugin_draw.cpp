@@ -7,6 +7,10 @@
 
 namespace samples {
 
+    static ImColor toImColor(const Color& color)
+    {
+        return ImColor{ color.r, color.g, color.b, color.a };
+    }
     void ImFormTexSet::onInit()
     {
         auto& textureSets = _application->resourceManager().textureManager().getTexSets();
@@ -21,61 +25,77 @@ namespace samples {
         int PickerFlag = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel;
 
         ImGui::Begin("textures");
+            static bool showBorder = false;
+            ImGui::Checkbox("border##texset", &showBorder);
 
-        static bool showBorder = false;
-        ImGui::Checkbox("border##texset", &showBorder);
+            ImGui::SameLine();
 
-        ImGui::SameLine();
-
-        static float borderColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };;
-        ImGui::ColorEdit4("##texset_border_color", (float*)&borderColor, PickerFlag);
+            static float borderColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };;
+            ImGui::ColorEdit4("##texset_border_color", borderColor, PickerFlag);
   
-        static bool showGround = false;
-        ImGui::Checkbox("ground##texset", &showGround);
+            static bool showGround = false;
+            ImGui::Checkbox("ground##texset", &showGround);
 
-        ImGui::SameLine();
+            ImGui::SameLine();
 
-        static float groundColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
-        ImGui::ColorEdit4("##texset_ground_color", (float*)&groundColor, PickerFlag);
+            static float groundColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+            ImGui::ColorEdit4("##texset_ground_color", groundColor, PickerFlag);
 
-        static int texset_select_index = 0;
-        if (ImGui::ListBox("tex_sets##texset_list", &texset_select_index, _texSets.data(), (int)_texSets.size()))
-        {
-            _selectTexSet = _texSets[texset_select_index];
-
-            auto& textureSets = _application->resourceManager().textureManager().getTexSets();
-            auto it = textureSets.find(_selectTexSet);
-            if (it == textureSets.end())
+            static int texset_select_index = 0;
+            if (ImGui::ListBox("tex_sets##texset_list", &texset_select_index, _texSets.data(), (int)_texSets.size()))
             {
-                return;
+                _selectTexSet = _texSets[texset_select_index];
+
+                auto& textureSets = _application->resourceManager().textureManager().getTexSets();
+                auto it = textureSets.find(_selectTexSet);
+                if (it == textureSets.end())
+                {
+                    return;
+                }
+
+                _texTiles.clear();
+
+                auto& texset = it->second;
+                for (auto& [name, textile] : texset.tileset)
+                {
+                    _texTiles.push_back(name.c_str());
+                }
             }
 
-            _texTiles.clear();
-
-            auto& texset = it->second;
-            for (auto& [name, textile] : texset.tileset)
+            static int textile_select_index = 0;
+            if (ImGui::ListBox("tex_tiles##textile_list", &textile_select_index, _texTiles.data(), (int)_texTiles.size()))
             {
-                _texTiles.push_back(name.c_str());
+                auto selectTile = _texTiles[textile_select_index];
+                _selectTile = _application->resourceManager().textureManager().getTexTile(selectTile, _selectTexSet);
             }
-        }
 
-        static int textile_select_index = 0;
-        if (ImGui::ListBox("tex_tiles##textile_list", &textile_select_index, _texTiles.data(), (int)_texTiles.size()))
-        {
-            auto selectTile = _texTiles[textile_select_index];
-            _selectTile = _application->resourceManager().textureManager().getTexTile(selectTile, _selectTexSet);
-        }
+            // color
+            static float blend_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            ImGui::ColorEdit4("blend_color##texset_ground_color", blend_color);
 
-        if (ImGui::Button("reset##texset")) 
-        {
-            _scale = 1.0f;
-        }
+            // scale
+            if (ImGui::Button("reset##texset_scale")) {
+                _scale = 1.0f;
+            }
+            ImGui::SameLine();
+            ImGui::SliderFloat("scale##texset", &_scale, 0.1f, 10.0f);
 
-        ImGui::SameLine();
+            // rotate
+            if (ImGui::Button("reset##texset_rotate")) {
+                _rotate = 0.0f;
+            }
+            ImGui::SameLine();
+            ImGui::SliderFloat("rotate##texset", &_rotate, 0.0f, PI * 2);
 
-        ImGui::SliderFloat("scale##texset", &_scale, 0.1f, 10.0f);
-
+            // round
+            if (ImGui::Button("reset##texset_round")) {
+                _round = 0.0f;
+            }
+            ImGui::SameLine();
+            ImGui::SliderFloat("round##texset", &_round, 0.0f, 100.0f);
         ImGui::End();
+
+        auto& painter = _application->painter();
 
         if (_selectTile)
         {
@@ -83,19 +103,23 @@ namespace samples {
 
             if (showGround)
             {
-                _application->painter().fillRect(Color{ groundColor[0], groundColor[1], groundColor[2], groundColor[3] }, rect);
+                Color gc { groundColor[0], groundColor[1], groundColor[2], groundColor[3] };
+                painter.fillRect(gc, rect);
             }
 
-            _application->painter().drawTexTile(_selectTile, rect);
+            Color bc { blend_color[0], blend_color[1], blend_color[2], blend_color[3] };
+            painter.drawTexTile(_selectTile, rect, _rotate, _round, bc);
 
             if (showBorder)
             {
-                _application->painter().drawRect(Color{ borderColor[0], borderColor[1], borderColor[2], borderColor[3] }, rect);
+                Color bc { borderColor[0], borderColor[1], borderColor[2], borderColor[3] };
+                painter.drawRect(bc, rect);
             }
         }
     }
 
     // ============================================================================
+
 
     void ImGuiFormDraw::onInit()
     {

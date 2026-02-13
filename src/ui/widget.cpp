@@ -237,7 +237,7 @@ void Widget::draw()
 
     if(state.texture)
     {
-        painter.drawTexTile(state.texture, bksize, borderRound(), state.ground_color);
+        painter.drawTexTile(state.texture, bksize, 0.0f, borderRound(), state.ground_color);
     }
     else
     {

@@ -126,7 +126,7 @@ namespace engine
 		_application.renderer().drawText(text, font, pos, color);
 	}
 
-	void Painter::drawTexTile(TexTile* pTexTile, const Rect& dst, float round, const Color& color)
+	void Painter::drawTexTile(TexTile* pTexTile, const Rect& dst, float radian, float round, const Color& color)
 	{
 		drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
 	}

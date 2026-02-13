@@ -125,6 +125,16 @@ std::vector<Vec2i> Geometry::bresenhamLine(const Vec2i src, const Vec2i& dst)
 }
 
 
+Vec2 Geometry::RotatePoint(const Vec2& p, const Vec2 c, float r)
+{
+    Vec2 d = p - c;
+    float cos_a = cosf(r);
+    float sin_a = sinf(r);
+
+    return Vec2(d.x * cos_a - d.y * sin_a, d.x * sin_a + d.y * cos_a) + c;
+}
+
+
 
 
 
