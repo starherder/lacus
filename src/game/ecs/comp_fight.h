@@ -72,6 +72,7 @@ namespace game
 	{
 		TexTile* texture = nullptr;
 		float orient = 0.0f;
+		Vec2 offset;
 		Color color = Color::White;
 	};
 
@@ -81,7 +82,7 @@ namespace game
 		float speed = 100.0f;
 
 		std::string texture;
-		float texorient = 0.0f;
+		float texangle = 0.0f;
 
 		std::string particle;
 		std::string tween;

@@ -39,6 +39,8 @@ namespace samples {
 
         void draw() override;
 
+        void testRotate();
+
     private:
         engine::Application* _application = nullptr;
         class SamplePluginDraw* _plugin = nullptr;

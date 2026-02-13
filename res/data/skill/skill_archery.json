@@ -28,9 +28,10 @@
 
   "projectile": {
     "name": "",
-    "particle": "trail",
+    "#particle": "trail",
     "texture": "skill:arrow",
-    "texorient" :  90,
+    "texangle": -90,
+    "texscale": "0.5,0.5",
     "speed": 1000,
     "tween": "cubicIn"
   }

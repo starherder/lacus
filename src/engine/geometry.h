@@ -1,5 +1,10 @@
 ﻿#include <SDL3/SDL.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>  // 包含 π 常量
+#include <glm/gtx/vector_angle.hpp>  // 角度计算扩展
+
 #include "utility/string_util.h"
 
 #define PI		3.1415926535898f

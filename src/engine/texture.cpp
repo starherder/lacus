@@ -50,8 +50,8 @@ namespace engine {
             return nullptr;
         }
 
-        if (!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST)) {
-            LogWarn("set texture scale mode to nearest failed");
+        if (!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_LINEAR)) {
+            LogWarn("set texture scale mode to linear failed");
             return nullptr;
         }
 
@@ -185,7 +185,14 @@ namespace engine {
                     auto tilename = tilenode->Attribute("name");
                     auto rect = ToRect(tilenode->Attribute("rect"));
 
-                    texset.tileset[tilename] = TexTile{texture, rect};
+                    auto centerAttr = tilenode->Attribute("center");
+                    if (strlen(centerAttr) == 0) centerAttr = "0.5,0.5";
+                    auto center = ToVec2(centerAttr);
+
+                    TexTile textile{texture, rect};
+                    textile.setCenter(center);
+
+                    texset.tileset[tilename] = textile;
                     tilenode = tilenode->NextSiblingElement("tile");
                 }
             }
@@ -193,14 +200,8 @@ namespace engine {
             texnode = texnode->NextSiblingElement("texture");
         }
 
-        auto [it, res] =_texSetMap.insert({texsetName, texset});
-        if (!res) 
-        {
-            LogError("add tileset({}) to map failed.", cfgpath.string());
-            nullptr; 
-        }
-
-        return &(it->second);
+        _texSetMap[texsetName] = texset;
+        return &(_texSetMap[texsetName]);
     }
 
     TexTile* TextureManager::getCfgTexTile(const std::string& cfgTexTile)

@@ -140,9 +140,10 @@ void RenderSystem::drawSkillEffect()
         auto& trans = projectile_view.get<CompTransform>(ent);
         auto& disp = projectile_view.get<CompProjectileDisplay>(ent);
 
-        Rect dstrect = { trans.position, disp.texture->rect().size()};
+        Rect dstrect = { trans.position+disp.offset, disp.texture->rect().size()};
+        dstrect = camera.projectRect(dstrect);
 
-        painter.drawTexTile(disp.texture, dstrect, 0.0f, 0.0f, disp.color);
+        painter.drawTexTile(disp.texture, dstrect, disp.orient, 0.0f, disp.color);
     }
 }
 

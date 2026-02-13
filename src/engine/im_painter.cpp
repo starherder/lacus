@@ -7,8 +7,13 @@
 #include "imgui/backends/imgui_impl_sdl3.h"
 #include "imgui/backends/imgui_impl_sdlrenderer3.h"
 
-
+#define float_epsilon  0.00001
 #define fail_return(p) if(!p) {return;}
+
+inline bool float_euqal(float lv, float rv) 
+{ 
+	return lv > rv - float_epsilon && lv < rv + float_epsilon;
+}
 
 namespace engine
 {
@@ -132,13 +137,13 @@ namespace engine
 	{
 		fail_return(pTexTile);
 
-		if(radian > 0)
+		if(float_euqal(radian, 0.0f))
 		{
-			drawRotateTexTile(pTexTile, dst, radian, color);
+			drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
 		}
 		else
 		{
-			drawTexture(pTexTile->texture(), pTexTile->rect(), dst, round, color);
+			drawRotateTexTile(pTexTile, dst, radian, color);
 		}
 	}
 

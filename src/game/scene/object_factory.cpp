@@ -656,7 +656,7 @@ namespace game
 			compProjectile.tween = projectJs.value("tween", "linear");
 			compProjectile.particle = projectJs.value("particle", "");
 			compProjectile.texture = projectJs.value("texture", "");
-			compProjectile.texorient = projectJs.value("texorient", 90.0f);
+			compProjectile.texangle = projectJs.value("texangle", 0.0f);
 
 			_context->registry().emplace<CompProjectileCfg>(skill, compProjectile);
 		}
@@ -750,6 +750,8 @@ namespace game
 	{
 		assert(_context);
 
+		float angle = glm::angle(source, target);
+
 		auto bullet = _context->registry().create();
 
 		CompNameId compName;
@@ -759,11 +761,15 @@ namespace game
 		_context->registry().emplace<CompNameId>(bullet, compName);
 
 		CompTransform compTrans;
+		compTrans.position = source;
 		_context->registry().emplace<CompTransform>(bullet, compTrans);
+
+		Vec2 dir = glm::normalize(target - source);
 
 		CompProjectileDisplay compDisplay;
 		compDisplay.texture = _context->textureMgr().getCfgTexTile(cfg.texture);
-		compDisplay.orient = -cfg.texorient;
+		compDisplay.orient = glm::orientedAngle(Vec2{1.0f, 0.0f}, dir) + glm::radians(cfg.texangle);
+		compDisplay.offset = - compDisplay.texture->center() * compDisplay.texture->rect().size();
 		_context->registry().emplace<CompProjectileDisplay>(bullet, compDisplay);
 
 		createParticleOnObject(bullet, cfg.particle);

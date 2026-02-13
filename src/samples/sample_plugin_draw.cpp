@@ -85,7 +85,7 @@ namespace samples {
                 _rotate = 0.0f;
             }
             ImGui::SameLine();
-            ImGui::SliderFloat("rotate##texset", &_rotate, 0.0f, PI * 2);
+            ImGui::SliderFloat("rotate##texset", &_rotate, -PI * 2, PI * 2);
 
             // round
             if (ImGui::Button("reset##texset_round")) {
@@ -93,6 +93,15 @@ namespace samples {
             }
             ImGui::SameLine();
             ImGui::SliderFloat("round##texset", &_round, 0.0f, 100.0f);
+
+            static bool showRotate = false;
+            ImGui::Checkbox("test_rotate", &showRotate);
+            
+            if (showRotate) 
+            {
+                testRotate();
+            }
+
         ImGui::End();
 
         auto& painter = _application->painter();
@@ -115,6 +124,40 @@ namespace samples {
                 Color bc { borderColor[0], borderColor[1], borderColor[2], borderColor[3] };
                 painter.drawRect(bc, rect);
             }
+        }
+    }
+
+
+    void ImFormTexSet::testRotate()
+    {
+        auto& painter = _application->painter();
+
+        if(_selectTile)
+        {
+            Vec2 srcPos = { 700, 600 };
+            //Vec2 dstPos = { 500, 500 };
+
+            static float rot = 0.0f;
+            rot += 1.0f * _application->frameTicker().deltaSeconds();
+            rot = rot > PI * 2 ? 0 : rot;
+
+            Vec2 dstPos = Geometry::RotatePoint({ 500, 500 }, srcPos, rot);
+
+            Vec2 diff = dstPos - srcPos;
+
+            Vec2 srcSize = _selectTile->rect().size();
+
+            Vec2 offset = srcSize + _selectTile->center();
+            Vec2 fixPos = srcPos - offset;
+
+            float radian = glm::orientedAngle(Vec2{1.0f, 0.0f}, glm::normalize(diff))  + glm::radians(-90.0f);
+            float degree = glm::degrees(radian);
+
+            painter.drawTexTile(_selectTile, { fixPos, srcSize }, radian, 0.0f, Color::White);
+
+            painter.fillCircle(Color::Red, srcPos, 10);
+            painter.fillCircle(Color::Green, dstPos, 10);
+            painter.drawLine(Color::Yellow, srcPos, dstPos);
         }
     }
 

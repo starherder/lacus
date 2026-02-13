@@ -1,7 +1,7 @@
 <tilset name="skill">
     <texture file="textures/bot/etc.png" >
-      <tile name="arrow" rect="0,388,16,120" />
-      <tile name="gold_arrow" rect="24,385,24,125" />
-      <tile name="fire_arrow" rect="54,350,30,160" />
+      <tile name="arrow" rect="0,388,16,120" center="0.5,1.0"/>
+      <tile name="gold_arrow" rect="24,385,24,125" center="0.5,1.0"/>
+      <tile name="fire_arrow" rect="54,350,30,160" center="0.5,1.0"/>
     </texture>
 </tilset>
