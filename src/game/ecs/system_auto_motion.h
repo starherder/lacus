@@ -6,11 +6,11 @@
 
 namespace game {
 
-    class MotionSystem : public EcsSystem
+    class AutoMotionSystem : public EcsSystem
     {
     public:
-        MotionSystem(GameContext& context);
-        ~MotionSystem();
+        AutoMotionSystem(GameContext& context);
+        ~AutoMotionSystem();
 
         void update(float deltaTime);
 

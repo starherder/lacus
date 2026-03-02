@@ -91,11 +91,18 @@ void ImFormDebug::draw()
 
         ImGui::SameLine();
 
-        static bool camera_ctrl = false;
-        if (ImGui::Checkbox("camera_control", &camera_ctrl))
+        static bool camera_drag = false;
+        if (ImGui::Checkbox("camera_drag", &camera_drag))
         {
-            _context->scene().camera().setDragMode(camera_ctrl);
+            _context->scene().camera().setDragMode(camera_drag);
         }
+
+        static bool camera_move = false;
+        if (ImGui::Checkbox("camera_move", &camera_move))
+        {
+            _context->scene().camera().setMoveByKey(camera_move);
+        }
+
         static bool camera_limit = false;
         if (ImGui::Checkbox("camera_limit", &camera_limit))
         {

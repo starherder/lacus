@@ -6,6 +6,12 @@
 
 namespace game 
 {
+	struct EvtStepMove {
+		entt::entity actor;
+		Vec2i dir;
+		uint8_t grid;
+	};
+
 	struct EvtRoleStopMotion {
 		entt::entity actor;
 	};

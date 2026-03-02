@@ -3,21 +3,10 @@
 #include "bevtree/bevtree.h"
 #include "utility/translator.h"
 
+#include "game/ecs/system_utils.h"
+
 #include "game/scene/game_scene.h"
 #include "game/scene/object_factory.h"
-
-#include "game/ecs/system_motion.h"
-#include "game/ecs/system_render.h"
-#include "game/ecs/system_bevtree.h"
-#include "game/ecs/system_skill.h"
-#include "game/ecs/system_pickup.h"
-#include "game/ecs/system_dead.h"
-#include "game/ecs/system_selection.h"
-#include "game/ecs/system_fight.h"
-#include "game/ecs/system_buff.h"
-#include "game/ecs/system_spawner.h"
-#include "game/ecs/system_numerical.h"
-#include "game/ecs/system_float_text.h"
 
 #include "game/ui/form_loading.h"
 #include "game/ui/form_start.h"

@@ -364,12 +364,12 @@ void RenderSystem::drawMotionDebug()
     auto& painter = _context.painter();
     auto& camera = _context.camera();
 
-    auto ent_view = _context.registry().view<CompTransform, CompMotion>();
+    auto ent_view = _context.registry().view<CompTransform, CompAutoMotion>();
     for (auto& ent : ent_view)
     {
         auto& transform = ent_view.get<CompTransform>(ent);
-        auto& motion = ent_view.get<CompMotion>(ent);
-   
+        auto& motion = ent_view.get<CompAutoMotion>(ent);
+        
         if (motion.state == MotionState::Moving && motion.path.size() > 0)
         {
             auto lstPos = camera.projectPoint(transform.position);
@@ -430,7 +430,6 @@ void RenderSystem::drawSceneDebug()
     }
 
     renderer.setDrawColor({ 0, 0, 255, 255 });
-
 }
 
 

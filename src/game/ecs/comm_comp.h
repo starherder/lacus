@@ -121,21 +121,27 @@ namespace game
         CoordMode coord_mode = CoordMode::WorldSpace;
     };
 
-    struct CompMotion
+    struct CompMoveCfg
     {
         float speed = 150.0f;
         float swim_speed = 150.0f;
+    };
 
+    struct CompAutoMotion
+    {
         MotionState state = MotionState::Resting;
-        
-        MotionMode mode = MotionMode::Run;
 
         Vec2i targetGrid;
-
         tweeny::tween<float, float> tween;
 
         std::vector<Vec2i> path;
         std::vector<Vec2i>::reverse_iterator path_iterator;
+    };
+
+    struct CompStepMotion
+    {
+        MotionState state = MotionState::Resting;
+        tweeny::tween<float, float> tween;
     };
 
     struct CompSelection

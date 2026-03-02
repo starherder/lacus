@@ -131,6 +131,8 @@ namespace game {
         void onMouseRightClick(const Vec2& pos);
         void onMouseMotion(const Vec2& pos, const Vec2& offset);
 
+        void onKeyDown(KeyCode key);
+
         void onHoverObject(entt::entity obj);
         void onLeaveObject(entt::entity obj);
 
@@ -140,6 +142,9 @@ namespace game {
         bool dragSelectActorInProgress(const Vec2& pos);
         bool dropSelectActor(const Vec2& pos);
         bool canDropToPos(const Vec2& pos);
+
+        void onMoveStep(const Vec2i& dir);
+        void onSkipMove();
 
     private:
         tilemap::TileMap _tileMap;

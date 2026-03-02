@@ -31,25 +31,28 @@ namespace game
     {
         //LogInfo("GameCamera::onKeyDown, keyCode = {}", (int)keyCode);
 
-        switch (keyCode)
+        if (_moveByKey)
         {
-        case SDLK_LEFT: {
-            moveCamera({ -1, 0 });
-        }break;
-        case SDLK_RIGHT: {
-            moveCamera({ 1, 0 });
-        }break;
-        case SDLK_UP: {
-            moveCamera({ 0, -1 });
-        }break;
-        case SDLK_DOWN: {
-            moveCamera({ 0, 1 });
-        }break;
-        case SDLK_SPACE: {
-            moveHome();
-        }break;
-        default: {
-        }break;
+            switch (keyCode)
+            {
+            case SDLK_LEFT: {
+                moveCamera({ -1, 0 });
+            }break;
+            case SDLK_RIGHT: {
+                moveCamera({ 1, 0 });
+            }break;
+            case SDLK_UP: {
+                moveCamera({ 0, -1 });
+            }break;
+            case SDLK_DOWN: {
+                moveCamera({ 0, 1 });
+            }break;
+            case SDLK_SPACE: {
+                moveHome();
+            }break;
+            default: {
+            }break;
+            }
         }
     }
 

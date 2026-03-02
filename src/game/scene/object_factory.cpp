@@ -423,10 +423,10 @@ namespace game
 		{
 			auto& motionJs = json["motion"];
 			
-			CompMotion motion;
-			motion.speed = motionJs.value("speed", 0.0f);
-			motion.swim_speed = motionJs.value("swim_speed", 0.0f);
-			_context->registry().emplace<CompMotion>(role, motion);
+			CompMoveCfg move;
+			move.speed = motionJs.value("speed", 0.0f);
+			move.swim_speed = motionJs.value("swim_speed", 0.0f);
+			_context->registry().emplace<CompMoveCfg>(role, move);
 		}
 
 		CompUnderAttack underATK;

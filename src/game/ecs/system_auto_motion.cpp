@@ -1,4 +1,4 @@
-﻿#include "system_motion.h"
+﻿#include "system_auto_motion.h"
 #include "comm_event.h"
 #include "tweeny/tweeny.h"
 #include "game/game_config.h"
@@ -6,21 +6,21 @@
 
 namespace game 
 {
-    DeclareEcsSystem(MotionSystem, EcsPriority::Middle);
+    DeclareEcsSystem(AutoMotionSystem, EcsPriority::Middle);
 
 
-    MotionSystem::MotionSystem(GameContext& context) : EcsSystem(context)
+    AutoMotionSystem::AutoMotionSystem(GameContext& context) : EcsSystem(context)
     {
-        context.dispatcher().sink<EvtMoveToGrid>().connect<&MotionSystem::onEventMoveToGrid>(this);
-        context.dispatcher().sink<EvtMotionSwitchState>().connect<&MotionSystem::onEventMotionStateSwtich>(this);
-        context.dispatcher().sink<EvtRoleStopMotion>().connect<&MotionSystem::onEventStopMotion>(this);
+        context.dispatcher().sink<EvtMoveToGrid>().connect<&AutoMotionSystem::onEventMoveToGrid>(this);
+        context.dispatcher().sink<EvtMotionSwitchState>().connect<&AutoMotionSystem::onEventMotionStateSwtich>(this);
+        context.dispatcher().sink<EvtRoleStopMotion>().connect<&AutoMotionSystem::onEventStopMotion>(this);
     }
 
-    MotionSystem::~MotionSystem()
+    AutoMotionSystem::~AutoMotionSystem()
     {
     }
 
-    void MotionSystem::update(float deltaTime)
+    void AutoMotionSystem::update(float deltaTime)
     {
         deltaTime = std::clamp(deltaTime, 0.0f, 1.0f);
 
@@ -32,14 +32,16 @@ namespace game
             compTween.tween.step(delta);
         }
 
-        auto ent_view = _context.registry().view<CompMotion>();
+        auto ent_view = _context.registry().view<CompAutoMotion>();
         for (auto& ent : ent_view)
         {
             auto pdead = _context.registry().try_get<CompDead>(ent);
-            if (pdead) { continue; }
+            if (pdead) 
+            { 
+                continue; 
+            }
 
-            auto& motion = ent_view.get<CompMotion>(ent);
-
+            auto& motion = ent_view.get<CompAutoMotion>(ent);
             if (motion.state != MotionState::Moving)
             {
                 continue;
@@ -55,7 +57,7 @@ namespace game
         }
     }
 
-    bool MotionSystem::motionStart(entt::entity id, const Vec2i& dstGrid, bool findPath)
+    bool AutoMotionSystem::motionStart(entt::entity id, const Vec2i& dstGrid, bool findPath)
     {
         if (!_context.registry().valid(id))
         {
@@ -63,8 +65,11 @@ namespace game
             return false;
         }
 
-        auto& motion = _context.registry().get<CompMotion>(id);
+        _context.registry().emplace_or_replace<CompAutoMotion>(id, CompAutoMotion{});
+
+        auto& move = _context.registry().get<CompMoveCfg>(id);
         auto& transform = _context.registry().get<CompTransform>(id);
+        auto& motion = _context.registry().get<CompAutoMotion>(id);
 
         const auto& srcPos = transform.position;
         const auto& dstPos = _context.scene().getGridCenterPos(dstGrid);
@@ -79,7 +84,7 @@ namespace game
         if (findPath)
         {
             // path find
-            auto path = _context.findPath(srcGrid, dstGrid, motion.swim_speed > 0.0f);
+            auto path = _context.findPath(srcGrid, dstGrid, move.swim_speed > 0.0f);
             if (!path)
             {
                 LogInfo("path find failed.");
@@ -107,9 +112,10 @@ namespace game
         return true;
     }
 
-    bool MotionSystem::tweenNextGrid(entt::entity entid)
+    bool AutoMotionSystem::tweenNextGrid(entt::entity entid)
     {
-        auto& motion = _context.registry().get<CompMotion>(entid);
+        auto& move = _context.registry().get<CompMoveCfg>(entid);
+        auto& motion = _context.registry().get<CompAutoMotion>(entid);
         auto& transform = _context.registry().get<CompTransform>(entid);
 
         motion.path_iterator++;
@@ -128,20 +134,24 @@ namespace game
         const auto& curGrid = _context.scene().getGridFromPos(curPos);
         const auto& nextPos = _context.scene().getGridCenterPos(nextGrid);
 
-        std::string mode = _context.gameConfig().motion.walk;
+        auto curType = _context.scene().getGridWalkType(curGrid);
+        auto nextType = _context.scene().getGridWalkType(nextGrid);
 
-        auto curtype = _context.scene().getGridWalkType(curGrid);
-        auto nexttype = _context.scene().getGridWalkType(nextGrid);
-        if(curtype == (int)tilemap::WalkType::Swim && nexttype == (int)tilemap::WalkType::Swim)
+        float moveSpeed = move.speed;
+        std::string tweenMode = _context.gameConfig().motion.walk;
+
+        if(curType == (int)tilemap::WalkType::Swim 
+            && nextType == (int)tilemap::WalkType::Swim)
         {
-            mode = _context.gameConfig().motion.swim;
+            moveSpeed = move.swim_speed;
+            tweenMode = _context.gameConfig().motion.swim;
         }
 
-        int ticks = (glm::distance(curPos, nextPos) / motion.speed) * 1000;
+        int ticks = (glm::distance(curPos, nextPos) / moveSpeed) * 1000;
         motion.tween = tweeny::from(curPos.x, curPos.y)
             .to(nextPos.x, nextPos.y)
             .during(ticks)
-            .via(mode.c_str())
+            .via(tweenMode.c_str())
             .onStep([entid, this](auto& t, float x, float y)
                 {
                     checkEntityGrid(entid, Vec2{x, y});
@@ -153,11 +163,11 @@ namespace game
         return true;
     }
 
-    bool MotionSystem::motionStop(entt::entity id)
+    bool AutoMotionSystem::motionStop(entt::entity id)
     {
         if (_context.registry().valid(id))
         {
-            auto motion = _context.registry().try_get<CompMotion>(id);
+            auto motion = _context.registry().try_get<CompAutoMotion>(id);
             if (motion)
             {
                 motion->state = MotionState::Resting;
@@ -170,18 +180,18 @@ namespace game
         return true;
     }
 
-    bool MotionSystem::motionPause(entt::entity id, bool pause)
+    bool AutoMotionSystem::motionPause(entt::entity id, bool pause)
     {
         if (_context.registry().valid(id))
         {
-            auto& motion = _context.registry().get<CompMotion>(id);
+            auto& motion = _context.registry().get<CompAutoMotion>(id);
             motion.state = pause ? MotionState::Paused : MotionState::Moving;
         }
 
         return true;
     }
 
-    void MotionSystem::onEventMoveToGrid(const EvtMoveToGrid& e)
+    void AutoMotionSystem::onEventMoveToGrid(const EvtMoveToGrid& e)
     {
         bool res = motionStart(e.actor, e.dest, e.findPath);
         if (!res) 
@@ -190,21 +200,21 @@ namespace game
         }
     }
     
-    void MotionSystem::onEventStopMotion(const EvtRoleStopMotion& e)
+    void AutoMotionSystem::onEventStopMotion(const EvtRoleStopMotion& e)
     {
         motionStop(e.actor);
     }
 
-    void MotionSystem::onEventMotionStateSwtich(const EvtMotionSwitchState& e)
+    void AutoMotionSystem::onEventMotionStateSwtich(const EvtMotionSwitchState& e)
     {
         if (_context.registry().valid(e.actor))
         {
-            auto& motion = _context.registry().get<CompMotion>(e.actor);
+            auto& motion = _context.registry().get<CompAutoMotion>(e.actor);
             motion.state = e.new_state;
         }
     }
 
-    void MotionSystem::checkEntityGrid(entt::entity ent, const Vec2& curpos)
+    void AutoMotionSystem::checkEntityGrid(entt::entity ent, const Vec2& curpos)
     {
         auto& transform = _context.registry().get<CompTransform>(ent);
 

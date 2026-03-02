@@ -21,6 +21,8 @@ public:
 
     void setDragMode(bool dragable) { _dragMode = dragable; }
 
+    void setMoveByKey(bool moveByKey) { _moveByKey = moveByKey; }
+
 private:
     void onKeyDown(KeyCode keyCode);
 
@@ -44,6 +46,7 @@ private:
     Application* _application = nullptr;
     
     bool _dragMode = false;
+    bool _moveByKey = false;
 
     float _speed = 200.0f;
     Vec2 _vec = {0.0f, 0.0f};

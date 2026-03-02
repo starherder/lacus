@@ -30,6 +30,8 @@ GameScene::GameScene(GameContext& context)
     _context.eventDispatcher().onMouseLeftClicked.connect(this, &GameScene::onMouseLeftClick, -1);
     _context.eventDispatcher().onMouseRightClicked.connect(this, &GameScene::onMouseRightClick, -1);
 
+    _context.eventDispatcher().onKeyDown.connect(this, &GameScene::onKeyDown, -1);
+
     _context.eventDispatcher().onMouseMotion.connect(this, &GameScene::onMouseMotion, -1);
 }
 
@@ -615,6 +617,39 @@ void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
     _hoverEntity = hoverEntity;
 }
 
+void GameScene::onKeyDown(KeyCode key)
+{
+    switch (key)
+    {
+    case SDLK_W: return onMoveStep({0, -1});
+    case SDLK_S: return onMoveStep({0, 1});
+    case SDLK_A: return onMoveStep({-1, 0});
+    case SDLK_D: return onMoveStep({1, 0});
+    case SDLK_SPACE: return onSkipMove();
+    default: return;
+    }
+}
+
+void GameScene::onMoveStep(const Vec2i& dir)
+{
+    if (!_context.registry().valid(_selectEntity)) 
+    { 
+        return; 
+    }
+
+    if (!_context.registry().try_get<CompMoveCfg>(_selectEntity))
+    {
+        return;
+    }
+
+    uint8_t moveGrids = 1;
+    _context.dispatcher().trigger(EvtStepMove{ _selectEntity, dir, moveGrids });
+}
+
+void GameScene::onSkipMove()
+{
+}
+
 void GameScene::onHoverObject(entt::entity obj)
 {
     LogInfo("hover object: {}", obj);
@@ -640,7 +675,7 @@ void GameScene::moveSelectActor(const Vec2& pos)
         bevComp->bevtree->stop();
     }
 
-    if (_context.registry().try_get<CompMotion>(_selectEntity))
+    if (_context.registry().try_get<CompMoveCfg>(_selectEntity))
     {
         auto gridPos = getGridFromPos(pos);
         _context.dispatcher().trigger(EvtMoveToGrid{ _selectEntity, gridPos, true });

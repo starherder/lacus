@@ -32,7 +32,7 @@ namespace game {
 		}
 
 		auto ptrans = _context->registry().try_get<CompTransform>(_actor);
-		auto pmotion = _context->registry().try_get<CompMotion>(_actor);
+		auto pmotion = _context->registry().try_get<CompAutoMotion>(_actor);
 		if(!ptrans || !pmotion)
 		{
 			LogError("actor {} Have NO transform nor motion.", (uint32_t)_actor);
@@ -126,7 +126,7 @@ namespace game {
 
 		_finished = false;
 
-		auto& motion = _context->registry().get<CompMotion>(_actor);
+		auto& motion = _context->registry().get<CompAutoMotion>(_actor);
 		_context->dispatcher().trigger(EvtMoveToGrid{ _actor, motion.targetGrid, false });
 		_context->dispatcher().sink<EvtMotionStop>().connect<&BevNode_PatrolMove::onMotionStop>(this);
 	}
@@ -234,7 +234,7 @@ namespace game {
 		}
 
 		auto ptrans = _context->registry().try_get<CompTransform>(_actor);
-		auto pmotion = _context->registry().try_get<CompMotion>(_actor);
+		auto pmotion = _context->registry().try_get<CompAutoMotion>(_actor);
 		if(!ptrans || !pmotion)
 		{
 			return Status::Failure;
