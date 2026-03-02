@@ -20,6 +20,8 @@ namespace game
         bool tweenNextGrid(entt::entity entid, const Vec2i& dir);
 
         Vec2i getNextGrid(const Vec2i& curGrid, const Vec2i& dir);
+
+        void onMotionStop(entt::entity entid);
     };
 
 

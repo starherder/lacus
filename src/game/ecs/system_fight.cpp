@@ -10,6 +10,7 @@ namespace game
     {
         _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
         _context.dispatcher().sink<EvtExecPropFuncs>().connect<&FightSystem::applyAllFuncs>(this);
+        _context.dispatcher().sink<EvtGameTurnStart>().connect<&FightSystem::onGameTurnStart>(this);
     }
 
     FightSystem::~FightSystem()
@@ -172,5 +173,77 @@ namespace game
         ft.type = FloatTextType::HP;
         ft.val = (int)hp;
         _context.dispatcher().trigger(ft);
+    }
+
+    void FightSystem::onGameTurnStart(const EvtGameTurnStart& e)
+    {
+        if (e.turn_type != GameTurnType::Fighting)
+        {
+            return;
+        }
+
+        autoFight(e.actor);
+    }
+
+    void FightSystem::fightFinish(entt::entity actor)
+    {
+        auto& turn = _context.registry().get<CompGameTurn>(actor);
+        turn.running = false;
+    }
+
+    void FightSystem::autoFight(entt::entity actor)
+    {
+        auto& trans = _context.registry().get<CompTransform>(actor);
+        auto& rolePos = trans.position;
+
+        auto pComm = _context.registry().try_get<CompComm>(actor);
+        if (!pComm)
+        {
+            LogError("role {} No CompComm found.", actor);
+            return;
+        }
+
+        bool enemyFound = false;
+
+        auto& skills = _context.registry().get<CompSkills>(actor);
+        for (auto& skill_id : skills.skills)
+        {
+            auto& compName = _context.registry().get<CompNameId>(skill_id);
+            auto& compSkill = _context.registry().get<CompSkillComm>(skill_id);
+
+            if (compSkill.type != SkillType::Invalid)
+            {
+                // 需要目标，寻找目标
+                auto dis = compSkill.distance;
+                auto& objects = _context.scene().getObjectsInCircle(rolePos, dis);
+                for (auto& [dis, target] : objects)
+                {
+                    if (_context.registry().valid(target) == false || target == actor)
+                    {
+                        continue;
+                    }
+
+                    auto pdead = _context.registry().try_get<CompDead>(target);
+                    if (pdead)
+                    {
+                        continue;
+                    }
+
+                    auto pCompComm = _context.registry().try_get<CompComm>(target);
+                    if (pCompComm && pCompComm->type == ObjectType::Npc && pCompComm->side != pComm->side)
+                    {
+                        enemyFound = true;
+                        _context.dispatcher().trigger(EvtMotionSwitchState{ actor, MotionState::Paused });
+                        _context.dispatcher().trigger(EvtCastSkillToObject{ actor, target, skill_id });
+                    }
+                }
+            }
+        }
+
+        //if (!enemyFound)
+        {
+            fightFinish(actor);
+        }
+
     }
 }

@@ -43,6 +43,7 @@ namespace game
 
         void onSkillEvent(const EvtExecSkillEvent& e);
 
+        void onSkillFinish(entt::entity srcid, entt::entity skill, bool success);
 
         tweeny::tween<float, float> makeSkillSpellTween(const EvtCastSkillToObject& e);
 

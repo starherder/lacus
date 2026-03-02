@@ -8,6 +8,7 @@
 
 #include "game/game_config.h"
 #include "game/game_script.h"
+#include "game/logic/game_play.h"
 
 #include "game/ui/ui_logic_events.h"
 
@@ -82,6 +83,8 @@ namespace game
 		std::string _currentScene;
 
 		std::unique_ptr<GameScene> _scene = nullptr;
+		
+		std::unique_ptr<GamePlay> _gamePlay = nullptr;
 
 		GameContext& _context;
 

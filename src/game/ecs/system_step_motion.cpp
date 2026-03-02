@@ -1,5 +1,6 @@
 #include "system_step_motion.h"
 #include "game/game_config.h"
+#include "game/logic/game_play.h"
 
 namespace game
 {
@@ -8,11 +9,12 @@ namespace game
     StepMotionSystem::StepMotionSystem(GameContext& context) : EcsSystem(context)
     {
         context.dispatcher().sink<EvtStepMove>().connect<&StepMotionSystem::onEventStepMove>(this);
+
+        //context.dispatcher().sink<EvtGameTurnStart>().connect<&StepMotionSystem::onEventGameTurnStart>(this);
     }
     
     StepMotionSystem::~StepMotionSystem()
     {
-
     }
 
     void StepMotionSystem::update(float delta)
@@ -39,6 +41,11 @@ namespace game
 
     void StepMotionSystem::onEventStepMove(const EvtStepMove& e)
     {
+        if (_context.gamePlay().currentTurnType() != GameTurnType::Moving)
+        {
+            return;
+        }
+
         auto pMotion = _context.registry().try_get<CompStepMotion>(e.actor);
         if (!pMotion)
         {
@@ -93,8 +100,7 @@ namespace game
         {
             if (t.isFinished()) 
             {
-                auto& motion = _context.registry().get<CompStepMotion>(entid);
-                motion.state = MotionState::Resting;
+                onMotionStop(entid);
                 return true;
             }
 
@@ -103,6 +109,15 @@ namespace game
         });
 
         return true;
+    }
+
+    void StepMotionSystem::onMotionStop(entt::entity entid)
+    {
+        auto& motion = _context.registry().get<CompStepMotion>(entid);
+        motion.state = MotionState::Resting;
+
+        auto& turn = _context.registry().get<CompGameTurn>(entid);
+        turn.running = false;
     }
 
 }

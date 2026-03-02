@@ -15,6 +15,10 @@ namespace game
         void update(float delta) override;
 
     private:
+        void autoFight(entt::entity actor);
+        void fightFinish(entt::entity actor);
+        void onGameTurnStart(const EvtGameTurnStart& e);
+
         void onRoleUnderAttack(const EvtRoleOnAttack& e);
 
         void applyFuncToTarget(SystemUtils::FuncFactor fac, entt::entity source, entt::entity target);

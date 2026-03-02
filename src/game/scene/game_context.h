@@ -16,6 +16,7 @@ namespace game {
 	class GameScene;
 	class GameCamera;
 	class GameData;
+	class GamePlay;
 	class ObjectFactory;
 
 	class GameContext final
@@ -59,6 +60,9 @@ namespace game {
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }
 
+		GamePlay& gamePlay();
+		void setGamePlay(GamePlay* gamePlay);
+
 		GameScript& gameScript() { return *_gameScript; }
 		void setGameScript(GameScript* script) { _gameScript = script; }
 
@@ -89,6 +93,8 @@ namespace game {
 		GameConfig* _gameConfig = nullptr;
 
 		GameScript* _gameScript = nullptr;
+
+		GamePlay* _gamePlay = nullptr;
 
 		PathFinder _pathFinder;
 

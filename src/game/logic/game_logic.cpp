@@ -35,6 +35,9 @@ namespace game
 
         _gameScript.load(_context.resPath() / _gameConfig.script.entry);
 
+        _gamePlay = std::make_unique<GamePlay>(_context);
+        _context.setGamePlay(_gamePlay.get());
+
         GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
 
         initEscSystem();
@@ -134,6 +137,8 @@ namespace game
         }
 
         _scene->onUpdate(delta);
+
+        _gamePlay->onUpdate(delta);
 
         checkGameState();
 

@@ -6,6 +6,12 @@
 
 namespace game 
 {
+	struct EvtGameTurnStart
+	{
+		entt::entity actor;
+		GameTurnType turn_type;
+	};
+
 	struct EvtStepMove {
 		entt::entity actor;
 		Vec2i dir;
@@ -87,6 +93,12 @@ namespace game
 		entt::entity source;
 		entt::entity target;
 		entt::entity skill;
+	};
+
+	struct EvtCastSkillOver {
+		entt::entity source;
+		entt::entity skill;
+		bool success = false;
 	};
 
 	struct EvtCastSkillToPos {

@@ -2,6 +2,8 @@
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/object_factory.h"
+#include "game/logic/game_play.h"
+
 
 namespace game 
 {
@@ -35,6 +37,16 @@ namespace game
 	GameData& GameContext::dataCenter()
 	{
 		return _currentScene->dataCenter(); 
+	}
+
+	GamePlay& GameContext::gamePlay()
+	{
+		return *_gamePlay;
+	}
+
+	void GameContext::setGamePlay(GamePlay* gamePlay)
+	{
+		_gamePlay = gamePlay;
 	}
 
 	GameContext::OptPathList GameContext::findPath(const Vec2i& srcGrid, const Vec2i& dstGrid, bool can_swim)

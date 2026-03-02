@@ -836,4 +836,9 @@ namespace game
 		e.pos = pCompTrans->position;
 		_context.dispatcher().trigger(e);
 	}
+
+	void SkillSystem::onSkillFinish(entt::entity srcid, entt::entity skill, bool success)
+	{
+		_context.dispatcher().trigger(EvtCastSkillOver{ srcid, skill, success });
+	}
 }
