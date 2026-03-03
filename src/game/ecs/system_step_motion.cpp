@@ -11,6 +11,7 @@ namespace game
         context.dispatcher().sink<EvtStepMove>().connect<&StepMotionSystem::onEventStepMove>(this);
 
         //context.dispatcher().sink<EvtGameTurnStart>().connect<&StepMotionSystem::onEventGameTurnStart>(this);
+        context.dispatcher().sink<EvtGameTurnFinish>().connect<&StepMotionSystem::onEventGameTurnFinish>(this);
     }
     
     StepMotionSystem::~StepMotionSystem()
@@ -60,6 +61,16 @@ namespace game
 
         motion.state = MotionState::Moving;
         tweenNextGrid(e.actor, e.dir);
+    }
+
+    void StepMotionSystem::onEventGameTurnStart(const EvtGameTurnFinish& e)
+    {
+
+    }
+
+    void StepMotionSystem::onEventGameTurnFinish(const EvtGameTurnFinish& e)
+    {
+        onMotionStop(e.actor);
     }
 
     Vec2i StepMotionSystem::getNextGrid(const Vec2i& curGrid, const Vec2i& dir)
@@ -113,8 +124,16 @@ namespace game
 
     void StepMotionSystem::onMotionStop(entt::entity entid)
     {
-        auto& motion = _context.registry().get<CompStepMotion>(entid);
-        motion.state = MotionState::Resting;
+        if (!_context.registry().valid(entid))
+        {
+            return;
+        }
+
+        auto pmotion = _context.registry().try_get<CompStepMotion>(entid);
+        if (pmotion)
+        {
+            pmotion->state = MotionState::Resting;
+        }
 
         auto& turn = _context.registry().get<CompGameTurn>(entid);
         turn.running = false;

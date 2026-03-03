@@ -648,6 +648,7 @@ void GameScene::onMoveStep(const Vec2i& dir)
 
 void GameScene::onSkipMove()
 {
+    _context.dispatcher().trigger(EvtGameTurnFinish{_selectEntity, GameTurnType::Moving});
 }
 
 void GameScene::onHoverObject(entt::entity obj)

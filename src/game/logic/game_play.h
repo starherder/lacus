@@ -22,6 +22,9 @@ namespace game
 	private:
 		void switchGameTurn();
 
+		bool isFightTurnOver();
+		bool isMotionTurnOver();
+
 	private:
 		GameContext& _context;
 

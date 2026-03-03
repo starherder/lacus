@@ -10,26 +10,50 @@ namespace game
 
 	}
 
-	void GamePlay::onUpdate(float deltaTime)
+	bool GamePlay::isFightTurnOver()
 	{
-
-		// 有问题啊： 没有任何操作的时候，会不停的反转
-
-		bool allTurnOver = true;
-
 		auto entviews = _context.registry().view<CompGameTurn>();
 		for (auto& actor : entviews)
 		{
 			auto& gameTurn = entviews.get<CompGameTurn>(actor);
-			
 			if (gameTurn.running)
 			{
-				allTurnOver = false;
-				break;
+				return false;
 			}
 		}
 
-		if (allTurnOver)
+		return true;
+	}
+
+	bool GamePlay::isMotionTurnOver()
+	{
+		auto entviews = _context.registry().view<CompGameTurn>();
+		for (auto& actor : entviews)
+		{
+			auto& gameTurn = entviews.get<CompGameTurn>(actor);
+			if (!gameTurn.running)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	void GamePlay::onUpdate(float deltaTime)
+	{
+		bool isTurnOver = false;
+
+		if (_turnType == GameTurnType::Fighting)
+		{
+			isTurnOver = isFightTurnOver();
+		}
+		else
+		{
+			isTurnOver = isMotionTurnOver();
+		}
+
+		if (isTurnOver)
 		{
 			switchGameTurn();
 		}

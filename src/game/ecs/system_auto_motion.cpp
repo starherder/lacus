@@ -209,8 +209,11 @@ namespace game
     {
         if (_context.registry().valid(e.actor))
         {
-            auto& motion = _context.registry().get<CompAutoMotion>(e.actor);
-            motion.state = e.new_state;
+            auto pmotion = _context.registry().try_get<CompAutoMotion>(e.actor);
+            if(pmotion) 
+            {
+                pmotion->state = e.new_state;
+            }
         }
     }
 

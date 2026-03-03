@@ -4,7 +4,7 @@
     <vlayout name="vlay_bg">
         <widget />
 
-        <label text="loading..." text_color="#3388FFFF" font_name="fonts/Vonwaon.ttf" font_size="40"/>
+        <label text="loading..." text_color="#DDDDAAFF" font_name="fonts/Vonwaon.ttf" font_size="40"/>
         
         <hlayout name="hlay_title" size="0,30" >
             <widget size="100,0" />

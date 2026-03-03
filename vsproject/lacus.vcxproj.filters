@@ -271,7 +271,7 @@
     <ClCompile Include="..\src\game\ecs\system_bevtree.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\ecs\system_motion.cpp">
+    <ClCompile Include="..\src\game\ecs\system_auto_motion.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
     <ClCompile Include="..\src\game\ecs\system_render.cpp">
@@ -477,6 +477,12 @@
     </ClCompile>
     <ClCompile Include="..\src\samples\sample_plugin_quadtree.cpp">
       <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\ecs\system_step_motion.cpp">
+      <Filter>game\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\logic\game_play.cpp">
+      <Filter>game\logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -717,7 +723,7 @@
     <ClInclude Include="..\src\game\ecs\system_bevtree.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\game\ecs\system_motion.h">
+    <ClInclude Include="..\src\game\ecs\system_auto_motion.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_render.h">
@@ -926,6 +932,12 @@
     </ClInclude>
     <ClInclude Include="..\src\samples\sample_plugin_quadtree.h">
       <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_step_motion.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\logic\game_play.h">
+      <Filter>game\logic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

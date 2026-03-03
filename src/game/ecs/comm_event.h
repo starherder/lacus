@@ -12,6 +12,12 @@ namespace game
 		GameTurnType turn_type;
 	};
 
+	struct EvtGameTurnFinish
+	{
+		entt::entity actor;
+		GameTurnType turn_type;
+	};
+
 	struct EvtStepMove {
 		entt::entity actor;
 		Vec2i dir;

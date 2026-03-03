@@ -11,6 +11,7 @@ namespace game
         _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
         _context.dispatcher().sink<EvtExecPropFuncs>().connect<&FightSystem::applyAllFuncs>(this);
         _context.dispatcher().sink<EvtGameTurnStart>().connect<&FightSystem::onGameTurnStart>(this);
+        _context.dispatcher().sink<EvtGameTurnFinish>().connect<&FightSystem::onGameTurnFinish>(this);
     }
 
     FightSystem::~FightSystem()
@@ -183,6 +184,11 @@ namespace game
         }
 
         autoFight(e.actor);
+    }
+
+    void FightSystem::onGameTurnFinish(const EvtGameTurnFinish& e)
+    {
+
     }
 
     void FightSystem::fightFinish(entt::entity actor)

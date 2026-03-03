@@ -27,7 +27,8 @@ void ImFormDebug::init(GameContext* context)
     _context = context;
 
     auto& particles = particle::ParticleManager::inst().GetAllParticleConfigs();
-    for (auto& [name, file] : particles) {
+    for (auto& [name, file] : particles) 
+    {
         _particleNames.push_back(name.c_str());
     }
 
@@ -39,7 +40,8 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
     if (_debugMode == DebugMode::PutObject)
     {
         auto scenePos = _context->camera().screenToWorld(pos);
-        auto ent = _context->scene().createObjectInScene(_selectCfgId, scenePos, _campSide);
+        scenePos = _context->scene().normalToGridPos(scenePos);
+        _context->scene().createObjectInScene(_selectCfgId, scenePos, _campSide);
     }
 }
 

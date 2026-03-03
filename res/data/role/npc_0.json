@@ -21,7 +21,7 @@
   },
 
   "behavior": {
-    "bevtree": "npc_patrol"
+    "#bevtree": "npc_patrol"
   },
 
   "display": {
@@ -36,7 +36,7 @@
   },
 
   "base_prop": {
-    "level" : 1,
+    "level" : 100,
     "roll" : 10,
     "str": 80,
     "cst": 80,

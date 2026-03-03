@@ -17,7 +17,9 @@ namespace game
     private:
         void autoFight(entt::entity actor);
         void fightFinish(entt::entity actor);
+
         void onGameTurnStart(const EvtGameTurnStart& e);
+        void onGameTurnFinish(const EvtGameTurnFinish& e);
 
         void onRoleUnderAttack(const EvtRoleOnAttack& e);
 
