@@ -2,7 +2,7 @@
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/object_factory.h"
-#include "game/logic/game_play.h"
+#include "game/logic/game_play_tile_battle.h"
 
 
 namespace game 

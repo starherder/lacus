@@ -144,12 +144,6 @@ namespace game
         tweeny::tween<float, float> tween;
     };
 
-    enum class GameTurnType 
-    {
-        Fighting,
-        Moving,
-    };
-
     struct CompGameTurn
     {
         bool running = false;

@@ -18,6 +18,7 @@
 #include "game/ui/form_result.h"
 #include "game/ui/form_chess_tip.h"
 
+#include "game/logic/game_play_tile_battle.h"
 
 namespace game
 {
@@ -35,7 +36,7 @@ namespace game
 
         _gameScript.load(_context.resPath() / _gameConfig.script.entry);
 
-        _gamePlay = std::make_unique<GamePlay>(_context);
+        _gamePlay = std::make_unique<GamePlayTileBattle>(_context);
         _context.setGamePlay(_gamePlay.get());
 
         GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
@@ -138,7 +139,7 @@ namespace game
 
         _scene->onUpdate(delta);
 
-        _gamePlay->onUpdate(delta);
+        _gamePlay->update(delta);
 
         checkGameState();
 

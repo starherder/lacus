@@ -10,7 +10,7 @@ namespace game
     {
     public:
         FightSystem(GameContext& context);
-        ~FightSystem();
+        ~FightSystem() override;
 
         void update(float delta) override;
 
@@ -18,9 +18,8 @@ namespace game
         void autoFight(entt::entity actor);
         void fightFinish(entt::entity actor);
 
-        void onGameTurnStart(const EvtGameTurnStart& e);
-        void onGameTurnFinish(const EvtGameTurnFinish& e);
-
+        void onRoleAutoAttack(const EvtRoleAutoAttack& e);
+        
         void onRoleUnderAttack(const EvtRoleOnAttack& e);
 
         void applyFuncToTarget(SystemUtils::FuncFactor fac, entt::entity source, entt::entity target);

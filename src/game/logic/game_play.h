@@ -1,33 +1,45 @@
 #pragma once
 
 #include "game/scene/game_context.h"
-#include "game/ecs/comm_comp.h"
 
 namespace game
 {
-
-	class GamePlay final
+	class GamePlay
 	{
 	public:
 		GamePlay() = delete;
 		GamePlay(const GamePlay&) = delete;
 		GamePlay(GamePlay&&) = delete;
 
-		GamePlay(GameContext& context);
+		GamePlay(GameContext& context) : _context(context) {}
+		virtual ~GamePlay() = default;
 
-		GameTurnType currentTurnType() { return _turnType; }
+		GameContext& context() { return _context; }
 
-		void onUpdate(float deltaTime);
+		void setSelectEntity(entt::entity ent) { _selectEntity = ent; }
+		entt::entity selectEntity() { return _selectEntity; }
 
-	private:
-		void switchGameTurn();
+	public:
+		virtual void update(float deltaTime) = 0;
 
-		bool isFightTurnOver();
-		bool isMotionTurnOver();
-
-	private:
+		virtual bool isTileBattle() { return false; }
+		virtual bool isAutoChess() { return false; }
+		
+		virtual bool isMoveStage() { return true; }
+		virtual bool isFightStage() { return true; } 
+		
+		virtual void onFightStart(entt::entity actor) {}
+		virtual void onFightFinish(entt::entity actor) {}
+		
+		virtual void onMotionStart(entt::entity actor) {}
+		virtual void onMotionFinish(entt::entity actor) {}
+		
+		virtual void onKeyDown(KeyCode key) {}
+		
+	private:	
 		GameContext& _context;
 
-		GameTurnType _turnType = GameTurnType::Fighting;
+		entt::entity _selectEntity = entt::null;
 	};
+	
 }

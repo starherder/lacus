@@ -9,9 +9,6 @@ namespace game
     StepMotionSystem::StepMotionSystem(GameContext& context) : EcsSystem(context)
     {
         context.dispatcher().sink<EvtStepMove>().connect<&StepMotionSystem::onEventStepMove>(this);
-
-        //context.dispatcher().sink<EvtGameTurnStart>().connect<&StepMotionSystem::onEventGameTurnStart>(this);
-        context.dispatcher().sink<EvtGameTurnFinish>().connect<&StepMotionSystem::onEventGameTurnFinish>(this);
     }
     
     StepMotionSystem::~StepMotionSystem()
@@ -42,7 +39,7 @@ namespace game
 
     void StepMotionSystem::onEventStepMove(const EvtStepMove& e)
     {
-        if (_context.gamePlay().currentTurnType() != GameTurnType::Moving)
+        if (_context.gamePlay().isMoveStage())
         {
             return;
         }
@@ -61,16 +58,6 @@ namespace game
 
         motion.state = MotionState::Moving;
         tweenNextGrid(e.actor, e.dir);
-    }
-
-    void StepMotionSystem::onEventGameTurnStart(const EvtGameTurnFinish& e)
-    {
-
-    }
-
-    void StepMotionSystem::onEventGameTurnFinish(const EvtGameTurnFinish& e)
-    {
-        onMotionStop(e.actor);
     }
 
     Vec2i StepMotionSystem::getNextGrid(const Vec2i& curGrid, const Vec2i& dir)
@@ -128,15 +115,14 @@ namespace game
         {
             return;
         }
-
+        
         auto pmotion = _context.registry().try_get<CompStepMotion>(entid);
         if (pmotion)
         {
             pmotion->state = MotionState::Resting;
         }
 
-        auto& turn = _context.registry().get<CompGameTurn>(entid);
-        turn.running = false;
+        _context.gamePlay().onMotionFinish(entid);
     }
 
 }

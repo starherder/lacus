@@ -8,6 +8,7 @@
 
 #include "game/game_config.h"
 #include "game/game_script.h"
+
 #include "game/logic/game_play.h"
 
 #include "game/ui/ui_logic_events.h"

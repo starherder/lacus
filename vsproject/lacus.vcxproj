@@ -225,7 +225,7 @@
     <ClCompile Include="..\src\game\game_plugin.cpp" />
     <ClCompile Include="..\src\game\game_script.cpp" />
     <ClCompile Include="..\src\game\logic\game_logic.cpp" />
-    <ClCompile Include="..\src\game\logic\game_play.cpp" />
+    <ClCompile Include="..\src\game\logic\game_play_tile_battle.cpp" />
     <ClCompile Include="..\src\game\scene\game_data.cpp" />
     <ClCompile Include="..\src\game\scene\object_factory.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
@@ -364,6 +364,7 @@
     <ClInclude Include="..\src\game\game_script.h" />
     <ClInclude Include="..\src\game\logic\game_logic.h" />
     <ClInclude Include="..\src\game\logic\game_play.h" />
+    <ClInclude Include="..\src\game\logic\game_play_tile_battle.h" />
     <ClInclude Include="..\src\game\scene\game_data.h" />
     <ClInclude Include="..\src\game\scene\object_factory.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />

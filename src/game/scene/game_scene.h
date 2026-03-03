@@ -143,9 +143,6 @@ namespace game {
         bool dropSelectActor(const Vec2& pos);
         bool canDropToPos(const Vec2& pos);
 
-        void onMoveStep(const Vec2i& dir);
-        void onSkipMove();
-
     private:
         tilemap::TileMap _tileMap;
 

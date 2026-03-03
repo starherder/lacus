@@ -10,7 +10,7 @@ namespace game
     {
     public:
         StepMotionSystem(GameContext& context);
-        ~StepMotionSystem();
+        ~StepMotionSystem() override;
 
         void update(float delta) override;
         
@@ -22,9 +22,6 @@ namespace game
         Vec2i getNextGrid(const Vec2i& curGrid, const Vec2i& dir);
 
         void onMotionStop(entt::entity entid);
-
-        void onEventGameTurnStart(const EvtGameTurnFinish& e);
-        void onEventGameTurnFinish(const EvtGameTurnFinish& e);
     };
 
 

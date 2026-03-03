@@ -6,18 +6,6 @@
 
 namespace game 
 {
-	struct EvtGameTurnStart
-	{
-		entt::entity actor;
-		GameTurnType turn_type;
-	};
-
-	struct EvtGameTurnFinish
-	{
-		entt::entity actor;
-		GameTurnType turn_type;
-	};
-
 	struct EvtStepMove {
 		entt::entity actor;
 		Vec2i dir;
@@ -124,6 +112,10 @@ namespace game
 		std::string cfgid;
 	};
 
+	struct EvtRoleAutoAttack {
+		entt::entity actor;
+	};
+	
 	struct EvtRoleOnAttack {
 		entt::entity source;
 		entt::entity target;

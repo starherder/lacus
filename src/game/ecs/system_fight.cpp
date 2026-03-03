@@ -1,5 +1,7 @@
 #include "system_fight.h"
 
+#include "game/logic/game_play.h"
+
 
 namespace game
 {
@@ -10,8 +12,8 @@ namespace game
     {
         _context.dispatcher().sink<EvtRoleOnAttack>().connect<&FightSystem::onRoleUnderAttack>(this);
         _context.dispatcher().sink<EvtExecPropFuncs>().connect<&FightSystem::applyAllFuncs>(this);
-        _context.dispatcher().sink<EvtGameTurnStart>().connect<&FightSystem::onGameTurnStart>(this);
-        _context.dispatcher().sink<EvtGameTurnFinish>().connect<&FightSystem::onGameTurnFinish>(this);
+
+        _context.dispatcher().sink<EvtRoleAutoAttack>().connect<&FightSystem::onRoleAutoAttack>(this);
     }
 
     FightSystem::~FightSystem()
@@ -22,6 +24,11 @@ namespace game
     {
     }
 
+    void FightSystem::onRoleAutoAttack(const EvtRoleAutoAttack& e)
+    {
+        autoFight(e.actor);
+    }
+    
     void FightSystem::onRoleUnderAttack(const EvtRoleOnAttack& e)
     {
         auto compName = _context.registry().get<CompNameId>(e.skill);
@@ -112,7 +119,7 @@ namespace game
     {
         if(hp < 0.0f)
         {
-            // TODO: ÉËº¦¹«Ê½
+            // TODO: ï¿½Ëºï¿½ï¿½ï¿½Ê½
             return  hp;
         } 
 
@@ -176,29 +183,18 @@ namespace game
         _context.dispatcher().trigger(ft);
     }
 
-    void FightSystem::onGameTurnStart(const EvtGameTurnStart& e)
-    {
-        if (e.turn_type != GameTurnType::Fighting)
-        {
-            return;
-        }
-
-        autoFight(e.actor);
-    }
-
-    void FightSystem::onGameTurnFinish(const EvtGameTurnFinish& e)
-    {
-
-    }
-
     void FightSystem::fightFinish(entt::entity actor)
     {
-        auto& turn = _context.registry().get<CompGameTurn>(actor);
-        turn.running = false;
+        _context.gamePlay().onFightFinish(actor);
     }
 
     void FightSystem::autoFight(entt::entity actor)
     {
+        if (!_context.registry().valid(actor))
+        {
+            return;
+        }
+        
         auto& trans = _context.registry().get<CompTransform>(actor);
         auto& rolePos = trans.position;
 
@@ -219,7 +215,7 @@ namespace game
 
             if (compSkill.type != SkillType::Invalid)
             {
-                // ÐèÒªÄ¿±ê£¬Ñ°ÕÒÄ¿±ê
+                // ï¿½ï¿½ÒªÄ¿ï¿½ê£¬Ñ°ï¿½ï¿½Ä¿ï¿½ï¿½
                 auto dis = compSkill.distance;
                 auto& objects = _context.scene().getObjectsInCircle(rolePos, dis);
                 for (auto& [dis, target] : objects)

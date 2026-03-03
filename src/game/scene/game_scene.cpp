@@ -1,5 +1,6 @@
 ﻿#include "game_scene.h"
 #include "game/game_config.h"
+#include "game/logic/game_play_tile_battle.h"
 
 namespace game 
 {
@@ -431,7 +432,9 @@ void GameScene::onRoleSelect(const EvtObjectSelection& e)
 
     on_select_object(e.object);
 
+    _context.gamePlay().setSelectEntity(e.object);
 }
+    
 void GameScene::onRoleUnselect(const EvtObjectUnselect& e)
 {
     auto bevComp = _context.registry().try_get<CompBehavior>(e.object);
@@ -441,6 +444,8 @@ void GameScene::onRoleUnselect(const EvtObjectUnselect& e)
     }
 
     on_unselect_object(e.object);
+    
+    _context.gamePlay().setSelectEntity(entt::null);
 }
 
 void GameScene::onRoleMotionStop(const EvtMotionStop& e)
@@ -619,38 +624,9 @@ void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
 
 void GameScene::onKeyDown(KeyCode key)
 {
-    switch (key)
-    {
-    case SDLK_W: return onMoveStep({0, -1});
-    case SDLK_S: return onMoveStep({0, 1});
-    case SDLK_A: return onMoveStep({-1, 0});
-    case SDLK_D: return onMoveStep({1, 0});
-    case SDLK_SPACE: return onSkipMove();
-    default: return;
-    }
+    _context.gamePlay().onKeyDown(key);
 }
-
-void GameScene::onMoveStep(const Vec2i& dir)
-{
-    if (!_context.registry().valid(_selectEntity)) 
-    { 
-        return; 
-    }
-
-    if (!_context.registry().try_get<CompMoveCfg>(_selectEntity))
-    {
-        return;
-    }
-
-    uint8_t moveGrids = 1;
-    _context.dispatcher().trigger(EvtStepMove{ _selectEntity, dir, moveGrids });
-}
-
-void GameScene::onSkipMove()
-{
-    _context.dispatcher().trigger(EvtGameTurnFinish{_selectEntity, GameTurnType::Moving});
-}
-
+    
 void GameScene::onHoverObject(entt::entity obj)
 {
     LogInfo("hover object: {}", obj);
