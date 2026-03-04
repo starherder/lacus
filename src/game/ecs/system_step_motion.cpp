@@ -39,11 +39,6 @@ namespace game
 
     void StepMotionSystem::onEventStepMove(const EvtStepMove& e)
     {
-        if (_context.gamePlay().isMoveStage())
-        {
-            return;
-        }
-
         auto pMotion = _context.registry().try_get<CompStepMotion>(e.actor);
         if (!pMotion)
         {

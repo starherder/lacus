@@ -237,6 +237,8 @@ namespace game
                         enemyFound = true;
                         _context.dispatcher().trigger(EvtMotionSwitchState{ actor, MotionState::Paused });
                         _context.dispatcher().trigger(EvtCastSkillToObject{ actor, target, skill_id });
+
+                        LogInfo("autoFight: {} cast skill {}({}) to {}", actor, compName.name, skill_id, target);
                     }
                 }
             }

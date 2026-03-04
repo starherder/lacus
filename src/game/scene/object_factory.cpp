@@ -400,8 +400,6 @@ namespace game
 			return role;
 		}
 
-		_context->registry().emplace<CompGameTurn>(role, CompGameTurn{});
-
 		if (json.contains("patrol"))
 		{
 			auto& patrolJs = json["patrol"];

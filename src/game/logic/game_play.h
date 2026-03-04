@@ -27,6 +27,9 @@ namespace game
 		
 		virtual bool isMoveStage() { return true; }
 		virtual bool isFightStage() { return true; } 
+
+		virtual void onActorCreate(entt::entity actor) {}
+		virtual void onActorDestroy(entt::entity actor) {}
 		
 		virtual void onFightStart(entt::entity actor) {}
 		virtual void onFightFinish(entt::entity actor) {}

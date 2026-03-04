@@ -10,7 +10,6 @@ namespace game
 	
 	void GamePlayTileBattle::onKeyDown(KeyCode key)
 	{
-		
 		switch (key)
 		{
 		case SDLK_W: return onMoveStep({0, -1});
@@ -24,6 +23,11 @@ namespace game
 	
 	void GamePlayTileBattle::onMoveStep(const Vec2i& dir)
 	{
+		if (!isMoveStage())
+		{
+			return;
+		}
+		
 		if (!context().registry().valid(selectEntity())) 
 		{ 
 			return; 
@@ -127,11 +131,20 @@ namespace game
 
 			if (_turnType == GameTurnType::Fighting)
 			{
-				startAutoFightFlow();
+				startAutoFightFlow(actor);
 			}
 		}
 	}
 
+	void GamePlayTileBattle::onActorCreate(entt::entity actor)
+	{
+		context().registry().emplace<CompGameTurn>(actor, CompGameTurn{ false });
+	}
+	
+	void GamePlayTileBattle::onActorDestroy(entt::entity actor)
+	{
+	}
+	
 	void GamePlayTileBattle::onFightStart(entt::entity actor)
 	{
 	}
@@ -152,9 +165,9 @@ namespace game
 		turn.running = false;
 	}
 
-	void GamePlayTileBattle::startAutoFightFlow()
+	void GamePlayTileBattle::startAutoFightFlow(entt::entity actor)
 	{
-		context().dispatcher().trigger(EvtRoleAutoAttack{ selectEntity() });		
+		context().dispatcher().trigger(EvtRoleAutoAttack{ actor });
 	}
 	
 }

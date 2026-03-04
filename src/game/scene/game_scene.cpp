@@ -362,6 +362,8 @@ entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2
         }
     }
 
+    _context.gamePlay().onActorCreate(ent);
+
     _sceneObjects.insert(ent);
     return ent;
 }
@@ -374,6 +376,8 @@ void GameScene::destroyObject(entt::entity id)
         return;
     }
 
+    _context.gamePlay().onActorDestroy(id);
+    
     _registry.emplace_or_replace<CompDestroy>(id);
 }
 

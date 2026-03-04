@@ -23,7 +23,10 @@ namespace game
 		bool isFightStage() override; 
 		
 		bool isTileBattle() override { return true; }
-		
+
+		void onActorCreate(entt::entity actor) override;
+		void onActorDestroy(entt::entity actor) override;
+
 		void onFightStart(entt::entity actor) override;
 		void onFightFinish(entt::entity actor) override;
 		
@@ -41,8 +44,9 @@ namespace game
 		void onMoveStep(const Vec2i& dir);
 		void onSkipMove();
 
-		void startAutoFightFlow();
+		void startAutoFightFlow(entt::entity actor);
+		
 	private:
-		GameTurnType _turnType = GameTurnType::Fighting;
+		GameTurnType _turnType = GameTurnType::Moving;
 	};
 }
