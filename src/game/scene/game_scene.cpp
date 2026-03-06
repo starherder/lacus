@@ -23,6 +23,7 @@ GameScene::GameScene(GameContext& context)
     _context.dispatcher().sink<EvtMotionStop>().connect<&GameScene::onRoleMotionStop>(this);
 
     _context.eventDispatcher().onMouseLeftDown.connect(this, &GameScene::onMouseLeftPressed, -1);
+    _context.eventDispatcher().onMouseLeftUp.connect(this, &GameScene::onMouseLeftRelease, -1);
     _context.eventDispatcher().onMouseLeftDrag.connect(this, &GameScene::onMouseLeftDrag, -1);
 
     _context.eventDispatcher().onMouseLeftDragStart.connect(this, &GameScene::onMouseLeftDragStart, -1);
@@ -456,20 +457,6 @@ void GameScene::onRoleMotionStop(const EvtMotionStop& e)
 {
 }
 
-GameScene::EntityVector GameScene::getObjectsInGrid(const Vec2i& grid)
-{ 
-    auto pos = getGridLeftTopPos(grid);
-    auto sz = _tileMap.tileSize();
-    
-    BoxType box = {pos.x, pos.y, (float)sz.x, (float)sz.y};
-
-    if (_quadtree)
-    {
-        return _quadtree->query(box);
-    }
-
-    return EntityVector{};
-}
 
 int GameScene::getGridWalkType(const Vec2i& grid)
 {
@@ -499,6 +486,41 @@ void GameScene::swichCoord(CompTransform& trans, CoordMode coordmode)
     }
 
     trans.coord_mode = coordmode;
+}
+
+GameScene::EntitySet GameScene::getObjectsInGrid(const Vec2i& grid)
+{
+    auto pos = getGridLeftTopPos(grid);
+    auto sz = _tileMap.tileSize();
+    BoxType box = {pos.x, pos.y, (float)sz.x, (float)sz.y};
+
+    EntitySet result;
+    
+    if (_quadtree)
+    {
+        auto queryResult = _quadtree->query(box);
+        std::copy(queryResult.begin(), queryResult.end(), std::inserter(result, result.begin()));
+    }
+
+    return result;
+}
+    
+GameScene::EntitySet GameScene::getObjectsInRect(const Rect& rect)
+{
+    BoxType box = { rect.x, rect.y, rect.w, rect.h };
+
+    box.left = box.width < 0 ? box.left + box.width : box.left;
+    box.top = box.height < 0 ? box.top + box.height : box.top;
+    box.width = std::fabs(box.width);
+    box.height = std::fabs(box.height);
+
+    EntitySet result;
+    if (_quadtree)
+    {
+        auto qureyResult = _quadtree->query(box);
+        std::copy(qureyResult.begin(), qureyResult.end(), std::inserter(result, result.begin()));
+    }
+    return result;
 }
 
 const GameScene::EntityDisMap& GameScene::getObjectsInCircle(const Vec2& center, float radius)
@@ -545,6 +567,7 @@ SkyEffect GameScene::getSkyEffect()
 
 void GameScene::onMouseLeftPressed(const Vec2& pos)
 {
+    /*
     auto scenePos = camera().screenToWorld(pos);
     auto selobj = findObjectAtPos(scenePos);
     if (selobj != _selectEntity && _selectEntity != entt::null)
@@ -556,6 +579,7 @@ void GameScene::onMouseLeftPressed(const Vec2& pos)
 
     _context.dispatcher().trigger(EvtRoleStopMotion{ _selectEntity });
     _context.dispatcher().trigger(EvtObjectSelection{ _selectEntity });
+    */
 }
 
 void GameScene::onMouseLeftRelease(const Vec2& pos)
@@ -564,26 +588,26 @@ void GameScene::onMouseLeftRelease(const Vec2& pos)
 
 void GameScene::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
-    if (objectDragable() && dragSelectActorInProgress(pos))
-    {
-        slot_context().setBreak(true);
-    }
+    //if (objectDragable() && dragSelectActorInProgress(pos))
+    //{
+    //    slot_context().setBreak(true);
+    //}
 }
 
 void GameScene::onMouseLeftDragStart(const Vec2& pos)
 {
-    if (dragSelectActor(pos))
-    {
-        slot_context().setBreak(true);
-    }
+    //if (dragSelectActor(pos))
+    //{
+    //    slot_context().setBreak(true);
+    //}
 }
 
 void GameScene::onMouseLeftDragFinish(const Vec2& pos)
 {
-    if (dropSelectActor(pos))
-    {
-        slot_context().setBreak(true);
-    }
+    //if (dropSelectActor(pos))
+    //{
+    //    slot_context().setBreak(true);
+    //}
 }
 
 void GameScene::onMouseLeftClick(const Vec2& pos)
@@ -592,6 +616,7 @@ void GameScene::onMouseLeftClick(const Vec2& pos)
 
 void GameScene::onMouseRightClick(const Vec2& pos)
 {
+/*
     if (!_context.registry().valid(_selectEntity)) {
         return;
     }
@@ -603,6 +628,7 @@ void GameScene::onMouseRightClick(const Vec2& pos)
 
     auto scenePos = camera().screenToWorld(pos);
     moveSelectActor(scenePos);
+*/
 }
 
 void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)

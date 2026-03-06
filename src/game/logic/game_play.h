@@ -21,6 +21,7 @@ namespace game
 
 	public:
 		virtual void update(float deltaTime) = 0;
+		virtual void draw() = 0;
 
 		virtual bool isTileBattle() { return false; }
 		virtual bool isAutoChess() { return false; }

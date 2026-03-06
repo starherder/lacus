@@ -481,7 +481,7 @@
     <ClCompile Include="..\src\game\ecs\system_step_motion.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\game\logic\game_play.cpp">
+    <ClCompile Include="..\src\game\logic\game_play_tile_battle.cpp">
       <Filter>game\logic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -937,6 +937,9 @@
       <Filter>game\ecs</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\logic\game_play.h">
+      <Filter>game\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\logic\game_play_tile_battle.h">
       <Filter>game\logic</Filter>
     </ClInclude>
   </ItemGroup>

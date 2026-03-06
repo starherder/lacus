@@ -155,6 +155,8 @@ namespace game
 
         _scene->onDraw();
 
+        _gamePlay->draw();
+
         EcsSystemManager::inst().draw();
     }
 

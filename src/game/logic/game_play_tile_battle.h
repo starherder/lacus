@@ -10,14 +10,18 @@ namespace game
 		Moving,
 	};
 
-	class GamePlayTileBattle : public GamePlay
+	class GamePlayTileBattle : public GamePlay, public signals::SlotHandler
 	{
+		using EntitySet = std::set<entt::entity>;
+		using EntityVector = std::vector<entt::entity>;
+
 	public:
 		GamePlayTileBattle(GameContext& context);
 		~GamePlayTileBattle() = default;
 		
 		void update(float deltaTime) override;
-		
+		void draw() override;
+
 	public:
 		bool isMoveStage() override;
 		bool isFightStage() override; 
@@ -33,6 +37,10 @@ namespace game
 		void onMotionStart(entt::entity actor) override;  
 		void onMotionFinish(entt::entity actor) override;
 
+		void onMouseLeftPressed(const Vec2& pos);
+		void onMouseLeftRelease(const Vec2& pos);
+		void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
+
 		void onKeyDown(KeyCode key) override;
 		
 	private:
@@ -44,9 +52,14 @@ namespace game
 		void onMoveStep(const Vec2i& dir);
 		void onSkipMove();
 
+		void unselectAll();
+		void onSelectChange(const EntitySet& selectEntities);
+
 		void startAutoFightFlow(entt::entity actor);
 		
 	private:
 		GameTurnType _turnType = GameTurnType::Moving;
+		Rect _selectRect;
+		EntitySet _selectEntities;
 	};
 }

@@ -1,11 +1,16 @@
 #include "game/logic/game_play_tile_battle.h"
 #include "game/ecs/comm_event.h"
+#include "game/scene/game_scene.h"
 #include "magic_enum/magic_enum.h"
+#include <algorithm>
 
 namespace game
 {
 	GamePlayTileBattle::GamePlayTileBattle(GameContext& context) : GamePlay(context)
 	{
+		context.eventDispatcher().onMouseLeftDown.connect(this, &GamePlayTileBattle::onMouseLeftPressed, -1);
+		context.eventDispatcher().onMouseLeftUp.connect(this, &GamePlayTileBattle::onMouseLeftRelease, -1);
+		context.eventDispatcher().onMouseLeftDrag.connect(this, &GamePlayTileBattle::onMouseLeftDrag, -1);
 	}
 	
 	void GamePlayTileBattle::onKeyDown(KeyCode key)
@@ -20,6 +25,35 @@ namespace game
 		default: return;
 		}
 	}
+
+	void GamePlayTileBattle::onMouseLeftPressed(const Vec2& pos)
+	{
+		auto scenePos = context().camera().screenToWorld(pos);
+		_selectRect = Rect{ scenePos.x, scenePos.y, 0.0f, 0.0f };
+
+		//unselectAll();
+
+		auto selent = context().scene().findObjectAtPos(_selectRect.pos());
+		if (context().registry().valid(selent))
+		{
+			onSelectChange({ selent });
+		}
+	}
+
+	void GamePlayTileBattle::onMouseLeftRelease(const Vec2& pos)
+	{
+		_selectRect = { 0,0,0,0 };
+	}
+	
+	void GamePlayTileBattle::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
+	{
+		auto scenePos = context().camera().screenToWorld(pos);
+		_selectRect.w = scenePos.x - _selectRect.x;
+		_selectRect.h = scenePos.y - _selectRect.y;
+
+		auto selents = context().scene().getObjectsInRect(_selectRect);
+		onSelectChange(selents);
+	}
 	
 	void GamePlayTileBattle::onMoveStep(const Vec2i& dir)
 	{
@@ -28,26 +62,72 @@ namespace game
 			return;
 		}
 		
-		if (!context().registry().valid(selectEntity())) 
-		{ 
-			return; 
-		}
-
-		if (!context().registry().try_get<CompMoveCfg>(selectEntity()))
+		for(auto& entity : _selectEntities)
 		{
-			return;
+			if (!context().registry().valid(entity))
+			{
+				continue;
+			}
+
+			if (!context().registry().try_get<CompMoveCfg>(entity))
+			{
+				continue;
+			}
+
+			uint8_t moveGrids = 1;
+			context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });
+		}
+	}
+
+
+	void GamePlayTileBattle::unselectAll()
+	{
+		auto selviews = context().registry().view<CompSelection>();
+		for (auto& ent : selviews)
+		{
+			context().registry().remove<CompSelection>(ent);
 		}
 
-		uint8_t moveGrids = 1;
-		context().dispatcher().trigger(EvtStepMove{ selectEntity(), dir, moveGrids });
+		_selectEntities.clear();
+	}
+
+	void GamePlayTileBattle::onSelectChange(const EntitySet& selectEntities)
+	{
+		std::set<entt::entity> intersetVec;
+		std::set_intersection(_selectEntities.begin(), _selectEntities.end(),
+								selectEntities.begin(), selectEntities.end(),
+								std::inserter(intersetVec, intersetVec.begin()));
+
+		for (auto& ent : selectEntities)
+		{
+			if (!intersetVec.contains(ent))
+			{
+				// not selected, select now
+				context().registry().emplace_or_replace<CompSelection>(ent, CompSelection{});
+			}
+		}
+		
+		for (auto& ent : _selectEntities)
+		{
+			if (!intersetVec.contains(ent))
+			{
+				// not select now, unselect
+				context().registry().remove<CompSelection>(ent);
+			}
+		}
+
+		_selectEntities = selectEntities;
 	}
 
 	void GamePlayTileBattle::onSkipMove()
 	{
-		auto pGameTurn = context().registry().try_get<CompGameTurn>(selectEntity());
-		if (pGameTurn && _turnType == GameTurnType::Moving)
+		for (auto& entity : _selectEntities)
 		{
-			pGameTurn->running = false;
+			auto pGameTurn = context().registry().try_get<CompGameTurn>(entity);
+			if (pGameTurn && _turnType == GameTurnType::Moving)
+			{
+				pGameTurn->running = false;
+			}
 		}
 	}
 	
@@ -90,7 +170,12 @@ namespace game
 
 		return false;
 	}
-	
+
+	void GamePlayTileBattle::draw()
+	{
+		context().painter().drawRect(Color::Red, _selectRect, 0, 2);
+	}
+
 	void GamePlayTileBattle::update(float deltaTime)
 	{
 		bool isTurnOver = false;
