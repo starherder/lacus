@@ -91,6 +91,7 @@ namespace game {
         entt::entity findObjectAtPos(const Vec2& pos);
         EntitySet getObjectsInRect(const Rect& rect);
         EntitySet getObjectsInGrid(const Vec2i& grid);
+        bool hasObjectInGrid(const Vec2i& grid, ObjectType type=ObjectType::All);
         const EntityDisMap& getObjectsInCircle(const Vec2& center, float radius);
 
         int getGridWalkType(const Vec2i& grid);

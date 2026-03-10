@@ -73,6 +73,11 @@ namespace game
 
         auto curType = _context.scene().getGridWalkType(curGrid);
         auto nextType = _context.scene().getGridWalkType(nextGrid);
+        if (nextType == (int)tilemap::WalkType::Collision)
+        {
+            onMotionStop(entid);
+			return false;
+        }
 
         float moveSpeed = move.speed;
         std::string tweenMode = _context.gameConfig().motion.walk;

@@ -14,7 +14,8 @@ namespace game
 	{
 		using EntitySet = std::set<entt::entity>;
 		using EntityVector = std::vector<entt::entity>;
-
+		using GridEntityMap = std::map<Vec2i, entt::entity, Geometry::Vec2iComparator>;
+		
 	public:
 		GamePlayTileBattle(GameContext& context);
 		~GamePlayTileBattle() = default;
@@ -56,6 +57,9 @@ namespace game
 		void onSelectChange(const EntitySet& selectEntities);
 
 		void startAutoFightFlow(entt::entity actor);
+		
+		void checkMoveValid(const Vec2i& dir);
+		void blockOneLine(const GridEntityMap& allEntityGrids, const Vec2i& grid, const Vec2i& dir);
 		
 	private:
 		GameTurnType _turnType = GameTurnType::Moving;

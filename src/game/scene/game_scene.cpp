@@ -492,7 +492,7 @@ GameScene::EntitySet GameScene::getObjectsInGrid(const Vec2i& grid)
 {
     auto pos = getGridLeftTopPos(grid);
     auto sz = _tileMap.tileSize();
-    BoxType box = {pos.x, pos.y, (float)sz.x, (float)sz.y};
+    BoxType box = {pos.x-1, pos.y-1, (float)sz.x-2, (float)sz.y-2};
 
     EntitySet result;
     
@@ -503,6 +503,25 @@ GameScene::EntitySet GameScene::getObjectsInGrid(const Vec2i& grid)
     }
 
     return result;
+}
+    
+bool GameScene::hasObjectInGrid(const Vec2i& grid, ObjectType type)
+{
+    auto objects = getObjectsInGrid(grid);
+    if (type == ObjectType::All)
+    {
+        return !objects.empty();
+    }
+    
+    for (auto& obj : objects)
+    {
+        auto typeComp = _registry.try_get<CompComm>(obj);
+        if (typeComp && typeComp->type == type)
+        {
+            return true;
+        }
+    }
+    return false;
 }
     
 GameScene::EntitySet GameScene::getObjectsInRect(const Rect& rect)

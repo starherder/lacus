@@ -2,10 +2,14 @@
 #include "game/ecs/comm_event.h"
 #include "game/scene/game_scene.h"
 #include "magic_enum/magic_enum.h"
-#include <algorithm>
 
 namespace game
 {
+	struct CompMoveBlocked
+	{
+		bool blocked = false;
+	};
+	
 	GamePlayTileBattle::GamePlayTileBattle(GameContext& context) : GamePlay(context)
 	{
 		context.eventDispatcher().onMouseLeftDown.connect(this, &GamePlayTileBattle::onMouseLeftPressed, -1);
@@ -61,6 +65,14 @@ namespace game
 		{
 			return;
 		}
+
+		// dir 只支持 4 个方向
+		if (dir.x * dir.x + dir.y * dir.y != 1)
+		{
+		    return;
+		}
+		
+		checkMoveValid(dir);
 		
 		for(auto& entity : _selectEntities)
 		{
@@ -69,17 +81,151 @@ namespace game
 				continue;
 			}
 
-			if (!context().registry().try_get<CompMoveCfg>(entity))
+			if (context().registry().try_get<CompMoveCfg>(entity) == nullptr)
 			{
 				continue;
 			}
 
-			uint8_t moveGrids = 1;
-			context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });
+			auto compBlock =context().registry().try_get<CompMoveBlocked>(entity); 
+			if ( !compBlock )
+			{
+				uint8_t moveGrids = 1;
+				context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });				
+			}
+			else
+			{
+				context().registry().remove<CompMoveBlocked>(entity);
+			}
 		}
 	}
 
+	void GamePlayTileBattle::checkMoveValid(const Vec2i& dir)
+	{
+		std::map<int, int> frontGridsX;
+		std::map<int, int> frontGridsY;
+		
+		GridEntityMap allEntityGrids;
+		
+		for (auto& entity : _selectEntities)
+		{
+			if (!context().registry().valid(entity))
+			{
+				continue;
+			}
 
+			auto& transform = context().registry().get<CompTransform>(entity);
+			auto grid = context().scene().getGridFromPos(transform.position);
+			allEntityGrids.insert({ grid, entity });
+			
+			if (dir.x == 0)
+			{
+				auto it = frontGridsX.find(grid.x);
+				if (it == frontGridsX.end())
+				{
+					frontGridsX.insert({grid.x, grid.y});
+					continue;
+				}
+
+				if (dir.y > 0)
+				{
+					it->second = std::max(it->second, grid.y);
+				}
+				else if (dir.y < 0)
+				{
+					it->second = std::min(it->second, grid.y);
+				}
+				else
+				{
+					LogError("checkMoveValid: dir.x == 0 && dir.y == 0");
+					continue;
+				}
+			}
+			else if (dir.y == 0)
+			{
+				auto it = frontGridsY.find(grid.y);
+				if (it == frontGridsY.end())
+				{
+					frontGridsY.insert({grid.y, grid.x});
+					continue;
+				}
+				
+				if (dir.x > 0)
+				{
+					it->second = std::max(it->second, grid.x);
+				}
+				else if (dir.x < 0)
+				{
+					it->second = std::min(it->second, grid.x);
+				}
+				else
+				{
+					LogError("checkMoveValid: dir.x == 0 && dir.y == 0");
+					continue;
+				}
+			}
+			else
+			{
+				LogError("checkMoveValid: dir.x != 0 && dir.y != 0");
+				continue;
+			}
+		}
+
+		std::map<int, int> frontGrids;
+		if (dir.x == 0)
+		{
+			frontGrids = frontGridsX;
+		}
+		else if (dir.y == 0)
+		{
+			std::transform(frontGridsY.begin(), frontGridsY.end(),
+				std::inserter(frontGrids, frontGrids.begin()),
+				[](auto& it) { return std::make_pair(it.second, it.first); });
+		}
+		else
+		{
+			LogError("checkMoveValid: dir.x != 0 && dir.y != 0");
+			return;
+		}
+		
+		for (auto& it : frontGrids)
+		{
+			auto grid = Vec2i{ it.first, it.second };
+			auto nextGrid = grid + dir;
+
+			auto walkType = context().scene().getGridWalkType(nextGrid);
+			
+			bool blocked = walkType == (int)tilemap::WalkType::Collision;
+			blocked = blocked || context().scene().hasObjectInGrid(nextGrid, ObjectType::Npc);
+			
+			if (blocked)
+			{
+				LogError("checkMoveValid: walkType == tilemap::WalkType::Collision");
+
+				blockOneLine(allEntityGrids, grid, dir);
+				return;
+			}
+		}
+	}
+
+	void GamePlayTileBattle::blockOneLine(const GridEntityMap& allEntityGrids, const Vec2i& grid, const Vec2i& dir)
+	{
+		auto gridindex = grid;
+		
+		while (true)
+		{
+			auto it = allEntityGrids.find(gridindex);
+			if (it == allEntityGrids.end())
+			{
+				return;
+			}
+
+			auto entity = it->second;
+			context().registry().emplace<CompMoveBlocked>(entity);
+
+			gridindex -= dir;
+		}
+	}
+	
 	void GamePlayTileBattle::unselectAll()
 	{
 		auto selviews = context().registry().view<CompSelection>();

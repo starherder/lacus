@@ -22,6 +22,7 @@ namespace game
         Spawner,
 
         Other,
+        All,
     };
 
     enum class CampSide {
