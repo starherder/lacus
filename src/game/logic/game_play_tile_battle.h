@@ -41,7 +41,8 @@ namespace game
 		void onMouseLeftPressed(const Vec2& pos);
 		void onMouseLeftRelease(const Vec2& pos);
 		void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
-
+		void onMouseMotion(const Vec2& pos, const Vec2& offset);
+		
 		void onKeyDown(KeyCode key) override;
 		
 	private:
@@ -58,8 +59,8 @@ namespace game
 
 		void startAutoFightFlow(entt::entity actor);
 		
-		void checkMoveValid(const Vec2i& dir);
-		void blockOneLine(const GridEntityMap& allEntityGrids, const Vec2i& grid, const Vec2i& dir);
+		void checkMoveBlock(const Vec2i& dir);
+		void checkLineBlock(Vec2i grid, entt::entity entity, Vec2i dir);
 		
 	private:
 		GameTurnType _turnType = GameTurnType::Moving;

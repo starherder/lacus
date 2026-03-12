@@ -93,6 +93,8 @@ void RenderSystem::draw()
         drawSceneDebug();
 
         drawMotionDebug();
+
+        drawSceneQuadTree();
     }
 }
 
@@ -388,6 +390,11 @@ void RenderSystem::drawMotionDebug()
             }
         }
     }
+}
+
+void RenderSystem::drawSceneQuadTree()
+{
+    _context.scene().drawQuadTree();
 }
 
 void RenderSystem::drawSceneDebug()

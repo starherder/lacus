@@ -2,6 +2,10 @@
 #include "game/game_config.h"
 #include "game/logic/game_play_tile_battle.h"
 
+#ifdef _DevelopMode
+#include "game/ui/imform_debug.h"
+#endif
+
 namespace game 
 {
 
@@ -224,7 +228,7 @@ void GameScene::setDebugInfo(bool show)
 
 void GameScene::initQuadTree()
 {
-    auto sceneSize = (_tileMap.mapSize() + Vec2i{1,1})*_tileMap.tileSize();
+    auto sceneSize = _tileMap.mapSize() * _tileMap.tileSize();
     auto scenebox = BoxType(0.0f, 0.0f, sceneSize.x, sceneSize.y);
 
     auto getAABB = [this](const entt::entity ent)
@@ -232,8 +236,10 @@ void GameScene::initQuadTree()
         auto comp = _context.registry().try_get<CompTransform>(ent);
         if (comp)
         {
-            auto& pos = comp->position;
-            auto& sz = comp->size;
+            auto pos = comp->position;
+            auto sz = comp->size;
+            pos -= sz / 2.0f;
+    
             return BoxType{ pos.x, pos.y, sz.x, sz.y };
         }
 
@@ -241,6 +247,7 @@ void GameScene::initQuadTree()
     };
 
     _quadtree = std::make_unique<QuadTreeType>(scenebox, getAABB);
+    _quadtree->setQueryMode(quadtree::QueryMode::ContainCenter);
 }
 
 void GameScene::initPathFind()
@@ -492,7 +499,7 @@ GameScene::EntitySet GameScene::getObjectsInGrid(const Vec2i& grid)
 {
     auto pos = getGridLeftTopPos(grid);
     auto sz = _tileMap.tileSize();
-    BoxType box = {pos.x-1, pos.y-1, (float)sz.x-2, (float)sz.y-2};
+    BoxType box = {pos.x, pos.y, (float)sz.x, (float)sz.y};
 
     EntitySet result;
     
@@ -503,6 +510,26 @@ GameScene::EntitySet GameScene::getObjectsInGrid(const Vec2i& grid)
     }
 
     return result;
+}
+    
+entt::entity GameScene::getOneObjectInGrid(const Vec2i& grid, ObjectType type)
+{
+    auto objects = getObjectsInGrid(grid);
+    if (objects.empty())
+    {
+        return entt::null;
+    }
+    
+    for (auto& obj : objects)
+    {
+        auto typeComp = _registry.try_get<CompComm>(obj);
+        if (typeComp && typeComp->type == type)
+        {
+            return obj;
+        }
+    }
+    
+    return entt::null;
 }
     
 bool GameScene::hasObjectInGrid(const Vec2i& grid, ObjectType type)
@@ -653,6 +680,17 @@ void GameScene::onMouseRightClick(const Vec2& pos)
 void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
 {
     auto scenePos = camera().screenToWorld(pos);
+    
+#ifdef _DevelopMode
+    auto grid = _context.scene().getGridFromPos(scenePos);
+    auto objs = _context.scene().getObjectsInGrid(grid);
+    auto form = imgui::ImFormManager::inst().getForm<ImFormDebug>("ImFormDebug");
+    if (form)
+    {
+        form->showGridInfo(grid, objs);
+    }
+#endif
+    
     auto hoverEntity = findObjectAtPos(scenePos);
     if (hoverEntity == _hoverEntity)
     {
@@ -830,4 +868,23 @@ bool GameScene::canDropToPos(const Vec2& pos)
     return walktype != (int)tilemap::WalkType::Collision;
 }
 
+void GameScene::drawQuadTree()
+{
+    drawQuadNode(_quadtree->getRoot());
+}
+        
+void GameScene::drawQuadNode(QuadTreeType::Node* node)
+{
+    if (!node) return;
+
+    Vec2 pos = camera().projectPoint({node->box.left, node->box.top});
+    Vec2 size = { node->box.width, node->box.height };
+
+    _context.painter().drawRect(Color::White, {pos, size}, 0.0f, 2.0f);
+
+    for (auto& child : node->children)
+    {
+        drawQuadNode(child.get());
+    }
+}
 } 

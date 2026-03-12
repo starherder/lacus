@@ -92,6 +92,7 @@ namespace game {
         EntitySet getObjectsInRect(const Rect& rect);
         EntitySet getObjectsInGrid(const Vec2i& grid);
         bool hasObjectInGrid(const Vec2i& grid, ObjectType type=ObjectType::All);
+        entt::entity getOneObjectInGrid(const Vec2i& grid, ObjectType type=ObjectType::All);
         const EntityDisMap& getObjectsInCircle(const Vec2& center, float radius);
 
         int getGridWalkType(const Vec2i& grid);
@@ -107,6 +108,8 @@ namespace game {
 
         auto& getCollisionDebugRects() { return _collisionDebugRects; }
 
+        void drawQuadTree();
+        
     private:
         void initPathFind();
         void initQuadTree();
@@ -145,6 +148,8 @@ namespace game {
         bool dropSelectActor(const Vec2& pos);
         bool canDropToPos(const Vec2& pos);
 
+        void drawQuadNode(QuadTreeType::Node* node);
+        
     private:
         tilemap::TileMap _tileMap;
 

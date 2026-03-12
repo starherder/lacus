@@ -35,6 +35,11 @@ void ImFormDebug::init(GameContext* context)
     _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick, -1);
 }
 
+void ImFormDebug::showGridInfo(const Vec2i& grid, const std::set<entt::entity>& objs)
+{
+    _curGridInfo = {grid, objs};
+}
+    
 void ImFormDebug::onMouseLeftClick(const Vec2& pos)
 {
     if (_debugMode == DebugMode::PutObject)
@@ -51,11 +56,8 @@ void ImFormDebug::draw()
 
     ImGui::Begin("debug");
     {
-        auto ent_num = _context->registry().storage<entt::entity>().size();
-        ImGui::Text("entt::entities: %lu", ent_num);
-
-        ImGui::Text("scene objects: %lu", _context->scene().sceneObjectCount());
-
+        drawSceneInfo();
+        
         ImGui::Separator();
 
         static bool show_mainform = true;
@@ -224,6 +226,18 @@ void ImFormDebug::draw()
     }
 }
 
+void ImFormDebug::drawSceneInfo()
+{
+    auto ent_num = _context->registry().storage<entt::entity>().size();
+    ImGui::Text("entt::entities: %lu", ent_num);
+    ImGui::Text("scene objects: %lu", _context->scene().sceneObjectCount());
+
+    ImGui::Dummy(ImVec2(0, 10));
+        
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "grid: {%d, %d}", _curGridInfo.grid.x, _curGridInfo.grid.y);
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "objs: %lu", _curGridInfo.objs.size());
+}
+    
 void ImFormDebug::drawSelectEntityProps()
 {
     if(!_context->registry().valid(_selectEntity))

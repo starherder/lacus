@@ -18,6 +18,11 @@ namespace game
         PutObject,
     };
 
+    struct GridInfo
+    {
+        Vec2i grid = {0,0};
+        std::set<entt::entity> objs;
+    };
 
     class ImFormDebug : public imgui::ImForm
     {
@@ -32,6 +37,8 @@ namespace game
 
         void init(GameContext* context);
 
+        void showGridInfo(const Vec2i& grid, const std::set<entt::entity>& objs);
+        
 	protected:
 
 		void draw() override;
@@ -46,6 +53,8 @@ namespace game
 
         void drawSkillWindow();
 
+        void drawSceneInfo();
+        
         void onMouseLeftClick(const Vec2& pos);
 
     public:
@@ -63,6 +72,8 @@ namespace game
         Vec2 _windowPos, _windowSize;
 
         std::vector<const char*> _particleNames;
+
+        GridInfo _curGridInfo;
     };
 
 }

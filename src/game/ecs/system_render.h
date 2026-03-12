@@ -19,7 +19,9 @@ private:
 	void drawMotionDebug();
 
     void drawSceneDebug();
-
+    
+    void drawSceneQuadTree();
+    
     void drawMarker();
 
     void drawObjects();
