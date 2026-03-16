@@ -5,9 +5,9 @@
 
 namespace game
 {
-	struct CompMoveBlocked
+	struct CompMoveCheck
 	{
-		bool blocked = false;
+		Vec2i dir;
 	};
 	
 	GamePlayTileBattle::GamePlayTileBattle(GameContext& context) : GamePlay(context)
@@ -16,6 +16,8 @@ namespace game
 		context.eventDispatcher().onMouseLeftUp.connect(this, &GamePlayTileBattle::onMouseLeftRelease, -1);
 		context.eventDispatcher().onMouseLeftDrag.connect(this, &GamePlayTileBattle::onMouseLeftDrag, -1);
 		context.eventDispatcher().onMouseMotion.connect(this, &GamePlayTileBattle::onMouseMotion, -1);
+
+		context.eventDispatcher().onKeyDown.connect(this, &GamePlayTileBattle::onKeyDown, -1);
 	}
 	
 	void GamePlayTileBattle::onKeyDown(KeyCode key)
@@ -87,15 +89,13 @@ namespace game
 				continue;
 			}
 
-			auto compBlock =context().registry().try_get<CompMoveBlocked>(entity); 
-			if ( !compBlock )
+			auto moveCheck = context().registry().try_get<CompMoveCheck>(entity);
+			if(moveCheck)
 			{
 				uint8_t moveGrids = 1;
-				context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });				
-			}
-			else
-			{
-				context().registry().remove<CompMoveBlocked>(entity);
+				context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });
+
+				context().registry().remove<CompMoveCheck>(entity);
 			}
 		}
 	}
@@ -113,7 +113,8 @@ namespace game
 		
 		std::map<int, std::map<int, entt::entity>> sortEntitiyLines;
 
-		GridEntityMap allEntityGrids;
+		static GridEntityMap allEntityGrids;
+		allEntityGrids.clear();
 
 		// 先把移动方向上的每一行角色按照前后位置排序
 		for (auto& entity : _selectEntities)
@@ -130,7 +131,8 @@ namespace game
 			if (mvHorizonal)
 			{
 				sortEntitiyLines[grid.y].insert({grid.x, entity});
-			}else
+			}
+			else
 			{
 				sortEntitiyLines[grid.x].insert({grid.y, entity});
 			}
@@ -145,15 +147,17 @@ namespace game
 				{
 					auto c2 = it->first;
 					auto entity = it->second;
-					
-					checkLineBlock({c2, c1}, entity, dir);
+
+					Vec2i grid = mvHorizonal ? Vec2i{ c2, c1 } : Vec2i{ c1, c2 };
+					checkLineBlock(grid, entity, dir);
 				}
 			}
 			else
 			{
 				for (auto& [c2, entity] : others)
 				{
-					checkLineBlock({c1, c2}, entity, dir);
+					Vec2i grid = mvHorizonal ? Vec2i{ c2, c1 } : Vec2i{ c1, c2 };
+					checkLineBlock(grid, entity, dir);
 				}
 			}
 		}
@@ -168,37 +172,23 @@ namespace game
 		auto walkType = context().scene().getGridWalkType(preGrid);
 		if (walkType == (int)tilemap::WalkType::Collision)
 		{
-			context().registry().emplace_or_replace<CompMoveBlocked>(entity);
 			return;
 		}
 
-		// 前面有没有其他人
+		// 前面有其他人
 		auto preEntity = context().scene().getOneObjectInGrid(preGrid, ObjectType::Npc);
-		if (!context().registry().valid(preEntity))
+		if (context().registry().valid(preEntity))
 		{
-			return;
+			// 前面人的运动方向和我不一致
+			auto moveCheck = context().registry().try_get<CompMoveCheck>(preEntity);
+			if(!moveCheck || moveCheck->dir != dir)
+			{
+				return;
+			}
 		}
 
-		// 没有comm控件，不知道什么东西，可以走
-		auto commMe = context().registry().try_get<CompComm>(entity);
-		auto commPre = context().registry().try_get<CompComm>(preEntity);
-		if (!commMe || !commPre)
-		{
-			return;
-		}
-
-		// 跟我不是一边的，阻挡
-		if (commMe->side != commPre->side)
-		{
-			context().registry().emplace_or_replace<CompMoveBlocked>(entity);
-		}
-
-		// 前面那个人也被阻挡了
-		auto blocked = context().registry().try_get<CompMoveBlocked>(preEntity);
-		if (blocked)
-		{
-			context().registry().emplace_or_replace<CompMoveBlocked>(entity);
-		}
+		// 可以走
+		context().registry().emplace_or_replace<CompMoveCheck>(entity, CompMoveCheck{ dir });
 	}
 	
 	void GamePlayTileBattle::unselectAll()
@@ -327,7 +317,7 @@ namespace game
 			_turnType = GameTurnType::Moving;
 		}
 
-		LogInfo("swith turn to : {}", MagicEnumText(GameTurnType, _turnType));
+		//LogInfo("swith turn to : {}", MagicEnumText(GameTurnType, _turnType));
 
 		auto entviews = context().registry().view<CompGameTurn>();
 		for (auto& actor : entviews)

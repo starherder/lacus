@@ -43,7 +43,8 @@ namespace game
 		void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
 		void onMouseMotion(const Vec2& pos, const Vec2& offset);
 		
-		void onKeyDown(KeyCode key) override;
+		void onKeyDown(KeyCode key);
+
 		
 	private:
 		void switchGameTurn();

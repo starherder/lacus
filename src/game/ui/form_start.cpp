@@ -14,9 +14,14 @@ FormStart::FormStart(const std::string& name, GameContext& context) : FormLogicB
 		btnStart->on_click.connect([this](ui::Button* btn) { onStart(btn); });
 	}
 
-	auto btnResume = getWidget<ui::Button>("btn_resume");
-	if (btnResume) {
-		btnResume->on_click.connect([this](ui::Button* btn) { onResume(btn); });
+	auto btnBot = getWidget<ui::Button>("btn_tile_battle");
+	if (btnBot) {
+		btnBot->on_click.connect([this](ui::Button* btn) { onTileBattle(btn); });
+	}
+	
+	auto btnAutoChess = getWidget<ui::Button>("btn_auto_chess");
+	if (btnAutoChess) {
+		btnAutoChess->on_click.connect([this](ui::Button* btn) { onAutoChess(btn); });
 	}
 
 	auto btnConfig = getWidget<ui::Button>("btn_config");
@@ -43,13 +48,17 @@ void FormStart::onStart(Button* btn)
 	on_start_game.emit();
 }
 
-void FormStart::onResume(Button* btn)
+void FormStart::onTileBattle(Button* btn)
 {
 	ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_SelectScene, 
-		{ std::string{"scenes/demos/four.tmj"}, (int)SceneGameMode::GameMode_Test
-});
-
+		{ std::string{"demo_4_1"}, (int)SceneGameMode::GameMode_Test});
 	//on_resume_game.emit();
+}
+
+void FormStart::onAutoChess(Button* btn)
+{
+	ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_SelectScene, 
+		{ std::string{"demo_4"}, (int)SceneGameMode::GameMode_Test});
 }
 
 void FormStart::onConfig(Button* btn)

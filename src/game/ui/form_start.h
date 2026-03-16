@@ -22,7 +22,9 @@ namespace game
     private:
         void onStart(Button* btn);
 
-        void onResume(Button* btn);
+        void onTileBattle(Button* btn);
+        
+        void onAutoChess(Button* btn);
 
         void onConfig(Button* btn);
 

@@ -13,7 +13,12 @@
         </hlayout>
         <hlayout size="0,50" >
             <widget />
-            <button name="btn_resume" size="250,50" text="继续"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
+            <button name="btn_tile_battle" size="250,50" text="石板"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
+            <widget />
+        </hlayout>
+        <hlayout size="0,50" >
+            <widget />
+            <button name="btn_auto_chess" size="250,50" text="自走棋"  text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
             <widget />
         </hlayout>
         <hlayout size="0,50" >

@@ -207,8 +207,14 @@ namespace game
 
         bool enemyFound = false;
 
-        auto& skills = _context.registry().get<CompSkills>(actor);
-        for (auto& skill_id : skills.skills)
+        auto compSkills = _context.registry().try_get<CompSkills>(actor);
+        if (!compSkills)
+        {
+            LogError("role {} No CompSkills found.", actor);
+            return;
+        }
+
+        for (auto& skill_id : compSkills->skills)
         {
             auto& compName = _context.registry().get<CompNameId>(skill_id);
             auto& compSkill = _context.registry().get<CompSkillComm>(skill_id);

@@ -29,7 +29,7 @@ namespace engine
 
         bool ready() { return _state == (int)SceneState::Ready; }
         
-        virtual bool load(const engine::fs::path& filePath) = 0;
+        virtual bool load(const std::string& id) = 0;
         virtual bool unload() = 0;
 
         virtual void onStart() = 0;

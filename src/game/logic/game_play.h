@@ -16,8 +16,7 @@ namespace game
 
 		GameContext& context() { return _context; }
 
-		void setSelectEntity(entt::entity ent) { _selectEntity = ent; }
-		entt::entity selectEntity() { return _selectEntity; }
+		virtual entt::entity getSelectEntity() { return entt::null; }
 
 	public:
 		virtual void update(float deltaTime) = 0;
@@ -38,12 +37,8 @@ namespace game
 		virtual void onMotionStart(entt::entity actor) {}
 		virtual void onMotionFinish(entt::entity actor) {}
 		
-		virtual void onKeyDown(KeyCode key) {}
-		
-	private:	
+	protected:	
 		GameContext& _context;
-
-		entt::entity _selectEntity = entt::null;
 	};
 	
 }

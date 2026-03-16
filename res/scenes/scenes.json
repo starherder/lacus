@@ -1,20 +1,43 @@
 [
-	{
-		"name": "test_scene",
-		"type": "normal",
-		"tile_map": "scenes/level_test"
-	},
+  {
+    "id": "demo_1",
+    "name": "txt_demo_1_name",
+    "desc": "txt_demo_1_desc",
+    "level": 1,
+    "play_type": "TileBattle",
+    "map_path": "scenes/demos/one.tmj"
+  },
 
-	{
-		"name": "scene_shijie_village",
-		"type": "normal",
-		"tile_map": "scenes/shijie_village"
-	}
-
-	{
-		"name": "scene_dongxi_village",
-		"type": "normal",
-		"tile_map": "scenes/dongxi_village"
-	}
-
+  {
+    "id": "demo_2",
+    "name": "txt_demo_2_name",
+    "desc": "txt_demo_2_desc",
+    "level": 2,
+    "play_type": "AutoChess",
+    "map_path": "scenes/demos/two.tmj"
+  },
+  {
+    "id": "demo_3",
+    "name": "txt_demo_3_name",
+    "desc": "txt_demo_3_desc",
+    "level": 3,
+    "play_type": "TileBattle",
+    "map_path": "scenes/demos/three.tmj"
+  },
+  {
+    "id": "demo_4",
+    "name": "txt_demo_4_name",
+    "desc": "txt_demo_4_desc",
+    "level": 1,
+    "play_type": "AutoChess",
+    "map_path": "scenes/demos/four.tmj"
+  },
+  {
+    "id": "demo_4_1",
+    "name": "txt_demo_4_1_name",
+    "desc": "txt_demo_4_1_desc",
+    "level": 1,
+    "play_type": "TileBattle",
+    "map_path": "scenes/demos/four.tmj"
+  }
 ]

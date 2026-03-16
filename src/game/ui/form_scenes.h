@@ -11,7 +11,7 @@ namespace game
     public:
         FormScenes(const std::string& name) = delete;
         FormScenes(const std::string& name, GameContext& context);
-        ~FormScenes();
+        ~FormScenes() override;
 
     private:
         void onUpdate(float delta) override;

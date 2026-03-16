@@ -9,7 +9,7 @@ namespace game
 
 	SelectionSystem::SelectionSystem(GameContext& context) : EcsSystem(context)
 	{
-		//context.dispatcher().sink<EvtObjectSelection>().connect<&SelectionSystem::onObjectSelection>(this);
+		context.dispatcher().sink<EvtObjectSelection>().connect<&SelectionSystem::onObjectSelection>(this);
 	}
 
 	SelectionSystem::~SelectionSystem()
@@ -22,7 +22,6 @@ namespace game
 
 	void SelectionSystem::onObjectSelection(const EvtObjectSelection& e)
 	{
-		/*
 		auto views = _context.registry().view<CompSelection>();
 		for (auto ent : views)
 		{
@@ -33,7 +32,6 @@ namespace game
 		{
 			_context.registry().emplace<CompSelection>(e.object, CompSelection{});
 		}
-		*/
 	}
 
 

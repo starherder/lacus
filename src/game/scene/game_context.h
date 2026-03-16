@@ -13,6 +13,7 @@ namespace game {
 
 	class GameScript;
 	class GameConfig;
+	class SceneConfig;
 	class GameScene;
 	class GameCamera;
 	class GameData;
@@ -46,7 +47,7 @@ namespace game {
 		FontManager& fontMgr() { return resourceMgr().fontManager(); }
 		AudioManager& audioMgr() { return resourceMgr().audioManager(); }
 
-		const FrameTicker& frameTicker() { return _application.frameTicker(); }
+	    const FrameTicker& frameTicker() { return _application.frameTicker(); }
 		EventDispatcher& eventDispatcher() { return _application.eventDispatcher(); }
 
 		BevTreeManager& bevtreeMgr() { return BevTreeManager::inst(); }
@@ -59,6 +60,9 @@ namespace game {
 
 		GameConfig& gameConfig() { return *_gameConfig; }
 		void setGameConfig(GameConfig* config) { _gameConfig = config; }
+
+		SceneConfig& sceneConfig() { return *_sceneConfig; }
+		void setSceneConfig(SceneConfig* config) { _sceneConfig = config; }
 
 		GamePlay& gamePlay();
 		void setGamePlay(GamePlay* gamePlay);
@@ -91,6 +95,8 @@ namespace game {
 		GameScene* _currentScene = nullptr;
 
 		GameConfig* _gameConfig = nullptr;
+		
+		SceneConfig* _sceneConfig = nullptr;
 
 		GameScript* _gameScript = nullptr;
 

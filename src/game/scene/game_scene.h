@@ -9,6 +9,8 @@
 #include "game/scene/object_factory.h"
 #include "game/ecs/comm_event.h"
 #include "game/scene/game_data.h"
+#include "game/logic/game_play.h"
+#include "game/scene/scene_config.h"
 
 #include "game_camera.h"
 
@@ -36,8 +38,6 @@ namespace game {
     public:
         signals::Signal<entt::entity> on_hover_object;
         signals::Signal<entt::entity> on_leave_object;
-        signals::Signal<entt::entity> on_select_object;
-        signals::Signal<entt::entity> on_unselect_object;
 
     public:
         GameScene() = default;
@@ -47,6 +47,9 @@ namespace game {
         
         GameScene(GameContext& context);
         ~GameScene();
+
+        bool load(const std::string& id) override;
+        bool unload() override;
 
         Vec2 sceneSize();
         Vec2 scenePos();
@@ -61,8 +64,6 @@ namespace game {
 
         void swichCoord(CompTransform& trans, CoordMode coordmode);
 
-        bool load(const engine::fs::path& mapPath) override;
-        bool unload() override;
 
         void onUpdate(float deltaTime) override;
         void onDraw() override;
@@ -99,11 +100,6 @@ namespace game {
 
         SkyEffect getSkyEffect();
 
-        entt::entity getSelectEntity() { return _selectEntity; }
-
-        bool objectDragable() { return _objectDragable; }
-        void setObjectDragable(bool dragable) { _objectDragable = dragable; }
-
         void setDebugInfo(bool show);
 
         auto& getCollisionDebugRects() { return _collisionDebugRects; }
@@ -121,34 +117,16 @@ namespace game {
         void onRoleDestroyed(const EvtRoleDestroyed& e);
         void onRoleMotionStop(const EvtMotionStop& e);
 
-        void onRoleSelect(const EvtObjectSelection& e);
-        void onRoleUnselect(const EvtObjectUnselect& e);
-
-        void loadInThread(const engine::fs::path& mapPath);
+        void loadInThread(const MapConfig& mapPath);
         void unloadInThread();
 
-        void onMouseLeftPressed(const Vec2& pos);
-        void onMouseLeftRelease(const Vec2& pos);
-        void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
-        void onMouseLeftDragStart(const Vec2& pos);
-        void onMouseLeftDragFinish(const Vec2& pos);
-        void onMouseLeftClick(const Vec2& pos);
-        void onMouseRightClick(const Vec2& pos);
         void onMouseMotion(const Vec2& pos, const Vec2& offset);
-
-        void onKeyDown(KeyCode key);
 
         void onHoverObject(entt::entity obj);
         void onLeaveObject(entt::entity obj);
 
-        void moveSelectActor(const Vec2& pos);
-
-        bool dragSelectActor(const Vec2& pos);
-        bool dragSelectActorInProgress(const Vec2& pos);
-        bool dropSelectActor(const Vec2& pos);
-        bool canDropToPos(const Vec2& pos);
-
         void drawQuadNode(QuadTreeType::Node* node);
+        
         
     private:
         tilemap::TileMap _tileMap;
@@ -161,7 +139,6 @@ namespace game {
 
         GameData _gameData;;
 
-        entt::entity _selectEntity = entt::null;
         entt::entity _hoverEntity = entt::null;
 
         // 场景对象：在场景中有位置、碰撞、会加入到四叉树中的对象
@@ -169,7 +146,7 @@ namespace game {
 
         QuadTreePtr _quadtree = nullptr;
 
-        bool _objectDragable = false;
+        std::unique_ptr<GamePlay> _gamePlay = nullptr;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

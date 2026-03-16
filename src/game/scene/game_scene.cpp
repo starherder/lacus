@@ -1,6 +1,8 @@
 ﻿#include "game_scene.h"
 #include "game/game_config.h"
+#include "game/scene/scene_config.h"
 #include "game/logic/game_play_tile_battle.h"
+#include "game/logic/game_play_auto_chess.h"
 
 #ifdef _DevelopMode
 #include "game/ui/imform_debug.h"
@@ -21,24 +23,13 @@ GameScene::GameScene(GameContext& context)
     _context.dispatcher().sink<EvtRoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
     _context.dispatcher().sink<EvtRoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
 
-    _context.dispatcher().sink<EvtObjectSelection>().connect<&GameScene::onRoleSelect>(this);
-    _context.dispatcher().sink<EvtObjectUnselect>().connect<&GameScene::onRoleUnselect>(this);
-    
     _context.dispatcher().sink<EvtMotionStop>().connect<&GameScene::onRoleMotionStop>(this);
 
-    _context.eventDispatcher().onMouseLeftDown.connect(this, &GameScene::onMouseLeftPressed, -1);
-    _context.eventDispatcher().onMouseLeftUp.connect(this, &GameScene::onMouseLeftRelease, -1);
-    _context.eventDispatcher().onMouseLeftDrag.connect(this, &GameScene::onMouseLeftDrag, -1);
-
-    _context.eventDispatcher().onMouseLeftDragStart.connect(this, &GameScene::onMouseLeftDragStart, -1);
-    _context.eventDispatcher().onMouseLeftDragFinish.connect(this, &GameScene::onMouseLeftDragFinish, -1);
-
-    _context.eventDispatcher().onMouseLeftClicked.connect(this, &GameScene::onMouseLeftClick, -1);
-    _context.eventDispatcher().onMouseRightClicked.connect(this, &GameScene::onMouseRightClick, -1);
-
-    _context.eventDispatcher().onKeyDown.connect(this, &GameScene::onKeyDown, -1);
-
     _context.eventDispatcher().onMouseMotion.connect(this, &GameScene::onMouseMotion, -1);
+
+    // 默认玩法
+    _gamePlay = std::make_unique<GamePlayTileBattle>(_context);
+    _context.setGamePlay(_gamePlay.get());
 }
 
 GameScene::~GameScene()
@@ -87,13 +78,20 @@ Vec2 GameScene::normalToGridPos(const Vec2& pos)
     return getGridCenterPos(getGridFromPos(pos));
 }
 
-bool GameScene::load(const engine::fs::path& mapPath)
+bool GameScene::load(const std::string& id)
 {
     _camera.setPos({ 0, 0 });
 
-    std::thread loadthread([this, mapPath]() 
+    auto mapCfg = _context.sceneConfig().getMapConfig(id);
+    if (!mapCfg)
     {
-        loadInThread(mapPath);
+        LogError("load scene ({}) failed, not found.", id);
+        return false;
+    }
+
+    std::thread loadthread([this, mapCfg]() 
+    {
+        loadInThread(*mapCfg);
     });
 
     loadthread.detach();
@@ -113,7 +111,7 @@ bool GameScene::unload()
     return true;
 }
 
-void GameScene::loadInThread(const engine::fs::path& mapPath)
+void GameScene::loadInThread(const MapConfig& mapCfg)
 {
     int loop_count = 0;
     while (_state != (int)SceneState::None)
@@ -129,15 +127,28 @@ void GameScene::loadInThread(const engine::fs::path& mapPath)
 
     _state = (int)SceneState::Loading;
 
-    LogInfo("load in thread start:  map={}", mapPath.string());
+    LogInfo("load in thread start: map={}", mapCfg.map_path);
 
     on_load_progress.emit(0.0f);
+
+    if (mapCfg.play_type == GamePlayType::GamePlay_TileBattle)
+    {
+        _gamePlay = std::make_unique<GamePlayTileBattle>(_context); 
+    }
+    else if (mapCfg.play_type == GamePlayType::GamePlay_AutoChess)
+    {
+        _gamePlay = std::make_unique<GamePlayAutoChess>(_context);    
+    }
+    
+    _context.setGamePlay(_gamePlay.get());
 
     // TODO: remove this
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     on_load_progress(0.2f);
 
-    auto res = _tileMap.load(mapPath);
+    auto mapPath = _context.resPath() / mapCfg.map_path;
+    
+    auto res = _tileMap.load(mapPath.string());
     if(!res)
     {
         LogError("load map ({}) failed.", mapPath.string());
@@ -198,10 +209,14 @@ void GameScene::onUpdate(float deltaTime)
     _camera.update(deltaTime);
 
     _quadtree->clear();
+
     for (auto& obj : _sceneObjects)
     {
         _quadtree->add(obj);
     }
+
+    _gamePlay->update(deltaTime);
+
 }
 
 void GameScene::onDraw() 
@@ -209,6 +224,9 @@ void GameScene::onDraw()
     auto& renderer = application().renderer();
 
     _tileMap.draw(renderer, _camera);
+
+    _gamePlay->draw();
+
 }
 
 void GameScene::onStart()
@@ -432,38 +450,12 @@ void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 
 void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
 {
-}
 
-void GameScene::onRoleSelect(const EvtObjectSelection& e)
-{
-    auto bevComp = _context.registry().try_get<CompBehavior>(e.object);
-    if (bevComp && bevComp->bevtree)
-    {
-        bevComp->bevtree->stop();
-    }
-
-    on_select_object(e.object);
-
-    _context.gamePlay().setSelectEntity(e.object);
-}
-    
-void GameScene::onRoleUnselect(const EvtObjectUnselect& e)
-{
-    auto bevComp = _context.registry().try_get<CompBehavior>(e.object);
-    if (bevComp && bevComp->bevtree)
-    {
-        bevComp->bevtree->start();
-    }
-
-    on_unselect_object(e.object);
-    
-    _context.gamePlay().setSelectEntity(entt::null);
 }
 
 void GameScene::onRoleMotionStop(const EvtMotionStop& e)
 {
 }
-
 
 int GameScene::getGridWalkType(const Vec2i& grid)
 {
@@ -611,72 +603,6 @@ SkyEffect GameScene::getSkyEffect()
     return SkyEffect::None;
 }
 
-void GameScene::onMouseLeftPressed(const Vec2& pos)
-{
-    /*
-    auto scenePos = camera().screenToWorld(pos);
-    auto selobj = findObjectAtPos(scenePos);
-    if (selobj != _selectEntity && _selectEntity != entt::null)
-    {
-        _context.dispatcher().trigger(EvtObjectUnselect{ _selectEntity });
-    }
-
-    _selectEntity = selobj;
-
-    _context.dispatcher().trigger(EvtRoleStopMotion{ _selectEntity });
-    _context.dispatcher().trigger(EvtObjectSelection{ _selectEntity });
-    */
-}
-
-void GameScene::onMouseLeftRelease(const Vec2& pos)
-{
-}
-
-void GameScene::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
-{
-    //if (objectDragable() && dragSelectActorInProgress(pos))
-    //{
-    //    slot_context().setBreak(true);
-    //}
-}
-
-void GameScene::onMouseLeftDragStart(const Vec2& pos)
-{
-    //if (dragSelectActor(pos))
-    //{
-    //    slot_context().setBreak(true);
-    //}
-}
-
-void GameScene::onMouseLeftDragFinish(const Vec2& pos)
-{
-    //if (dropSelectActor(pos))
-    //{
-    //    slot_context().setBreak(true);
-    //}
-}
-
-void GameScene::onMouseLeftClick(const Vec2& pos)
-{
-}
-
-void GameScene::onMouseRightClick(const Vec2& pos)
-{
-/*
-    if (!_context.registry().valid(_selectEntity)) {
-        return;
-    }
-
-    auto pcomm = _context.registry().try_get<CompComm>(_selectEntity);
-    if (!pcomm || pcomm->side != CampSide::Gangster) {
-        return;
-    }
-
-    auto scenePos = camera().screenToWorld(pos);
-    moveSelectActor(scenePos);
-*/
-}
-
 void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
 {
     auto scenePos = camera().screenToWorld(pos);
@@ -709,163 +635,16 @@ void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
     _hoverEntity = hoverEntity;
 }
 
-void GameScene::onKeyDown(KeyCode key)
-{
-    _context.gamePlay().onKeyDown(key);
-}
-    
 void GameScene::onHoverObject(entt::entity obj)
 {
-    LogInfo("hover object: {}", obj);
+    //LogInfo("hover object: {}", obj);
     on_hover_object.emit(obj);
 }
 
 void GameScene::onLeaveObject(entt::entity obj)
 {
-    LogInfo("leave object: {}", obj);
+    //LogInfo("leave object: {}", obj);
     on_leave_object.emit(obj);
-}
-
-void GameScene::moveSelectActor(const Vec2& pos)
-{
-    if (_context.registry().valid(_selectEntity) == false)
-    {
-        return;
-    }
-
-    auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
-    if (bevComp && bevComp->bevtree)
-    {
-        bevComp->bevtree->stop();
-    }
-
-    if (_context.registry().try_get<CompMoveCfg>(_selectEntity))
-    {
-        auto gridPos = getGridFromPos(pos);
-        _context.dispatcher().trigger(EvtMoveToGrid{ _selectEntity, gridPos, true });
-    }
-}
-
-bool GameScene::dragSelectActor(const Vec2& pos)
-{
-    if (!_context.registry().valid(_selectEntity) || !objectDragable())
-    {
-        return false;
-    }
-
-    auto pDead = _context.registry().try_get<CompDead>(_selectEntity);
-    if (pDead)
-    {
-        return false;
-    }
-
-    auto pTrans = _context.registry().try_get<CompTransform>(_selectEntity);
-    if (!pTrans)
-    {
-        return false;
-    }
-    
-    auto dstpos = pTrans->position;
-    _context.registry().emplace_or_replace<CompDragging>(_selectEntity, CompDragging{ dstpos, dstpos, pTrans->size });
-
-    auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
-    if (bevComp && bevComp->bevtree)
-    {
-        bevComp->bevtree->stop();
-    }
-
-    removeObjectFromScene(_selectEntity);
-
-    return true;
-}
-
-bool GameScene::dragSelectActorInProgress(const Vec2& pos)
-{
-    if (!_context.registry().valid(_selectEntity) || !objectDragable())
-    {
-        return false;
-    }
-
-    auto pDragging = _context.registry().try_get<CompDragging>(_selectEntity);
-    if (!pDragging)
-    {
-        return false;
-    }
-
-    auto pTrans = _context.registry().try_get<CompTransform>(_selectEntity);
-    if (!pTrans)
-    {
-        return false;
-    }
-
-    auto dstpos = camera().screenToWorld(pos);
-    if (!canDropToPos(dstpos))
-    {
-        pDragging->ground_color = _context.gameConfig().display.ground_color_drag_error;
-        pDragging->border_color = _context.gameConfig().display.border_color_drag_error;
-    }
-    else
-    {
-        pDragging->ground_color = _context.gameConfig().display.ground_color_drag_ok;
-        pDragging->border_color = _context.gameConfig().display.border_color_drag_ok;
-    }
-
-    pTrans->position = dstpos;
-    pDragging->tip_pos = normalToGridPos(dstpos);
-
-    return true;
-}
-
-bool GameScene::dropSelectActor(const Vec2& pos)
-{
-    if (!_context.registry().valid(_selectEntity) || !objectDragable())
-    {
-        return false;
-    }
-
-    auto pDragging = _context.registry().try_get<CompDragging>(_selectEntity);
-    auto pTrans = _context.registry().try_get<CompTransform>(_selectEntity);
-    if (!pDragging || !pTrans)
-    {
-        return false;
-    }
-
-    auto dstpos = camera().screenToWorld(pos);
-    if (canDropToPos(dstpos))
-    {
-        dstpos = normalToGridPos(dstpos);
-        _context.dispatcher().trigger(EvtRoleOnDrop{ _selectEntity, dstpos });
-    }
-    else
-    {
-        dstpos = pDragging->origin_pos;
-    }
-
-    addObjectToScene(_selectEntity);
-
-    setObjectPos(_selectEntity, dstpos);
-
-    _context.registry().remove<CompDragging>(_selectEntity);
-
-    auto bevComp = _context.registry().try_get<CompBehavior>(_selectEntity);
-    if (bevComp && bevComp->bevtree)
-    {
-        bevComp->bevtree->start();
-    }
-
-    EvtRoleCrossGrid e;
-    e.actor = _selectEntity;
-    e.cur_grid = getObjectGrid(_selectEntity);
-    e.lst_grid = getObjectGrid(_selectEntity);
-    _context.dispatcher().trigger(e);
-
-    return true;
-}
-
-bool GameScene::canDropToPos(const Vec2& pos)
-{
-    auto walktype = getGridWalkType(getGridFromPos(pos));
-    return walktype != (int)tilemap::WalkType::Collision;
 }
 
 void GameScene::drawQuadTree()
@@ -887,4 +666,6 @@ void GameScene::drawQuadNode(QuadTreeType::Node* node)
         drawQuadNode(child.get());
     }
 }
+
+
 } 

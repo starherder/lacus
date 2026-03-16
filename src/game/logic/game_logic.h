@@ -8,6 +8,7 @@
 
 #include "game/game_config.h"
 #include "game/game_script.h"
+#include "game/scene/scene_config.h"
 
 #include "game/logic/game_play.h"
 
@@ -44,7 +45,7 @@ namespace game
 
 		void loadResource();
 
-		bool switchScene(const std::string& sceneName);
+		bool switchScene(const std::string& sceneId);
 		bool restartScene();
 
 	private:
@@ -75,7 +76,6 @@ namespace game
 
 		void onSceneObjectHover(entt::entity obj);
 		void onSceneObjectLeave(entt::entity obj);
-		void onSceneObjectSelect(entt::entity obj);
 
 		SceneGameMode gameMode() { return _gameMode; }
 		void setGameMode(SceneGameMode mode) { _gameMode = mode; }
@@ -85,17 +85,18 @@ namespace game
 
 		std::unique_ptr<GameScene> _scene = nullptr;
 		
-		std::unique_ptr<GamePlay> _gamePlay = nullptr;
-
 		GameContext& _context;
 
 		GameConfig _gameConfig;
 
+		SceneConfig _sceneConfig;
+		
 		GameScript _gameScript;
 
 		GameState _state = GameState::Running;
 
 		SceneGameMode _gameMode = SceneGameMode::GameMode_AutoChess;
 
+		// ��ȡscene.json
 	};
 }

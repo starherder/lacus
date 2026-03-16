@@ -28,16 +28,13 @@ namespace game
         _scene->on_load_progress.connect(this, &GameLogic::onSceneLoadProgress);
         _scene->on_hover_object.connect(this, &GameLogic::onSceneObjectHover);
         _scene->on_leave_object.connect(this, &GameLogic::onSceneObjectLeave);
-        _scene->on_select_object.connect(this, &GameLogic::onSceneObjectSelect);
 
 		_context.setScene(_scene.get());
 		_context.setGameConfig(&_gameConfig);
         _context.setGameScript(&_gameScript);
+	    _context.setSceneConfig(&_sceneConfig);
 
         _gameScript.load(_context.resPath() / _gameConfig.script.entry);
-
-        _gamePlay = std::make_unique<GamePlayTileBattle>(_context);
-        _context.setGamePlay(_gamePlay.get());
 
         GuiManager().inst().on_custom_event.connect(this, &GameLogic::onUICustomEvent);
 
@@ -57,8 +54,14 @@ namespace game
 	{
         ObjectFactory::inst().init(&_context);
 
+	    auto sceneCfg = _context.resPath() / "scenes/scenes.json";
+		auto res = _sceneConfig.load(sceneCfg);
+		if (!res) {
+			LogError("load scene config: {} failed.", sceneCfg.string());
+		}
+	    
         auto gamecfg = _context.resPath() / "game_config.json";
-        bool res = _gameConfig.load(gamecfg);
+        res = _gameConfig.load(gamecfg);
         if (!res) {
             LogError("load game config: {} failed.", gamecfg.string());
         }
@@ -139,8 +142,6 @@ namespace game
 
         _scene->onUpdate(delta);
 
-        _gamePlay->update(delta);
-
         checkGameState();
 
         EcsSystemManager::inst().update(delta);
@@ -154,8 +155,6 @@ namespace game
         }
 
         _scene->onDraw();
-
-        _gamePlay->draw();
 
         EcsSystemManager::inst().draw();
     }
@@ -248,9 +247,9 @@ namespace game
         _scene->onStart();
     }
 
-    bool GameLogic::switchScene(const std::string& sceneName)
+    bool GameLogic::switchScene(const std::string& sceneId)
     {
-        _currentScene = sceneName;
+        _currentScene = sceneId;
         _state = GameState::Running;
 
         closeAllForms();
@@ -259,8 +258,7 @@ namespace game
 
         _scene->unload();
 
-        auto mapFile = _context.resPath() / sceneName;
-        _scene->load(mapFile);
+        _scene->load(sceneId);
 
         return true;
     }
@@ -412,11 +410,6 @@ namespace game
                 form->setVisible(false);
             }
         }
-    }
-    
-    void GameLogic::onSceneObjectSelect(entt::entity obj)
-    {
-
     }
 
 }

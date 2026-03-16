@@ -2,6 +2,7 @@
 #include "spdlog/spdlog.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/game_context.h"
+#include "game/logic/game_play.h"
 #include "game/ecs/comp_fight.h"
 
 #include "ui/gui_manager.h"
@@ -52,7 +53,8 @@ void ImFormDebug::onMouseLeftClick(const Vec2& pos)
 
 void ImFormDebug::draw()
 {
-    _selectEntity = _context->scene().getSelectEntity();
+    _selectEntity = _context->gamePlay().getSelectEntity();
+    //_selectEntity = _context->scene().getSelectEntity();
 
     ImGui::Begin("debug");
     {
@@ -90,7 +92,7 @@ void ImFormDebug::draw()
         static bool drag_object = false;
         if (ImGui::Checkbox("drag object", &drag_object))
         {
-            _context->scene().setObjectDragable(drag_object);
+            //_context->scene().setObjectDragable(drag_object);
         }
 
         ImGui::SameLine();
