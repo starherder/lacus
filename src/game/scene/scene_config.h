@@ -1,17 +1,12 @@
 #pragma once
 
 #include "engine/config.h"
+#include "game/logic/game_play.h"
 
 namespace game
 {
 	using namespace engine;
 
-	enum GamePlayType : int8_t
-	{
-		GamePlay_TileBattle = 0,
-		GamePlay_AutoChess = 1,
-	};
-	
 	struct MapConfig
 	{
 		std::string id;

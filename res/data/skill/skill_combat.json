@@ -4,7 +4,7 @@
   "name": "text_skill_combat",
   "desc": "text_skill_combat_desc",
 
-  "distance": 64,
+  "distance": 80,
   "cd_ticks": 1000,
   "sound": "audio/bot/axe.wav",
 

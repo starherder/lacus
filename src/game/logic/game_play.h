@@ -4,6 +4,12 @@
 
 namespace game
 {
+	enum GamePlayType : int8_t
+	{
+		GamePlay_TileBattle = 0,
+		GamePlay_AutoChess = 1,
+	};
+
 	class GamePlay
 	{
 	public:
@@ -13,6 +19,8 @@ namespace game
 
 		GamePlay(GameContext& context) : _context(context) {}
 		virtual ~GamePlay() = default;
+
+		virtual GamePlayType getType() = 0;
 
 		GameContext& context() { return _context; }
 

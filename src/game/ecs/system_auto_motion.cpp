@@ -65,7 +65,11 @@ namespace game
             return false;
         }
 
-        _context.registry().emplace_or_replace<CompAutoMotion>(id, CompAutoMotion{});
+        auto pmotion = _context.registry().try_get<CompAutoMotion>(id);
+        if(!pmotion)
+        {
+            _context.registry().emplace_or_replace<CompAutoMotion>(id, CompAutoMotion{});
+        }
 
         auto& move = _context.registry().get<CompMoveCfg>(id);
         auto& transform = _context.registry().get<CompTransform>(id);
@@ -193,6 +197,11 @@ namespace game
 
     void AutoMotionSystem::onEventMoveToGrid(const EvtMoveToGrid& e)
     {
+        if(_context.gamePlay().getType() == GamePlay_TileBattle)
+        {
+            return;
+        }
+
         bool res = motionStart(e.actor, e.dest, e.findPath);
         if (!res) 
         {

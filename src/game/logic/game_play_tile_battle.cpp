@@ -232,6 +232,14 @@ namespace game
 
 	void GamePlayTileBattle::onSkipMove()
 	{
+		auto turnViews = context().registry().view<CompGameTurn>();
+		for(auto& ent : turnViews)
+		{
+			auto& compTurn = context().registry().get<CompGameTurn>(ent);
+			compTurn.running = false;
+		}
+
+#if 0
 		for (auto& entity : _selectEntities)
 		{
 			auto pGameTurn = context().registry().try_get<CompGameTurn>(entity);
@@ -240,6 +248,7 @@ namespace game
 				pGameTurn->running = false;
 			}
 		}
+#endif
 	}
 	
 	bool GamePlayTileBattle::isMoveStage()
@@ -317,7 +326,7 @@ namespace game
 			_turnType = GameTurnType::Moving;
 		}
 
-		//LogInfo("swith turn to : {}", MagicEnumText(GameTurnType, _turnType));
+		LogInfo("swith turn to : {}", MagicEnumText(GameTurnType, _turnType));
 
 		auto entviews = context().registry().view<CompGameTurn>();
 		for (auto& actor : entviews)

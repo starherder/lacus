@@ -19,7 +19,10 @@ namespace game
 	public:
 		GamePlayTileBattle(GameContext& context);
 		~GamePlayTileBattle() = default;
-		
+
+		GamePlayType getType() override { return GamePlayType::GamePlay_TileBattle; };
+		GameTurnType getTurn() { return _turnType; }
+
 		void update(float deltaTime) override;
 		void draw() override;
 
@@ -44,7 +47,6 @@ namespace game
 		void onMouseMotion(const Vec2& pos, const Vec2& offset);
 		
 		void onKeyDown(KeyCode key);
-
 		
 	private:
 		void switchGameTurn();

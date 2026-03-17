@@ -221,9 +221,7 @@ namespace game
 
             if (compSkill.type != SkillType::Invalid)
             {
-                // ��ҪĿ�꣬Ѱ��Ŀ��
-                auto dis = compSkill.distance;
-                auto& objects = _context.scene().getObjectsInCircle(rolePos, dis);
+                const auto& objects = _context.scene().getObjectsInCircle(rolePos, compSkill.distance);
                 for (auto& [dis, target] : objects)
                 {
                     if (_context.registry().valid(target) == false || target == actor)

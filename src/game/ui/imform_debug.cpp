@@ -11,6 +11,9 @@
 #include "game/ui/ui_logic_events.h"
 #include "utility/translator.h"
 
+#include "game/logic/game_play_tile_battle.h"
+#include "game/logic/game_play_auto_chess.h"
+
 
 namespace game 
 {
@@ -34,6 +37,11 @@ void ImFormDebug::init(GameContext* context)
     }
 
     _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick, -1);
+}
+
+void ImFormDebug::showTurnInfo(int turnType)
+{
+    _turnInfo = turnType;
 }
 
 void ImFormDebug::showGridInfo(const Vec2i& grid, const std::set<entt::entity>& objs)
@@ -231,6 +239,11 @@ void ImFormDebug::draw()
 void ImFormDebug::drawSceneInfo()
 {
     auto ent_num = _context->registry().storage<entt::entity>().size();
+
+    ImGui::Text("turn = %s", _turnInfo==(int)GameTurnType::Fighting?"fight":"move");
+
+    ImGui::Separator();
+
     ImGui::Text("entt::entities: %lu", ent_num);
     ImGui::Text("scene objects: %lu", _context->scene().sceneObjectCount());
 

@@ -39,6 +39,8 @@ namespace game
 
         void showGridInfo(const Vec2i& grid, const std::set<entt::entity>& objs);
         
+        void showTurnInfo(int turnType);
+
 	protected:
 
 		void draw() override;
@@ -74,6 +76,7 @@ namespace game
         std::vector<const char*> _particleNames;
 
         GridInfo _curGridInfo;
+        int _turnInfo;
     };
 
 }

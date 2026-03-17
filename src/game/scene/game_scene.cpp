@@ -78,6 +78,23 @@ Vec2 GameScene::normalToGridPos(const Vec2& pos)
     return getGridCenterPos(getGridFromPos(pos));
 }
 
+void GameScene::normalToGridPos(entt::entity ent)
+{
+    if(!_context.registry().valid(ent))
+    {
+        return;
+    }
+
+    auto pTrans = _context.registry().try_get<CompTransform>(ent);
+    if(!pTrans)
+    {
+        return;
+    }
+
+    auto pos = normalToGridPos(pTrans->position);
+    pTrans->position = pos;
+}
+
 bool GameScene::load(const std::string& id)
 {
     _camera.setPos({ 0, 0 });
@@ -217,6 +234,14 @@ void GameScene::onUpdate(float deltaTime)
 
     _gamePlay->update(deltaTime);
 
+#ifdef _DevelopMode
+    auto form = imgui::ImFormManager::inst().getForm<ImFormDebug>("ImFormDebug");
+    auto pBotPlay = dynamic_cast<GamePlayTileBattle*>(_gamePlay.get());
+    if (form && pBotPlay)
+    {
+        form->showTurnInfo((int)pBotPlay->getTurn());
+    }
+#endif
 }
 
 void GameScene::onDraw() 
@@ -266,6 +291,7 @@ void GameScene::initQuadTree()
 
     _quadtree = std::make_unique<QuadTreeType>(scenebox, getAABB);
     _quadtree->setQueryMode(quadtree::QueryMode::ContainCenter);
+    //_quadtree->setQueryMode(quadtree::QueryMode::Intersect);
 }
 
 void GameScene::initPathFind()

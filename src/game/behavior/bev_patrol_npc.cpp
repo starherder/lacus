@@ -32,11 +32,17 @@ namespace game {
 		}
 
 		auto ptrans = _context->registry().try_get<CompTransform>(_actor);
-		auto pmotion = _context->registry().try_get<CompAutoMotion>(_actor);
-		if(!ptrans || !pmotion)
+		if(!ptrans)
 		{
-			LogError("actor {} Have NO transform nor motion.", (uint32_t)_actor);
+			LogError("actor {} Have NO transform.", (uint32_t)_actor);
 			return Status::Failure;
+		}
+		
+		auto pmotion = _context->registry().try_get<CompAutoMotion>(_actor);
+		if(!pmotion)
+		{
+			_context->registry().emplace_or_replace<CompAutoMotion>(_actor);
+			pmotion = _context->registry().try_get<CompAutoMotion>(_actor);
 		}
 
 		auto& trans = *ptrans;

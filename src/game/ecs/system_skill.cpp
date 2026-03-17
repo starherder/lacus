@@ -146,8 +146,12 @@ namespace game
 				.during(skillAffect.post_ticks)
 				.onStep([e, this](auto& t, float x, float y) {
 						if (_context.registry().valid(e.source)) {
+							if(t.isFinished()) {
+								_context.scene().normalToGridPos(e.source);
+								return true;
+							}
+
 							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-							//srcTrans.position = { x, y };
 							_context.scene().setObjectPos(e.source, { x, y });
 						}
 						return false;
@@ -357,6 +361,10 @@ namespace game
 								.via(sprintComp.tween_mode)
 								.during(during).onStep(
 									[this, srcid, skill](auto& t, float x, float y) {
+										if (t.isFinished()) {
+											_context.scene().normalToGridPos(srcid);
+											return true;
+										}
 
 										auto pSrcSprint = _context.registry().try_get<CompSprint>(skill);
 										auto pSrcTrans = _context.registry().try_get<CompTransform>(srcid);
@@ -804,6 +812,7 @@ namespace game
 
 					if(t.isFinished())
 					{
+						_context.scene().normalToGridPos(e.target);
 						auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
 						if(underatk) 
 						{

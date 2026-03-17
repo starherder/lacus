@@ -11,6 +11,8 @@ namespace game
 		GamePlayAutoChess(GameContext& context);
 		~GamePlayAutoChess() = default;
 
+		GamePlayType getType() override { return GamePlayType::GamePlay_AutoChess; };
+
 		void update(float deltaTime) override;
 		void draw() override;
 
