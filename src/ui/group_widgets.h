@@ -102,7 +102,7 @@ protected:
 
     Vec2 getContentPos() const override { return _contentPos; }
 
-    void onHorizonalSlide(class SliderBar* slider);
+    void onHorizontalSlide(class SliderBar* slider);
     void onVerticalSlide(class SliderBar* slider);
 
     void onChildAdded(Widget* child) override;
@@ -131,12 +131,12 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-class HorizonalLayout : public Group
+class HorizontalLayout : public Group
 {
 public:
-    HorizonalLayout() = delete;
-    ~HorizonalLayout() = default;
-	HorizonalLayout(const std::string& name, Widget* parent = nullptr);
+    HorizontalLayout() = delete;
+    ~HorizontalLayout() = default;
+	HorizontalLayout(const std::string& name, Widget* parent = nullptr);
 
     const Vec2& padding() { return _padding; }
     void setPadding(const Vec2& padding) { _padding = padding; }
@@ -163,11 +163,11 @@ protected:
     float _spacing = 10; 
 };
 
-using HLayout = HorizonalLayout;
+using HLayout = HorizontalLayout;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-class VerticalLayout : public HorizonalLayout
+class VerticalLayout : public HorizontalLayout
 {
 public:
     VerticalLayout() = delete;

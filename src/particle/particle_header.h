@@ -41,7 +41,7 @@ void Set##name(const vtype& val){mem=val;}
 	type valname
 
 
-	static float FloatEqual(float lval, float rval, float epsilon = 0.000001)
+	static bool FloatEqual(float lval, float rval, float epsilon = 0.000001)
 	{
 		return lval >= (rval - epsilon) && lval <= (rval + epsilon);
 	}

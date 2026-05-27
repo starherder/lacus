@@ -13,7 +13,7 @@ namespace game
 
         std::vector<FuncFactor> result;
 
-        auto& views = utility::StringUtil::split(str, ',');
+        const auto& views = utility::StringUtil::split(str, ',');
         for (auto& svitem : views)
         {
             std::string sitem{ svitem.data(), svitem.size() };

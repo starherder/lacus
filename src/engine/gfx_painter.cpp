@@ -59,16 +59,18 @@ namespace engine
 
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 
-		Vec2 trPoint = { rect.pos().x + rect.size().x, rect.pos().y};
-		Vec2 lbPoint = { rect.pos().x, rect.pos().y + rect.size().y};
+		float left = rect.pos().x;
+		float top = rect.pos().y;
+		float right = left + rect.size().x;
+		float bottom = top + rect.size().y;
 
 		if (round > 0)
 		{
-			roundedBoxRGBA(sdlRenderer, trPoint.x, trPoint.y, lbPoint.x, lbPoint.y, round, color.r, color.g, color.b, color.a);
+			roundedBoxRGBA(sdlRenderer, left, top, right, bottom, round, color.r, color.g, color.b, color.a);
 		}
 		else
 		{
-			boxRGBA(sdlRenderer, trPoint.x, trPoint.y, lbPoint.x, lbPoint.y, color.r, color.g, color.b, color.a);
+			boxRGBA(sdlRenderer, left, top, right, bottom, color.r, color.g, color.b, color.a);
 		}
 	}
 
@@ -76,16 +78,18 @@ namespace engine
 	{
 		auto sdlRenderer = _application.renderer().getSdlRenderer();
 
-		Vec2 trPoint = { rect.pos().x + rect.size().x, rect.pos().y };
-		Vec2 lbPoint = { rect.pos().x, rect.pos().y + rect.size().y };
+		float left = rect.pos().x;
+		float top = rect.pos().y;
+		float right = left + rect.size().x;
+		float bottom = top + rect.size().y;
 
 		if (round > 0)
 		{
-			roundedRectangleRGBA(sdlRenderer, trPoint.x, trPoint.y, lbPoint.x, lbPoint.y, round, color.r, color.g, color.b, color.a);
+			roundedRectangleRGBA(sdlRenderer, left, top, right, bottom, round, color.r, color.g, color.b, color.a);
 		}
 		else
 		{
-			rectangleRGBA(sdlRenderer, trPoint.x, trPoint.y, lbPoint.x, lbPoint.y, color.r, color.g, color.b, color.a);
+			rectangleRGBA(sdlRenderer, left, top, right, bottom, color.r, color.g, color.b, color.a);
 		}
 	}
 

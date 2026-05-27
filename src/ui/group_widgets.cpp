@@ -131,6 +131,10 @@ namespace ui
     {
         for(auto it=_children.begin(); it!=_children.end(); it++)
         {
+            if ((*it)->name() != name)
+            {
+                continue;
+            }
             auto ptr = *it;
             onChildRemoved(ptr.get());
 
@@ -289,8 +293,8 @@ namespace ui
         setAcceptEvent(true);
 
         _horizonSlider = createChild<ui::SliderBar>("__h_slider__");
-        _horizonSlider->setDirection(ui::Coordinate::Horizonal);
-        _horizonSlider->on_value_changed.connect(this, &ExpandGroup::onHorizonalSlide);
+        _horizonSlider->setDirection(ui::Coordinate::Horizontal);
+        _horizonSlider->on_value_changed.connect(this, &ExpandGroup::onHorizontalSlide);
 
         _verticalSlider = createChild<ui::SliderBar>("__v_slider__");
         _verticalSlider->setDirection(ui::Coordinate::Vertical);
@@ -314,7 +318,7 @@ namespace ui
         return true;
     }
 
-    void ExpandGroup::onHorizonalSlide(SliderBar* slider)
+    void ExpandGroup::onHorizontalSlide(SliderBar* slider)
     {
         _contentPos.x = -slider->value();
 
@@ -406,7 +410,7 @@ namespace ui
         Vec2 contentRB = { 0, 0 };
         for (auto& ctrl : children())
         {
-            if (ctrl->name() == "__h_slider__" || ctrl->name() == "__h_slider__")
+            if (ctrl->name() == "__h_slider__" || ctrl->name() == "__v_slider__")
             {
                 continue;
             }
@@ -484,12 +488,12 @@ namespace ui
     }
     ///////////////////////////////////////////////////////////////////////////////////////
 
-	HorizonalLayout::HorizonalLayout(const std::string& name, Widget* parent )
+	HorizontalLayout::HorizontalLayout(const std::string& name, Widget* parent )
         : Group(name, parent)
     {
     }
 
-    bool HorizonalLayout::onLoad(XmlNode* node)
+    bool HorizontalLayout::onLoad(XmlNode* node)
     {
         if (!Group::onLoad(node))
         {
@@ -504,7 +508,7 @@ namespace ui
         return true;
     }
 
-    void HorizonalLayout::adjustLayout()
+    void HorizontalLayout::adjustLayout()
     {
         float width_used = _padding.x * 2;
         float scalable_height = size().y - _padding.y * 2;
@@ -565,23 +569,23 @@ namespace ui
         }
     }
 
-    void HorizonalLayout::onChildAdded(Widget* child) 
+    void HorizontalLayout::onChildAdded(Widget* child) 
     {
         child->setScaleInGroup(true);
         adjustLayout();
     }
 
-    void HorizonalLayout::onChildRemoved(Widget* child) 
+    void HorizontalLayout::onChildRemoved(Widget* child) 
     {
         adjustLayout();
     }
 
-    void HorizonalLayout::onChildPosChanged(Widget* child)
+    void HorizontalLayout::onChildPosChanged(Widget* child)
     {
         adjustLayout();
     }
 
-    void HorizonalLayout::onChildSizeChanged(Widget* child) 
+    void HorizontalLayout::onChildSizeChanged(Widget* child) 
     {
         if(child->size().x > 0)
         {
@@ -591,12 +595,12 @@ namespace ui
         adjustLayout();
     }
 
-    void HorizonalLayout::onChildVisibleChanged(Widget* child) 
+    void HorizontalLayout::onChildVisibleChanged(Widget* child) 
     {
         adjustLayout();
     }
 
-    void HorizonalLayout::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    void HorizontalLayout::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
     {
         Group::onSizeChanged(oldPos, newPos);
 
@@ -606,13 +610,13 @@ namespace ui
     ///////////////////////////////////////////////////////////////////////////////////////
 
 	VerticalLayout::VerticalLayout(const std::string& name, Widget* parent)
-        : HorizonalLayout(name, parent)
+        : HorizontalLayout(name, parent)
     {
     }
 
     bool VerticalLayout::onLoad(XmlNode* node)
     {
-        if (!HorizonalLayout::onLoad(node))
+        if (!HorizontalLayout::onLoad(node))
         {
             return false;
         }

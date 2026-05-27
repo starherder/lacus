@@ -65,7 +65,7 @@ namespace game
 	{
 		if (dragSelectActorInProgress(pos))
 		{
-		    slot_context().setBreak(true);
+		    slotContext().setBreak(true);
 		}
 	}
 
@@ -96,7 +96,7 @@ namespace game
 	{
         if ( objectDragable() && dragSelectActor(pos))
         {
-            slot_context().setBreak(true);
+            slotContext().setBreak(true);
         }
 	}
 
@@ -104,7 +104,7 @@ namespace game
 	{
         if (objectDragable() && dropSelectActor(pos))
         {
-            slot_context().setBreak(true);
+            slotContext().setBreak(true);
         }
 	}
 

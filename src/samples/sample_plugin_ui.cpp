@@ -383,7 +383,7 @@ namespace samples
 		}
 
 		{	// ---------------------- horizonal layout ----------------------
-			auto hlay = bk_group->createChild<ui::HorizonalLayout>("hlay");
+			auto hlay = bk_group->createChild<ui::HorizontalLayout>("hlay");
 			hlay->setPos({ 100, 650 });
 			hlay->setSize({ 800, 100 });
 			hlay->setBgColor(Color::LightRed);
@@ -515,26 +515,26 @@ namespace samples
 				btn->setSize({ 150, 50 });
 				btn->setPos({ 550, 80 });
 				btn->setText("xml");
-				btn->on_click.connect([this](ui::Button* btn) 
+				btn->on_click.connect([this](ui::Button* btn)
 				{
 					bool visible = btn->getData<bool>("load_xml");
-					if (!visible) 
+					if (!visible)
 					{
 						auto form = ui::GuiManager::inst().loadForm("form_test", _application.resPath() / "ui/form_test.xml");
 						if (form)
 						{
-							auto btn = form->getWidget<ui::Button>("btn_close");
-							if (btn) {
-								btn->on_click.connect([form](ui::Button* btn) { form->close(); });
+							auto closeBtn = form->getWidget<ui::Button>("btn_close");
+							if (closeBtn) {
+								closeBtn->on_click.connect([form](ui::Button*) { form->close(); });
 							}
 						}
 					}
-					else 
+					else
 					{
 						ui::GuiManager::inst().closeForm("form_test");
 					}
 
-					btn->setData("layout_show", !visible);
+					btn->setData("load_xml", !visible);
 				});
 			}
 		}

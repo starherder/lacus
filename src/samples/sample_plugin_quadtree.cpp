@@ -154,7 +154,7 @@ namespace samples
         obj->size = { rand() % ObjectWidth, rand() % ObjectHeight };
         obj->pos = { rand() % (int)(_worldSize.x - ObjectWidth), rand() % (int)(_worldSize.y - ObjectHeight) };
         obj->color.fromHSV({ (float)(30 + rand() % 300), 1.0f, 1.0f, 1.0f });
-        obj->vel = { utility::RandomHelper::random_real(-ObjectSpeed, ObjectSpeed), utility::RandomHelper::random_real(-ObjectSpeed, ObjectSpeed) };
+        obj->vel = { utility::RandomHelper::randomReal(-ObjectSpeed, ObjectSpeed), utility::RandomHelper::randomReal(-ObjectSpeed, ObjectSpeed) };
 
         if (_quadtree->getBox().contains(obj->getBox()))
         {

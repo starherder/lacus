@@ -448,10 +448,10 @@ namespace game
 
 			CompBaseProp compBase;
 			compBase.lv = baseJs.value("level", 0);
-			compBase.str = baseJs.value("str", 0.0f) + utility::Random_Minus1_1() * roll;
-			compBase.cst = baseJs.value("cst", 0.0f) + utility::Random_Minus1_1() * roll;
-			compBase.dex = baseJs.value("dex", 0.0f) + utility::Random_Minus1_1() * roll;
-			compBase.met = baseJs.value("met", 0.0f) + utility::Random_Minus1_1() * roll;
+			compBase.str = baseJs.value("str", 0.0f) + utility::rand_minus1_1() * roll;
+			compBase.cst = baseJs.value("cst", 0.0f) + utility::rand_minus1_1() * roll;
+			compBase.dex = baseJs.value("dex", 0.0f) + utility::rand_minus1_1() * roll;
+			compBase.met = baseJs.value("met", 0.0f) + utility::rand_minus1_1() * roll;
 			compBase.exp = 0;
 
 			_context->registry().emplace<CompBaseProp>(role, compBase);

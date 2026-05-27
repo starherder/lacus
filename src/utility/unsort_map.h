@@ -1,14 +1,14 @@
-﻿#pragma once
+#pragma once
 
 #include <map>
 #include <vector>
 #include <string>
-#include <xutility>
+#include <stdexcept>
 #include <initializer_list>
 
 namespace utility {
 
-// 非排序map，元素顺序就是元素插入的顺序 
+// 非排序map，元素顺序就是元素插入的顺序
 // std::map 会自动根据key值排序
 // std::unordered_map 无序，也不按照记录插入顺序存放
 template<typename KT, typename VT>
@@ -26,116 +26,126 @@ public:
 	using reverse_iterator = typename data_type::reverse_iterator;
 	using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
-	unsort_map() { }
-	~unsort_map() { }
+	unsort_map() = default;
+	~unsort_map() = default;
 
 	unsort_map(const unsort_map& _unsortmap)
 	{
-		m_data = _unsortmap.m_data;
+		_data = _unsortmap._data;
 	}
 
-	unsort_map(unsort_map&& _unsortmap)
+	unsort_map(unsort_map&& _unsortmap) noexcept
 	{
-		m_data = _unsortmap.m_data;
+		_data = std::move(_unsortmap._data);
 	}
 
 	unsort_map(const std::initializer_list<pair_type>& il)
 	{
 		for (const auto& p : il) {
-			m_data.push_back(p);
+			_data.push_back(p);
 		}
 	}
 
-	unsort_map& operator=(unsort_map&& _unsortmap)
+	unsort_map& operator=(unsort_map&& _unsortmap) noexcept
 	{
-		m_data = _unsortmap;
-		return this;
+		_data = std::move(_unsortmap._data);
+		return *this;
 	}
 
 	iterator begin()
 	{
-		return m_data.begin();
+		return _data.begin();
 	}
 
 	iterator end()
 	{
-		return m_data.end();
+		return _data.end();
 	}
 
 	reverse_iterator rbegin()
 	{
-		return m_data.rbegin();
+		return _data.rbegin();
 	}
 
 	reverse_iterator rend()
 	{
-		return m_data.rend();
+		return _data.rend();
 	}
 
 	const_reverse_iterator crbegin() const
 	{
-		return m_data.rbegin();
+		return _data.rbegin();
 	}
 
 	const_reverse_iterator crend() const
 	{
-		return m_data.rend();
+		return _data.rend();
 	}
 
 
 	const_iterator begin() const
 	{
-		return m_data.cbegin();
+		return _data.cbegin();
 	}
 
 	const_iterator end() const
 	{
-		return m_data.cend();
+		return _data.cend();
 	}
 
 	size_t size() const
 	{
-		return m_data.size();
+		return _data.size();
 	}
 
 	bool empty() const
 	{
-		return m_data.empty();
+		return _data.empty();
 	}
 
 	void clear()
 	{
-		m_data.clear();
+		_data.clear();
 	}
 
 	void insert(const pair_type& p)
 	{
-		m_data.push_back(p);
+		_data.push_back(p);
 	}
-	
+
 	void insert(pair_type&& p)
 	{
-		m_data.push_back(std::forward<pair_type>(p));
+		_data.push_back(std::move(p));
 	}
 
 	void insert(iterator it, const pair_type& p)
 	{
-		m_data.insert(it, p);
+		_data.insert(it, p);
 	}
 
 	void insert(iterator it, pair_type&& p)
 	{
-		m_data.insert(it, std::forward<pair_type>(p));
+		_data.insert(it, std::move(p));
 	}
-	
+
 	value_type& at(const key_type& key)
 	{
-		for (auto& p : m_data) {
+		for (auto& p : _data) {
 			if (p.first == key) {
 				return p.second;
 			}
 		}
-		std::_Xout_of_range("invalid UnSortMap<K, T> key");
+		throw std::out_of_range("invalid unsort_map<K, T> key");
+	}
+
+	const value_type& at(const key_type& key) const
+	{
+		for (const auto& p : _data) {
+			if (p.first == key) {
+				return p.second;
+			}
+		}
+		throw std::out_of_range("invalid unsort_map<K, T> key");
 	}
 
 	value_type& operator[](const key_type& key)
@@ -149,42 +159,42 @@ public:
 
 	iterator find(const key_type& key)
 	{
-		for (auto it = m_data.begin(); it != m_data.end(); it++) {
+		for (auto it = _data.begin(); it != _data.end(); it++) {
 			if (it->first == key) {
 				return it;
 			}
 		}
-		return m_data.end();
+		return _data.end();
 	}
 
 	const_iterator find(const key_type& key) const
 	{
-		for (auto it = m_data.begin(); it != m_data.end(); it++) {
+		for (auto it = _data.begin(); it != _data.end(); it++) {
 			if (it->first == key) {
 				return it;
 			}
 		}
-		return m_data.end();
+		return _data.end();
 	}
 
 	iterator erase(iterator it)
 	{
-		return m_data.erase(it);
+		return _data.erase(it);
 	}
 
 	iterator erase(const key_type& key)
 	{
-		for (auto it = m_data.begin(); it != m_data.end(); it++) {
+		for (auto it = _data.begin(); it != _data.end(); it++) {
 			if (it->first == key) {
-				return m_data.erase(it);
+				return _data.erase(it);
 			}
 		}
-		return m_data.end();
+		return _data.end();
 	}
 
 
 private:
-	data_type m_data;
+	data_type _data;
 };
 
 }

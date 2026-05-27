@@ -217,7 +217,7 @@ private:
     std::list<RadioBox*> _items;
 };
 
-class RadioHLayGroup : public HorizonalLayout
+class RadioHLayGroup : public HorizontalLayout
 {
 public:
     signal<int> on_item_select;
@@ -239,7 +239,7 @@ protected:
     bool onLoad(XmlNode* node) override;
 
 private:
-    class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
+    std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
 };
 
 class RadioVLayGroup : public VerticalLayout
@@ -264,7 +264,7 @@ protected:
     bool onLoad(XmlNode* node) override;
 
 private:
-    class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
+    std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -295,7 +295,7 @@ protected:
 
 private:
     Vec2 DefaultSize = {100, 20};
-    Coordinate _direction = Coordinate::Horizonal;
+    Coordinate _direction = Coordinate::Horizontal;
 
     float _progress = 0.0f;
     Widget* _foreground = nullptr;
@@ -361,7 +361,7 @@ private:
     float _value = 0.0f;
     float _maxValue = 100.0f;
 
-    Coordinate _direction = Coordinate::Horizonal;
+    Coordinate _direction = Coordinate::Horizontal;
 
     SliderBlock* _slider = nullptr;
 
@@ -397,7 +397,7 @@ protected:
 private:
     float _itemHeight = 25;
 
-    class std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
+    std::unique_ptr<RadioGroupImpl> _radioGroup = nullptr;
 };
 
 }

@@ -136,7 +136,7 @@ namespace game
 
 	void BuffSystem::onPeriodExec(entt::entity target, entt::entity buff, entt::entity source)
 	{
-		// ¸ÄÔì FightSystem::onRoleUnderAttack£¬·¢ÏûÏ¢¹ıÈ¥´¦ÀíÉËº¦
+		// æ”¹é€  FightSystem::onRoleUnderAttackï¼Œå‘æ¶ˆæ¯è¿‡å»å¤„ç†ä¼¤å®³
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 		//LogInfo("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);

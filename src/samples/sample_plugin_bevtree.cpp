@@ -370,7 +370,7 @@ namespace samples {
                 npc->pos = { 200, 200 };
                 npc->color = Color::LightYellow;
                 _actors.push_back(npc);
-                dynamic_cast<BtNode*>(btree->getNode("idle_npc_move"))->setNpc(npc.get());
+                if (auto idle_move = dynamic_cast<BtNode*>(btree->getNode("idle_npc_move"))) { idle_move->setNpc(npc.get()); }
             }
         }
 
@@ -383,9 +383,9 @@ namespace samples {
                 npc1->pos = { 500, 400 };
                 npc1->color = Color::PaleBlue;
                 _actors.push_back(npc1);
-                dynamic_cast<BtNode*>(btree1->getNode("boring_npc_move"))->setNpc(npc1.get());
-                dynamic_cast<BtNode*>(btree1->getNode("boring_npc_resize"))->setNpc(npc1.get());
-                dynamic_cast<BtNode*>(btree1->getNode("boring_npc_alpha"))->setNpc(npc1.get());
+                if (auto boring_move = dynamic_cast<BtNode*>(btree1->getNode("boring_npc_move"))) { boring_move->setNpc(npc1.get()); }
+                if (auto boring_resize = dynamic_cast<BtNode*>(btree1->getNode("boring_npc_resize"))) { boring_resize->setNpc(npc1.get()); }
+                if (auto boring_alpha = dynamic_cast<BtNode*>(btree1->getNode("boring_npc_alpha"))) { boring_alpha->setNpc(npc1.get()); }
             }
         }
 
@@ -398,9 +398,9 @@ namespace samples {
                 npc2->pos = { 500, 400 };
                 npc2->color = Color::Red;
                 _actors.push_back(npc2);
-                dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_move"))->setNpc(npc2.get());
-                dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_resize"))->setNpc(npc2.get());
-                dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_hue"))->setNpc(npc2.get());
+                if (auto crazy_move = dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_move"))) { crazy_move->setNpc(npc2.get()); }
+                if (auto crazy_resize = dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_resize"))) { crazy_resize->setNpc(npc2.get()); }
+                if (auto crazy_hue = dynamic_cast<BtNode*>(btree2->getNode("crazy_npc_hue"))) { crazy_hue->setNpc(npc2.get()); }
             }
         }
     }

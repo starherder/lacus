@@ -35,12 +35,15 @@ namespace game
 
 	bool EffectManager::createEffectOnEntity(entt::entity ent, const std::string& effect_name)
 	{
-		_context.registry().emplace<CompEffect>(ent, CompEffect{});
+		if (!_context.registry().all_of<CompEffect>(ent))
+		{
+			_context.registry().emplace<CompEffect>(ent, CompEffect{});
+		}
 		auto& compEffect = _context.registry().get<CompEffect>(ent);
 
 		//compEffect.tween.
 
-		// effect的配置，一个个放到tween里，用于定时顺序执行
+		// effect鐨勯厤缃紝涓�涓釜鏀惧埌tween閲岋紝鐢ㄤ簬瀹氭椂椤哄簭鎵ц
 
 		return true;
 	}

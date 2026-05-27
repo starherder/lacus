@@ -1,4 +1,4 @@
-﻿/*
+/*
   * sigslot.h
   *
   * Copyright (c) 2014, Leon Colijn. All rights reserved.
@@ -27,14 +27,14 @@
 
 #include <list>
 
-//#define USE_MULTI_THREAD 
+//#define USE_MULTI_THREAD
 
 #ifdef USE_MULTI_THREAD
 #	include <mutex>
 #	define THREAD_BLOCK_LOCKER std::lock_guard<std::mutex> locker(_mutex);
 #	define THREAD_DEFINE_MUTEX std::mutex _mutex;
 #else
-#	define THREAD_BLOCK_LOCKER 
+#	define THREAD_BLOCK_LOCKER
 #	define THREAD_DEFINE_MUTEX
 #endif
 
@@ -48,12 +48,11 @@ namespace sigslot
 
 	struct SlotContext
 	{
-		// break the loop, stop signal pass through to other slots
 		void setBreak(bool v) { flow = (v ? Flow::Break : Flow::Continue); }
-		bool isBreak() { return flow == Flow::Break;}
-		
+		bool isBreak() const { return flow == Flow::Break; }
+
 	private:
-		enum class Flow 
+		enum class Flow
 		{
 			Continue = 0,
 			Break = 1,
@@ -67,8 +66,8 @@ namespace sigslot
 	class SigSlotInterface
 	{
 	public:
-		virtual void add_binding(const BindingPtr& b) = 0;
-		virtual void erase_binding(const BindingPtr& b) = 0;
+		virtual void addBinding(const BindingPtr& b) = 0;
+		virtual void eraseBinding(const BindingPtr& b) = 0;
 
 	protected:
 		THREAD_DEFINE_MUTEX
@@ -100,12 +99,12 @@ namespace sigslot
 			if (_emitter) {
 				SigSlotInterface* em = _emitter;
 				_emitter = nullptr;
-				em->erase_binding(shared_from_this());
+				em->eraseBinding(shared_from_this());
 			}
 			if (_receiver) {
 				SigSlotInterface* recv = _receiver;
 				_receiver = nullptr;
-				recv->erase_binding(shared_from_this());
+				recv->eraseBinding(shared_from_this());
 			}
 		}
 
@@ -133,25 +132,24 @@ namespace sigslot
 			}
 		}
 
-		void add_binding(const BindingPtr& b) override
+		void addBinding(const BindingPtr& b) override
 		{
 			_bindings.push_back(b);
 		}
 
-		void erase_binding(const BindingPtr& b) override
+		void eraseBinding(const BindingPtr& b) override
 		{
 			auto pos = std::find(_bindings.begin(), _bindings.end(), b);
 			if (pos == _bindings.end()) {
-				// throw std::runtime_error("Specified binding was not found");
 				return;
 			}
 
 			_bindings.erase(pos);
 		}
 
-		static SlotContext& slot_context() 
+		static SlotContext& slotContext()
 		{
-			static SlotContext context;
+			thread_local SlotContext context;
 			return context;
 		}
 
@@ -163,61 +161,65 @@ namespace sigslot
 	/*
 	 * @brief signal can be connected and emit
 	 */
-	template <typename... _ArgTypes>
+	template <typename... ArgTypes>
 	class Signal : public SigSlotBase
 	{
-		typedef std::function<void(_ArgTypes...)> _Fun;
-		struct _Slot
+		using Fun = std::function<void(ArgTypes...)>;
+		struct Slot
 		{
 			int prio;
-			_Fun func;
+			Fun func;
 		};
-		typedef std::pair<BindingPtr, _Slot> _BindingRef;
+		using BindingRef = std::pair<BindingPtr, Slot>;
 
 	public:
-		// prio: priority, 0 is the middle priority (negative number is lower)
-		template <typename _Class>
-		void connect(_Class* inst, void(_Class::* func)(_ArgTypes...), int prio = 0)
+		template <typename ClassType>
+		void connect(ClassType* inst, void(ClassType::* func)(ArgTypes...), int prio = 0)
 		{
 			THREAD_BLOCK_LOCKER;
 
-			_Slot slot = { prio, [=](_ArgTypes... args) {return (inst->*func)(args...); } };
+			Slot slot = { prio, [=](ArgTypes... args) {return (inst->*func)(args...); } };
 			BindingPtr binding = Binding::create(this, inst);
 
-			add_slot(binding, slot);
+			addSlot(binding, slot);
 
-			inst->add_binding(binding);
-			add_binding(binding);
+			inst->addBinding(binding);
+			addBinding(binding);
 		}
 
-		void connect(_Fun fun, int prio = 0)
+		void connect(Fun fun, int prio = 0)
 		{
 			THREAD_BLOCK_LOCKER;
 
-			_Slot slot = { prio, fun};
+			Slot slot = { prio, fun };
 			BindingPtr binding = Binding::create(nullptr, nullptr);
 
-			add_slot(binding, slot);
+			addSlot(binding, slot);
 		}
 
-		void emit(_ArgTypes... args)
+		void emit(ArgTypes... args)
 		{
 			THREAD_BLOCK_LOCKER;
 
-			for (auto& slotBind : _slotBinds) 
+			auto& ctx = slotContext();
+			bool savedBreak = ctx.isBreak();
+			ctx.setBreak(false);
+
+			for (auto& slotBind : _slotBinds)
 			{
 				auto& slot = std::get<1>(slotBind);
 				slot.func(args...);
 
-				if(slot_context().isBreak()) 
+				if (ctx.isBreak())
 				{
-					slot_context().setBreak(false);
 					break;
 				}
 			}
+
+			ctx.setBreak(savedBreak);
 		}
 
-		void operator()(_ArgTypes... args)
+		void operator()(ArgTypes... args)
 		{
 			emit(args...);
 		}
@@ -230,18 +232,21 @@ namespace sigslot
 		}
 
 	protected:
-		void erase_binding(const BindingPtr& b)
+		void eraseBinding(const BindingPtr& b)
 		{
 			THREAD_BLOCK_LOCKER;
 
-			SigSlotBase::erase_binding(b);
+			SigSlotBase::eraseBinding(b);
 
-			auto it = std::find_if(_slotBinds.begin(), _slotBinds.end(), [&b](_BindingRef r) -> bool {
+			auto it = std::find_if(_slotBinds.begin(), _slotBinds.end(), [&b](BindingRef r) -> bool {
 				return std::get<0>(r) == b; });
-			_slotBinds.erase(it);
+			if (it != _slotBinds.end())
+			{
+				_slotBinds.erase(it);
+			}
 		}
 
-		void add_slot(const BindingPtr& binding, const _Slot& slot)
+		void addSlot(const BindingPtr& binding, const Slot& slot)
 		{
 			int prio = slot.prio;
 			for (auto it = _slotBinds.rbegin(); it != _slotBinds.rend(); it++)
@@ -258,7 +263,7 @@ namespace sigslot
 		}
 
 	private:
-		std::list<_BindingRef> _slotBinds;
+		std::list<BindingRef> _slotBinds;
 	};
 
 	using SlotHandler = SigSlotBase;

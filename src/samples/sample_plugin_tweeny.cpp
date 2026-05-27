@@ -161,20 +161,8 @@ namespace samples {
             _tween.to(p.x, p.y).via(ease).during(duration);
         }
 
-        uint16_t lstpoint = -1;
-        _tween.onStep([this, &lstpoint] (auto& t, float x, float y) {
-
-            //LogInfo("t.process = {} t.point = {}/{}, timePoint = {}", 
-            //    t.progress(), t.point(), t.point_count(), t.currentTimePoint());
-    
-            _rolePos.x = x;
-            _rolePos.y = y;
-            return false;
-        });
-
-
         _tween.onPoint([this](auto& t, float x, float y) {
-            
+
             LogInfo("onPoint: current point = {} progress = {}", t.point(), t.progress());
 
             _lights[t.point()] = true;
@@ -184,45 +172,33 @@ namespace samples {
 
         int start_ticks = (int)SDL_GetTicks();
 
-        if (mode == EaseMode::Once)
-        {
-            _tween.onStep([ease, start_ticks](auto& t, int x, int y) {
-                if (t.progress() >= 1.0f) {
-                    LogInfo("{} finish!,  ticks = {}", ease, SDL_GetTicks()-start_ticks);
-                    return true;
+        _tween.onStep([this, ease, mode, start_ticks](auto& t, float x, float y) {
+            _rolePos.x = x;
+            _rolePos.y = y;
+
+            if (mode == EaseMode::Once && t.progress() >= 1.0f) {
+                LogInfo("{} finish!, ticks = {}", ease, SDL_GetTicks() - start_ticks);
+                return true;
+            }
+
+            if (mode == EaseMode::Loop && t.progress() >= 1.0f) {
+                LogInfo("{} reward!", ease);
+                t.seek(0);
+            }
+
+            if (mode == EaseMode::Yoyo) {
+                if (t.progress() <= 0.01f) {
+                    LogInfo("{} forward!", ease);
+                    t.forward();
                 }
-                return false;
-            });
-        }
-
-        if (mode == EaseMode::Loop)
-        {
-            _tween.onStep([ease](auto& t, int x, int y) {  
                 if (t.progress() >= 1.0f) {
-                    LogInfo("{} reward!", ease);
-                    t.seek(0); 
+                    LogInfo("{} backward!", ease);
+                    t.backward();
                 }
-                return false;
-            });
-         }
+            }
 
-        if (mode == EaseMode::Yoyo)
-        {
-            _tween.onStep([ease](auto& t, int x, int y) 
-                {
-                    //LogInfo("t.progress() = {}", t.progress());
-
-                    if (t.progress() <= 0.01f) { 
-                        LogInfo("{} forward!", ease);
-                        t.forward(); 
-                    }
-                    if (t.progress() >= 1.0f) {
-                        LogInfo("{} backward!", ease);
-                        t.backward(); 
-                    }
-                    return false;
-            });
-        }
+            return false;
+        });
     }
 
 }

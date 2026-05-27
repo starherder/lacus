@@ -10,7 +10,8 @@ namespace game
 		for (auto& ent : views)
 		{
 			auto& compEffect = views.get<CompEffect>(ent);
-			auto delta = _context.frameTicker().deltaTicks();
+			float dtTicks = _context.frameTicker().deltaTicks();
+			compEffect.tween.step(dtTicks);
 			compEffect.tween.step(delta);
 		}
 	}

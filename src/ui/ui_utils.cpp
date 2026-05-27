@@ -48,9 +48,9 @@ const WidgetStatus WidgetUtils::selectHoverStatus = WidgetStatus{
 
 Coordinate WidgetUtils::getCoord(const std::string& str)
 {
-    if (str == "horizonal") return Coordinate::Horizonal;
+    if (str == "horizonal") return Coordinate::Horizontal;
     if (str == "vertical") return Coordinate::Vertical;
-    return Coordinate::Horizonal;
+    return Coordinate::Horizontal;
 }
 
 Align WidgetUtils::getAlign(const std::string& str) 

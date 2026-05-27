@@ -36,10 +36,10 @@ namespace tilemap {
     };
 
     struct MapDrawCall {
-        std::vector<engine::Vertex> vertexies;
+        std::vector<engine::Vertex> vertices;
 
-        // vertexies on camera
-        std::vector<engine::Vertex> display_vertexies;
+        // vertices on camera
+        std::vector<engine::Vertex> display_vertices;
         engine::Texture* texture;
     };
 

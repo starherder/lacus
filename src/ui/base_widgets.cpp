@@ -539,7 +539,7 @@ namespace ui
 
     /////////////////////////////////////////////////////////////////
 
-    RadioHLayGroup::RadioHLayGroup(const std::string& name, Widget* parent) : HorizonalLayout(name, parent)
+    RadioHLayGroup::RadioHLayGroup(const std::string& name, Widget* parent) : HorizontalLayout(name, parent)
     {
         _radioGroup = std::make_unique<RadioGroupImpl>(this);
         _radioGroup->on_item_select.connect([this](int v) { on_item_select.emit(v); });
@@ -567,7 +567,7 @@ namespace ui
 
     bool RadioHLayGroup::onLoad(XmlNode* node)
     {
-        if (!HorizonalLayout::onLoad(node))
+        if (!HorizontalLayout::onLoad(node))
         {
             return false;
         }
@@ -637,7 +637,7 @@ namespace ui
 
         Vec2 foreSize = {0, 0};
 
-        if(_direction == Coordinate::Horizonal)
+        if(_direction == Coordinate::Horizontal)
         {
             foreSize.x = progress * size().x;
             foreSize.y = size().y;
@@ -792,7 +792,7 @@ namespace ui
         auto sliderPos = _slider->pos();
         float progress = std::clamp(_value / _maxValue, 0.0f, 1.0f);
 
-        if (_direction == Coordinate::Horizonal)
+        if (_direction == Coordinate::Horizontal)
         {
             sliderPos.x = progress * (size().x - _slider->size().x);
             sliderPos.y = (size().y - _slider->size().y) / 2.0f;
@@ -815,7 +815,7 @@ namespace ui
         auto sliderPos = _slider->pos();
         Vec2 sliderSize;
 
-        if(_direction == Coordinate::Horizonal)
+        if(_direction == Coordinate::Horizontal)
         {
             sliderSize.x = size().y * 2;
             sliderSize.y = size().y;
@@ -850,7 +850,7 @@ namespace ui
         Vec2 totalOffset = pos - _beginPos;
         auto realSize = size() - _slider->size();
 
-        float poffset = (_direction == Coordinate::Horizonal) ? totalOffset.x / realSize.x : totalOffset.y / realSize.y;
+        float poffset = (_direction == Coordinate::Horizontal) ? totalOffset.x / realSize.x : totalOffset.y / realSize.y;
         float value = _beginValue + poffset * _maxValue;
 
         setValue(value);

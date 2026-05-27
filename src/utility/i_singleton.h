@@ -23,9 +23,11 @@ namespace utility
 		}
 
 	protected:
-		ISingleton()
-		{
-		}
+		ISingleton() = default;
+		ISingleton(const ISingleton&) = delete;
+		ISingleton& operator=(const ISingleton&) = delete;
+		ISingleton(ISingleton&&) = delete;
+		ISingleton& operator=(ISingleton&&) = delete;
 	};
 
 }

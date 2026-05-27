@@ -54,7 +54,7 @@ void EventDispatcher::run()
 			{
 				onMouseLeftDown({ e.button.x, e.button.y });
 			}
-			if (e.button.button == SDL_BUTTON_RIGHT) 
+			if (e.button.button == SDL_BUTTON_RIGHT)
 			{
 				onMouseRightDown({ e.button.x, e.button.y });
 			}
@@ -69,10 +69,10 @@ void EventDispatcher::run()
 				if (_isDragging)
 				{
 					_isDragging = false;
-					onMouseLeftDragFinish.emit({ e.motion.x, e.motion.y });
+					onMouseLeftDragFinish.emit({ e.button.x, e.button.y });
 				}
 			}
-			if (e.button.button == SDL_BUTTON_RIGHT) 
+			if (e.button.button == SDL_BUTTON_RIGHT)
 			{
 				onMouseRightUp({ e.button.x, e.button.y });
 				onMouseRightClicked.emit({e.button.x, e.button.y});
@@ -83,7 +83,7 @@ void EventDispatcher::run()
 			_mousePos = { e.motion.x, e.motion.y };
 
 			onMouseMotion.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
-			if(e.button.button == SDL_BUTTON_LEFT) 
+			if(e.motion.state & SDL_BUTTON_LMASK) 
 			{
 				onMouseLeftDrag.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
 
@@ -93,7 +93,7 @@ void EventDispatcher::run()
 					onMouseLeftDragStart.emit({ e.motion.x, e.motion.y });
 				}
 			}
-			if (e.button.button == SDL_BUTTON_RIGHT) 
+			if (e.motion.state & SDL_BUTTON_RMASK) 
 			{
 				onMouseRightDrag.emit({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel });
 			}

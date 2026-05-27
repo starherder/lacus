@@ -10,8 +10,8 @@ namespace ui
 
 using namespace engine;
 
-template <typename... _ArgTypes>
-using signal = utility::sigslot::Signal<_ArgTypes...>;
+template <typename... Args>
+using signal = utility::sigslot::Signal<Args...>;
 
 using Properties = utility::DynamicStruct<std::string>;
 
@@ -46,7 +46,7 @@ enum class Align {
 };
 
 enum class Coordinate {
-    Horizonal,
+    Horizontal,
     Vertical,
 };
 
@@ -92,7 +92,7 @@ using WidgetCreatorPtr = std::shared_ptr<WidgetCreator>;
             ui::GuiManager::inst()                                          \
                 .addWidgetCreator<WidgetType##_Creator>();                  \
         }                                                                   \
-        ~##WidgetType##_Initializer() {}                                    \
+        ~WidgetType##_Initializer() = default;                                    \
     }g_##WidgetType##_Initializer;
 
 

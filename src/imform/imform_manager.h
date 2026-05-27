@@ -36,7 +36,7 @@ namespace imgui
 		T* getForm(const std::string& name);
 
 		template<class T, typename... Args>
-		T* showForm(const std::string& name, Args... args);
+		T* showForm(const std::string& name, Args&&... args);
 
 		void closeForm(const std::string& name);
 
@@ -79,11 +79,11 @@ namespace imgui
 		}
 
 		auto pForm = it->second;
-		return (T*)pForm.get();
+		return static_cast<T*>(pForm.get());
 	}
 
 	template<class T, typename... Args>
-	T* ImFormManager::showForm(const std::string& name, Args... args)
+	T* ImFormManager::showForm(const std::string& name, Args&&... args)
 	{
 		auto form = getForm<T>(name);
 		if (form)
@@ -92,13 +92,13 @@ namespace imgui
 			return form;
 		}
 
-		auto pForm = std::make_shared<T>(args...);
+		auto pForm = std::make_shared<T>(std::forward<Args>(args)...);
 		assert(pForm);
 
 		pForm->setName(name);
 
 		_forms[name] = pForm;
 		pForm->show(true);
-		return (T*)pForm.get();
+		return static_cast<T*>(pForm.get());
 	}
 }

@@ -94,7 +94,7 @@ template <> struct fmt::formatter<engine::Rect> : fmt::ostream_formatter {};
 
 inline std::ostream& operator<<(std::ostream& os, const engine::Color& c)
 {
-    return os << "(" << (int)c.r << "," << (int)c.b << (int)c.b << "," << (int)c.a << ")";
+    return os << "(" << (int)c.r << "," << (int)c.g << "," << (int)c.b << "," << (int)c.a << ")";
 }
 template <> struct fmt::formatter<engine::Color> : fmt::ostream_formatter {};
 

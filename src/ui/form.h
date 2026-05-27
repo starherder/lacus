@@ -47,7 +47,7 @@ public:
     auto& size() const { return _size; }
     void setSize(const Vec2& sz);
 
-    const Rect& getRect() const;
+    Rect getRect() const;
     void setRect(const Rect& rect);
 
     bool dragMovable() const { return _dragMovable; }

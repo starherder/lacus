@@ -51,6 +51,7 @@ namespace engine {
         }
 
         if (!SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_LINEAR)) {
+            SDL_DestroyTexture(texture);
             LogWarn("set texture scale mode to linear failed");
             return nullptr;
         }
@@ -59,6 +60,7 @@ namespace engine {
         if (!SDL_GetTextureSize(texture, &size.x, &size.y))
         {
             LogError("SDL_GetTextureSize failed.");
+            SDL_DestroyTexture(texture);
             return nullptr;
         }
 
@@ -186,7 +188,7 @@ namespace engine {
                     auto rect = ToRect(tilenode->Attribute("rect"));
 
                     auto centerAttr = tilenode->Attribute("center");
-                    if (strlen(centerAttr) == 0) centerAttr = "0.5,0.5";
+                    if (!centerAttr || strlen(centerAttr) == 0) centerAttr = "0.5,0.5";
                     auto center = ToVec2(centerAttr);
 
                     TexTile textile{texture, rect};

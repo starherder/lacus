@@ -15,4 +15,8 @@ imgui.ini
 .vs/
 .cache/
 x64
-x86
+x86i
+
+
+*.exe
+*.obj

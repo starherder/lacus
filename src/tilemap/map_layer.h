@@ -25,7 +25,7 @@ namespace tilemap {
     {
         int id = -1;
         std::string name;
-        bool visible = true;;
+        bool visible = true;
 
         MapLayerType type;
         int opacity = 0;

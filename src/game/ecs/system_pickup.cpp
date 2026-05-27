@@ -47,7 +47,7 @@ namespace game
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
-        // ÇĞ»»µ½ÆÁÄ»¿Õ¼ä
+        // åˆ‡æ¢åˆ°å±å¹•ç©ºé—´
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
 
         _context.scene().removeObjectFromScene(obj);

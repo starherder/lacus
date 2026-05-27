@@ -23,6 +23,7 @@ namespace samples {
 
         std::vector<std::string> _audioNames;
         std::vector<const char*> _audioList;
+        std::vector<std::string> _audioNameStorage;
 	};
 
 

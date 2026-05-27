@@ -97,13 +97,13 @@ bool TileMap::unload()
 
 void TileMap::draw(engine::Renderer& renderer, const engine::Camera& camera)
 {
-    for (auto& [id, dc] : _drawCalls)
+    for (auto& [_, dc] : _drawCalls)
     {
-        dc->display_vertexies.clear();
-        dc->display_vertexies.insert(dc->display_vertexies.end(), dc->vertexies.begin(), dc->vertexies.end());
-        camera.projectVertexies(dc->display_vertexies);
+        dc->display_vertices.clear();
+        dc->display_vertices.insert(dc->display_vertices.end(), dc->vertices.begin(), dc->vertices.end());
+        camera.projectVertices(dc->display_vertices);
 
-        renderer.drawGeometry(dc->texture, dc->display_vertexies.data(), (int)(dc->display_vertexies.size()), nullptr, 0);
+        renderer.drawGeometry(dc->texture, dc->display_vertices.data(), (int)(dc->display_vertices.size()), nullptr, 0);
     }
 }
 
@@ -202,7 +202,7 @@ bool TileMap::load_mapdata(const json& json_data)
 
 bool TileMap::load_layers(const json& json)
 {
-    for (auto layer_json : json) {
+    for (const auto& layer_json : json) {
         auto id = layer_json.value("id", 0);
         auto type = layer_json.value("type", "");
 
@@ -227,7 +227,9 @@ bool TileMap::load_layers(const json& json)
             layer = std::make_shared<GroupLayer>();
             if(layer_json.contains("layers")) {
                 auto& layers = layer_json["layers"];
-                load_layers(layers);
+                if(!load_layers(layers)) {
+                    LogWarn("load sub-layers for group layer {} failed", id);
+                }
             }
         }
         else 
@@ -288,18 +290,15 @@ void TileMap::bake(engine::ResourceManager& resourceMgr)
     {
         if(layer && layer->type==MapLayerType::TileLayer) 
         {
-            auto& tileLayer = dynamic_cast<TileLayer&>(*layer);
-            bakeTileLayer(resourceMgr, tileLayer);
+            bakeTileLayer(resourceMgr, static_cast<TileLayer&>(*layer));
         }
         else if (layer && layer->type == MapLayerType::ImageLayer)
         {
-            auto& imageLayer = dynamic_cast<ImageLayer&>(*layer);
-            bakeImageLayer(resourceMgr, imageLayer);
+            bakeImageLayer(resourceMgr, static_cast<ImageLayer&>(*layer));
         }
         else if (layer && layer->type == MapLayerType::ObjectLayer)
         {
-            auto& objectLayer = dynamic_cast<ObjectLayer&>(*layer);
-            bakeObjectLayer(resourceMgr, objectLayer);
+            bakeObjectLayer(resourceMgr, static_cast<ObjectLayer&>(*layer));
         }
         else if (layer && layer->type == MapLayerType::GroupLayer)
         {
@@ -357,7 +356,7 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
         std::vector<engine::Vertex> verts;
         for (int y = 0; y < _mapSize.y; ++y)
         {
-            for (int x = 0u; x < _mapSize.x; ++x)
+            for (int x = 0; x < _mapSize.x; ++x)
             {
                 const auto idx = y * _mapSize.x + x;
                 if (idx >= tileData.size())
@@ -417,8 +416,8 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
         {
             auto drawcall = std::make_shared<MapDrawCall>();
             drawcall->texture = tileset.texture;
-            drawcall->vertexies.swap(verts);
-            drawcall->display_vertexies.reserve(drawcall->vertexies.size());
+            drawcall->vertices.swap(verts);
+            drawcall->display_vertices.reserve(drawcall->vertices.size());
 
             _drawCalls.insert({layer.id, drawcall});
         }
@@ -470,8 +469,8 @@ void TileMap::bakeImageLayer(engine::ResourceManager& resourceMgr, ImageLayer& l
 
     auto drawcall = std::make_shared<MapDrawCall>();
     drawcall->texture = texture;
-    drawcall->vertexies.swap(verts);
-    drawcall->display_vertexies.reserve(drawcall->vertexies.size());
+    drawcall->vertices.swap(verts);
+    drawcall->display_vertices.reserve(drawcall->vertices.size());
 
     _drawCalls.insert({layer.id, drawcall});
 }

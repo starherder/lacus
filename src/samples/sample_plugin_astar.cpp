@@ -77,7 +77,7 @@ namespace samples {
             findPath();
         }
         ImGui::SameLine(0, 20);
-        ImGui::TextColored({ 255,0,0,255 }, _tips.c_str());
+        ImGui::TextColored({ 1.0f, 0, 0, 1.0f }, _tips.c_str());
     }
 
     void ImPathFindForm::drawScene()

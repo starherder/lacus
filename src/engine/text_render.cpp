@@ -24,7 +24,7 @@ namespace engine {
         _renderer = renderer->getSdlRenderer();
         
         // 初始化 SDL_ttf
-        if (!TTF_WasInit() && !TTF_Init() ) 
+        if (!TTF_WasInit() && TTF_Init() != 0)
         {
             LogError("init ttf failed: {}", SDL_GetError());
             return false;

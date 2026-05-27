@@ -7,10 +7,9 @@ namespace ui {
 
 DeclareWidgetType(Widget, "widget");
 
-static const std::map<std::string, std::string>& parseData(const std::string& str)
+static std::map<std::string, std::string> parseData(const std::string& str)
 {
-    static std::map<std::string, std::string> result;
-    result.clear();
+    std::map<std::string, std::string> result;
 
     auto sv = utility::StringUtil::split(str, ',');
     for(auto& val : sv)
@@ -204,7 +203,7 @@ bool Widget::load(XmlNode* node)
 
     auto data = node->Attribute("data");
     if(strlen(data) > 0 ) {
-        auto& datamap = parseData(data);
+        const auto& datamap = parseData(data);
         for(auto& [k, v] : datamap) {
             setData(k, v);
         }

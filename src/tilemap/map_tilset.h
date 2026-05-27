@@ -10,7 +10,7 @@ namespace tilemap {
 		struct Frame 
 		{
 			int tileId;
-			int dration;
+			int duration;
 		};
 
 		std::vector<Frame> frames;

@@ -4,37 +4,36 @@
 namespace game 
 {
 
-    DeclareEcsSystem(RenderSystem, EcsPriority::Middle);
+DeclareEcsSystem(RenderSystem, EcsPriority::Middle);
 
-    Color RenderSystem::getBorderColor(CampSide side)
+Color RenderSystem::getBorderColor(CampSide side)
+{
+    return _context.gameConfig().display.chess_border_color;
+}
+
+Color RenderSystem::getFontColor(CampSide side)
+{
+    return _context.gameConfig().display.chess_font_color;
+}
+
+Color RenderSystem::getGroundColor(CampSide side)
+{
+    switch (side)
     {
-        return _context.gameConfig().display.chess_border_color;
+    case CampSide::Officer: return _context.gameConfig().display.chess_officer_ground_color;
+    case CampSide::Rebel: return _context.gameConfig().display.chess_rebel_ground_color;
+    case CampSide::Gangster: return _context.gameConfig().display.chess_gangster_ground_color;
+    case CampSide::Civilian: return _context.gameConfig().display.chess_civil_ground_color;
+    default: return Color::White;
     }
 
-    Color RenderSystem::getFontColor(CampSide side)
-    {
-        return _context.gameConfig().display.chess_font_color;
-    }
+    return Color::White;
+}
 
-    Color RenderSystem::getGroundColor(CampSide side)
-    {
-        switch (side)
-        {
-        case CampSide::Officer: return _context.gameConfig().display.chess_officer_ground_color;
-        case CampSide::Rebel: return _context.gameConfig().display.chess_rebel_ground_color;
-        case CampSide::Gangster: return _context.gameConfig().display.chess_gangster_ground_color;
-        case CampSide::Civilian: return _context.gameConfig().display.chess_civil_ground_color;
-        default: return Color::White;
-        }
-
-        return Color::White;
-    }
-
-
-    Color RenderSystem::getForeColor(CampSide side)
-    {
-        return Color::White;
-    }
+Color RenderSystem::getForeColor(CampSide side)
+{
+    return Color::White;
+}
 
 void RenderSystem::update(float delta)
 {

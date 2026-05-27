@@ -1,15 +1,16 @@
-﻿#pragma once
+#pragma once
 
 #include <variant>
 #include <string>
 #include <vector>
-#include <assert.h>
+#include <cstring>
+#include <cassert>
 
 namespace utility
 {
 	enum class VariantType : int8_t
 	{
-		VT_Unknow,
+		VT_Unknown,
 		VT_Bool,
 		VT_Int8,
 		VT_UInt8,
@@ -149,17 +150,17 @@ namespace utility
 				return T{};
 			}
 		}
-		
+
 		VariantType type() const
 		{
-			if(_variant.index() + 1 > (int)VariantType::VT_String)
+			if (_variant.index() + 1 > (int)VariantType::VT_String)
 			{
-				return VariantType::VT_Unknow;
+				return VariantType::VT_Unknown;
 			}
 
 			return VariantType(_variant.index() + 1);
 		}
-		
+
 		size_t byteCount() const
 		{
 			size_t used_len = 1;
@@ -183,9 +184,8 @@ namespace utility
 				used_len += len + 1;
 			}break;
 			case VariantType::VT_String: {
-				auto str = std::get<std::string>(_variant);
-				int len = (int)str.length();
-				used_len += sizeof(int) + len;
+				auto& str = std::get<std::string>(_variant);
+				used_len += sizeof(int) + str.length();
 			}break;
 			default: {}break;
 			}
@@ -223,61 +223,68 @@ namespace utility
 				used_len += sizeof(bool);
 			}break;
 			case VariantType::VT_Int8: {
-				*((int8_t*)buff) = std::get<int8_t>(_variant);
+				auto val = std::get<int8_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(int8_t);
 			}break;
 			case VariantType::VT_UInt8: {
-				*((uint8_t*)buff) = std::get<uint8_t>(_variant);
+				auto val = std::get<uint8_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(uint8_t);
 			}break;
 			case VariantType::VT_Int16: {
-				*((int16_t*)buff) = std::get<int16_t>(_variant);
+				auto val = std::get<int16_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(int16_t);
 			}break;
 			case VariantType::VT_UInt16: {
-				*((uint16_t*)buff) = std::get<uint16_t>(_variant);
+				auto val = std::get<uint16_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(uint16_t);
 			}break;
 			case VariantType::VT_Int32: {
-				*((int32_t*)buff) = std::get<int32_t>(_variant);
+				auto val = std::get<int32_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(int32_t);
 			}break;
 			case VariantType::VT_UInt32: {
-				*((uint32_t*)buff) = std::get<uint32_t>(_variant);
+				auto val = std::get<uint32_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(uint32_t);
 			}break;
 			case VariantType::VT_Int64: {
-				*((int64_t*)buff) = std::get<int64_t>(_variant);
+				auto val = std::get<int64_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(int64_t);
 			}break;
 			case VariantType::VT_UInt64: {
-				*((uint64_t*)buff) = std::get<uint64_t>(_variant);
+				auto val = std::get<uint64_t>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(uint64_t);
 			}break;
 			case VariantType::VT_Float: {
-				*((float*)buff) = std::get<float>(_variant);
+				auto val = std::get<float>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(float);
 			}break;
 			case VariantType::VT_Double: {
-				*((double*)buff) = std::get<double>(_variant);
+				auto val = std::get<double>(_variant);
+				std::memcpy(buff, &val, sizeof(val));
 				used_len += sizeof(double);
 			}break;
 			case VariantType::VT_CString: {
 				auto str = std::get<const char*>(_variant);
 				auto len = strlen(str);
-				memcpy_s(buff, len, str, len);
+				std::memcpy(buff, str, len);
 				*(buff + len) = 0;
 				used_len += len + 1;
 			}break;
 			case VariantType::VT_String: {
-				auto str = std::get<std::string>(_variant);
-				int len = (int)str.length();
+				auto& str = std::get<std::string>(_variant);
+				auto len = str.length();
 
-				int* idata = (int*)buff;
-				*idata = (int)len;
-
-				char* data = (char*)(idata + 1);
-				memcpy_s(data, len, str.data(), len);
+				std::memcpy(buff, &len, sizeof(len));
+				std::memcpy(buff + sizeof(len), str.data(), len);
 
 				used_len += sizeof(int) + len;
 			}break;
@@ -291,31 +298,31 @@ namespace utility
 
 		size_t deserialization(const char* str)
 		{
-			char* data = (char*)str;
+			const char* data = str;
 
 			char index = *data;
-			char* rawdata = ++data;
+			const char* rawdata = ++data;
 
 			size_t used = 1;
 
 			switch ((VariantType)index)
 			{
 			case VariantType::VT_Bool: { _variant = (bool)(*rawdata); used += sizeof(char); } break;
-			case VariantType::VT_Int8: { _variant = *((int8_t*)rawdata); used += sizeof(int8_t); } break;
-			case VariantType::VT_UInt8: { _variant = *((uint8_t*)rawdata); used += sizeof(uint8_t); } break;
-			case VariantType::VT_Int16: { _variant = *((int16_t*)rawdata); used += sizeof(int16_t); } break;
-			case VariantType::VT_UInt16: { _variant = *((int16_t*)rawdata); used += sizeof(uint16_t); } break;
-			case VariantType::VT_Int32: { _variant = *((int32_t*)(rawdata)); used += sizeof(int32_t); } break;
-			case VariantType::VT_UInt32: { _variant = *((uint32_t*)(rawdata)); used += sizeof(uint32_t); } break;
-			case VariantType::VT_Int64: { _variant = *((int64_t*)(rawdata)); used += sizeof(int64_t); } break;
-			case VariantType::VT_UInt64: { _variant = *((uint64_t*)(rawdata)); used += sizeof(uint64_t); } break;
-			case VariantType::VT_Float: { _variant = *((float*)(rawdata)); used += sizeof(float); } break;
-			case VariantType::VT_Double: { _variant = *((double*)(rawdata)); used += sizeof(double); } break;
+			case VariantType::VT_Int8: { int8_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(int8_t); } break;
+			case VariantType::VT_UInt8: { uint8_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(uint8_t); } break;
+			case VariantType::VT_Int16: { int16_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(int16_t); } break;
+			case VariantType::VT_UInt16: { uint16_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(uint16_t); } break;
+			case VariantType::VT_Int32: { int32_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(int32_t); } break;
+			case VariantType::VT_UInt32: { uint32_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(uint32_t); } break;
+			case VariantType::VT_Int64: { int64_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(int64_t); } break;
+			case VariantType::VT_UInt64: { uint64_t val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(uint64_t); } break;
+			case VariantType::VT_Float: { float val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(float); } break;
+			case VariantType::VT_Double: { double val; std::memcpy(&val, rawdata, sizeof(val)); _variant = val; used += sizeof(double); } break;
 			case VariantType::VT_CString: { _variant = rawdata; used += strlen(rawdata) + 1; } break;
 			case VariantType::VT_String: {
-				auto szdata = (int*)rawdata;
-				int len = *szdata;
-				char* data = (char*)(szdata + 1);
+				int len;
+				std::memcpy(&len, rawdata, sizeof(len));
+				const char* data = rawdata + sizeof(len);
 				_variant = std::string(data, len);
 				used += sizeof(int) + len;
 			}break;
@@ -428,6 +435,10 @@ namespace utility
 
 		VarList& operator >> (Var& var)
 		{
+			if (_vars.empty())
+			{
+				return *this;
+			}
 			var = _vars.back();
 			_vars.pop_back();
 			return *this;
@@ -465,7 +476,7 @@ namespace utility
 		{
 			_vars.clear();
 
-			char* data = (char*)str.data();
+			const char* data = str.data();
 			size_t len = str.length();
 
 			Var var;

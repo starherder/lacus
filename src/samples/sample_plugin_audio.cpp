@@ -20,7 +20,8 @@ namespace samples
              }
         }
 
-        for(auto& name : _audioNames)
+        _audioNameStorage = _audioNames;
+        for(auto& name : _audioNameStorage)
         {
             _audioList.push_back(name.c_str());
         }

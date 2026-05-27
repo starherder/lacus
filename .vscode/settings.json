@@ -14,6 +14,18 @@
             ],
             "args": [],
             "icon": "terminal-cmd"
+        },
+        
+          "VS2022 Prompt": {
+            "path": "cmd.exe",
+            "args": [
+                "/k",
+                "C:\\PROGRA~1\\MICROS~1\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat",
+                "-arch=x64",
+                "-host_arch=x64"
+            ],
+            "icon": "terminal-cmd",
+            "overrideName": true
         }
     }
 }

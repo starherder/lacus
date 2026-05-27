@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "dynamic_var.h"
 
@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <memory>
+#include <stdexcept>
 
 namespace utility
 {
@@ -53,14 +54,12 @@ namespace utility
 			return _data[name];
 		}
 
-		const Var& operator [] (const K& name) const
+		Var operator [] (const K& name) const
 		{
-			static Var emptyVar;
-
 			ConstIterator it = find(name);
-			if (it == end()) 
+			if (it == end())
 			{
-				return emptyVar;
+				return Var{};
 			}
 
 			return it->second;
@@ -168,7 +167,7 @@ namespace utility
 			ConstIterator it = find(key);
 			if (it == end())
 			{
-				throw std::exception("Key not found in DynamicStruct");
+				throw std::runtime_error("Key not found in DynamicStruct");
 			}
 			return it->second;
 		}

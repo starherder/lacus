@@ -243,7 +243,7 @@ namespace particle
 		desc.cBeginColorVar = getColor4f(props, "start_color_variance");
 
 		desc.cEndColor = getColor4f(props, "finish_color");
-		desc.cBeginColorVar = getColor4f(props, "finish_color_variance");
+		desc.cEndColorVar = getColor4f(props, "finish_color_variance");
 
 		desc.fBeginSize = getFloat(props, "start_size");
 		desc.fBeginSizeVar = getFloat(props, "start_size_variance");

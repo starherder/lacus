@@ -28,9 +28,9 @@ namespace utility
 
 	public:
 
-		Language getLanguage() { return _language; }
+		Language getLanguage() const { return _language; }
 
-		bool setLanguage(Language lan) { _language = lan; }
+		void setLanguage(Language lan) { _language = lan; }
 
         bool load(Language language, const std::filesystem::path& dir)
         {
@@ -97,14 +97,14 @@ namespace utility
 			return true;
 		}
 
-		std::string getAnsiString(const std::string& key)
+		std::string getAnsiString(const std::string& key) const
 		{
             return StringUtil::utf8_str_to_ansi(getUtf8String(key));
 		}
 
-		std::string getUtf8String(const std::string& key)
+		std::string getUtf8String(const std::string& key) const
 		{
-            auto& text = _all_text[_language];
+		auto& text = _all_text.find(_language)->second;
             auto it = text.find(key);
             if (it == text.end()) {
                 return key;

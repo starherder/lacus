@@ -126,7 +126,6 @@ namespace bevtree
 
     BevNodePtr BehaviorTree::loadNode(const XmlNode* xmlnode, BevNodePtr parent)
     {
-        //auto type = std::string(xmlnode->name(), xmlnode->name_size());
         auto type = xmlnode->Name();
 
         auto node = BevTreeManager::inst().createNode(type);
@@ -161,21 +160,14 @@ namespace bevtree
     {
         assert(hasChildren() && "Composite has no children");
 
-        it = children.begin() + rand() % children.size();
+        it = children.begin() + utility::RandomHelper::randomInt(0, (int)children.size() - 1);
         return (*it)->tick();
     }
    
     bool Repeater::load(const XmlNode* node)
     {
-        try 
-        {
-            int count = node->IntAttribute("count", 0);
-            setLimit(count);
-        } 
-        catch (std::exception& e ) 
-        {
-            LogWarn("load repeator count failed. err = {}", e.what());
-        }
+        int count = node->IntAttribute("count", 0);
+        setLimit(count);
 
         return true;
     }
@@ -183,15 +175,8 @@ namespace bevtree
 
     bool Parallel::load(const XmlNode* node)
     {
-        try
-        {
-            failOnAll = node->BoolAttribute("fail_on_all", true);
-            successOnAll = node->BoolAttribute("success_on_all", true);
-        }
-        catch (std::exception& e)
-        {
-            LogWarn("load repeator count failed. err = {}", e.what());
-        }
+        failOnAll = node->BoolAttribute("fail_on_all", true);
+        successOnAll = node->BoolAttribute("success_on_all", true);
 
         return true;
     }

@@ -18,10 +18,9 @@ namespace utility
                 [](unsigned char c) { return std::isdigit(c); });
     }
 
-	const StrViewVector& StringUtil::split(const std::string& str, char delimiter)
+	StrViewVector StringUtil::split(const std::string& str, char delimiter)
 	{
-		static StrViewVector tokens;
-        tokens.clear();
+		StrViewVector tokens;
 
 		std::string_view sv(str);
 

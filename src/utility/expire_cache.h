@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 
 #include <map>
-#include <time.h>
+#include <chrono>
 #include <string>
 
 #include "signalslot.h"
@@ -13,10 +13,12 @@ namespace utility
 	template<typename K, typename V>
 	class ExpireCache
 	{
+		using Clock = std::chrono::steady_clock;
+
 		template<typename ValType>
 		struct CacheValue
 		{
-			std::clock_t time_stamp;
+			Clock::time_point time_stamp;
 			ValType value;
 		};
 
@@ -32,60 +34,59 @@ namespace utility
 	public:
 		ExpireCache()
 		{}
-		ExpireCache(int ms) : m_ExpireMs(ms)
+		ExpireCache(int ms) : _expireMs(ms)
 		{}
 		ExpireCache(const ExpireCache& cache) = delete;
 
-
-		void SetExpreTime(int ms)
+		void setExpireTime(int ms)
 		{
-			m_ExpireMs = ms;
+			_expireMs = ms;
 		}
 
-		void Set(const K& key, const V& val)
+		void set(const K& key, const V& val)
 		{
-			auto it = m_Data.find(key);
-			if (it == m_Data.end())
+			auto it = _data.find(key);
+			if (it == _data.end())
 			{
-				m_Data.emplace(key, CacheValue<V>{ std::clock(), val });
+				_data.emplace(key, CacheValue<V>{ Clock::now(), val });
 				on_add.emit(key, val);
 			}
 			else
 			{
 				auto& v = it->second;
-				v.time_stamp = std::clock();
+				v.time_stamp = Clock::now();
 				v.value = val;
 				on_update.emit(key, val);
 			}
 
-			Update();
+			update();
 		}
 
-		void Remove(const K& key)
+		void remove(const K& key)
 		{
-			auto it = m_Data.find(key);
-			if (it == m_Data.end())
+			auto it = _data.find(key);
+			if (it == _data.end())
 			{
 				return;
 			}
 
 			on_del.emit(key, it->second.value);
-			m_Data.erase(it);
+			_data.erase(it);
 
-			Update();
+			update();
 		}
 
-		void Update()
+		void update()
 		{
-			auto timestamp = std::clock();
-			for (auto it = m_Data.begin(); it != m_Data.end();)
+			auto now = Clock::now();
+			for (auto it = _data.begin(); it != _data.end();)
 			{
-				std::clock_t time_passed = (timestamp - it->second.time_stamp);
+				auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - it->second.time_stamp);
 
-				if (time_passed >= m_ExpireMs)
+				if (elapsed.count() >= _expireMs)
 				{
 					on_del.emit(it->first, it->second.value);
-					it = m_Data.erase(it);
+					it = _data.erase(it);
 				}
 				else
 				{
@@ -94,73 +95,73 @@ namespace utility
 			}
 		}
 
-		bool Has(const K& key) const
+		bool has(const K& key) const
 		{
-			auto it = m_Data.find(key);
-			return (it != m_Data.end());
+			auto it = _data.find(key);
+			return (it != _data.end());
 		}
 
 		V& operator[](const K& key)
 		{
-			auto it = m_Data.find(key);
-			if (it == m_Data.end())
+			auto it = _data.find(key);
+			if (it != _data.end())
 			{
 				return it->second.value;
 			}
 
-			m_Data.emplace(key, CacheValue<V>{ std::clock(), V{} });
-			return m_Data.find(key)->second.value;
+			auto result = _data.emplace(key, CacheValue<V>{ Clock::now(), V{} });
+			return result.first->second.value;
 		}
 
 		size_t size() const
 		{
-			return m_Data.size();
+			return _data.size();
 		}
 
 		iterator find(const K& key)
 		{
-			return m_Data.find(key);
+			return _data.find(key);
+		}
+
+		const_iterator find(const K& key) const
+		{
+			return _data.find(key);
 		}
 
 		iterator begin()
 		{
-			return m_Data.begin();
+			return _data.begin();
 		}
 
 		iterator end()
 		{
-			return m_Data.end();
-		}
-
-		iterator erase(iterator it)
-		{
-			return m_Data.erase(it);
-		}
-
-		bool empty() const
-		{
-			return m_Data.empty();
+			return _data.end();
 		}
 
 		const_iterator begin() const
 		{
-			return m_Data.cbegin();
+			return _data.cbegin();
 		}
 
 		const_iterator end() const
 		{
-			return m_Data.cend();
+			return _data.cend();
 		}
 
-		const_iterator find() const
+		iterator erase(iterator it)
 		{
-			return m_Data.find();
+			return _data.erase(it);
+		}
+
+		bool empty() const
+		{
+			return _data.empty();
 		}
 
 
 	private:
-		int m_ExpireMs = 60000; // 1 minute
+		int _expireMs = 60000; // 1 minute
 
-		std::map<K, CacheValue<V>> m_Data;
+		std::map<K, CacheValue<V>> _data;
 	};
 }

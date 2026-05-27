@@ -108,7 +108,7 @@ namespace ui
         bool onLoad(XmlNode* node);
 
     private:
-        ui::Coordinate _coord = ui::Coordinate::Horizonal;
+        ui::Coordinate _coord = ui::Coordinate::Horizontal;
 
         Vec2 _padding = {10.0f, 10.0f};
 

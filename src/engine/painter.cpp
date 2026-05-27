@@ -236,10 +236,10 @@ namespace engine
 			pathLineTo({ tl.x, br.y });
 		}
 		else {
-			pathArcToFast({ tl.x + rounding, tl.y - rounding }, rounding, 0, 3);
+			pathArcToFast({ tl.x + rounding, tl.y + rounding }, rounding, 0, 3);
 			pathArcToFast({ tl.x + rounding, br.y + rounding }, rounding, 3, 6);
 			pathArcToFast({ br.x - rounding, br.y + rounding }, rounding, 6, 9);
-			pathArcToFast({ br.x - rounding, tl.y - rounding }, rounding, 9, 12);
+			pathArcToFast({ br.x - rounding, tl.y + rounding }, rounding, 9, 12);
 		}
 	}
 

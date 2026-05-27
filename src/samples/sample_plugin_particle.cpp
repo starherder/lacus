@@ -173,7 +173,7 @@ namespace samples
 
 			if (emitType == (int)EmitterType::EMITTER_TYPE_GRAVITY)
 			{
-				float grav[2] = { _particleDescript.gravityMode.vGravity.x, _particleDescript.gravityMode.vGravity.x };
+				float grav[2] = { _particleDescript.gravityMode.vGravity.x, _particleDescript.gravityMode.vGravity.y };
 				if (ImGui::InputFloat2("gravity", grav))
 				{
 					_particleDescript.gravityMode.vGravity = { grav[0], grav[1] };
@@ -255,7 +255,7 @@ namespace samples
 			}
 
 			float spin[2] = { _particleDescript.fBeginSpin, _particleDescript.fEndSpin };
-			if (ImGui::InputFloat2("BeginEnd spin", size))
+			if (ImGui::InputFloat2("BeginEnd spin", spin))
 			{
 				_particleDescript.fBeginSpin = spin[0];
 				_particleDescript.fEndSpin = spin[1];

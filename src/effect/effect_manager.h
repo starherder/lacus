@@ -6,6 +6,20 @@
 #include "utility/i_singleton.h"
 #include "nlohmann/json_fwd.hpp"
 
+
+/*
+	ä¸€ä¸ªç‰¹æ•ˆ(Effect)ç”±å¤šä¸ªå­ç‰¹æ•ˆ(SubEffect)å’Œå¤šä¸ªå­ç‰¹æ•ˆç»„(SubEffectGroup)ç»„æˆã€‚
+	å¤šä¸ªå­ç‰¹æ•ˆé¡ºåºæ‰§è¡Œï¼ŒåŒä¸€ä¸ªç»„å†…çš„å¤šä¸ªç‰¹æ•ˆå¹¶å‘æ‰§è¡Œã€‚
+	ç›®å‰æƒ³æ³•æ˜¯åœ¨entityä¸Šåˆ›å»ºç‰¹æ•ˆæ—¶ï¼Œåˆ›å»ºä¸€ä¸ªtweenæ¥ä½œä¸ºå®šæ—¶å™¨ä½¿ç”¨ï¼Œ
+	æ¯ä¸ªtween.pointèŠ‚ç‚¹æ‰§è¡Œä¸‹ä¸€ä¸ªç‰¹æ•ˆï¼Œ æ‰§è¡Œæ—¶åœ¨entityèº«ä¸Šåˆ›å»ºä¸€ä¸ªå¯¹åº”çš„å­ç‰¹æ•ˆç»„ä»¶ï¼Œ
+	å­ç‰¹æ•ˆæ‰§è¡Œå®Œå°±åˆ é™¤æ‰è¯¥ç»„ä»¶ã€‚
+	æ‰€æœ‰ç‰¹æ•ˆç»„ä»¶çš„upateç”±effect_systemè´Ÿè´£
+
+	å­ç‰¹æ•ˆç±»å‹æœ‰ ç§»åŠ¨ã€ç¼©æ”¾ã€æŠ–åŠ¨ã€æ—‹è½¬ã€é€æ˜åº¦å˜åŒ–ã€é¢œè‰²æ¸å˜ã€ç²’å­ã€å£°éŸ³ç­‰ç­‰
+*/
+
+
+
 namespace game
 {
 	using namespace engine;
@@ -26,7 +40,7 @@ namespace game
 	public:
 		SubEffect() = delete;
 		SubEffect(entt::entity ent) : _entity(ent) {}
-		~SubEffect() {}
+		virtual ~SubEffect() {}
 
 		entt::entity entity() { return _entity; }
 
@@ -71,16 +85,6 @@ namespace game
 		std::map<std::string, SubEffectPtr> _subEffects;
 	};
 
-	/*
-		Ò»¸öÌØĞ§ÓÉ¶à¸ö×ÓÌØĞ§ºÍ¶à¸öÌØĞ§×é×é³É¡£
-		¶à¸ö×ÓÌØĞ§Ë³ĞòÖ´ĞĞ£¬Í¬Ò»¸ö×éÄÚµÄ¶à¸öÌØĞ§²¢·¢Ö´ĞĞ¡£
-		Ä¿Ç°Ïë·¨ÊÇÔÚentityÉÏ´´½¨ÌØĞ§Ê±£¬´´½¨Ò»¸ötweenÀ´×÷Îª¶¨Ê±Æ÷Ê¹ÓÃ£¬
-		Ã¿¸ötween.point½ÚµãÖ´ĞĞÏÂÒ»¸öÌØĞ§£¬ Ö´ĞĞÊ±ÔÚentityÉíÉÏ´´½¨Ò»¸ö¶ÔÓ¦µÄ×ÓÌØĞ§×é¼ş£¬
-		×ÓÌØĞ§Ö´ĞĞÍê¾ÍÉ¾³ıµô¸Ã×é¼ş¡£
-		ËùÓĞÌØĞ§×é¼şµÄupateÓÉeffect_system¸ºÔğ
-
-		×ÓÌØĞ§ÀàĞÍÓĞ ÒÆ¶¯¡¢Ëõ·Å¡¢¶¶¶¯¡¢Ğı×ª¡¢Í¸Ã÷¶È±ä»¯¡¢ÑÕÉ«½¥±ä¡¢Á£×Ó¡¢ÉùÒôµÈµÈ
-	*/
 
 
 	class EffectManager : public utility::ISingleton<EffectManager>

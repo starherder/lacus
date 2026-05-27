@@ -141,24 +141,24 @@ bool Application::initLog(std::string_view logFile)
     return true;
 }
 
-bool Application::initWindow() 
+bool Application::initWindow()
 {
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        LogError("SDL_Init failed: %s", SDL_GetError());
+        return false;
+    }
+
     int numDrivers = _renderer->getNumRenderDrivers();
     if (numDrivers <= 0) {
         LogError("No render drivers available");
         return false;
     }
-    
-    for (int i = 0; i < numDrivers; ++i) 
+
+    for (int i = 0; i < numDrivers; ++i)
     {
         const char* name = _renderer->getRenderDriver(i);
         LogInfo("Render driver[{}]: {}", i, name);
-    }
-
-    if (!SDL_Init(SDL_INIT_VIDEO)) 
-    {
-        LogError("SDL_Init failed: %s", SDL_GetError());
-        return false;
     }
 
     bool res = _window->create(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::Resizable);

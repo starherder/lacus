@@ -94,11 +94,9 @@ void Form::setSize(const Vec2& sz)
     onSizeChanged(); 
 }
 
-const Rect& Form::getRect() const
-{ 
-    static Rect rect; 
-    rect = Rect{ _pos, _size }; 
-    return rect; 
+Rect Form::getRect() const
+{
+    return Rect{ _pos, _size };
 }
 
 void Form::setRect(const Rect& rect) 

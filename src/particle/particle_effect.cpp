@@ -42,28 +42,28 @@ namespace particle
 		fail_return(pe && particle);
 
 		/* 粒子起始位置 */
-		particle->vPos.x = pe->GetEmitPos().x + pe->GetEmitPosVar().x * utility::Random_Minus1_1();
-		particle->vPos.y = pe->GetEmitPos().y + pe->GetEmitPosVar().y * utility::Random_Minus1_1();
+		particle->vPos.x = pe->GetEmitPos().x + pe->GetEmitPosVar().x * utility::rand_minus1_1();
+		particle->vPos.y = pe->GetEmitPos().y + pe->GetEmitPosVar().y * utility::rand_minus1_1();
 
 		particle->vStartPos = pe->GetEmitPos();
 		particle->vChangePos = particle->vPos;
 
 		/* 粒子生命 */
-		particle->fRemainingLife = std::max(0.1f, life + lifeVar * utility::Random_Minus1_1());
+		particle->fRemainingLife = std::max(0.1f, life + lifeVar * utility::rand_minus1_1());
 
 		/* 粒子的颜色变化值 */
 		//Color begin_color, end_color;
-		//begin_color.r = std::clamp(beginColor.r + beginColorVar.r * utility::Random_Minus1_1(), 0, 1);
-		//begin_color.g = std::clamp(beginColor.g + beginColorVar.g * utility::Random_Minus1_1(), 0, 1);
-		//begin_color.b = std::clamp(beginColor.b + beginColorVar.b * utility::Random_Minus1_1(), 0, 1);
-		//begin_color.a = std::clamp(beginColor.a + beginColorVar.a * utility::Random_Minus1_1(), 0, 1);
-		//end_color.r = std::clamp(endColor.r + endColorVar.r * utility::Random_Minus1_1(), 0, 1);
-		//end_color.g = std::clamp(endColor.g + endColorVar.g * utility::Random_Minus1_1(), 0, 1);
-		//end_color.b = std::clamp(endColor.b + endColorVar.b * utility::Random_Minus1_1(), 0, 1);
-		//end_color.a = std::clamp(endColor.a + endColorVar.a * utility::Random_Minus1_1(), 0, 1);
+		//begin_color.r = std::clamp(beginColor.r + beginColorVar.r * utility::rand_minus1_1(), 0, 1);
+		//begin_color.g = std::clamp(beginColor.g + beginColorVar.g * utility::rand_minus1_1(), 0, 1);
+		//begin_color.b = std::clamp(beginColor.b + beginColorVar.b * utility::rand_minus1_1(), 0, 1);
+		//begin_color.a = std::clamp(beginColor.a + beginColorVar.a * utility::rand_minus1_1(), 0, 1);
+		//end_color.r = std::clamp(endColor.r + endColorVar.r * utility::rand_minus1_1(), 0, 1);
+		//end_color.g = std::clamp(endColor.g + endColorVar.g * utility::rand_minus1_1(), 0, 1);
+		//end_color.b = std::clamp(endColor.b + endColorVar.b * utility::rand_minus1_1(), 0, 1);
+		//end_color.a = std::clamp(endColor.a + endColorVar.a * utility::rand_minus1_1(), 0, 1);
 
-		Color begin_color = beginColor + beginColorVar * utility::Random_Minus1_1();
-		Color end_color = endColor + beginColorVar * utility::Random_Minus1_1();
+		Color begin_color = beginColor + beginColorVar * utility::rand_minus1_1();
+		Color end_color = endColor + endColorVar * utility::rand_minus1_1();
 
 		assert(particle->fRemainingLife!=0);
 
@@ -77,15 +77,15 @@ namespace particle
 		//particle->cDeltaColor.a = (end_color.a - begin_color.a) * tmp;
 
 		/* 粒子大小 */
-		float begin_size = std::max(0.0f, beginSize + beginSizeVar * utility::Random_Minus1_1());
-		float end_size = std::max(0.0f, endSize + endSizeVar * utility::Random_Minus1_1());
+		float begin_size = std::max(0.0f, beginSize + beginSizeVar * utility::rand_minus1_1());
+		float end_size = std::max(0.0f, endSize + endSizeVar * utility::rand_minus1_1());
 
 		particle->fSize = begin_size;
 		particle->fDeltaSize = (end_size - begin_size) / particle->fRemainingLife;
 
 		/* 粒子旋转角度 */
-		float begin_spin = DegreeToRadian(std::max(0.0f, beginSpin + beginSpinVar * utility::Random_Minus1_1()));
-		float end_spin = DegreeToRadian(std::max(0.0f, endSpin + endSpinVar * utility::Random_Minus1_1()));
+		float begin_spin = DegreeToRadian(std::max(0.0f, beginSpin + beginSpinVar * utility::rand_minus1_1()));
+		float end_spin = DegreeToRadian(std::max(0.0f, endSpin + endSpinVar * utility::rand_minus1_1()));
 
 		particle->fRotation = begin_spin;
 		particle->fDeltaRotation = (end_spin - begin_spin) / particle->fRemainingLife;
@@ -102,18 +102,18 @@ namespace particle
 		ParticleEffect::initParticle(pe, particle);
 
 		/* 计算粒子受到发射器给的初速度大小 */
-		float particleSpeed = pe->GetEmitSpeed() + pe->GetEmitSpeedVar() * utility::Random_Minus1_1();
+		float particleSpeed = pe->GetEmitSpeed() + pe->GetEmitSpeedVar() * utility::rand_minus1_1();
 
 		/* 计算粒子初速度的方向，即发射器发射粒子的发射方向 */
-		float angle = pe->GetEmitAngle() + pe->GetEmitAngleVar() * utility::Random_Minus1_1();
+		float angle = pe->GetEmitAngle() + pe->GetEmitAngleVar() * utility::rand_minus1_1();
 		Vec2 particleDirection = Vec2(cosf(DegreeToRadian(angle)), sinf(DegreeToRadian(angle)));
 		
 		/* 设置粒子的起始加速度（包括大小及方向）*/
 		particle->gravityMode.vInitialVelocity = particleDirection * particleSpeed;
 
 		/* 粒子切向加速度、径向加速度 */
-		particle->gravityMode.fTangentialAccel = gravityMode.fTangentialAccel + gravityMode.fTangentialAccelVar * utility::Random_Minus1_1();
-		particle->gravityMode.fRadialAccel = gravityMode.fRadialAccel + gravityMode.fRadialAccelVar * utility::Random_Minus1_1();
+		particle->gravityMode.fTangentialAccel = gravityMode.fTangentialAccel + gravityMode.fTangentialAccelVar * utility::rand_minus1_1();
+		particle->gravityMode.fRadialAccel = gravityMode.fRadialAccel + gravityMode.fRadialAccelVar * utility::rand_minus1_1();
 	}
 
 	void GravityParticleEffect::update(ParticleEmitter* pe, float dt)
@@ -132,7 +132,7 @@ namespace particle
 			p->fRemainingLife -= dt;
 
 			if ( p->fRemainingLife > 0 ) {
-				static Vec2 offset, radial, tangential;
+				Vec2 offset, radial, tangential;
 
 				/* 径向加速度 */
 				if ( p->vChangePos.x || p->vChangePos.y ) {
@@ -189,16 +189,16 @@ namespace particle
 
 		assert(particle->fRemainingLife!=0);
 
-		float begin_radius = radiusMode.fBeginRadius + radiusMode.fBeginRadiusVar * utility::Random_Minus1_1();
-		float end_radius = radiusMode.fEndRadius + radiusMode.fEndRadiusVar * utility::Random_Minus1_1();
+		float begin_radius = radiusMode.fBeginRadius + radiusMode.fBeginRadiusVar * utility::rand_minus1_1();
+		float end_radius = radiusMode.fEndRadius + radiusMode.fEndRadiusVar * utility::rand_minus1_1();
 		
 		particle->radiusMode.fRadius = begin_radius;
 		particle->radiusMode.fDelatRadius = (end_radius - begin_radius) / particle->fRemainingLife;
 
-		float degress = pe->GetEmitAngle() + pe->GetEmitAngleVar() * utility::Random_Minus1_1();
+		float degress = pe->GetEmitAngle() + pe->GetEmitAngleVar() * utility::rand_minus1_1();
 		particle->radiusMode.fAngle = DegreeToRadian(degress);
 
-		degress = radiusMode.fSpinPerSecond + radiusMode.fSpinPerSecondVar * utility::Random_Minus1_1();
+		degress = radiusMode.fSpinPerSecond + radiusMode.fSpinPerSecondVar * utility::rand_minus1_1();
 		particle->radiusMode.fDegressPerSecond = DegreeToRadian(degress);
 	}
 

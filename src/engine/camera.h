@@ -34,7 +34,7 @@ namespace engine {
         virtual bool handleEvent(const Event& event);
 
 		Vec2 projectPoint(const Vec2& point) const;
-		void projectVertexies(std::vector<Vertex>& verts) const;
+		void projectVertices(std::vector<Vertex>& verts) const;
 
 		Rect projectRect(const Rect& rect) const;
 		void projectRects(Rect* rect, size_t count) const;

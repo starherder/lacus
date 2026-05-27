@@ -1,4 +1,4 @@
-﻿#include "imform_manager.h"
+#include "imform_manager.h"
 
 #include "engine/wrapper.h"
 
@@ -16,18 +16,16 @@ namespace imgui
 
 	void ImFormManager::pendingDestroyForm()
 	{
-		for (auto it = _forms.begin(); it != _forms.end(); it++ )
+		for (auto it = _forms.begin(); it != _forms.end(); )
 		{
 			auto pForm = it->second;
-			if (!pForm)
+			if (pForm && pForm->getPendingDestroy())
 			{
-				continue;
+				_forms.erase(it++);
 			}
-
-			if (pForm->getPendingDestroy())
+			else
 			{
-				_forms.erase(it);
-				return;
+				++it;
 			}
 		}
 	}
@@ -47,10 +45,8 @@ namespace imgui
 
 		pendingDestroyForm();
 
-		for (auto itForm : _forms)
+		for (const auto& [name, pForm] : _forms)
 		{
-			const std::string name = itForm.first;
-			auto pForm = itForm.second;
 			if (pForm)
 			{
 				pForm->drawForm();
@@ -79,7 +75,7 @@ namespace imgui
 
 	void ImFormManager::init(struct SDL_Window* window, struct SDL_Renderer* renderer)
 	{
-        _window = window;  
+        _window = window;
         _renderer = renderer;
 		assert(_renderer);
 
@@ -103,10 +99,10 @@ namespace imgui
     void ImFormManager::setScale(float scale)
     {
         ImGuiStyle& style = ImGui::GetStyle();
-        style.ScaleAllSizes(scale);        // 固定样式缩放比例。
-        style.FontScaleDpi = scale;  
+        style.ScaleAllSizes(scale);
+        style.FontScaleDpi = scale;
     }
-    
+
 	void ImFormManager::setFont(const std::filesystem::path& file, float size)
 	{
 #ifndef USE_IMGUI_AS_RENDER_ENGINE
@@ -151,11 +147,11 @@ namespace imgui
 	{
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}
-	
+
 	bool ImFormManager::isAnyWindowHovered()
 	{
-		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) 
+		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)
 			|| ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered();
 	}
-	
+
 }

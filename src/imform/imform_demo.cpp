@@ -8,6 +8,10 @@ namespace imgui
 	void ImGuiFormDemo::draw()
 	{
 		ImGui::ShowDemoWindow(&_visible);
+		if (!_visible)
+		{
+			close();
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////

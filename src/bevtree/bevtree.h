@@ -37,7 +37,8 @@ namespace bevtree
 
         bool load(const XmlNode* root) override;
 
-        auto& name() { return _name; }
+        const std::string& name() const { return _name; }
+        std::string& name() { return _name; }
 
         BevNode* getNode(const std::string& name);
 
@@ -101,7 +102,7 @@ namespace bevtree
     template<typename NodeType>
     void BevTreeManager::registerNode(const std::string& name)
     {
-        _creators[name.data()] = std::make_shared<BevNodeCreator<NodeType>>();
+        _creators[name] = std::make_shared<BevNodeCreator<NodeType>>();
     }
 
     // --------------------compositor-------------------------

@@ -75,7 +75,7 @@ namespace engine {
         return worldToScreen(point);
     }
 
-    void Camera::projectVertexies(std::vector<Vertex>& verts) const 
+    void Camera::projectVertices(std::vector<Vertex>& verts) const 
     {
         for (auto& vert : verts) 
         {

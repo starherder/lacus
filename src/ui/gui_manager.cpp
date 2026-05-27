@@ -263,7 +263,7 @@ namespace ui
     {
         if (_draggingData)
         {
-            slot_context().setBreak(true);
+            slotContext().setBreak(true);
             return;
         }
 
@@ -278,7 +278,7 @@ namespace ui
         {
             drag(widget);
 
-            slot_context().setBreak(true);
+            slotContext().setBreak(true);
             return;
         }
 
@@ -316,7 +316,7 @@ namespace ui
         auto widget = form->hoverWidget();
         if (widget && widget->acceptEvent())
         {
-            slot_context().setBreak(true);
+            slotContext().setBreak(true);
         }
     }
 

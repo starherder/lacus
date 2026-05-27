@@ -257,7 +257,7 @@ namespace ui
 
     void CardGroup::overlapChildren()
     {
-        if (_coord == Coordinate::Horizonal) 
+        if (_coord == Coordinate::Horizontal) 
         {
             float total = 0.0f;
             for (auto& card : children()) 
@@ -305,7 +305,7 @@ namespace ui
         int index = 0;
         for (auto& card : children()) 
         {
-            float x = (_coord == Coordinate::Horizonal) ? _padding.x + index * (_space + card->size().x) : _padding.x;
+            float x = (_coord == Coordinate::Horizontal) ? _padding.x + index * (_space + card->size().x) : _padding.x;
             float y = (_coord == Coordinate::Vertical) ? _padding.y + index * (_space + card->size().y) : _padding.y;
 
             card->setPos({x, y});
