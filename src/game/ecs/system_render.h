@@ -34,6 +34,8 @@ private:
 
     void drawFightText();
 
+    void drawBubble();
+
     Color getBorderColor(CampSide side);
     Color getGroundColor(CampSide side);
     Color getForeColor(CampSide side);

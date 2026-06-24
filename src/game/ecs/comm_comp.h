@@ -190,6 +190,18 @@ namespace game
         Rect tex_rect;
     };
 
+    struct CompBubble
+    {
+        std::string text;               // 气泡文字（已译文）
+        Font* font = nullptr;           // 文字字体
+        TexTile* emotion_tex = nullptr; // 表情纹理
+        Color bg_color = Color::White;
+        Color border_color = Color::Dark;
+        Color text_color = Color::Dark;
+        uint8_t alpha = 255;            // 当前不透明度
+        int lifetime = 3000;            // 剩余毫秒
+    };
+
     struct CompRolePick 
     {
         float range = 100.0f;

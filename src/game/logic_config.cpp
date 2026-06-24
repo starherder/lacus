@@ -50,4 +50,15 @@ namespace game
 		return _emotions;
 	}
 
+	std::vector<std::string> LogicConfig::getAllEmotionNames() const
+	{
+		std::vector<std::string> names;
+		names.reserve(_emotions.size());
+		for (const auto& [name, _] : _emotions)
+		{
+			names.push_back(name);
+		}
+		return names;
+	}
+
 }

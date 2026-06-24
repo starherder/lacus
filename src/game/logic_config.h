@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "engine/config.h"
 
@@ -22,6 +23,8 @@ namespace game
 		const std::string* getEmotion(const std::string& name) const;
 
 		const EmotionTextureMap& getAllEmotion() const;
+
+		std::vector<std::string> getAllEmotionNames() const;
 
 	private:
 		JsonConfig _jsonConfig;

@@ -64,6 +64,16 @@ namespace game
 			int pick_period = 1000;
 		}pickup;
 
+		struct Bubble {
+			std::string font_name = "fonts/msyh.ttf";
+			int font_size = 16;
+			Color bg_color = Color::White;
+			Color border_color = Color::Dark;
+			Color text_color = Color::Dark;
+			int lifetime_ms = 3000;
+			int fadeout_ms = 500;
+		} bubble;
+
 		struct Scenes {
 			std::string first_scene;
 		}scenes;

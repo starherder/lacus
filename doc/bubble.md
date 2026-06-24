@@ -7,8 +7,9 @@
 ## 实现：
 
 - 使用ECS模式，需要显示气泡时发送一个ECS事件。
-- 在BubbleSystem的system类中，收到该事件时，给entity上加一个BubbleComponent组件，改组件上记录了气泡类型（语言、表情），语言需要配置文字、表情需要配置图标
-- BubbleComponent中的语言对应的文字要使用译文系统(Trans宏)，表情要使用BubbleManager
+- 在game/ecs/目录中实现BubbleSystem类，在comm_comp.h中增加一个CompBubble组件，改组件上记录了背景图片、气泡类型（语言、表情），文字、图标的配置、气泡alpha
+- 收到显示气泡事件时，在该类中给entity上加一个CompBubble组件
+- 语言对应的文字要使用译文系统(Trans宏)，表情要使用BubbleManager
 - 在BubbleSystem的update方法中定时淡出气泡（气泡的存在、淡出时间在GameConfig里配置）。
 - 在RenderSystem中增加绘制气泡及其中文字和表情的方法。
 
@@ -19,4 +20,4 @@
 
 ## 测试
 
-在ImFormDebug中像drawSkyWindow一样，遍历所有表情管理器中的表情，写入Combobox，选择表情，即给已选择的角色发送显示气泡事件，让他显示气泡
+    在ImFormDebug中像drawSkyWindow一样，遍历所有表情管理器中的表情，写入Combobox，选择表情，即给已选择的角色发送显示气泡事件，让他显示气泡

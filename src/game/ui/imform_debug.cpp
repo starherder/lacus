@@ -13,6 +13,8 @@
 
 #include "game/logic/game_play_tile_battle.h"
 #include "game/logic/game_play_auto_chess.h"
+#include "game/logic_config.h"
+#include "game/ecs/comm_event.h"
 
 
 namespace game 
@@ -35,6 +37,8 @@ void ImFormDebug::init(GameContext* context)
     {
         _particleNames.push_back(name.c_str());
     }
+
+    _emotionNames = _context->logicConfig().getAllEmotionNames();
 
     _context->eventDispatcher().onMouseLeftClicked.connect(this, &ImFormDebug::onMouseLeftClick, -1);
 }
@@ -217,6 +221,54 @@ void ImFormDebug::draw()
         ImGui::Separator();
 
         drawSelectEntityProps();
+
+        ImGui::Separator();
+        ImGui::Text("bubble test");
+
+        static int selectEmotionIndex = 0;
+        if (!_emotionNames.empty())
+        {
+            if (selectEmotionIndex >= _emotionNames.size())
+            {
+                selectEmotionIndex = 0;
+            }
+
+            ImGui::SetNextItemWidth(150);
+            if (ImGui::BeginCombo("##emotion_cfgs", _emotionNames[selectEmotionIndex].c_str()))
+            {
+                for (int n = 0; n < _emotionNames.size(); n++)
+                {
+                    bool is_selected = (selectEmotionIndex == n);
+                    if (ImGui::Selectable(_emotionNames[n].c_str(), is_selected))
+                    {
+                        selectEmotionIndex = n;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+        else
+        {
+            ImGui::Text("no emotion");
+        }
+
+        static char bubbleText[128] = "";
+        ImGui::InputText("##bubble_text", bubbleText, sizeof(bubbleText));
+
+        if(_context->registry().valid(_selectEntity))
+        {
+            if(ImGui::Button("Send Bubble"))
+            {
+                EvtShowBubble evt;
+                evt.actor = _selectEntity;
+                evt.text = bubbleText;
+                if (!_emotionNames.empty())
+                {
+                    evt.emotion = _emotionNames[selectEmotionIndex];
+                }
+                _context->dispatcher().trigger(evt);
+            }
+        }
 
         ImVec2 winpos = ImGui::GetWindowPos();
         ImVec2 winsize = ImGui::GetWindowSize();

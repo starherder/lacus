@@ -169,6 +169,12 @@ namespace game
 		FloatTextType type;
 
 		int val = 0;
-		
+
+	};
+
+	struct EvtShowBubble {
+		entt::entity actor;
+		std::string text;     // 气泡文字（可选，会用 Trans 译文）
+		std::string emotion;  // 表情名称（可选，如 "sad"、"love"）
 	};
 }

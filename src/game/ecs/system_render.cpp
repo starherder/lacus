@@ -87,6 +87,8 @@ void RenderSystem::draw()
 
     drawFightText();
 
+    drawBubble();
+
     if (_context.debugMode())
     {
         drawSceneDebug();
@@ -120,6 +122,116 @@ void RenderSystem::drawFightText()
 
         auto pos = _context.camera().projectPoint(compTrans.position);
         _context.painter().drawText(compFt.text, compFt.font, pos, compFt.color);
+    }
+}
+
+void RenderSystem::drawBubble()
+{
+    auto& painter = _context.painter();
+    auto& camera = _context.camera();
+    auto& renderer = _context.renderer();
+
+    auto view = _context.registry().view<CompTransform, CompBubble>();
+    for (auto& ent : view)
+    {
+        auto& trans = view.get<CompTransform>(ent);
+        auto& bubble = view.get<CompBubble>(ent);
+
+        if (bubble.alpha == 0)
+        {
+            continue;
+        }
+
+        // 实体头顶位置（世界坐标），投影到屏幕
+        Vec2 entityTop = trans.position - Vec2(0, trans.size.y / 2.0f);
+        Vec2 screenPos = camera.projectPoint(entityTop);
+
+        // 测量文字
+        Vec2 textSize = {0, 0};
+        if (!bubble.text.empty() && bubble.font)
+        {
+            textSize = renderer.getTextSize(bubble.text, bubble.font);
+        }
+
+        // 表情尺寸
+        Vec2 iconSize = {0, 0};
+        if (bubble.emotion_tex)
+        {
+            iconSize = bubble.emotion_tex->rect().size();
+        }
+
+        // 布局常量
+        const float padding = 8.0f;
+        const float tailHeight = 10.0f;
+        const float corner = 5.0f;
+        const float iconTextGap = 5.0f;
+        const float gapAboveEntity = 5.0f;
+
+        // 计算内容尺寸
+        float contentWidth = textSize.x;
+        float contentHeight = textSize.y;
+        if (bubble.emotion_tex)
+        {
+            contentWidth += iconSize.x + iconTextGap;
+            contentHeight = std::max(contentHeight, iconSize.y);
+        }
+        contentWidth = std::max(contentWidth, 20.0f); // 最小宽度
+
+        float bubbleWidth = contentWidth + padding * 2;
+        float bubbleHeight = contentHeight + padding * 2;
+
+        // 气泡左上角（屏幕坐标）
+        float bubbleLeft = screenPos.x - bubbleWidth / 2.0f;
+        float bubbleTop = screenPos.y - bubbleHeight - tailHeight - gapAboveEntity;
+
+        Rect bubbleRect = {Vec2{bubbleLeft, bubbleTop}, Vec2{bubbleWidth, bubbleHeight}};
+
+        // 气泡背景色 + alpha
+        Color bgColor = bubble.bg_color;
+        bgColor.a = bubble.alpha;
+
+        // 气泡边框色 + alpha
+        Color borderColor = bubble.border_color;
+        borderColor.a = bubble.alpha;
+
+        // 1. 填充气泡主体（圆角矩形）
+        painter.fillRect(bgColor, bubbleRect, corner);
+
+        // 2. 绘制气泡边框
+        painter.drawRect(borderColor, bubbleRect, corner);
+
+        // 3. 绘制气泡尾部（三角形）
+        float tailCenterX = screenPos.x;
+        float tailBaseY = bubbleTop + bubbleHeight;
+        float tailTipY = tailBaseY + tailHeight;
+        Vec2 tailTip = {tailCenterX, tailTipY};
+        Vec2 tailBaseLeft = {tailCenterX - 8.0f, tailBaseY};
+        Vec2 tailBaseRight = {tailCenterX + 8.0f, tailBaseY};
+
+        painter.fillTriangle(bgColor, tailBaseLeft, tailBaseRight, tailTip);
+        painter.drawLine(borderColor, tailBaseLeft, tailTip);
+        painter.drawLine(borderColor, tailBaseRight, tailTip);
+
+        // 4. 绘制表情图标
+        float contentX = bubbleLeft + padding;
+        if (bubble.emotion_tex)
+        {
+            Rect iconRect = {Vec2{contentX, bubbleTop + padding}, iconSize};
+            Color iconColor = Color::White;
+            iconColor.a = bubble.alpha;
+            painter.drawTexTile(bubble.emotion_tex, iconRect, 0.0f, 0.0f, iconColor);
+            contentX += iconSize.x + iconTextGap;
+        }
+
+        // 5. 绘制文字
+        if (!bubble.text.empty() && bubble.font)
+        {
+            float textX = contentX;
+            float textY = bubbleTop + padding + (contentHeight - textSize.y) / 2.0f;
+            Color textColor = bubble.text_color;
+            textColor.a = bubble.alpha;
+            painter.drawText(bubble.text, bubble.font, {textX, textY}, textColor);
+        }
     }
 }
 

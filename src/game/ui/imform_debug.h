@@ -74,6 +74,7 @@ namespace game
         Vec2 _windowPos, _windowSize;
 
         std::vector<const char*> _particleNames;
+        std::vector<std::string> _emotionNames;
 
         GridInfo _curGridInfo;
         int _turnInfo;

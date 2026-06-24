@@ -86,6 +86,18 @@ namespace game
 			pickup.dead_drop_range = pickupJs.value("dead_drop_range", 130);
 		}
 
+		if (json.contains("bubble"))
+		{
+			auto& bubbleJs = json["bubble"];
+			bubble.font_name = bubbleJs.value("font_name", "fonts/msyh.ttf");
+			bubble.font_size = bubbleJs.value("font_size", 16);
+			bubble.bg_color.fromHexString(bubbleJs.value("bg_color", "#FFFFFFFF"));
+			bubble.border_color.fromHexString(bubbleJs.value("border_color", "#505050FF"));
+			bubble.text_color.fromHexString(bubbleJs.value("text_color", "#000000FF"));
+			bubble.lifetime_ms = bubbleJs.value("lifetime_ms", 3000);
+			bubble.fadeout_ms = bubbleJs.value("fadeout_ms", 500);
+		}
+
 		return true;
 	}
 
