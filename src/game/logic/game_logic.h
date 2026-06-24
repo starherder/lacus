@@ -7,6 +7,7 @@
 #include "game/ecs/comm_event.h"
 
 #include "game/game_config.h"
+#include "game/logic_config.h"
 #include "game/game_script.h"
 #include "game/scene/scene_config.h"
 
@@ -88,6 +89,8 @@ namespace game
 		GameContext& _context;
 
 		GameConfig _gameConfig;
+
+		LogicConfig _logicConfig;
 
 		SceneConfig _sceneConfig;
 		

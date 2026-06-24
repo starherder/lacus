@@ -33,6 +33,7 @@ namespace game
 		_context.setGameConfig(&_gameConfig);
         _context.setGameScript(&_gameScript);
 	    _context.setSceneConfig(&_sceneConfig);
+		_context.setLogicConfig(&_logicConfig);
 
         _gameScript.load(_context.resPath() / _gameConfig.script.entry);
 
@@ -75,6 +76,13 @@ namespace game
             LogError("load game config: {} failed.", gamecfg.string());
         }
 
+        auto emotioncfg = _context.resPath() / "data/emotion/emotions.json";
+        res = _logicConfig.loadEmotion(emotioncfg);
+        if (!res)
+        {
+            LogError("load emotion config: {} failed.", emotioncfg.string());
+        }
+        
         auto btreePath =_context.resPath() / "data/bevtree/";
         res = bevtree::BevTreeManager::inst().load(btreePath);
         if (!res) 

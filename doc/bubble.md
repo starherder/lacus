@@ -8,11 +8,11 @@
 
 - 使用ECS模式，需要显示气泡时发送一个ECS事件。
 - 在BubbleSystem的system类中，收到该事件时，给entity上加一个BubbleComponent组件，改组件上记录了气泡类型（语言、表情），语言需要配置文字、表情需要配置图标
-- BubbleComponent中的语言对应的文字要使用译文系统(Trans宏)，表情要有个配置文件(json)配置表情（字符串）对应的材质
+- BubbleComponent中的语言对应的文字要使用译文系统(Trans宏)，表情要使用BubbleManager
 - 在BubbleSystem的update方法中定时淡出气泡（气泡的存在、淡出时间在GameConfig里配置）。
 - 在RenderSystem中增加绘制气泡及其中文字和表情的方法。
 
-## 配置
+## 配置	
 
 - 文字使用译文，通过Trans宏来获取实际的文字
 - 增加个表情管理器EmotionManager，用于读取res/data/emotion/emotions.json，提供接口根据名字获取材质

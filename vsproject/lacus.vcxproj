@@ -223,6 +223,7 @@
     <ClCompile Include="..\src\game\ecs\system_step_motion.cpp" />
     <ClCompile Include="..\src\game\ecs\system_utils.cpp" />
     <ClCompile Include="..\src\game\game_config.cpp" />
+    <ClCompile Include="..\src\game\logic_config.cpp" />
     <ClCompile Include="..\src\game\game_plugin.cpp" />
     <ClCompile Include="..\src\game\game_script.cpp" />
     <ClCompile Include="..\src\game\logic\game_logic.cpp" />
@@ -363,6 +364,7 @@
     <ClInclude Include="..\src\game\ecs\system_step_motion.h" />
     <ClInclude Include="..\src\game\ecs\system_utils.h" />
     <ClInclude Include="..\src\game\game_config.h" />
+    <ClInclude Include="..\src\game\logic_config.h" />
     <ClInclude Include="..\src\game\game_plugin.h" />
     <ClInclude Include="..\src\game\game_script.h" />
     <ClInclude Include="..\src\game\logic\game_logic.h" />

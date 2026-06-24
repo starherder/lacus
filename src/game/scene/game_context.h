@@ -13,6 +13,7 @@ namespace game {
 
 	class GameScript;
 	class GameConfig;
+	class LogicConfig;
 	class SceneConfig;
 	class GameScene;
 	class GameCamera;
@@ -67,6 +68,9 @@ namespace game {
 		GamePlay& gamePlay();
 		void setGamePlay(GamePlay* gamePlay);
 
+		LogicConfig& logicConfig() { return *_logicConfig; }
+		void setLogicConfig(LogicConfig* config) { _logicConfig = config; }
+
 		GameScript& gameScript() { return *_gameScript; }
 		void setGameScript(GameScript* script) { _gameScript = script; }
 
@@ -99,6 +103,8 @@ namespace game {
 		SceneConfig* _sceneConfig = nullptr;
 
 		GameScript* _gameScript = nullptr;
+
+		LogicConfig* _logicConfig = nullptr;
 
 		GamePlay* _gamePlay = nullptr;
 

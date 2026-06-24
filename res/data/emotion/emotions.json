@@ -1,3 +1,7 @@
 [
-    { "name" : "", "texture" : "ui/"}
+    { "name" : "none", "texture" : "emote:none"},
+    { "name" : "sad", "texture" : "emote:sad"},
+    { "name" : "love", "texture" : "emote:love"},
+    { "name" : "shock", "texture" : "emote:shock"},
+    { "name" : "doubt", "texture" : "emote:doubt"}
 ]

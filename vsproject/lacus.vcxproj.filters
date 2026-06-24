@@ -322,6 +322,9 @@
     <ClCompile Include="..\src\game\game_config.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\logic_config.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\game\ecs\system_buff.cpp">
       <Filter>game\ecs</Filter>
     </ClCompile>
@@ -775,6 +778,9 @@
       <Filter>samples</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\game_config.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\logic_config.h">
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ecs\system_utils.h">
