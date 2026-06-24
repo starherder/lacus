@@ -2,14 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Lacus (cppvsdbg)",
+            "name": "Debug Lacus",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/Lacus.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
             "console": "externalTerminal",
             "preLaunchTask": "build"
         },
@@ -36,14 +35,15 @@
         },
         {
             "name": "Run Lacus",
-            "type": "cppdbg",
+            "type": "cppvsdbg",
             "request": "launch",
+            "noDebug": true,
             "program": "${workspaceFolder}/bin/Debug/Lacus.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "console": "externalTerminal"
+            "console": "externalTerminal",
+            "preLaunchTask": "build"
         }
     ]
 }

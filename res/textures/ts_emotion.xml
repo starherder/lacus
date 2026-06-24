@@ -1,0 +1,9 @@
+<tilset name="emote">
+    <texture file="textures/UI/emote.png" >
+        <tile name="none" rect="0,0,32,38" />
+        <tile name="sad" rect="96,0,32,38" />
+        <tile name="love" rect="128,0,32,38" />
+        <tile name="shock" rect="192,0,32,38" />
+        <tile name="doubt" rect="222,0,32,38" />
+    </texture>
+</tilset>

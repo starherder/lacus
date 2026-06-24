@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(Lacus VERSION 1.0.0 LANGUAGES CXX)
+project(Lacus VERSION 1.0.0 LANGUAGES CXX C)
 
 # 生成编译数据库，用于clangd等工具
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -13,6 +13,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if(WIN32)
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+    # 解决object_factory.cpp等文件节数超过对象文件格式限制的问题
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
 endif()
 
 # 添加IMGUI_DISABLE_WIN32_FUNCTIONS定义以解决MinGW下的_wfopen问题
@@ -77,10 +79,18 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "src/*.h")
 file(GLOB_RECURSE EXT_HEADERS "ext/*.h" "ext/*.hpp")
 
+# Lua 源码（LuaBridge 需要底层 Lua C 库）
+file(GLOB LUA_SOURCES "ext/lua/src/*.c")
+list(REMOVE_ITEM LUA_SOURCES
+    "${CMAKE_SOURCE_DIR}/ext/lua/src/lua.c"
+    "${CMAKE_SOURCE_DIR}/ext/lua/src/luac.c"
+)
+
 # 添加可执行文件
-add_executable(${PROJECT_NAME} 
-                ${SOURCES} 
+add_executable(${PROJECT_NAME}
+                ${SOURCES}
                 ${OTHER_SOURCES}
+                ${LUA_SOURCES}
                 ${HEADERS}
                 ${EXT_HEADERS}
 )

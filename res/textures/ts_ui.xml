@@ -2,5 +2,4 @@
     <texture file="textures/icon/0.png" >
         <tile name="role" rect="0,0,144,144" />
     </texture>
-
 </tilset>

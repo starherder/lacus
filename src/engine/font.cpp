@@ -34,7 +34,7 @@ namespace engine {
 
      FontManager::FontManager()
      {
-        if (!TTF_WasInit() && TTF_Init() != 0) {
+        if (!TTF_WasInit() && !TTF_Init()) {
             
             LogError("ttf font init faild.");
             assert("ttf font init faild");

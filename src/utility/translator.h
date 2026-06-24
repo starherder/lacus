@@ -66,17 +66,20 @@ namespace utility
 
             std::string line;
             std::size_t line_num = 0;
-            while (std::getline(ifs, line)) {
+            while (std::getline(ifs, line)) 
+            {
                 line_num++;
 
                 trim_space(line);
 
-                if (line.empty() || line.starts_with('#') || line.starts_with("//")) {
+                if (line.empty() || line.starts_with('#') || line.starts_with("//")) 
+                {
                     continue;
                 }
 
                 const std::size_t eq_pos = line.find('=');
-                if (eq_pos == 0 || eq_pos == line.size() - 1 || eq_pos == std::string::npos) {
+                if (eq_pos == 0 || eq_pos == line.size() - 1 || eq_pos == std::string::npos) 
+                {
                     continue;
                 }
 
@@ -89,8 +92,9 @@ namespace utility
                 text.emplace(std::move(key), std::move(value));
             }
 
-            if (!ifs.eof()) {
-                throw std::runtime_error("read file failed. eof NOT found.");
+            if (!ifs.eof()) 
+            {
+                throw std::runtime_error(std::format("read file {} failed, eof NOT found.", file_path.string()));
             }
 
             ifs.close();
@@ -104,13 +108,20 @@ namespace utility
 
 		std::string getUtf8String(const std::string& key) const
 		{
-		auto& text = _all_text.find(_language)->second;
-            auto it = text.find(key);
-            if (it == text.end()) {
+            auto it = _all_text.find(_language);
+            if (it == _all_text.end())
+            {
+                return "_NO_TEXT_";
+            }
+
+		    auto& text = it->second;
+            auto iter = text.find(key);
+            if (iter == text.end()) 
+            {
                 return key;
             }
 
-            return it->second;
+            return iter->second;
 		}
 
 	private:
