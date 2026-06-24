@@ -72,24 +72,13 @@ void Animation::update(float deltaTime)
         int nextFrame = _currentFrame + 1;
         if (nextFrame >= (int)_frames.size())
         {
-            // 到达末帧，处理循环
-            if (_loop == 0)
+            // 到达末帧
+            if (!_loop)
             {
                 // 不循环，停在最后一帧
                 _playing = false;
                 _currentFrame = (int)_frames.size() - 1;
                 return;
-            }
-
-            if (_loop > 0)
-            {
-                _loopCount++;
-                if (_loopCount >= _loop)
-                {
-                    _playing = false;
-                    _currentFrame = (int)_frames.size() - 1;
-                    return;
-                }
             }
 
             // 循环播放
@@ -116,7 +105,6 @@ void Animation::reset()
 {
     _time = 0.0f;
     _currentFrame = 0;
-    _loopCount = 0;
     _playing = false;
 }
 

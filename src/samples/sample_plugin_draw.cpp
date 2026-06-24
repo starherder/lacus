@@ -194,11 +194,23 @@ namespace samples {
             ImGui::Separator();
             ImGui::Text("name: %s", _selectAnimName.c_str());
             ImGui::Text("frames: %d", _selectAnim->frameCount());
-            ImGui::Text("current: %d", _selectAnim->getCurrentTexture() ? selectIndex : -1);
+
+            int curFrame = _selectAnim->getCurrentFrameIndex();
+            ImGui::Text("current frame: %d", curFrame);
+
+            // 如果当前帧有事件，显示事件名
+            if (curFrame >= 0 && curFrame < _selectAnim->frameCount())
+            {
+                const auto& frame = _selectAnim->getFrame(curFrame);
+                if (!frame.event.empty())
+                {
+                    ImGui::Text("event: %s", frame.event.c_str());
+                }
+            }
 
             // loop
-            int loop = _selectAnim->loop();
-            if (ImGui::InputInt("loop", &loop))
+            bool loop = _selectAnim->loop();
+            if (ImGui::Checkbox("loop", &loop))
             {
                 _selectAnim->setLoop(loop);
             }

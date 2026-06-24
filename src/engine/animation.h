@@ -34,13 +34,16 @@ public:
     /// @brief 获取指定索引的帧
     const Frame& getFrame(int index) const;
 
-    /// @brief 设置循环模式（0=不循环, >0=循环次数, -1=无限）
-    void setLoop(int loop) { _loop = loop; }
-    int loop() const { return _loop; }
+    /// @brief 设置是否循环播放
+    void setLoop(bool loop) { _loop = loop; }
+    bool loop() const { return _loop; }
 
     /// @brief 设置播放速率
     void setRate(float rate) { _rate = rate; }
     float rate() const { return _rate; }
+
+    /// @brief 获取当前帧索引
+    int getCurrentFrameIndex() const { return _currentFrame; }
 
     /// @brief 获取当前帧的材质
     TexTile* getCurrentTexture() const;
@@ -66,12 +69,11 @@ public:
 
 private:
     std::vector<Frame> _frames;
-    int _loop = 0;          // 循环次数
+    bool _loop = false;     // 是否循环
     float _rate = 1.0f;     // 播放速率
     bool _playing = false;
     float _time = 0.0f;     // 累计时间（秒）
     int _currentFrame = 0;  // 当前帧索引
-    int _loopCount = 0;     // 已循环次数
 };
 
 

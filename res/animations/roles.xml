@@ -1,9 +1,9 @@
 <data>
     <anim name="role-0">
-        <frame tex="role:0-0" dur="500" />
-        <frame tex="role:0-1" dur="500" evt="anim-evt-test"/>
-        <frame tex="role:0-2" dur="500" />
-        <frame tex="role:0-3" dur="500" />
+        <frame tex="role:0-0" dur="500" evt="anim-evt-test-0"/>
+        <frame tex="role:0-1" dur="500" evt="anim-evt-test-1"/>
+        <frame tex="role:0-2" dur="500" evt="anim-evt-test-2"/>
+        <frame tex="role:0-3" dur="500" evt="anim-evt-test-3"/>
     </anim >
     
     <anim name="role-1">
