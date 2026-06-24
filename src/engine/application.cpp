@@ -207,12 +207,12 @@ bool Application::initAudioPlayer()
     return true;
 }
 
-void Application::update() 
+void Application::update()
 {
     for(auto& plugin : _plugins)
     {
         plugin.second->update();
-    }   
+    }
 }
 
 void Application::draw() 

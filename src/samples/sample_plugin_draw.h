@@ -1,7 +1,11 @@
-﻿#pragma once
+#pragma once
 
 #include "engine/application.h"
 #include "imform/imform.h"
+
+namespace engine {
+    class Animation;
+}
 
 namespace samples {
 
@@ -11,7 +15,7 @@ namespace samples {
     {
     public:
         ImGuiFormDraw() = delete;
-        ImGuiFormDraw(engine::Application* app, class SamplePluginDraw* plugin) 
+        ImGuiFormDraw(engine::Application* app, class SamplePluginDraw* plugin)
             : _application(app), _plugin(plugin) {}
         ~ImGuiFormDraw() = default;
 
@@ -57,8 +61,31 @@ namespace samples {
     };
 
 
+    class ImFormAnimSet : public imgui::ImForm
+    {
+    public:
+        ImFormAnimSet() = delete;
+        ImFormAnimSet(engine::Application* app, class SamplePluginDraw* plugin)
+            : _application(app), _plugin(plugin) {}
+        ~ImFormAnimSet() = default;
 
-    class SamplePluginDraw final : public engine::Plugin 
+    protected:
+        void onInit() override;
+        void draw() override;
+
+    private:
+        engine::Application* _application = nullptr;
+        class SamplePluginDraw* _plugin = nullptr;
+
+        std::string _selectAnimName;
+        engine::Animation* _selectAnim = nullptr;
+
+        std::vector<const char*> _animNames;
+        std::vector<std::string> _animNameStore;
+    };
+
+
+    class SamplePluginDraw final : public engine::Plugin
     {
     public:
         SamplePluginDraw() = default;

@@ -2,6 +2,7 @@
 
 #include "engine/application.h"
 #include "engine/color.h"
+#include "engine/animation.h"
 
 #include "imform/imform_manager.h"
 
@@ -163,6 +164,93 @@ namespace samples {
 
     // ============================================================================
 
+    void ImFormAnimSet::onInit()
+    {
+        auto& animMgr = _application->resourceManager().animationManager();
+        _animNameStore = animMgr.getAllNames();
+        for (auto& name : _animNameStore)
+        {
+            _animNames.push_back(name.c_str());
+        }
+    }
+
+    void ImFormAnimSet::draw()
+    {
+        ImGui::Begin("animations");
+
+        static int selectIndex = 0;
+        if (ImGui::ListBox("anims##animset_list", &selectIndex, _animNames.data(), (int)_animNames.size()))
+        {
+            _selectAnimName = _animNames[selectIndex];
+            _selectAnim = _application->resourceManager().animationManager().get(_selectAnimName);
+            if (_selectAnim)
+            {
+                _selectAnim->play();
+            }
+        }
+
+        if (_selectAnim)
+        {
+            ImGui::Separator();
+            ImGui::Text("name: %s", _selectAnimName.c_str());
+            ImGui::Text("frames: %d", _selectAnim->frameCount());
+            ImGui::Text("current: %d", _selectAnim->getCurrentTexture() ? selectIndex : -1);
+
+            // loop
+            int loop = _selectAnim->loop();
+            if (ImGui::InputInt("loop", &loop))
+            {
+                _selectAnim->setLoop(loop);
+            }
+
+            // rate
+            float rate = _selectAnim->rate();
+            if (ImGui::SliderFloat("rate", &rate, 0.1f, 10.0f))
+            {
+                _selectAnim->setRate(rate);
+            }
+
+            // playback buttons
+            if (_selectAnim->isPlaying())
+            {
+                if (ImGui::Button("pause"))
+                {
+                    _selectAnim->stop();
+                }
+            }
+            else
+            {
+                if (ImGui::Button("play"))
+                {
+                    _selectAnim->play();
+                }
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("reset"))
+            {
+                _selectAnim->reset();
+                _selectAnim->play();
+            }
+
+            // update animation
+            _selectAnim->update(_application->frameTicker().deltaSeconds());
+
+            // draw preview
+            auto tex = _selectAnim->getCurrentTexture();
+            if (tex)
+            {
+                float previewSize = 150.0f;
+                Rect dstRect = {Vec2{50.0f, 50.0f}, Vec2{previewSize, previewSize}};
+                _selectAnim->draw(_application->painter(), dstRect);
+            }
+        }
+
+        ImGui::End();
+    }
+
+    // ============================================================================
+
 
     void ImGuiFormDraw::onInit()
     {
@@ -278,12 +366,14 @@ namespace samples {
     {
         imgui::ImFormManager::inst().showForm<ImGuiFormDraw>("form_draw", application(), this);
         imgui::ImFormManager::inst().showForm<ImFormTexSet>("form_texset", application(), this);
+        imgui::ImFormManager::inst().showForm<ImFormAnimSet>("form_animset", application(), this);
     }
 
     void SamplePluginDraw::onDisable()
     {
         imgui::ImFormManager::inst().closeForm("form_draw");
         imgui::ImFormManager::inst().closeForm("form_texset");
+        imgui::ImFormManager::inst().closeForm("form_animset");
     }
 
     void SamplePluginDraw::onUpdate() 

@@ -10,6 +10,7 @@ namespace engine {
     class TextureManager;
     class FontManager;
     class AudioManager;
+    class AnimationManager;
 
     class ResourceManager final : public IResManager
     {
@@ -26,12 +27,15 @@ namespace engine {
 
         AudioManager& audioManager() { return *_audioManager; }
 
+        AnimationManager& animationManager() { return *_animationManager; }
+
     private:
 
         std::unique_ptr<TextureManager> _textureManager = nullptr;
         std::unique_ptr<FontManager> _fontManager = nullptr;
         std::unique_ptr<AudioManager> _audioManager = nullptr;
-        
+        std::unique_ptr<AnimationManager> _animationManager = nullptr;
+
         Application& _application;
     };
 

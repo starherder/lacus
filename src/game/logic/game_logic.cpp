@@ -20,6 +20,8 @@
 
 #include "game/logic/game_play_tile_battle.h"
 
+#include "engine/animation.h"
+
 namespace game
 {
 	GameLogic::GameLogic(GameContext& context):_context(context)
@@ -142,7 +144,10 @@ namespace game
 
         auto texturedir = _context.resPath() / "textures";
         _context.textureMgr().loadAllTexSets(texturedir);
-	}
+
+        auto animDir = _context.resPath() / "animations";
+        _context.resourceMgr().animationManager().loadAll(animDir, _context.textureMgr());
+    }
 
     void GameLogic::init()
     {
