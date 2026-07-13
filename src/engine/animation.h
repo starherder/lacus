@@ -77,30 +77,59 @@ private:
 };
 
 
-/// @brief 动画管理器，负责从 XML 加载和管理动画模板
+/// @brief 动画帧配置（加载时解析，不含运行时指针）
+struct FrameConfig
+{
+    std::string tex;        // 材质引用，如 "role:0-0"
+    int duration = 0;       // 持续时长（毫秒）
+    std::string event;      // 帧事件（可选）
+};
+
+/// @brief 动画配置（从XML解析的模板数据）
+struct AnimationConfig
+{
+    std::string name;
+    std::vector<FrameConfig> frames;
+};
+
+
+/// @brief 动画管理器，负责从 XML 加载动画配置并管理动画实例
 class AnimationManager final : public IResManager
 {
 public:
     AnimationManager() = default;
     ~AnimationManager() = default;
 
-    /// @brief 加载目录下所有 XML 动画文件
-    bool loadAll(const fs::path& dir, TextureManager& texMgr);
+    /// @brief 初始化，绑定纹理管理器引用（在 Application 初始化时调用）
+    bool init(TextureManager& texMgr);
 
-    /// @brief 加载单个 XML 动画文件
-    bool loadFile(const fs::path& path, TextureManager& texMgr);
+    /// @brief 加载目录下所有 XML 动画配置文件（仅解析配置）
+    bool loadAll(const fs::path& dir);
 
-    /// @brief 获取指定名称的动画模板
+    /// @brief 加载单个 XML 动画配置文件（仅解析配置）
+    bool loadFile(const fs::path& path);
+
+    /// @brief 根据配置创建动画实例
+    /// @param cfgName 配置名（XML 中的 name 属性）
+    /// @param instName 实例名，用于后续 get() 查找
+    Animation* create(const std::string& cfgName, const std::string& instName);
+
+    /// @brief 获取已创建的动画实例
     Animation* get(const std::string& name) const;
 
-    /// @brief 获取所有动画名称
+    /// @brief 获取所有动画配置名称
     std::vector<std::string> getAllNames() const;
 
-    /// @brief 清除所有动画
-    void clear() { _animations.clear(); }
+    /// @brief 更新所有已创建的动画
+    void Update(float deltaTime) override;
+
+    /// @brief 清除所有配置和动画
+    void clear() { _configs.clear(); _animations.clear(); }
 
 private:
+    std::unordered_map<std::string, AnimationConfig> _configs;
     std::unordered_map<std::string, std::unique_ptr<Animation>> _animations;
+    TextureManager* _textureMgr = nullptr;
 };
 
 

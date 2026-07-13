@@ -10,6 +10,7 @@
 #include "resource.h"
 #include "audio.h"
 #include "audio_player.h"
+#include "animation.h"
 
 #include "painter.h"
 #include "gfx_painter.h"
@@ -78,6 +79,7 @@ private:
     bool initWindow();
     bool initRenderer();
     bool initAudioPlayer();
+    bool initAnimation();
 
 private:
     std::unique_ptr<Renderer> _renderer = nullptr;

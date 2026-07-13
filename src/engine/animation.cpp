@@ -113,7 +113,7 @@ void Animation::reset()
 // AnimationManager
 // ============================================================
 
-bool AnimationManager::loadAll(const fs::path& dir, TextureManager& texMgr)
+bool AnimationManager::loadAll(const fs::path& dir)
 {
     if (!fs::exists(dir))
     {
@@ -126,7 +126,7 @@ bool AnimationManager::loadAll(const fs::path& dir, TextureManager& texMgr)
     {
         if (entry.path().extension() == ".xml")
         {
-            bool ok = loadFile(entry.path(), texMgr);
+            bool ok = loadFile(entry.path());
             if (!ok)
             {
                 LogWarn("AnimationManager: load file ({}) failed.", entry.path().string());
@@ -138,7 +138,7 @@ bool AnimationManager::loadAll(const fs::path& dir, TextureManager& texMgr)
     return allOk;
 }
 
-bool AnimationManager::loadFile(const fs::path& path, TextureManager& texMgr)
+bool AnimationManager::loadFile(const fs::path& path)
 {
     using namespace tinyxml2;
 
@@ -174,19 +174,21 @@ bool AnimationManager::loadFile(const fs::path& path, TextureManager& texMgr)
             continue;
         }
 
-        auto anim = std::make_unique<Animation>();
+        std::string name = animName;
+        AnimationConfig config;
+        config.name = name;
 
         // 遍历所有 <frame> 元素
         auto frameNode = animNode->FirstChildElement("frame");
         while (frameNode)
         {
-            Animation::Frame frame;
+            FrameConfig frame;
 
-            // 解析材质
+            // 解析材质引用
             const char* texAttr = frameNode->Attribute("tex");
             if (texAttr && strlen(texAttr) > 0)
             {
-                frame.texture = texMgr.getCfgTexTile(texAttr);
+                frame.tex = texAttr;
             }
 
             // 解析持续时间（毫秒）
@@ -199,21 +201,75 @@ bool AnimationManager::loadFile(const fs::path& path, TextureManager& texMgr)
                 frame.event = evtAttr;
             }
 
-            anim->addFrame(-1, frame);
+            config.frames.push_back(frame);
 
             frameNode = frameNode->NextSiblingElement("frame");
         }
 
-        std::string name = animName;
-        _animations[name] = std::move(anim);
+        _configs[name] = std::move(config);
 
-        LogInfo("AnimationManager: loaded anim ({}), frames=({}).",
-                name, _animations[name]->frameCount());
+        LogInfo("AnimationManager: loaded anim config ({}), frames=({}).",
+                name, _configs[name].frames.size());
 
         animNode = animNode->NextSiblingElement("anim");
     }
 
     return true;
+}
+
+bool AnimationManager::init(TextureManager& texMgr)
+{
+    _textureMgr = &texMgr;
+    return true;
+}
+
+Animation* AnimationManager::create(const std::string& cfgName, const std::string& instName)
+{
+    if (!_textureMgr)
+    {
+        LogError("AnimationManager: create failed, TextureManager not initialized.");
+        return nullptr;
+    }
+
+    auto configIt = _configs.find(cfgName);
+    if (configIt == _configs.end())
+    {
+        LogError("AnimationManager: create failed, config ({}) not found.", cfgName);
+        return nullptr;
+    }
+
+    // 如果实例名已存在，返回已有实例
+    auto animIt = _animations.find(instName);
+    if (animIt != _animations.end())
+    {
+        LogWarn("AnimationManager: instance ({}) already exists, return existing.", instName);
+        return animIt->second.get();
+    }
+
+    auto anim = std::make_unique<Animation>();
+    for (const auto& frameCfg : configIt->second.frames)
+    {
+        Animation::Frame frame;
+        frame.texture = _textureMgr->getCfgTexTile(frameCfg.tex);
+        frame.duration = frameCfg.duration;
+        frame.event = frameCfg.event;
+        anim->addFrame(-1, frame);
+    }
+
+    auto* result = anim.get();
+    _animations[instName] = std::move(anim);
+
+    LogInfo("AnimationManager: created anim inst ({}), config ({}), frames=({}).",
+            instName, cfgName, result->frameCount());
+    return result;
+}
+
+void AnimationManager::Update(float deltaTime)
+{
+    for (auto& [name, anim] : _animations)
+    {
+        anim->update(deltaTime);
+    }
 }
 
 Animation* AnimationManager::get(const std::string& name) const
@@ -229,8 +285,8 @@ Animation* AnimationManager::get(const std::string& name) const
 std::vector<std::string> AnimationManager::getAllNames() const
 {
     std::vector<std::string> names;
-    names.reserve(_animations.size());
-    for (const auto& [name, _] : _animations)
+    names.reserve(_configs.size());
+    for (const auto& [name, _] : _configs)
     {
         names.push_back(name);
     }

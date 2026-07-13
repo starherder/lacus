@@ -113,6 +113,11 @@ bool Application::init(std::string_view configFile, std::string_view logFile)
         return false;
     }
 
+    if(!initAnimation())
+    {
+        return false;
+    }
+
     _frameTicker.init(_config.window.fps);
 
     LogInfo("---------------- engine init OK ----------------");
@@ -207,8 +212,17 @@ bool Application::initAudioPlayer()
     return true;
 }
 
+bool Application::initAnimation()
+{
+    return _resourceMgr->animationManager().init(_resourceMgr->textureManager());
+}
+
 void Application::update()
 {
+    // 先更新资源管理器（如动画）
+    _resourceMgr->Update(_frameTicker.deltaSeconds());
+
+    // 再更新插件
     for(auto& plugin : _plugins)
     {
         plugin.second->update();

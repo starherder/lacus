@@ -9,11 +9,14 @@
 namespace engine
 {
 
-class IResManager 
+class IResManager
 {
 public:
     const fs::path& resPath() const { return _resPath; }
     virtual void setResPath(const fs::path& path) { _resPath = path; }
+
+    /// @brief 每帧更新，子类可重写实现资源更新
+    virtual void Update(float deltaTime) {}
 
 private:
     fs::path _resPath;

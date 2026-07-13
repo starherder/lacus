@@ -146,7 +146,7 @@ namespace game
         _context.textureMgr().loadAllTexSets(texturedir);
 
         auto animDir = _context.resPath() / "animations";
-        _context.resourceMgr().animationManager().loadAll(animDir, _context.textureMgr());
+        _context.resourceMgr().animationManager().loadAll(animDir);
     }
 
     void GameLogic::init()

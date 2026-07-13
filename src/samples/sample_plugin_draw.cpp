@@ -182,7 +182,8 @@ namespace samples {
         if (ImGui::ListBox("anims##animset_list", &selectIndex, _animNames.data(), (int)_animNames.size()))
         {
             _selectAnimName = _animNames[selectIndex];
-            _selectAnim = _application->resourceManager().animationManager().get(_selectAnimName);
+            _selectAnim = _application->resourceManager().animationManager().create(
+                _selectAnimName, _selectAnimName);
             if (_selectAnim)
             {
                 _selectAnim->play();

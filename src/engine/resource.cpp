@@ -31,4 +31,9 @@ namespace engine {
         _animationManager->setResPath(path);
     }
 
+    void ResourceManager::Update(float deltaTime)
+    {
+        _animationManager->Update(deltaTime);
+    }
+
 }

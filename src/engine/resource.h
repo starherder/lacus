@@ -21,6 +21,8 @@ namespace engine {
     
         void setResPath(const fs::path& path) override;
 
+        void Update(float deltaTime);
+
         TextureManager& textureManager() { return *_textureManager; }
 
         FontManager& fontManager() { return *_fontManager;}
