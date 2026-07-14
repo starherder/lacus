@@ -73,6 +73,8 @@ void BubbleSystem::onShowBubble(const EvtShowBubble& e)
         return;
     }
 
+    LogInfo("BubbleSystem::onShowBubble: actor = {}, emotion = {}, text = {}", e.actor, e.emotion, e.text);
+
     if (auto* oldBubble = registry.try_get<CompBubble>(e.actor))
     {
         removeBubbleEmotionAnim(_context, *oldBubble);

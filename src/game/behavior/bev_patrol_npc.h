@@ -86,6 +86,30 @@ namespace game
 		float _idleCurSeconds = 0.0f;
 	};
 
+	class BevNode_RandomEmotion : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		void resetWaitSeconds();
+		void showRandomEmotion();
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor = entt::null;
+
+		float _minSeconds = 3.0f;
+		float _maxSeconds = 8.0f;
+		int64_t _nextTriggerTicks = 0;
+	};
+
 
 	class BevNode_DefendAttack : public BevNode
 	{

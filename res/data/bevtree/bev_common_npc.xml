@@ -34,6 +34,7 @@
               <patrol_move />
             </sequence>
             <defend_attack />
+            <random_emotion min_time="3.0" max_time="8.0" />
           </parallel>
           <patrol_idle time="2.0" />
       </sequence>

@@ -4,6 +4,7 @@
 
 #include "game/scene/game_scene.h"
 #include "game/scene/game_context.h"
+#include "game/logic_config.h"
 #include "utility/random.h"
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comm_event.h"
@@ -15,6 +16,7 @@ namespace game {
 	RegisterBehaviorNode("patrol_findpath", BevNode_FindPatrolPos);
 	RegisterBehaviorNode("patrol_move", BevNode_PatrolMove);
 	RegisterBehaviorNode("patrol_idle", BevNode_Idle);
+	RegisterBehaviorNode("random_emotion", BevNode_RandomEmotion);
 	RegisterBehaviorNode("pick_item", BevNode_PickItem);
 	RegisterBehaviorNode("defend_attack", BevNode_DefendAttack);
 
@@ -184,6 +186,75 @@ namespace game {
 
 	void BevNode_Idle::terminate(Status s) 
 	{
+	}
+
+
+	// ---------------------------------------------------------------------
+
+	bool BevNode_RandomEmotion::load(const XmlNode* node)
+	{
+		_minSeconds = node->FloatAttribute("min_time", _minSeconds);
+		_maxSeconds = node->FloatAttribute("max_time", _maxSeconds);
+		_minSeconds = std::max(_minSeconds, 0.0f);
+		_maxSeconds = std::max(_maxSeconds, _minSeconds);
+
+		return true;
+	}
+
+	Status BevNode_RandomEmotion::update()
+	{
+		if (!_context || _context->registry().valid(_actor) == false)
+		{
+			return Status::Failure;
+		}
+
+		if (_context->currentTicks() >= _nextTriggerTicks)
+		{
+			showRandomEmotion();
+			resetWaitSeconds();
+		}
+
+		return Status::Running;
+	}
+
+	void BevNode_RandomEmotion::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
+		resetWaitSeconds();
+	}
+
+	void BevNode_RandomEmotion::terminate(Status s)
+	{
+	}
+
+	void BevNode_RandomEmotion::resetWaitSeconds()
+	{
+		float waitSeconds = utility::random(_minSeconds, _maxSeconds);
+		_nextTriggerTicks = _context ? _context->currentTicks() + (int64_t)(waitSeconds * 1000.0f) : 0;
+	}
+
+	void BevNode_RandomEmotion::showRandomEmotion()
+	{
+		if (!_context || _context->registry().valid(_actor) == false)
+		{
+			return;
+		}
+
+		auto emotionNames = _context->logicConfig().getAllEmotionNames();
+		if (emotionNames.empty())
+		{
+			return;
+		}
+
+		int emotionIndex = utility::random(0, (int)emotionNames.size() - 1);
+		int textIndex = utility::random(1, 10);
+
+		EvtShowBubble evt;
+		evt.actor = _actor;
+		evt.emotion = emotionNames[emotionIndex];
+		evt.text = "mur_" + std::to_string(textIndex);
+		_context->dispatcher().trigger(evt);
 	}
 
 

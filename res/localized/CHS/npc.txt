@@ -52,3 +52,14 @@ buff_name_poision=毒
 buff_name_medicine=解
 buff_name_slow=慢
 buff_name_encourage=激
+
+mur_1=这是什么玩意
+mur_2=what the hell?
+mur_3=无聊
+mur_4=卧槽！
+mur_5=滚
+mur_6=好饿
+mur_7=走开啦
+mur_8=爱与和平
+mur_9=我要回家
+mur_10=不想动
