@@ -10,9 +10,22 @@ namespace game
 {
 	using namespace engine;
 
+	enum class EmotionResourceType
+	{
+		Texture,
+		Animation,
+	};
+
+	struct EmotionConfig
+	{
+		EmotionResourceType type = EmotionResourceType::Texture;
+		std::string resource;
+	};
+
 	class LogicConfig final
 	{
-		using EmotionTextureMap = std::unordered_map<std::string, std::string>;
+	public:
+		using EmotionConfigMap = std::unordered_map<std::string, EmotionConfig>;
 
 	public:
 		LogicConfig() = default;
@@ -20,15 +33,15 @@ namespace game
 
 		bool loadEmotion(const fs::path& filepath);
 
-		const std::string* getEmotion(const std::string& name) const;
+		const EmotionConfig* getEmotion(const std::string& name) const;
 
-		const EmotionTextureMap& getAllEmotion() const;
+		const EmotionConfigMap& getAllEmotion() const;
 
 		std::vector<std::string> getAllEmotionNames() const;
 
 	private:
 		JsonConfig _jsonConfig;
-		EmotionTextureMap _emotions;
+		EmotionConfigMap _emotions;
 	};
 
 }

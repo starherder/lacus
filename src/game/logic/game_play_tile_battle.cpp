@@ -2,6 +2,7 @@
 #include "game/ecs/comm_event.h"
 #include "game/scene/game_scene.h"
 #include "magic_enum/magic_enum.h"
+#include <iterator>
 
 namespace game
 {
@@ -200,6 +201,16 @@ namespace game
 		}
 
 		_selectEntities.clear();
+	}
+	
+	entt::entity GamePlayTileBattle::getSelectEntity() 
+	{
+		if(_selectEntities.empty())
+		{
+			return entt::null;
+		}
+
+		return *(_selectEntities.begin());
 	}
 
 	void GamePlayTileBattle::onSelectChange(const EntitySet& selectEntities)

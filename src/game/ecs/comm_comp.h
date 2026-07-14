@@ -10,7 +10,10 @@
 #include "particle/particle_manager.h"
 #include "bevtree/bevtree.h"
 
-
+namespace engine
+{
+    class Animation;
+}
 
 namespace game 
 {
@@ -192,14 +195,16 @@ namespace game
 
     struct CompBubble
     {
-        std::string text;               // 气泡文字（已译文）
-        Font* font = nullptr;           // 文字字体
-        TexTile* emotion_tex = nullptr; // 表情纹理
+        std::string text;                    // 气泡文字（已译文）
+        Font* font = nullptr;                // 文字字体
+        TexTile* emotion_tex = nullptr;      // 静态表情纹理
+        Animation* emotion_anim = nullptr;   // 动态表情动画
+        std::string emotion_anim_inst;       // 动态表情动画实例名
         Color bg_color = Color::White;
         Color border_color = Color::Dark;
         Color text_color = Color::Dark;
-        uint8_t alpha = 255;            // 当前不透明度
-        int lifetime = 3000;            // 剩余毫秒
+        uint8_t alpha = 255;                 // 当前不透明度
+        int lifetime = 3000;                 // 剩余毫秒
     };
 
     struct CompRolePick 

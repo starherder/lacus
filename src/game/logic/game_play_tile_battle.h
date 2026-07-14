@@ -25,6 +25,8 @@ namespace game
 
 		void update(float deltaTime) override;
 		void draw() override;
+		
+		entt::entity getSelectEntity() override;
 
 	public:
 		bool isMoveStage() override;

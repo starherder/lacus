@@ -3,5 +3,6 @@
     { "name" : "sad", "texture" : "emote:sad"},
     { "name" : "love", "texture" : "emote:love"},
     { "name" : "shock", "texture" : "emote:shock"},
-    { "name" : "doubt", "texture" : "emote:doubt"}
+    { "name" : "doubt", "texture" : "emote:doubt"},
+    { "name" : "sad_anim", "animation" : "emotion-sad"}
 ]

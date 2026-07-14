@@ -2,10 +2,30 @@
 #include "game/game_config.h"
 #include "game/logic_config.h"
 #include "utility/translator.h"
+#include "engine/animation.h"
 
 
 namespace game
 {
+namespace
+{
+    std::string makeBubbleEmotionAnimInstName(entt::entity actor, const std::string& emotion)
+    {
+        return "bubble-emotion-" + std::to_string(entt::to_integral(actor)) + "-" + emotion;
+    }
+
+    void removeBubbleEmotionAnim(GameContext& context, CompBubble& bubble)
+    {
+        if (bubble.emotion_anim_inst.empty())
+        {
+            return;
+        }
+
+        context.resourceMgr().animationManager().remove(bubble.emotion_anim_inst);
+        bubble.emotion_anim_inst.clear();
+        bubble.emotion_anim = nullptr;
+    }
+}
 
 DeclareEcsSystem(BubbleSystem, EcsPriority::Middle);
 
@@ -32,6 +52,7 @@ void BubbleSystem::update(float delta)
         bubble.lifetime -= _context.deltaTicks();
         if (bubble.lifetime < 0)
         {
+            removeBubbleEmotionAnim(_context, bubble);
             registry.remove<CompBubble>(ent);
             continue;
         }
@@ -50,6 +71,11 @@ void BubbleSystem::onShowBubble(const EvtShowBubble& e)
     if (!registry.valid(e.actor))
     {
         return;
+    }
+
+    if (auto* oldBubble = registry.try_get<CompBubble>(e.actor))
+    {
+        removeBubbleEmotionAnim(_context, *oldBubble);
     }
 
     auto& bubble = registry.emplace_or_replace<CompBubble>(e.actor);
@@ -72,19 +98,24 @@ void BubbleSystem::onShowBubble(const EvtShowBubble& e)
     // 表情
     if (!e.emotion.empty())
     {
-        const std::string* texRef = _context.logicConfig().getEmotion(e.emotion);
-        if (texRef)
+        const EmotionConfig* emotion = _context.logicConfig().getEmotion(e.emotion);
+        if (emotion)
         {
-            bubble.emotion_tex = _context.textureMgr().getCfgTexTile(*texRef);
+            if (emotion->type == EmotionResourceType::Animation)
+            {
+                bubble.emotion_anim_inst = makeBubbleEmotionAnimInstName(e.actor, e.emotion);
+                bubble.emotion_anim = _context.resourceMgr().animationManager().create(emotion->resource, bubble.emotion_anim_inst);
+                if (bubble.emotion_anim)
+                {
+                    bubble.emotion_anim->setLoop(true);
+                    bubble.emotion_anim->play();
+                }
+            }
+            else
+            {
+                bubble.emotion_tex = _context.textureMgr().getCfgTexTile(emotion->resource);
+            }
         }
-        else
-        {
-            bubble.emotion_tex = nullptr;
-        }
-    }
-    else
-    {
-        bubble.emotion_tex = nullptr;
     }
 
     // 颜色

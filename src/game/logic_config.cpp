@@ -25,17 +25,39 @@ namespace game
 		for (const auto& item : json)
 		{
 			auto name = item.value("name", "");
-			auto texture = item.value("texture", "");
-			if (!name.empty())
+			if (name.empty())
 			{
-				_emotions[name] = texture;
+				LogWarn("LogicConfig::loadEmotion: skip emotion config without name.");
+				continue;
 			}
+
+			auto texture = item.value("texture", "");
+			auto animation = item.value("animation", "");
+
+			EmotionConfig emotion;
+			if (!animation.empty())
+			{
+				emotion.type = EmotionResourceType::Animation;
+				emotion.resource = animation;
+			}
+			else if (!texture.empty())
+			{
+				emotion.type = EmotionResourceType::Texture;
+				emotion.resource = texture;
+			}
+			else
+			{
+				LogWarn("LogicConfig::loadEmotion: skip emotion config ({}) without texture or animation.", name);
+				continue;
+			}
+
+			_emotions[name] = std::move(emotion);
 		}
 
 		return true;
 	}
 
-	const std::string* LogicConfig::getEmotion(const std::string& name) const
+	const EmotionConfig* LogicConfig::getEmotion(const std::string& name) const
 	{
 		auto it = _emotions.find(name);
 		if (it != _emotions.end())
@@ -45,7 +67,7 @@ namespace game
 		return nullptr;
 	}
 
-	const LogicConfig::EmotionTextureMap& LogicConfig::getAllEmotion() const
+	const LogicConfig::EmotionConfigMap& LogicConfig::getAllEmotion() const
 	{
 		return _emotions;
 	}

@@ -1,5 +1,6 @@
 ﻿#include "system_render.h"
 #include "game/game_config.h"
+#include "engine/animation.h"
 
 namespace game 
 {
@@ -153,11 +154,17 @@ void RenderSystem::drawBubble()
             textSize = renderer.getTextSize(bubble.text, bubble.font);
         }
 
+        TexTile* emotionTex = bubble.emotion_tex;
+        if (bubble.emotion_anim)
+        {
+            emotionTex = bubble.emotion_anim->getCurrentTexture();
+        }
+
         // 表情尺寸
         Vec2 iconSize = {0, 0};
-        if (bubble.emotion_tex)
+        if (emotionTex)
         {
-            iconSize = bubble.emotion_tex->rect().size();
+            iconSize = emotionTex->rect().size();
         }
 
         // 布局常量
@@ -170,7 +177,7 @@ void RenderSystem::drawBubble()
         // 计算内容尺寸
         float contentWidth = textSize.x;
         float contentHeight = textSize.y;
-        if (bubble.emotion_tex)
+        if (emotionTex)
         {
             contentWidth += iconSize.x + iconTextGap;
             contentHeight = std::max(contentHeight, iconSize.y);
@@ -214,12 +221,12 @@ void RenderSystem::drawBubble()
 
         // 4. 绘制表情图标
         float contentX = bubbleLeft + padding;
-        if (bubble.emotion_tex)
+        if (emotionTex)
         {
             Rect iconRect = {Vec2{contentX, bubbleTop + padding}, iconSize};
             Color iconColor = Color::White;
             iconColor.a = bubble.alpha;
-            painter.drawTexTile(bubble.emotion_tex, iconRect, 0.0f, 0.0f, iconColor);
+            painter.drawTexTile(emotionTex, iconRect, 0.0f, 0.0f, iconColor);
             contentX += iconSize.x + iconTextGap;
         }
 

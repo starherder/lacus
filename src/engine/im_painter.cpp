@@ -319,7 +319,6 @@ namespace engine
 		}
 	}
 
-#if 1
 	void ImPainter::drawGeometry(Texture* texture, const Vertex* vertices, int vertices_count, const int* indices, int indices_count, const Vec2& pos, float scale)
 	{
 		bool has_indices = (indices != nullptr && indices_count > 0);
@@ -363,63 +362,4 @@ namespace engine
 			drawList->PopTextureID();
 		}
 	}
-
-#else
-	void ImPainter::drawGeometry(Texture* texture, const Vertex* vertices, int vertices_count, const int* indices, int indices_count, const Vec2& pos, float scale)
-	{
-		auto draw_list = ImGui::GetBackgroundDrawList();
-
-		bool has_indices = (indices != nullptr && indices_count > 0);
-		indices_count = has_indices ? indices_count : vertices_count ;
-
-		if (texture)
-		{
-			draw_list->PushTextureID((void*)texture->texture());
-		}
-
-		// 1. 为所需的顶点和索引数量预留空间
-		draw_list->PrimReserve(indices_count, vertices_count);
-
-		// 2. 获取当前绘制列表的写入指针
-		ImDrawIdx* idx_write = draw_list->_IdxWritePtr;
-		ImDrawVert* vtx_write = draw_list->_VtxWritePtr;
-
-		// 3. 记录当前顶点缓冲区的起始偏移量
-		ImDrawIdx vtx_offset = draw_list->_VtxCurrentIdx;
-
-		// 4. 复制并转换顶点数据到 ImDrawList 的顶点缓冲区
-		for (int i = 0; i < vertices_count; i++)
-		{
-			vtx_write[i].pos = ImVec2(pos.x + vertices[i].position.x * scale, pos.y + vertices[i].position.y * scale);
-			vtx_write[i].uv = ImVec2(vertices[i].tex_coord.x, vertices[i].tex_coord.y);
-			vtx_write[i].col = ImColor{ vertices[i].color.r, vertices[i].color.g, vertices[i].color.b, vertices[i].color.a };
-		}
-
-		if (!has_indices)
-		{
-			for (int i = 0; i < vertices_count; i++)
-			{
-				idx_write[i] = vtx_offset + i;
-			}
-		}
-		else
-		{
-			// 5. 复制索引数据，并加上顶点偏移量
-			for (int i = 0; i < indices_count; i++)
-			{
-				idx_write[i] = vtx_offset + indices[i];
-			}
-		}
-
-		// 6. 更新绘制列表的内部指针和索引计数
-		draw_list->_VtxWritePtr += vertices_count;
-		draw_list->_IdxWritePtr += indices_count;
-		draw_list->_VtxCurrentIdx += vertices_count;
-
-		if (texture)
-		{
-			draw_list->PopTextureID();
-		}
-	}
-#endif
 }
