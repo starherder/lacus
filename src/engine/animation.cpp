@@ -6,10 +6,6 @@
 namespace engine
 {
 
-// ============================================================
-// Animation
-// ============================================================
-
 Animation::Animation()
 {
 }
@@ -68,29 +64,23 @@ void Animation::update(float deltaTime)
     {
         _time -= frameDuration;
 
-        // 切换到下一帧
         int nextFrame = _currentFrame + 1;
         if (nextFrame >= (int)_frames.size())
         {
-            // 到达末帧
             if (!_loop)
             {
-                // 不循环，停在最后一帧
                 _playing = false;
                 _currentFrame = (int)_frames.size() - 1;
                 return;
             }
 
-            // 循环播放
             nextFrame = 0;
         }
 
         _currentFrame = nextFrame;
 
-        // 触发帧信号
         on_frame.emit(_currentFrame);
 
-        // 如果有帧事件，触发事件信号
         const auto& evt = _frames[_currentFrame].event;
         if (!evt.empty())
         {
@@ -108,10 +98,6 @@ void Animation::reset()
     _playing = false;
 }
 
-
-// ============================================================
-// AnimationManager
-// ============================================================
 
 bool AnimationManager::loadAll(const fs::path& dir)
 {
@@ -163,7 +149,6 @@ bool AnimationManager::loadFile(const fs::path& path)
         return false;
     }
 
-    // 遍历所有 <anim> 元素
     auto animNode = root->FirstChildElement("anim");
     while (animNode)
     {
@@ -178,23 +163,19 @@ bool AnimationManager::loadFile(const fs::path& path)
         AnimationConfig config;
         config.name = name;
 
-        // 遍历所有 <frame> 元素
         auto frameNode = animNode->FirstChildElement("frame");
         while (frameNode)
         {
             FrameConfig frame;
 
-            // 解析材质引用
             const char* texAttr = frameNode->Attribute("tex");
             if (texAttr && strlen(texAttr) > 0)
             {
                 frame.tex = texAttr;
             }
 
-            // 解析持续时间（毫秒）
             frame.duration = frameNode->IntAttribute("dur", 0);
 
-            // 解析帧事件（可选）
             const char* evtAttr = frameNode->Attribute("evt");
             if (evtAttr)
             {
@@ -238,7 +219,6 @@ Animation* AnimationManager::create(const std::string& cfgName, const std::strin
         return nullptr;
     }
 
-    // 如果实例名已存在，返回已有实例
     auto animIt = _animations.find(instName);
     if (animIt != _animations.end())
     {
@@ -280,6 +260,11 @@ Animation* AnimationManager::get(const std::string& name) const
         return it->second.get();
     }
     return nullptr;
+}
+
+bool AnimationManager::remove(const std::string& name)
+{
+    return _animations.erase(name) > 0;
 }
 
 std::vector<std::string> AnimationManager::getAllNames() const
