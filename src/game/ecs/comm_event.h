@@ -19,6 +19,7 @@ namespace game
 	struct EvtRoleDead {
 		entt::entity actor;
 		entt::entity killer;
+		std::string event;
 	};
 
 	struct EvtRoleDestroyed {

@@ -102,6 +102,12 @@ namespace game
         int ticks = 0;
     };
 
+    struct CompRoleEvent
+    {
+        std::string dead;
+        std::string born;
+    };
+
     struct CompDestroy 
     {
     };

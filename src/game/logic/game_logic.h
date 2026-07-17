@@ -17,6 +17,8 @@
 
 namespace game
 {
+	enum class GameResult;
+
 	enum GameState {
 		Running,
 		Pause,
@@ -48,6 +50,7 @@ namespace game
 
 		bool switchScene(const std::string& sceneId);
 		bool restartScene();
+		void finishGame(GameResult result);
 
 	private:
 		void startFirstScene();

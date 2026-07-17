@@ -32,6 +32,7 @@ namespace game
         _scene->on_leave_object.connect(this, &GameLogic::onSceneObjectLeave);
 
 		_context.setScene(_scene.get());
+		_context.setGameLogic(this);
 		_context.setGameConfig(&_gameConfig);
         _context.setGameScript(&_gameScript);
 	    _context.setSceneConfig(&_sceneConfig);
@@ -232,11 +233,19 @@ namespace game
 
         if (liveRole == 0 && handCards == 0)
         {
-            _state = GameState::Finish;
-            auto result = GameResult::Failed;
-
-            ui::GuiManager::inst().createForm<FormResult>("form_result", _context, result);
+            finishGame(GameResult::Failed);
         }
+    }
+
+    void GameLogic::finishGame(GameResult result)
+    {
+        if (_state == GameState::Finish)
+        {
+            return;
+        }
+
+        _state = GameState::Finish;
+        ui::GuiManager::inst().createForm<FormResult>("form_result", _context, result);
     }
 
     void GameLogic::pause()

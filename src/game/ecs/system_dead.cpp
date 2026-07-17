@@ -41,7 +41,8 @@ namespace game
 			auto& compDead = deadViews.get<CompDead>(ent);
 			if (compDead.ticks <= 0)
 			{
-				_context.dispatcher().trigger(EvtRoleDead{ent, compDead.killer});
+				auto roleEvent = _context.registry().try_get<CompRoleEvent>(ent);
+				_context.dispatcher().trigger(EvtRoleDead{ ent, compDead.killer, roleEvent ? roleEvent->dead : "" });
 			}
 			else if (compDead.ticks > _context.gameConfig().dying_ticks)
 			{

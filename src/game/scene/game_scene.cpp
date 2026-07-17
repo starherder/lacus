@@ -290,8 +290,8 @@ void GameScene::initQuadTree()
     };
 
     _quadtree = std::make_unique<QuadTreeType>(scenebox, getAABB);
-    _quadtree->setQueryMode(quadtree::QueryMode::ContainCenter);
-    //_quadtree->setQueryMode(quadtree::QueryMode::Intersect);
+    //_quadtree->setQueryMode(quadtree::QueryMode::ContainCenter);
+    _quadtree->setQueryMode(quadtree::QueryMode::Intersect);
 }
 
 void GameScene::initPathFind()

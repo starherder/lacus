@@ -19,6 +19,7 @@ namespace game {
 	class GameCamera;
 	class GameData;
 	class GamePlay;
+	class GameLogic;
 	class ObjectFactory;
 
 	class GameContext final
@@ -68,6 +69,9 @@ namespace game {
 		GamePlay& gamePlay();
 		void setGamePlay(GamePlay* gamePlay);
 
+		GameLogic& gameLogic() { return *_gameLogic; }
+		void setGameLogic(GameLogic* gameLogic) { _gameLogic = gameLogic; }
+
 		LogicConfig& logicConfig() { return *_logicConfig; }
 		void setLogicConfig(LogicConfig* config) { _logicConfig = config; }
 
@@ -107,6 +111,8 @@ namespace game {
 		LogicConfig* _logicConfig = nullptr;
 
 		GamePlay* _gamePlay = nullptr;
+
+		GameLogic* _gameLogic = nullptr;
 
 		PathFinder _pathFinder;
 

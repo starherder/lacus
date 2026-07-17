@@ -400,6 +400,15 @@ namespace game
 			return role;
 		}
 
+		if (json.contains("role_event"))
+		{
+			auto& roleEventJs = json["role_event"];
+			CompRoleEvent roleEvent;
+			roleEvent.dead = roleEventJs.value("dead", "");
+			roleEvent.born = roleEventJs.value("born", "");
+			_context->registry().emplace<CompRoleEvent>(role, roleEvent);
+		}
+
 		if (json.contains("patrol"))
 		{
 			auto& patrolJs = json["patrol"];

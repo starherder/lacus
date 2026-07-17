@@ -774,6 +774,9 @@
     <ClInclude Include="..\src\game\ecs\system_fight.h">
       <Filter>game\ecs</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\ecs\system_level.h">
+      <Filter>game\ecs</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\samples\sample_plugin_ui.h">
       <Filter>samples</Filter>
     </ClInclude>

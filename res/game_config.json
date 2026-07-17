@@ -40,7 +40,5 @@
 		"first_scene": "scenes/demos/one.tmj"
 	},
 
-	"dying_ticks" :  3000
-
-
+	"dying_ticks" :  1000
 }

@@ -354,6 +354,7 @@
     <ClInclude Include="..\src\game\ecs\system_dead.h" />
     <ClInclude Include="..\src\game\ecs\system_fight.h" />
     <ClInclude Include="..\src\game\ecs\system_float_text.h" />
+    <ClInclude Include="..\src\game\ecs\system_level.h" />
     <ClInclude Include="..\src\game\ecs\system_numerical.h" />
     <ClInclude Include="..\src\game\ecs\system_skill.h" />
     <ClInclude Include="..\src\game\ecs\system_auto_motion.h" />
