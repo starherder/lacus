@@ -6,11 +6,6 @@
 
 namespace game
 {
-	struct CompMoveCheck
-	{
-		Vec2i dir;
-	};
-	
 	GamePlayTileBattle::GamePlayTileBattle(GameContext& context) : GamePlay(context)
 	{
 		context.eventDispatcher().onMouseLeftDown.connect(this, &GamePlayTileBattle::onMouseLeftPressed, -1);
@@ -80,118 +75,101 @@ namespace game
 		    return;
 		}
 		
-		checkMoveBlock(dir);
+		auto movableEntities = getMovableSelectedEntities(dir);
+		if (movableEntities.empty())
+		{
+			return;
+		}
 		
 		for(auto& entity : _selectEntities)
 		{
-			if (context().registry().valid(entity) == false ||
+			if (!movableEntities.contains(entity))
+			{
+				continue;
+			}
+
+			uint8_t moveGrids = 1;
+			context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });
+		}
+	}
+
+	GamePlayTileBattle::EntitySet GamePlayTileBattle::getMovableSelectedEntities(const Vec2i& dir)
+	{
+		EntitySet movableEntities;
+
+		// dir 只支持 4 个方向
+		if (dir.x * dir.x + dir.y * dir.y != 1)
+		{
+			return movableEntities;
+		}
+
+		bool mvHorizonal = (dir.x != 0);
+		bool mvForward = (dir.x + dir.y) > 0;
+		std::map<int, std::map<int, entt::entity>> sortEntitiyLines;
+
+		for (auto& entity : _selectEntities)
+		{
+			if (!context().registry().valid(entity) ||
 				context().registry().try_get<CompMoveCfg>(entity) == nullptr)
 			{
 				continue;
 			}
 
-			auto moveCheck = context().registry().try_get<CompMoveCheck>(entity);
-			if(moveCheck)
-			{
-				uint8_t moveGrids = 1;
-				context().dispatcher().trigger(EvtStepMove{ entity, dir, moveGrids });
-
-				context().registry().remove<CompMoveCheck>(entity);
-			}
-		}
-	}
-
-	void GamePlayTileBattle::checkMoveBlock(const Vec2i& dir)
-	{
-		// {0,0}，{1,1}，{-1,1}，{1，-1}都排除
-		if (std::abs(dir.x) == std::abs(dir.y))
-		{
-			return;
-		}
-		
-		bool mvHorizonal =  (dir.x != 0);
-		bool mvForward = (dir.x + dir.y) > 0;
-		
-		std::map<int, std::map<int, entt::entity>> sortEntitiyLines;
-
-		static GridEntityMap allEntityGrids;
-		allEntityGrids.clear();
-
-		// 先把移动方向上的每一行角色按照前后位置排序
-		for (auto& entity : _selectEntities)
-		{
-			if (!context().registry().valid(entity))
+			auto transform = context().registry().try_get<CompTransform>(entity);
+			if (transform == nullptr)
 			{
 				continue;
 			}
 
-			auto& transform = context().registry().get<CompTransform>(entity);
-			auto grid = context().scene().getGridFromPos(transform.position);
-			allEntityGrids.insert({ grid, entity });
-
+			auto grid = context().scene().getGridFromPos(transform->position);
 			if (mvHorizonal)
 			{
-				sortEntitiyLines[grid.y].insert({grid.x, entity});
+				sortEntitiyLines[grid.y].insert({ grid.x, entity });
 			}
 			else
 			{
-				sortEntitiyLines[grid.x].insert({grid.y, entity});
+				sortEntitiyLines[grid.x].insert({ grid.y, entity });
 			}
 		}
 
-		// 按运动方向，从前到后检查每一个对象
 		for (auto& [c1, others] : sortEntitiyLines)
 		{
+			auto checkEntity = [&](int c2, entt::entity entity)
+			{
+				Vec2i grid = mvHorizonal ? Vec2i{ c2, c1 } : Vec2i{ c1, c2 };
+				Vec2i nextGrid = grid + dir;
+
+				if (context().scene().getGridWalkType(nextGrid) == (int)tilemap::WalkType::Collision)
+				{
+					return;
+				}
+
+				auto nextEntity = context().scene().getOneObjectInGrid(nextGrid, ObjectType::Npc);
+				if (!context().registry().valid(nextEntity) || movableEntities.contains(nextEntity))
+				{
+					movableEntities.insert(entity);
+				}
+			};
+
 			if (mvForward)
 			{
-				for (auto it=others.rbegin(); it!=others.rend(); ++it)
+				for (auto it = others.rbegin(); it != others.rend(); ++it)
 				{
-					auto c2 = it->first;
-					auto entity = it->second;
-
-					Vec2i grid = mvHorizonal ? Vec2i{ c2, c1 } : Vec2i{ c1, c2 };
-					checkLineBlock(grid, entity, dir);
+					checkEntity(it->first, it->second);
 				}
 			}
 			else
 			{
 				for (auto& [c2, entity] : others)
 				{
-					Vec2i grid = mvHorizonal ? Vec2i{ c2, c1 } : Vec2i{ c1, c2 };
-					checkLineBlock(grid, entity, dir);
+					checkEntity(c2, entity);
 				}
 			}
 		}
+
+		return movableEntities;
 	}
-	
-	// 检查每一个对象，如果它前面有障碍物，或者有被阻挡助的角色，则他也被阻挡
-	void GamePlayTileBattle::checkLineBlock(Vec2i grid, entt::entity entity, Vec2i dir)
-	{
-		Vec2i preGrid = grid + dir;
 
-		// 前面有障碍物，阻挡
-		auto walkType = context().scene().getGridWalkType(preGrid);
-		if (walkType == (int)tilemap::WalkType::Collision)
-		{
-			return;
-		}
-
-		// 前面有其他人
-		auto preEntity = context().scene().getOneObjectInGrid(preGrid, ObjectType::Npc);
-		if (context().registry().valid(preEntity))
-		{
-			// 前面人的运动方向和我不一致
-			auto moveCheck = context().registry().try_get<CompMoveCheck>(preEntity);
-			if(!moveCheck || moveCheck->dir != dir)
-			{
-				return;
-			}
-		}
-
-		// 可以走
-		context().registry().emplace_or_replace<CompMoveCheck>(entity, CompMoveCheck{ dir });
-	}
-	
 	void GamePlayTileBattle::unselectAll()
 	{
 		auto selviews = context().registry().view<CompSelection>();

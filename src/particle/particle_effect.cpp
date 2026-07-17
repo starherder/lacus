@@ -132,7 +132,7 @@ namespace particle
 			p->fRemainingLife -= dt;
 
 			if ( p->fRemainingLife > 0 ) {
-				Vec2 offset, radial, tangential;
+				Vec2 offset{0,0}, radial{0,0}, tangential{0,0};
 
 				/* 径向加速度 */
 				if ( p->vChangePos.x || p->vChangePos.y ) {

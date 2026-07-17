@@ -13,8 +13,6 @@ namespace game
 	class GamePlayTileBattle : public GamePlay, public signals::SlotHandler
 	{
 		using EntitySet = std::set<entt::entity>;
-		using EntityVector = std::vector<entt::entity>;
-		using GridEntityMap = std::map<Vec2i, entt::entity, Geometry::Vec2iComparator>;
 		
 	public:
 		GamePlayTileBattle(GameContext& context);
@@ -63,9 +61,8 @@ namespace game
 		void onSelectChange(const EntitySet& selectEntities);
 
 		void startAutoFightFlow(entt::entity actor);
-		
-		void checkMoveBlock(const Vec2i& dir);
-		void checkLineBlock(Vec2i grid, entt::entity entity, Vec2i dir);
+
+		EntitySet getMovableSelectedEntities(const Vec2i& dir);
 		
 	private:
 		GameTurnType _turnType = GameTurnType::Moving;
