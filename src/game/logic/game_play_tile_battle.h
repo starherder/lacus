@@ -59,6 +59,7 @@ namespace game
 
 		void unselectAll();
 		void onSelectChange(const EntitySet& selectEntities);
+		bool canSelectEntity(entt::entity entity);
 
 		void startAutoFightFlow(entt::entity actor);
 

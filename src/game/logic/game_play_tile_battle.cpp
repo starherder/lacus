@@ -34,12 +34,14 @@ namespace game
 		auto scenePos = context().camera().screenToWorld(pos);
 		_selectRect = Rect{ scenePos.x, scenePos.y, 0.0f, 0.0f };
 
-		//unselectAll();
-
 		auto selent = context().scene().findObjectAtPos(_selectRect.pos());
-		if (context().registry().valid(selent))
+		if (canSelectEntity(selent))
 		{
 			onSelectChange({ selent });
+		}
+		else
+		{
+			unselectAll();
 		}
 	}
 
@@ -54,7 +56,14 @@ namespace game
 		_selectRect.w = scenePos.x - _selectRect.x;
 		_selectRect.h = scenePos.y - _selectRect.y;
 
-		auto selents = context().scene().getObjectsInRect(_selectRect);
+		EntitySet selents;
+		for (auto& entity : context().scene().getObjectsInRect(_selectRect))
+		{
+			if (canSelectEntity(entity))
+			{
+				selents.insert(entity);
+			}
+		}
 		onSelectChange(selents);
 	}
 
@@ -217,6 +226,17 @@ namespace game
 		}
 
 		_selectEntities = selectEntities;
+	}
+
+	bool GamePlayTileBattle::canSelectEntity(entt::entity entity)
+	{
+		if (!context().registry().valid(entity))
+		{
+			return false;
+		}
+
+		auto comm = context().registry().try_get<CompComm>(entity);
+		return comm && comm->type == ObjectType::Npc;
 	}
 
 	void GamePlayTileBattle::onSkipMove()
