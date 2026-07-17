@@ -5,6 +5,7 @@ text_npc_name_3=赵柳
 text_npc_name_4=陈奇
 text_npc_name_5=刘霸
 text_boss_name_0=老猫
+text_boss_name_1=老鬼
 
 text_npc_desc_0=可怜辜负好韶光，于国于家无望。天下无能第一，古今不肖无双。
 text_npc_desc_1=一个高尚的人，纯粹的人，脱离了低级趣味的人。
@@ -13,6 +14,7 @@ text_npc_desc_3=可爱的一个小姑娘，外表美丽，内心善良。
 text_npc_desc_4=他自己都不知道自己是谁。
 text_npc_desc_5=村中恶霸，欺男霸女，人见狗嫌。
 text_boss_desc_0=红眼绿鼻子，两个毛蹄子
+text_boss_desc_1=秋风不懂我伤悲
 
 text_npc_name_100=张阿三
 text_npc_name_101=李阿四

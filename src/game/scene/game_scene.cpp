@@ -279,9 +279,20 @@ void GameScene::initQuadTree()
         auto comp = _context.registry().try_get<CompTransform>(ent);
         if (comp)
         {
-            auto pos = comp->position;
-            auto sz = comp->size;
-            pos -= sz / 2.0f;
+            auto tile = tileSize();
+            auto grid = getGridFromPos(comp->position);
+            Vec2i gridSize = {
+                std::max(1, (int)std::ceil(comp->size.x / tile.x)),
+                std::max(1, (int)std::ceil(comp->size.y / tile.y))
+            };
+
+            Vec2i leftTopGrid = {
+                grid.x - (gridSize.x % 2 == 0 ? 0 : gridSize.x / 2),
+                grid.y - (gridSize.y % 2 == 0 ? 0 : gridSize.y / 2)
+            };
+
+            auto pos = getGridLeftTopPos(leftTopGrid);
+            Vec2 sz = { gridSize.x * tile.x, gridSize.y * tile.y };
     
             return BoxType{ pos.x, pos.y, sz.x, sz.y };
         }

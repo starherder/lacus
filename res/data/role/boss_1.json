@@ -1,8 +1,8 @@
 {
-  "id": "boss_0",
-  "name": "text_boss_name_0",
+  "id": "boss_1",
+  "name": "text_boss_name_1",
   "type": "npc",
-  "desc": "text_boss_desc_0",
+  "desc": "text_boss_desc_1",
   "icon":"role:0-0",
 
   "role_event": {
@@ -30,13 +30,13 @@
   },
 
   "display": {
-    "size": "128,128",
+    "size": "192,192",
     "#groud_color": "#FFAA00FF",
     "#border_color": "#555555FF",
     "#font_color": "#555555FF",
     "font_file": "fonts/msyh.ttf",
     "font_size": 18,
-    "texture": "chess:stone",
+    "texture": "chess:wizzard",
     "ground_texture": "chess:chess_bg"
   },
 
