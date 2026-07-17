@@ -21,7 +21,7 @@
   },
 
   "behavior": {
-    "#bevtree": "npc_patrol"
+    "bevtree": "npc_step_battle"
   },
 
   "display": {

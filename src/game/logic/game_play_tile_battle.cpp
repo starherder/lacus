@@ -345,14 +345,18 @@ namespace game
 
 			if (_turnType == GameTurnType::Fighting)
 			{
-				startAutoFightFlow(actor);
+				auto behavior = context().registry().try_get<CompBehavior>(actor);
+				if (!behavior || !behavior->bevtree || behavior->bevtree->name() != "npc_step_battle")
+				{
+					startAutoFightFlow(actor);
+				}
 			}
 		}
 	}
 
 	void GamePlayTileBattle::onActorCreate(entt::entity actor)
 	{
-		context().registry().emplace<CompGameTurn>(actor, CompGameTurn{ false });
+		context().registry().emplace<CompGameTurn>(actor, CompGameTurn{ _turnType == GameTurnType::Moving });
 	}
 	
 	void GamePlayTileBattle::onActorDestroy(entt::entity actor)
@@ -375,6 +379,15 @@ namespace game
 	
 	void GamePlayTileBattle::onMotionFinish(entt::entity actor)
 	{
+		if (_turnType == GameTurnType::Moving)
+		{
+			auto behavior = context().registry().try_get<CompBehavior>(actor);
+			if (behavior && behavior->bevtree && behavior->bevtree->name() == "npc_step_battle")
+			{
+				return;
+			}
+		}
+
 		auto& turn = context().registry().get<CompGameTurn>(actor);
 		turn.running = false;
 	}

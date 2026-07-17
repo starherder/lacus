@@ -40,4 +40,28 @@
       </sequence>
   </bt>
 
+  <bt name="npc_step_battle">
+      <selector>
+          <sequence>
+              <in_fight_turn />
+              <step_fight />
+          </sequence>
+          <sequence>
+              <in_motion_turn />
+              <selector>
+                  <sequence>
+                      <hp_in_danger hp="30" />
+                      <step_move_to_flee />
+                  </sequence>
+                  <sequence>
+                      <inverter>
+                          <hp_in_danger hp="30" />
+                      </inverter>
+                      <step_move_to_fight />
+                  </sequence>
+              </selector>
+          </sequence>
+      </selector>
+  </bt>
+
 </bev>

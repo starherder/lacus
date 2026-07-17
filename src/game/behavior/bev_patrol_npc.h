@@ -128,4 +128,113 @@ namespace game
 		GameContext* _context = nullptr;
 		entt::entity _actor;
 	};
+
+	class BevNode_InMotionTurn : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		GameContext* _context = nullptr;
+	};
+
+	class BevNode_InFightTurn : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		GameContext* _context = nullptr;
+	};
+
+	class BevNode_HpInDanger : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor = entt::null;
+		float _hp = 0.0f;
+	};
+
+	class BevNode_StepMoveToFight : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		entt::entity findNearestEnemy();
+		bool tryStepToEnemy(entt::entity enemy);
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor = entt::null;
+		bool _finished = false;
+	};
+
+	class BevNode_StepFight : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		void finishFightTurn();
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor = entt::null;
+		bool _finished = false;
+	};
+
+	class BevNode_StepMoveToFlee : public BevNode
+	{
+	public:
+		bool load(const XmlNode* node) override;
+
+		Status update() override;
+
+		void initialize() override;
+
+		void terminate(Status s) override;
+
+	private:
+		entt::entity findNearestEnemy();
+		bool tryStepFromEnemy(entt::entity enemy);
+
+	private:
+		GameContext* _context = nullptr;
+		entt::entity _actor = entt::null;
+		bool _finished = false;
+	};
 }

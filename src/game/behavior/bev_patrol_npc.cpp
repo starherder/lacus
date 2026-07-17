@@ -9,6 +9,7 @@
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comm_event.h"
 
+#include <array>
 
 namespace game {
 
@@ -19,6 +20,12 @@ namespace game {
 	RegisterBehaviorNode("random_emotion", BevNode_RandomEmotion);
 	RegisterBehaviorNode("pick_item", BevNode_PickItem);
 	RegisterBehaviorNode("defend_attack", BevNode_DefendAttack);
+	RegisterBehaviorNode("in_motion_turn", BevNode_InMotionTurn);
+	RegisterBehaviorNode("in_fight_turn", BevNode_InFightTurn);
+	RegisterBehaviorNode("hp_in_danger", BevNode_HpInDanger);
+	RegisterBehaviorNode("step_move_to_fight", BevNode_StepMoveToFight);
+	RegisterBehaviorNode("step_fight", BevNode_StepFight);
+	RegisterBehaviorNode("step_move_to_flee", BevNode_StepMoveToFlee);
 
 
 	bool BevNode_FindPatrolPos::load(const bevtree::XmlNode* node)
@@ -463,5 +470,395 @@ namespace game {
 		}
 
 		return Status::Failure;
+	}
+
+	namespace
+	{
+		entt::entity findNearestEnemyEntity(GameContext& context, entt::entity actor)
+		{
+			auto actorTrans = context.registry().try_get<CompTransform>(actor);
+			auto actorComm = context.registry().try_get<CompComm>(actor);
+			if (!actorTrans || !actorComm)
+			{
+				return entt::null;
+			}
+
+			float visionDis = 300.0f;
+			auto behavior = context.registry().try_get<CompBehavior>(actor);
+			if (behavior)
+			{
+				visionDis = behavior->vision_dis;
+			}
+
+			const auto& objects = context.scene().getObjectsInCircle(actorTrans->position, visionDis);
+			for (auto& [dis, target] : objects)
+			{
+				if (!context.registry().valid(target) || target == actor)
+				{
+					continue;
+				}
+
+				if (context.registry().try_get<CompDead>(target))
+				{
+					continue;
+				}
+
+				auto targetComm = context.registry().try_get<CompComm>(target);
+				if (targetComm && targetComm->type == ObjectType::Npc && targetComm->side != actorComm->side)
+				{
+					return target;
+				}
+			}
+
+			return entt::null;
+		}
+
+		bool canStepToGrid(GameContext& context, entt::entity actor, const Vec2i& grid)
+		{
+			if (context.scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision)
+			{
+				return false;
+			}
+
+			auto entityInGrid = context.scene().getOneObjectInGrid(grid, ObjectType::Npc);
+			return !context.registry().valid(entityInGrid) || entityInGrid == actor;
+		}
+
+		bool tryStepToDir(GameContext& context, entt::entity actor, const Vec2i& dir)
+		{
+			if (dir.x * dir.x + dir.y * dir.y != 1)
+			{
+				return false;
+			}
+
+			if (!context.registry().try_get<CompMoveCfg>(actor))
+			{
+				return false;
+			}
+
+			auto stepMotion = context.registry().try_get<CompStepMotion>(actor);
+			if (stepMotion && stepMotion->state != MotionState::Resting)
+			{
+				return false;
+			}
+
+			auto nextGrid = context.scene().getObjectGrid(actor) + dir;
+			if (!canStepToGrid(context, actor, nextGrid))
+			{
+				return false;
+			}
+
+			context.dispatcher().trigger(EvtStepMove{ actor, dir, 1 });
+			return true;
+		}
+
+		Vec2i getDirToEnemy(GameContext& context, entt::entity actor, entt::entity enemy)
+		{
+			auto actorGrid = context.scene().getObjectGrid(actor);
+			auto enemyGrid = context.scene().getObjectGrid(enemy);
+			auto delta = enemyGrid - actorGrid;
+
+			if (std::abs(delta.x) > std::abs(delta.y) && delta.x != 0)
+			{
+				return { delta.x > 0 ? 1 : -1, 0 };
+			}
+
+			if (delta.y != 0)
+			{
+				return { 0, delta.y > 0 ? 1 : -1 };
+			}
+
+			if (delta.x != 0)
+			{
+				return { delta.x > 0 ? 1 : -1, 0 };
+			}
+
+			return { 0, 0 };
+		}
+
+		Vec2i getDirFromEnemy(GameContext& context, entt::entity actor, entt::entity enemy)
+		{
+			auto actorGrid = context.scene().getObjectGrid(actor);
+			auto enemyGrid = context.scene().getObjectGrid(enemy);
+			std::array<Vec2i, 4> dirs = {
+				Vec2i{ 1, 0 },
+				Vec2i{ -1, 0 },
+				Vec2i{ 0, 1 },
+				Vec2i{ 0, -1 },
+			};
+
+			Vec2i bestDir{ 0, 0 };
+			int bestScore = std::abs(actorGrid.x - enemyGrid.x) + std::abs(actorGrid.y - enemyGrid.y);
+			for (auto dir : dirs)
+			{
+				auto nextGrid = actorGrid + dir;
+				if (!canStepToGrid(context, actor, nextGrid))
+				{
+					continue;
+				}
+
+				int score = std::abs(nextGrid.x - enemyGrid.x) + std::abs(nextGrid.y - enemyGrid.y);
+				if (score > bestScore)
+				{
+					bestScore = score;
+					bestDir = dir;
+				}
+			}
+
+			return bestDir;
+		}
+	}
+
+	bool BevNode_InMotionTurn::load(const XmlNode* node)
+	{
+		return true;
+	}
+
+	Status BevNode_InMotionTurn::update()
+	{
+		return _context && _context->gamePlay().isMoveStage() ? Status::Success : Status::Failure;
+	}
+
+	void BevNode_InMotionTurn::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+	}
+
+	void BevNode_InMotionTurn::terminate(Status s)
+	{
+	}
+
+	bool BevNode_InFightTurn::load(const XmlNode* node)
+	{
+		return true;
+	}
+
+	Status BevNode_InFightTurn::update()
+	{
+		return _context && _context->gamePlay().isFightStage() ? Status::Success : Status::Failure;
+	}
+
+	void BevNode_InFightTurn::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+	}
+
+	void BevNode_InFightTurn::terminate(Status s)
+	{
+	}
+
+	bool BevNode_HpInDanger::load(const XmlNode* node)
+	{
+		_hp = node->FloatAttribute("hp", _hp);
+		return true;
+	}
+
+	Status BevNode_HpInDanger::update()
+	{
+		if (!_context || !_context->gamePlay().isMoveStage() || !_context->registry().valid(_actor))
+		{
+			return Status::Failure;
+		}
+
+		auto fightProp = _context->registry().try_get<CompFightProp>(_actor);
+		return fightProp && fightProp->hp < _hp ? Status::Success : Status::Failure;
+	}
+
+	void BevNode_HpInDanger::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
+	}
+
+	void BevNode_HpInDanger::terminate(Status s)
+	{
+	}
+
+	bool BevNode_StepMoveToFight::load(const XmlNode* node)
+	{
+		return true;
+	}
+
+	Status BevNode_StepMoveToFight::update()
+	{
+		if (!_context || !_context->registry().valid(_actor))
+		{
+			return Status::Failure;
+		}
+
+		if (!_context->gamePlay().isMoveStage())
+		{
+			return Status::Failure;
+		}
+
+		auto turn = _context->registry().try_get<CompGameTurn>(_actor);
+		if (!turn || !turn->running)
+		{
+			return Status::Success;
+		}
+
+		if (_finished)
+		{
+			return Status::Running;
+		}
+
+		auto enemy = findNearestEnemy();
+		if (enemy == entt::null || !tryStepToEnemy(enemy))
+		{
+			_finished = true;
+			return Status::Running;
+		}
+
+		_finished = true;
+		return Status::Running;
+	}
+
+	void BevNode_StepMoveToFight::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
+		_finished = false;
+		if (!_context || _actor == entt::null)
+		{
+			LogError("actor NOT valid.");
+		}
+	}
+
+	void BevNode_StepMoveToFight::terminate(Status s)
+	{
+	}
+
+	entt::entity BevNode_StepMoveToFight::findNearestEnemy()
+	{
+		return findNearestEnemyEntity(*_context, _actor);
+	}
+
+	bool BevNode_StepMoveToFight::tryStepToEnemy(entt::entity enemy)
+	{
+		auto dir = getDirToEnemy(*_context, _actor, enemy);
+		return tryStepToDir(*_context, _actor, dir);
+	}
+
+	bool BevNode_StepFight::load(const XmlNode* node)
+	{
+		return true;
+	}
+
+	Status BevNode_StepFight::update()
+	{
+		if (!_context || !_context->registry().valid(_actor))
+		{
+			return Status::Failure;
+		}
+
+		if (!_context->gamePlay().isFightStage())
+		{
+			return Status::Failure;
+		}
+
+		auto turn = _context->registry().try_get<CompGameTurn>(_actor);
+		if (!turn || !turn->running)
+		{
+			return Status::Success;
+		}
+
+		if (_finished)
+		{
+			return Status::Running;
+		}
+
+		_context->dispatcher().trigger(EvtRoleAutoAttack{ _actor });
+		finishFightTurn();
+		_finished = true;
+		return Status::Success;
+	}
+
+	void BevNode_StepFight::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
+		_finished = false;
+		if (!_context || _actor == entt::null)
+		{
+			LogError("actor NOT valid.");
+		}
+	}
+
+	void BevNode_StepFight::terminate(Status s)
+	{
+	}
+
+	void BevNode_StepFight::finishFightTurn()
+	{
+		auto turn = _context ? _context->registry().try_get<CompGameTurn>(_actor) : nullptr;
+		if (turn)
+		{
+			turn->running = false;
+		}
+	}
+
+	bool BevNode_StepMoveToFlee::load(const XmlNode* node)
+	{
+		return true;
+	}
+
+	Status BevNode_StepMoveToFlee::update()
+	{
+		if (!_context || !_context->registry().valid(_actor))
+		{
+			return Status::Failure;
+		}
+
+		if (!_context->gamePlay().isMoveStage())
+		{
+			return Status::Failure;
+		}
+
+		auto turn = _context->registry().try_get<CompGameTurn>(_actor);
+		if (!turn || !turn->running)
+		{
+			return Status::Success;
+		}
+
+		if (_finished)
+		{
+			return Status::Running;
+		}
+
+		auto enemy = findNearestEnemy();
+		if (enemy == entt::null || !tryStepFromEnemy(enemy))
+		{
+			_finished = true;
+			return Status::Running;
+		}
+
+		_finished = true;
+		return Status::Running;
+	}
+
+	void BevNode_StepMoveToFlee::initialize()
+	{
+		_context = getBlackboard()->getValue<GameContext*>("context", nullptr);
+		_actor = getBlackboard()->getValue<entt::entity>("actor", entt::null);
+		_finished = false;
+		if (!_context || _actor == entt::null)
+		{
+			LogError("actor NOT valid.");
+		}
+	}
+
+	void BevNode_StepMoveToFlee::terminate(Status s)
+	{
+	}
+
+	entt::entity BevNode_StepMoveToFlee::findNearestEnemy()
+	{
+		return findNearestEnemyEntity(*_context, _actor);
+	}
+
+	bool BevNode_StepMoveToFlee::tryStepFromEnemy(entt::entity enemy)
+	{
+		auto dir = getDirFromEnemy(*_context, _actor, enemy);
+		return tryStepToDir(*_context, _actor, dir);
 	}
 }

@@ -249,17 +249,17 @@ namespace game
 	// 战斗属性
 	struct CompFightProp
 	{
-		float hp;
-		float hpm;
-		float hpr;
+		float hp; // 血量
+		float hpm; // 最大血量
+		float hpr; // 血量成长率
 
-		float atk;
-		float def;
-		float mvs;
-		float ats;
-		float atd;
-		float crt;
-		float par;
+		float atk; // 攻击力
+		float def; // 防御力
+		float mvs; // 移动速度
+		float ats; // 攻击速度
+		float atd; // 攻击距离
+		float crt; // 暴击率
+		float par; // 躲避率
 	};
 
 	// 技能列表
