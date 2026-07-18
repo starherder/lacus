@@ -74,6 +74,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     }
 
     auto pos = _context.camera().screenToWorld(ptr->drop_screen_pos);
+    pos = _context.scene().normalToGridPos(pos);
     LogInfo("FormMain::onDropCard at ({},{})", pos.x, pos.y);
 
     auto card = dynamic_cast<CardWidget*>(ptr->widget.get());

@@ -41,7 +41,7 @@
   },
 
   "base_prop": {
-    "level" : 100,
+    "level" : 1,
     "roll" : 10,
     "str": 80,
     "cst": 80,

@@ -2,6 +2,8 @@
 
 #include "game_play.h"
 
+#include <optional>
+
 namespace game
 {
 	enum class GameTurnType 
@@ -64,6 +66,10 @@ namespace game
 		void startAutoFightFlow(entt::entity actor);
 
 		EntitySet getMovableSelectedEntities(const Vec2i& dir);
+		bool hasMovingSelectedEntity();
+		std::optional<Vec2> getSelectedEntitiesCenter();
+		Vec2 clampCameraPos(const Vec2& pos);
+		void followMovingSelection();
 		
 	private:
 		GameTurnType _turnType = GameTurnType::Moving;

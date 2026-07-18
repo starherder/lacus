@@ -1,7 +1,9 @@
 #include "game/logic/game_play_tile_battle.h"
 #include "game/ecs/comm_event.h"
 #include "game/scene/game_scene.h"
+#include "ui/gui_manager.h"
 #include "magic_enum/magic_enum.h"
+#include <algorithm>
 #include <iterator>
 
 namespace game
@@ -52,6 +54,12 @@ namespace game
 	
 	void GamePlayTileBattle::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 	{
+		if (ui::GuiManager::inst().isDragging())
+		{
+			_selectRect = { 0,0,0,0 };
+			return;
+		}
+
 		auto scenePos = context().camera().screenToWorld(pos);
 		_selectRect.w = scenePos.x - _selectRect.x;
 		_selectRect.h = scenePos.y - _selectRect.y;
@@ -334,11 +342,93 @@ namespace game
 
 	void GamePlayTileBattle::draw()
 	{
+		if (ui::GuiManager::inst().isDragging() || (_selectRect.w == 0.0f && _selectRect.h == 0.0f))
+		{
+			return;
+		}
+
 		context().painter().drawRect(Color::Red, _selectRect, 0, 2);
+	}
+
+	bool GamePlayTileBattle::hasMovingSelectedEntity()
+	{
+		for (auto& entity : _selectEntities)
+		{
+			if (!context().registry().valid(entity))
+			{
+				continue;
+			}
+
+			auto motion = context().registry().try_get<CompStepMotion>(entity);
+			if (motion && motion->state == MotionState::Moving)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	std::optional<Vec2> GamePlayTileBattle::getSelectedEntitiesCenter()
+	{
+		Vec2 center = { 0.0f, 0.0f };
+		int count = 0;
+		for (auto& entity : _selectEntities)
+		{
+			if (!context().registry().valid(entity))
+			{
+				continue;
+			}
+
+			auto transform = context().registry().try_get<CompTransform>(entity);
+			if (!transform)
+			{
+				continue;
+			}
+
+			center += transform->position;
+			++count;
+		}
+
+		if (count == 0)
+		{
+			return std::nullopt;
+		}
+
+		return center / (float)count;
+	}
+
+	Vec2 GamePlayTileBattle::clampCameraPos(const Vec2& pos)
+	{
+		auto sceneSize = context().scene().sceneSize();
+		auto viewSize = context().camera().getSize();
+		return {
+			std::clamp(pos.x, 0.0f, std::max(0.0f, sceneSize.x - viewSize.x)),
+			std::clamp(pos.y, 0.0f, std::max(0.0f, sceneSize.y - viewSize.y))
+		};
+	}
+
+	void GamePlayTileBattle::followMovingSelection()
+	{
+		if (!hasMovingSelectedEntity())
+		{
+			return;
+		}
+
+		auto center = getSelectedEntitiesCenter();
+		if (!center)
+		{
+			return;
+		}
+
+		auto target = center.value() - context().camera().getSize() / 2.0f;
+		context().camera().setPos(clampCameraPos(target));
 	}
 
 	void GamePlayTileBattle::update(float deltaTime)
 	{
+		followMovingSelection();
+
 		bool isTurnOver = false;
 
 		if (_turnType == GameTurnType::Fighting)
@@ -388,7 +478,11 @@ namespace game
 
 	void GamePlayTileBattle::onActorCreate(entt::entity actor)
 	{
-		context().registry().emplace<CompGameTurn>(actor, CompGameTurn{ _turnType == GameTurnType::Moving });
+		auto compComm = context().registry().try_get<CompComm>(actor);
+		if(compComm && compComm->type == ObjectType::Npc)
+		{
+			context().registry().emplace<CompGameTurn>(actor, CompGameTurn{ _turnType == GameTurnType::Moving });
+		}
 	}
 	
 	void GamePlayTileBattle::onActorDestroy(entt::entity actor)

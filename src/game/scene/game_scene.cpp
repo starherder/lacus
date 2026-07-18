@@ -171,13 +171,12 @@ Rect GameScene::getDisplayAABB(const CompTransform& trans)
 {
     auto tile = tileSize();
     auto gridSize = getObjectGridSize(trans);
-    Vec2 sz = { gridSize.x * tile.x, gridSize.y * tile.y };
     Vec2 offset = {
         gridSize.x % 2 == 0 ? (gridSize.x / 2.0f - 0.5f) * tile.x : 0.0f,
         gridSize.y % 2 == 0 ? (gridSize.y / 2.0f - 0.5f) * tile.y : 0.0f
     };
 
-    return Rect{ trans.position - sz / 2.0f + offset, sz };
+    return Rect{ trans.position - trans.size / 2.0f + offset, trans.size };
 }
 
 Vec2 GameScene::normalToGridPos(const Vec2& pos)

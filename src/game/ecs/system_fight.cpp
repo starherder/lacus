@@ -2,9 +2,21 @@
 
 #include "game/logic/game_play.h"
 
+#include <algorithm>
+#include <cmath>
+
 
 namespace game
 {
+    namespace
+    {
+        float calcAABBDistance(const Rect& a, const Rect& b)
+        {
+            float dx = std::max({ b.x - (a.x + a.w), a.x - (b.x + b.w), 0.0f });
+            float dy = std::max({ b.y - (a.y + a.h), a.y - (b.y + b.h), 0.0f });
+            return std::sqrt(dx * dx + dy * dy);
+        }
+    }
 
     DeclareEcsSystem(FightSystem, EcsPriority::Middle);
 
@@ -197,6 +209,8 @@ namespace game
         
         auto& trans = _context.registry().get<CompTransform>(actor);
         auto& rolePos = trans.position;
+        auto actorRect = _context.scene().getGridAlignedAABB(trans);
+        float actorQueryRadius = std::sqrt(actorRect.w * actorRect.w + actorRect.h * actorRect.h) / 2.0f;
 
         auto pComm = _context.registry().try_get<CompComm>(actor);
         if (!pComm)
@@ -221,7 +235,7 @@ namespace game
 
             if (compSkill.type != SkillType::Invalid)
             {
-                const auto& objects = _context.scene().getObjectsInCircle(rolePos, compSkill.distance);
+                const auto& objects = _context.scene().getObjectsInCircle(rolePos, actorQueryRadius + compSkill.distance);
                 for (auto& [dis, target] : objects)
                 {
                     if (_context.registry().valid(target) == false || target == actor)
@@ -231,6 +245,18 @@ namespace game
 
                     auto pdead = _context.registry().try_get<CompDead>(target);
                     if (pdead)
+                    {
+                        continue;
+                    }
+
+                    auto targetTrans = _context.registry().try_get<CompTransform>(target);
+                    if (!targetTrans)
+                    {
+                        continue;
+                    }
+
+                    auto targetRect = _context.scene().getGridAlignedAABB(*targetTrans);
+                    if (calcAABBDistance(actorRect, targetRect) > compSkill.distance)
                     {
                         continue;
                     }

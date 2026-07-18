@@ -43,6 +43,7 @@ public:
     auto& audioPlayer() { return _app->audioPlayer(); }
     auto& fontManager() { return _app->resourceManager().fontManager(); }
     auto& textureManager() { return _app->resourceManager().textureManager(); }
+    bool isDragging() const { return _draggingData != nullptr; }
     auto& eventDispatcher() { return _app->eventDispatcher(); }
     auto& frameTicker() { return _app->frameTicker(); }
 

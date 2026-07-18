@@ -42,11 +42,11 @@
 
   "base_prop": {
     "level" : 100,
-    "roll" : 10,
-    "str": 80,
-    "cst": 80,
-    "dex": 40,
-    "met": 20
+    "roll" : 100,
+    "str": 800,
+    "cst": 800,
+    "dex": 400,
+    "met": 200
   },
 
   "skills": [

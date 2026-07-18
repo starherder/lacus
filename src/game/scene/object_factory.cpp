@@ -777,8 +777,11 @@ namespace game
 
 		CompProjectileDisplay compDisplay;
 		compDisplay.texture = _context->textureMgr().getCfgTexTile(cfg.texture);
-		compDisplay.orient = glm::orientedAngle(Vec2{1.0f, 0.0f}, dir) + glm::radians(cfg.texangle);
-		compDisplay.offset = - compDisplay.texture->center() * compDisplay.texture->rect().size();
+		if(compDisplay.texture)
+		{
+			compDisplay.orient = glm::orientedAngle(Vec2{1.0f, 0.0f}, dir) + glm::radians(cfg.texangle);
+			compDisplay.offset = - compDisplay.texture->center() * compDisplay.texture->rect().size();
+		}
 		_context->registry().emplace<CompProjectileDisplay>(bullet, compDisplay);
 
 		createParticleOnObject(bullet, cfg.particle);
