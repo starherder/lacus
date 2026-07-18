@@ -123,10 +123,12 @@ namespace game
 
     struct CompTransform
     {
-        Vec2 position;
-        Vec2 size;
-        Vec2 rotation;
-        Vec2 scale;
+        Vec2 position = { 0.0f, 0.0f };
+        Vec2 size = { 0.0f, 0.0f };
+        Vec2 base_size = { 0.0f, 0.0f };
+        Vec2 visual_offset = { 0.0f, 0.0f };
+        Vec2 rotation = { 0.0f, 0.0f };
+        Vec2 scale = { 1.0f, 1.0f };
 
         CoordMode coord_mode = CoordMode::WorldSpace;
     };

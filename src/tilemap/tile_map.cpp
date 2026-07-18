@@ -3,6 +3,8 @@
 #include "engine/render.h"
 #include "magic_enum/magic_enum.h"
 #include "map_tilset.h"
+
+#include <cmath>
 #include "map_utils.h"
 
 namespace tilemap {
@@ -102,6 +104,12 @@ void TileMap::draw(engine::Renderer& renderer, const engine::Camera& camera)
         dc->display_vertices.clear();
         dc->display_vertices.insert(dc->display_vertices.end(), dc->vertices.begin(), dc->vertices.end());
         camera.projectVertices(dc->display_vertices);
+
+        for (auto& vert : dc->display_vertices)
+        {
+            vert.position.x = std::round(vert.position.x);
+            vert.position.y = std::round(vert.position.y);
+        }
 
         renderer.drawGeometry(dc->texture, dc->display_vertices.data(), (int)(dc->display_vertices.size()), nullptr, 0);
     }

@@ -76,9 +76,10 @@ Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
 Vec2i GameScene::getObjectGridSize(const CompTransform& trans)
 {
     auto tile = tileSize();
+    auto size = trans.base_size.length() > 1e-8f ? trans.base_size : trans.size;
     return {
-        std::max(1, (int)std::ceil(trans.size.x / tile.x)),
-        std::max(1, (int)std::ceil(trans.size.y / tile.y))
+        std::max(1, (int)std::ceil(size.x / tile.x)),
+        std::max(1, (int)std::ceil(size.y / tile.y))
     };
 }
 
@@ -176,7 +177,7 @@ Rect GameScene::getDisplayAABB(const CompTransform& trans)
         gridSize.y % 2 == 0 ? (gridSize.y / 2.0f - 0.5f) * tile.y : 0.0f
     };
 
-    return Rect{ trans.position - trans.size / 2.0f + offset, trans.size };
+    return Rect{ trans.position + trans.visual_offset - trans.size / 2.0f + offset, trans.size };
 }
 
 Vec2 GameScene::normalToGridPos(const Vec2& pos)

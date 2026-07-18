@@ -47,7 +47,7 @@ void RenderSystem::update(float delta)
         auto& compParticle = par_view.get<CompBindParticle>(ent);
         if (compParticle.particle)
         {
-            compParticle.particle->SetPos(compTransform.position);
+            compParticle.particle->SetPos(compTransform.position + compTransform.visual_offset);
             compParticle.particle->Update(delta);
         }
     }
@@ -259,11 +259,12 @@ void RenderSystem::drawSkillEffect()
     {
         auto& trans = projectile_view.get<CompTransform>(ent);
         auto& disp = projectile_view.get<CompProjectileDisplay>(ent);
-
-        Rect dstrect = { trans.position+disp.offset, disp.texture->rect().size()};
-        dstrect = camera.projectRect(dstrect);
-
-        painter.drawTexTile(disp.texture, dstrect, disp.orient, 0.0f, disp.color);
+        if(disp.texture)
+        {
+            Rect dstrect = { trans.position+disp.offset, disp.texture->rect().size()};
+            dstrect = camera.projectRect(dstrect);
+            painter.drawTexTile(disp.texture, dstrect, disp.orient, 0.0f, disp.color);   
+        }
     }
 }
 

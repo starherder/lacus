@@ -324,6 +324,7 @@ namespace game
 			auto& display = json["display"];
 			auto& trans = _context->registry().get<CompTransform>(object);
 			trans.size = ToVec2(display.value("size", "64,64"));
+			trans.base_size = trans.size;
 
 			//Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
 			//Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
@@ -566,6 +567,7 @@ namespace game
 
 			auto& trans = _context->registry().get<CompTransform>(buff);
 			trans.size = ToVec2(display.value("size", "16,16"));
+			trans.base_size = trans.size;
 
 			//Color bg; bg.fromHexString(display.value("groud_color", "0,0,0,0"));
 			//Color bd; bd.fromHexString(display.value("border_color", "0,0,0,0"));
@@ -805,6 +807,7 @@ namespace game
 		CompTransform compTrans;
 		compTrans.position = target;
 		compTrans.size = Vec2{ range, range };
+		compTrans.base_size = compTrans.size;
 		_context->registry().emplace<CompTransform>(trap, compTrans);
 
 		CompMarkDisplay compDisplay;

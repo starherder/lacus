@@ -127,7 +127,7 @@ namespace game
 
 		if(skillTween.trans_type == TweenTransform::Motion)
 		{
-			auto& srcPos = srcTrans.position;
+			auto srcPos = srcTrans.position;
 			Vec2 tgtPos = { 0, 0 };
 			if (_context.registry().valid(e.target))
 			{
@@ -144,15 +144,15 @@ namespace game
 				.to(srcPos.x, srcPos.y)
 				.via(skillTween.post_tween)
 				.during(skillAffect.post_ticks)
-				.onStep([e, this](auto& t, float x, float y) {
+				.onStep([e, this, srcPos](auto& t, float x, float y) {
 						if (_context.registry().valid(e.source)) {
+							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
 							if(t.isFinished()) {
-								_context.scene().normalToGridPos(e.source);
+								srcTrans.visual_offset = { 0.0f, 0.0f };
 								return true;
 							}
 
-							auto& srcTrans = _context.registry().get<CompTransform>(e.source);
-							_context.scene().setObjectPos(e.source, { x, y });
+							srcTrans.visual_offset = Vec2{ x, y } - srcPos;
 						}
 						return false;
 					});
@@ -653,6 +653,7 @@ namespace game
 		auto& compTrans = _context.registry().get<CompTransform>(projectile);
 		compTrans.position = source;
 		compTrans.size = {10, 10};
+		compTrans.base_size = compTrans.size;
 		compTrans.rotation = {0, 0};
 		compTrans.scale = { 1, 1 };
 
@@ -802,23 +803,23 @@ namespace game
 			.via(underatk->post_tween)
 			.during(underatk->during / 2)
 
-			.onStep([e, this](auto& t, float x, float y) 
+			.onStep([e, this, rolePos](auto& t, float x, float y) 
 			{
 				if (_context.registry().valid(e.target)) 
 				{
-					//auto& dstTrans = _context.registry().get<CompTransform>(e.target);
-					//dstTrans.position = { x, y };
-					_context.scene().setObjectPos(e.target, { x, y });
-
+					auto& dstTrans = _context.registry().get<CompTransform>(e.target);
 					if(t.isFinished())
 					{
-						_context.scene().normalToGridPos(e.target);
+						dstTrans.visual_offset = { 0.0f, 0.0f };
 						auto underatk = _context.registry().try_get<CompUnderAttack>(e.target);
 						if(underatk) 
 						{
 							underatk->under_attack = false;
 						}
+						return false;
 					}
+
+					dstTrans.visual_offset = Vec2{ x, y } - rolePos;
 				}
 				return false;
 			});

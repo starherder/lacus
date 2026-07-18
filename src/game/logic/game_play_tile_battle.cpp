@@ -120,9 +120,17 @@ namespace game
 			return movableEntities;
 		}
 
+		enum class MoveCheckResult
+		{
+			Clear,
+			Pending,
+			Blocked,
+		};
+
 		bool mvHorizonal = (dir.x != 0);
 		bool mvForward = (dir.x + dir.y) > 0;
 		std::map<int, std::map<int, entt::entity>> sortEntitiyLines;
+		EntitySet pendingEntities;
 
 		for (auto& entity : _selectEntities)
 		{
@@ -138,6 +146,7 @@ namespace game
 				continue;
 			}
 
+			pendingEntities.insert(entity);
 			auto grid = context().scene().getGridFromPos(transform->position);
 			if (mvHorizonal)
 			{
@@ -149,69 +158,107 @@ namespace game
 			}
 		}
 
-		for (auto& [c1, others] : sortEntitiyLines)
+		auto checkEnterGrid = [&](entt::entity entity, const Vec2i& grid)
 		{
-			auto canEnterGrid = [&](entt::entity entity, const Vec2i& grid)
+			if (context().scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision)
 			{
-				if (context().scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision)
-				{
-					return false;
-				}
+				return MoveCheckResult::Blocked;
+			}
 
-				for (auto& obj : context().scene().getObjectsInGrid(grid))
-				{
-					if (obj == entity)
-					{
-						continue;
-					}
-
-					auto pComm = context().registry().try_get<CompComm>(obj);
-					if (!pComm || pComm->type != ObjectType::Npc)
-					{
-						continue;
-					}
-
-					if (!movableEntities.contains(obj))
-					{
-						return false;
-					}
-				}
-
-				return true;
-			};
-
-			auto checkEntity = [&](int c2, entt::entity entity)
+			MoveCheckResult result = MoveCheckResult::Clear;
+			for (auto& obj : context().scene().getObjectsInGrid(grid))
 			{
-				auto transform = context().registry().try_get<CompTransform>(entity);
-				if (!transform)
+				if (obj == entity)
 				{
-					return;
+					continue;
 				}
 
-				auto enterGrids = context().scene().getObjectMoveEnterGrids(*transform, dir);
-				for (auto& grid : enterGrids)
+				auto pComm = context().registry().try_get<CompComm>(obj);
+				if (!pComm || pComm->type != ObjectType::Npc)
 				{
-					if (!canEnterGrid(entity, grid))
-					{
-						return;
-					}
+					continue;
 				}
 
-				movableEntities.insert(entity);
-			};
+				if (movableEntities.contains(obj))
+				{
+					continue;
+				}
 
-			if (mvForward)
+				if (pendingEntities.contains(obj))
+				{
+					result = MoveCheckResult::Pending;
+					continue;
+				}
+
+				return MoveCheckResult::Blocked;
+			}
+
+			return result;
+		};
+
+		auto checkEntity = [&](entt::entity entity)
+		{
+			auto transform = context().registry().try_get<CompTransform>(entity);
+			if (!transform)
 			{
-				for (auto it = others.rbegin(); it != others.rend(); ++it)
+				return MoveCheckResult::Blocked;
+			}
+
+			MoveCheckResult result = MoveCheckResult::Clear;
+			auto enterGrids = context().scene().getObjectMoveEnterGrids(*transform, dir);
+			for (auto& grid : enterGrids)
+			{
+				auto gridResult = checkEnterGrid(entity, grid);
+				if (gridResult == MoveCheckResult::Blocked)
 				{
-					checkEntity(it->first, it->second);
+					return MoveCheckResult::Blocked;
+				}
+
+				if (gridResult == MoveCheckResult::Pending)
+				{
+					result = MoveCheckResult::Pending;
 				}
 			}
-			else
+
+			return result;
+		};
+
+		auto tryResolveEntity = [&](entt::entity entity)
+		{
+			if (!pendingEntities.contains(entity))
 			{
-				for (auto& [c2, entity] : others)
+				return false;
+			}
+
+			if (checkEntity(entity) != MoveCheckResult::Clear)
+			{
+				return false;
+			}
+
+			movableEntities.insert(entity);
+			pendingEntities.erase(entity);
+			return true;
+		};
+
+		bool progress = true;
+		while (progress)
+		{
+			progress = false;
+			for (auto& [c1, others] : sortEntitiyLines)
+			{
+				if (mvForward)
 				{
-					checkEntity(c2, entity);
+					for (auto it = others.rbegin(); it != others.rend(); ++it)
+					{
+						progress = tryResolveEntity(it->second) || progress;
+					}
+				}
+				else
+				{
+					for (auto& [c2, entity] : others)
+					{
+						progress = tryResolveEntity(entity) || progress;
+					}
 				}
 			}
 		}
@@ -347,7 +394,8 @@ namespace game
 			return;
 		}
 
-		context().painter().drawRect(Color::Red, _selectRect, 0, 2);
+		auto rect = context().camera().projectRect(_selectRect);
+		context().painter().drawRect(Color::Red, rect, 0, 2);
 	}
 
 	bool GamePlayTileBattle::hasMovingSelectedEntity()

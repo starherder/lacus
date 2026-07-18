@@ -63,52 +63,147 @@
                 {
                  "height":0,
                  "id":79,
-                 "name":"npc_0",
+                 "name":"boss_0",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
-                 "type":"patrol_npc",
+                 "type":"npc",
                  "visible":true,
                  "width":0,
-                 "x":96.3030303030303,
-                 "y":538.545454545455
+                 "x":3056.90909090909,
+                 "y":284
                 }, 
                 {
                  "height":0,
                  "id":90,
                  "name":"npc_0",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
-                 "type":"patrol_npc",
+                 "type":"npc",
                  "visible":true,
                  "width":0,
-                 "x":108,
-                 "y":734
+                 "x":2559.51515151515,
+                 "y":361.272727272727
                 }, 
                 {
                  "height":0,
                  "id":92,
-                 "name":"spawner_0",
+                 "name":"spawner_2",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
                  "type":"spawner",
                  "visible":true,
                  "width":0,
-                 "x":794,
-                 "y":730
+                 "x":2400.06060606061,
+                 "y":1396.66666666667
                 }, 
                 {
                  "height":0,
                  "id":93,
                  "name":"spawner_1",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
                  "type":"spawner",
                  "visible":true,
                  "width":0,
-                 "x":315.151515151515,
-                 "y":990.909090909091
-                }
-               ],
+                 "x":1309.09090909091,
+                 "y":1230.30303030303
+                }, 
+                {
+                 "height":0,
+                 "id":95,
+                 "name":"spawner_0",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"spawner",
+                 "visible":true,
+                 "width":0,
+                 "x":381.818181818182,
+                 "y":569.69696969697
+                }, 
+                {
+                 "height":0,
+                 "id":96,
+                 "name":"spawner_3",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"spawner",
+                 "visible":true,
+                 "width":0,
+                 "x":2351.51515151515,
+                 "y":387.878787878788
+                }, 
+                {
+                 "height":0,
+                 "id":97,
+                 "name":"npc_0",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"npc",
+                 "visible":true,
+                 "width":0,
+                 "x":406.060606060606,
+                 "y":809.090909090909
+                }, 
+                {
+                 "height":0,
+                 "id":98,
+                 "name":"boss_1",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"side",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"npc",
+                 "visible":true,
+                 "width":0,
+                 "x":3087.87878787879,
+                 "y":1848.48484848485
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -157,7 +252,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":95,
+ "nextobjectid":99,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

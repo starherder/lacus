@@ -94,7 +94,7 @@ namespace game
             auto walktypeOpt = _context.scene().getGridWalkType(dstGrid);
             if (walktypeOpt != (int)tilemap::WalkType::Collision)
             {
-                optSpawnPos = dest;
+                optSpawnPos = _context.scene().normalToGridPos(dest);
                 break;
             }
         }
