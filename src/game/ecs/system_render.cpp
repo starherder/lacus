@@ -341,7 +341,7 @@ void RenderSystem::drawObjects()
 
         float corner = _context.gameConfig().display.chess_corner;
 
-        auto dstrect = Rect{ transform.position - transform.size / 2.0f, transform.size };
+        auto dstrect = _context.scene().getDisplayAABB(transform);
         if(transform.coord_mode == CoordMode::WorldSpace)
         {
             dstrect = camera.projectRect(dstrect);

@@ -73,6 +73,113 @@ Vec2 GameScene::getGridCenterPos(const Vec2i& grid)
     return { (grid.x + 0.5f) * tileSize().x, (grid.y + 0.5f) * tileSize().y };
 }
 
+Vec2i GameScene::getObjectGridSize(const CompTransform& trans)
+{
+    auto tile = tileSize();
+    return {
+        std::max(1, (int)std::ceil(trans.size.x / tile.x)),
+        std::max(1, (int)std::ceil(trans.size.y / tile.y))
+    };
+}
+
+Vec2i GameScene::getObjectLeftTopGrid(const CompTransform& trans)
+{
+    auto grid = getGridFromPos(trans.position);
+    auto gridSize = getObjectGridSize(trans);
+    return {
+        grid.x - (gridSize.x % 2 == 0 ? 0 : gridSize.x / 2),
+        grid.y - (gridSize.y % 2 == 0 ? 0 : gridSize.y / 2)
+    };
+}
+
+std::vector<Vec2i> GameScene::getObjectGrids(const CompTransform& trans)
+{
+    auto leftTopGrid = getObjectLeftTopGrid(trans);
+    auto gridSize = getObjectGridSize(trans);
+
+    std::vector<Vec2i> grids;
+    grids.reserve(gridSize.x * gridSize.y);
+    for (int y = 0; y < gridSize.y; ++y)
+    {
+        for (int x = 0; x < gridSize.x; ++x)
+        {
+            grids.push_back({ leftTopGrid.x + x, leftTopGrid.y + y });
+        }
+    }
+
+    return grids;
+}
+
+std::vector<Vec2i> GameScene::getObjectMoveEnterGrids(const CompTransform& trans, const Vec2i& dir)
+{
+    auto leftTopGrid = getObjectLeftTopGrid(trans);
+    auto gridSize = getObjectGridSize(trans);
+
+    std::vector<Vec2i> grids;
+    if (dir.x > 0)
+    {
+        grids.reserve(gridSize.y);
+        int x = leftTopGrid.x + gridSize.x;
+        for (int y = 0; y < gridSize.y; ++y)
+        {
+            grids.push_back({ x, leftTopGrid.y + y });
+        }
+    }
+    else if (dir.x < 0)
+    {
+        grids.reserve(gridSize.y);
+        int x = leftTopGrid.x - 1;
+        for (int y = 0; y < gridSize.y; ++y)
+        {
+            grids.push_back({ x, leftTopGrid.y + y });
+        }
+    }
+    else if (dir.y > 0)
+    {
+        grids.reserve(gridSize.x);
+        int y = leftTopGrid.y + gridSize.y;
+        for (int x = 0; x < gridSize.x; ++x)
+        {
+            grids.push_back({ leftTopGrid.x + x, y });
+        }
+    }
+    else if (dir.y < 0)
+    {
+        grids.reserve(gridSize.x);
+        int y = leftTopGrid.y - 1;
+        for (int x = 0; x < gridSize.x; ++x)
+        {
+            grids.push_back({ leftTopGrid.x + x, y });
+        }
+    }
+
+    return grids;
+}
+
+Rect GameScene::getGridAlignedAABB(const CompTransform& trans)
+{
+    auto tile = tileSize();
+    auto leftTopGrid = getObjectLeftTopGrid(trans);
+    auto gridSize = getObjectGridSize(trans);
+    auto pos = getGridLeftTopPos(leftTopGrid);
+    Vec2 sz = { gridSize.x * tile.x, gridSize.y * tile.y };
+
+    return Rect{ pos, sz };
+}
+
+Rect GameScene::getDisplayAABB(const CompTransform& trans)
+{
+    auto tile = tileSize();
+    auto gridSize = getObjectGridSize(trans);
+    Vec2 sz = { gridSize.x * tile.x, gridSize.y * tile.y };
+    Vec2 offset = {
+        gridSize.x % 2 == 0 ? (gridSize.x / 2.0f - 0.5f) * tile.x : 0.0f,
+        gridSize.y % 2 == 0 ? (gridSize.y / 2.0f - 0.5f) * tile.y : 0.0f
+    };
+
+    return Rect{ trans.position - sz / 2.0f + offset, sz };
+}
+
 Vec2 GameScene::normalToGridPos(const Vec2& pos)
 {
     return getGridCenterPos(getGridFromPos(pos));
@@ -279,22 +386,8 @@ void GameScene::initQuadTree()
         auto comp = _context.registry().try_get<CompTransform>(ent);
         if (comp)
         {
-            auto tile = tileSize();
-            auto grid = getGridFromPos(comp->position);
-            Vec2i gridSize = {
-                std::max(1, (int)std::ceil(comp->size.x / tile.x)),
-                std::max(1, (int)std::ceil(comp->size.y / tile.y))
-            };
-
-            Vec2i leftTopGrid = {
-                grid.x - (gridSize.x % 2 == 0 ? 0 : gridSize.x / 2),
-                grid.y - (gridSize.y % 2 == 0 ? 0 : gridSize.y / 2)
-            };
-
-            auto pos = getGridLeftTopPos(leftTopGrid);
-            Vec2 sz = { gridSize.x * tile.x, gridSize.y * tile.y };
-    
-            return BoxType{ pos.x, pos.y, sz.x, sz.y };
+            auto rect = getGridAlignedAABB(*comp);
+            return BoxType{ rect.x, rect.y, rect.w, rect.h };
         }
 
         return BoxType{0, 0, 0, 0};

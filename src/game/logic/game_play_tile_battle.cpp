@@ -143,21 +143,53 @@ namespace game
 
 		for (auto& [c1, others] : sortEntitiyLines)
 		{
+			auto canEnterGrid = [&](entt::entity entity, const Vec2i& grid)
+			{
+				if (context().scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision)
+				{
+					return false;
+				}
+
+				for (auto& obj : context().scene().getObjectsInGrid(grid))
+				{
+					if (obj == entity)
+					{
+						continue;
+					}
+
+					auto pComm = context().registry().try_get<CompComm>(obj);
+					if (!pComm || pComm->type != ObjectType::Npc)
+					{
+						continue;
+					}
+
+					if (!movableEntities.contains(obj))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			};
+
 			auto checkEntity = [&](int c2, entt::entity entity)
 			{
-				Vec2i grid = mvHorizonal ? Vec2i{ c2, c1 } : Vec2i{ c1, c2 };
-				Vec2i nextGrid = grid + dir;
-
-				if (context().scene().getGridWalkType(nextGrid) == (int)tilemap::WalkType::Collision)
+				auto transform = context().registry().try_get<CompTransform>(entity);
+				if (!transform)
 				{
 					return;
 				}
 
-				auto nextEntity = context().scene().getOneObjectInGrid(nextGrid, ObjectType::Npc);
-				if (!context().registry().valid(nextEntity) || movableEntities.contains(nextEntity))
+				auto enterGrids = context().scene().getObjectMoveEnterGrids(*transform, dir);
+				for (auto& grid : enterGrids)
 				{
-					movableEntities.insert(entity);
+					if (!canEnterGrid(entity, grid))
+					{
+						return;
+					}
 				}
+
+				movableEntities.insert(entity);
 			};
 
 			if (mvForward)
