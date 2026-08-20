@@ -2,6 +2,7 @@
 #include "spdlog/spdlog.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/game_context.h"
+#include "game/scene/object_manager.h"
 #include "game/logic/game_play.h"
 #include "game/ecs/comp_fight.h"
 
@@ -470,6 +471,55 @@ void ImFormDebug::drawSelectEntityProps()
     if(!_context->registry().valid(_selectEntity))
     {
         return;
+    }
+
+    auto pDisplay = _context->registry().try_get<CompDisplay>(_selectEntity);
+    if (pDisplay)
+    {
+        const char* layerNames[] = { "bottom", "middle", "top" };
+        int selectLayerIndex = 1;
+        switch (pDisplay->layer)
+        {
+        case DisplayLayer::Bottom:
+            selectLayerIndex = 0;
+            break;
+        case DisplayLayer::Middle:
+            selectLayerIndex = 1;
+            break;
+        case DisplayLayer::Top:
+            selectLayerIndex = 2;
+            break;
+        }
+
+        ImGui::Text("display layer");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(150);
+        if (ImGui::BeginCombo("##display_layer", layerNames[selectLayerIndex]))
+        {
+            for (int n = 0; n < 3; n++)
+            {
+                bool isSelected = (selectLayerIndex == n);
+                if (ImGui::Selectable(layerNames[n], isSelected))
+                {
+                    DisplayLayer layer = DisplayLayer::Middle;
+                    switch (n)
+                    {
+                    case 0:
+                        layer = DisplayLayer::Bottom;
+                        break;
+                    case 1:
+                        layer = DisplayLayer::Middle;
+                        break;
+                    case 2:
+                        layer = DisplayLayer::Top;
+                        break;
+                    }
+
+                    ObjectManager::inst().setObjectDisplayLayer(_selectEntity, layer);
+                }
+            }
+            ImGui::EndCombo();
+        }
     }
 
     std::map<std::string, std::string> props;

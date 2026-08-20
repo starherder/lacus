@@ -76,15 +76,19 @@ void RenderSystem::update(float delta)
 
 void RenderSystem::draw()
 {
+    drawObjects(DisplayLayer::Bottom);
+
     drawMarker();
 
-    drawObjects();
+    drawObjects(DisplayLayer::Middle);
 
     drawSkillEffect();
 
     drawParticles();
 
     drawSkyEffect();
+
+    drawObjects(DisplayLayer::Top);
 
     drawFightText();
 
@@ -317,7 +321,7 @@ void RenderSystem::drawMarker()
     }
 }
 
-void RenderSystem::drawObjects()
+void RenderSystem::drawObjects(DisplayLayer layer)
 { 
     auto& painter = _context.painter();
     auto& camera = _context.camera();
@@ -336,6 +340,11 @@ void RenderSystem::drawObjects()
         const auto& transform = ent_view.get<CompTransform>(ent);
         const auto& display = ent_view.get<CompDisplay>(ent);
         if (!display.visible) 
+        {
+            continue;
+        }
+
+        if (display.layer != layer)
         {
             continue;
         }

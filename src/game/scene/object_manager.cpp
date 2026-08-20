@@ -865,6 +865,25 @@ namespace game
 		_context->registry().emplace<CompSkyEffect>(sky, compSky);
 	}
 
+	bool ObjectManager::setObjectDisplayLayer(entt::entity entityid, DisplayLayer layer)
+	{
+		assert(_context);
+
+		if (!_context->registry().valid(entityid))
+		{
+			return false;
+		}
+
+		auto pDisplay = _context->registry().try_get<CompDisplay>(entityid);
+		if (!pDisplay)
+		{
+			return false;
+		}
+
+		pDisplay->layer = layer;
+		return true;
+	}
+
 	void ObjectManager::destroyObject(entt::entity entityid)
 	{
 		assert(_context);

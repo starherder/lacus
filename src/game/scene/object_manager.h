@@ -45,6 +45,8 @@ namespace game
 
 		void createSkyEffect(SkyEffect effect,  Color color, int last,int fadein = 500, int fadeout = 500);
 
+		bool setObjectDisplayLayer(entt::entity entityid, DisplayLayer layer);
+
 		void destroyObject(entt::entity entityid);
 
 		const auto& getAllObjectCfgIds() { return _objectCfgIds; }

@@ -67,6 +67,13 @@ namespace game
         Ride,
     };
 
+    enum class DisplayLayer
+    {
+        Bottom,
+        Middle,
+        Top,
+    };
+
     enum class CoordMode {
         WorldSpace,
         ScreenSpace,
@@ -180,6 +187,7 @@ namespace game
     struct CompDisplay
     {
         bool visible = true;
+        DisplayLayer layer = DisplayLayer::Middle;
 
         Color ground_color = Color::Yellow;
         Color border_color = Color::Dark;
