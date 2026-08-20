@@ -175,9 +175,12 @@ namespace game
             return;
         }
 
-        _scene->onUpdate(delta);
+        if (!_context.gamePaused())
+        {
+            _scene->onUpdate(delta);
 
-        checkGameState();
+            checkGameState();
+        }
 
         EcsSystemManager::inst().update(delta);
     }

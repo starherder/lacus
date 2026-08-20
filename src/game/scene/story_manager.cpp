@@ -1,5 +1,7 @@
 #include "story_manager.h"
 
+#include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -73,6 +75,8 @@ namespace game
 			StoryConfig config;
 			config.name = item.value("name", "");
 			config.desc = item.value("desc", "");
+			config.camera_follow = parseBool(item, "camera_follow");
+			config.game_pause = parseBool(item, "game_pause");
 
 			if (config.name.empty())
 			{
@@ -144,5 +148,42 @@ namespace game
 		}
 
 		return 0;
+	}
+
+	bool StoryManager::parseBool(const nJson& item, const std::string& key, bool defaultValue) const
+	{
+		if (!item.contains(key))
+		{
+			return defaultValue;
+		}
+
+		const auto& value = item[key];
+		if (value.is_boolean())
+		{
+			return value.get<bool>();
+		}
+		if (value.is_number_integer())
+		{
+			return value.get<int>() != 0;
+		}
+		if (value.is_string())
+		{
+			auto str = value.get<std::string>();
+			std::transform(str.begin(), str.end(), str.begin(), [](unsigned char ch) {
+				return static_cast<char>(std::tolower(ch));
+			});
+
+			if (str == "true" || str == "1" || str == "yes" || str == "on")
+			{
+				return true;
+			}
+			if (str == "false" || str == "0" || str == "no" || str == "off")
+			{
+				return false;
+			}
+		}
+
+		LogWarn("StoryManager::parseBool failed, key = '{}'", key);
+		return defaultValue;
 	}
 }

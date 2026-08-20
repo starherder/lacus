@@ -33,6 +33,11 @@ namespace game
 
 	void GamePlayTileBattle::onMouseLeftPressed(const Vec2& pos)
 	{
+		if (context().gamePaused())
+		{
+			return;
+		}
+
 		auto scenePos = context().camera().screenToWorld(pos);
 		_selectRect = Rect{ scenePos.x, scenePos.y, 0.0f, 0.0f };
 
@@ -49,11 +54,23 @@ namespace game
 
 	void GamePlayTileBattle::onMouseLeftRelease(const Vec2& pos)
 	{
+		if (context().gamePaused())
+		{
+			_selectRect = { 0,0,0,0 };
+			return;
+		}
+
 		_selectRect = { 0,0,0,0 };
 	}
 	
 	void GamePlayTileBattle::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 	{
+		if (context().gamePaused())
+		{
+			_selectRect = { 0,0,0,0 };
+			return;
+		}
+
 		if (ui::GuiManager::inst().isDragging())
 		{
 			_selectRect = { 0,0,0,0 };

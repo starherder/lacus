@@ -39,6 +39,11 @@ namespace game
 
 	void GamePlayAutoChess::onMouseLeftPressed(const Vec2& pos)
 	{
+		if (_context.gamePaused())
+		{
+			return;
+		}
+
 		auto scenePos = _context.camera().screenToWorld(pos);
 		auto selObj = _context.scene().findObjectAtPos(scenePos);
         if(selObj == _selectEntity)
@@ -63,6 +68,11 @@ namespace game
 
 	void GamePlayAutoChess::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 	{
+		if (_context.gamePaused())
+		{
+			return;
+		}
+
 		if (dragSelectActorInProgress(pos))
 		{
 		    slotContext().setBreak(true);
@@ -78,7 +88,11 @@ namespace game
 	}
 
 	void GamePlayAutoChess::onMouseRightClick(const Vec2& pos)
-{
+    {
+        if (_context.gamePaused()) {
+            return;
+        }
+
         if (!_context.registry().valid(_selectEntity)) {
             return;
         }
@@ -94,6 +108,11 @@ namespace game
 
 	void GamePlayAutoChess::onMouseLeftDragStart(const Vec2& pos)
 	{
+        if (_context.gamePaused())
+        {
+            return;
+        }
+
         if ( objectDragable() && dragSelectActor(pos))
         {
             slotContext().setBreak(true);
@@ -102,6 +121,11 @@ namespace game
 
 	void GamePlayAutoChess::onMouseLeftDragFinish(const Vec2& pos)
 	{
+        if (_context.gamePaused())
+        {
+            return;
+        }
+
         if (objectDragable() && dropSelectActor(pos))
         {
             slotContext().setBreak(true);

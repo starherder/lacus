@@ -13,10 +13,13 @@ namespace game
 		~StorySystem();
 
 		void update(float delta) override;
+		bool updateWhenGamePaused() const override { return true; }
 
 	private:
 		void onStartStory(const EvtStartStory& e);
 		void startNextDialogue(entt::entity storyPlayer, CompStoryPlayer& player);
+		void finishStory(entt::entity storyPlayer, CompStoryPlayer& player);
+		void followCamera(CompStoryPlayer& player);
 		int getDialogueDuration(const StoryDialogue& dialogue) const;
 	};
 }

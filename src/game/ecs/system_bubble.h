@@ -12,6 +12,7 @@ public:
     ~BubbleSystem();
 
     void update(float delta) override;
+    bool updateWhenGamePaused() const override { return true; }
 
 private:
     void onShowBubble(const EvtShowBubble& e);

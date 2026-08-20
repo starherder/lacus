@@ -4,8 +4,36 @@
 
 namespace game
 {
+    void EcsSystemManager::init(GameContext& context)
+    {
+        _context = &context;
+        for (auto& creator : _creators)
+        {
+            auto prio = creator->priority();
+            auto sys = creator->create(context);
+            _systems.insert({prio, sys});
+        }
+    }
 
+    void EcsSystemManager::update(float delta)
+    {
+        for (auto& [prio, sys] : _systems)
+        {
+            if (_context && _context->gamePaused() && !sys->updateWhenGamePaused())
+            {
+                continue;
+            }
+            sys->update(delta);
+        }
+    }
 
+    void EcsSystemManager::draw()
+    {
+        for (auto& [prio, sys] : _systems)
+        {
+            sys->draw();
+        }
+    }
 
     SystemUtils::FuncFactorOpt SystemUtils::parseFightFunc(const std::string& str)
     {

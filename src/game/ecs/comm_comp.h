@@ -221,6 +221,10 @@ namespace game
         std::map<std::string, entt::entity> actors;
         size_t dialogue_index = 0;
         int dialogue_ticks = 0;
+        bool camera_follow = false;
+        bool game_pause = false;
+        entt::entity camera_target = entt::null;
+        Vec2 camera_target_pos = { 0.0f, 0.0f };
     };
 
     struct CompRolePick 

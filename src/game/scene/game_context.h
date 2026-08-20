@@ -97,6 +97,10 @@ namespace game {
 		bool debugMode() { return _debugMode; }
 		void setDebugMode(bool debug) { _debugMode = debug; }
 
+		void pushGamePause() { _gamePauseCount++; }
+		void popGamePause() { if (_gamePauseCount > 0) { _gamePauseCount--; } }
+		bool gamePaused() const { return _gamePauseCount > 0; }
+
 	private:
 		Application& _application;
 
@@ -119,6 +123,8 @@ namespace game {
 		PathFinder _landPathFinder;
 
 		bool _debugMode = false;
+
+		int _gamePauseCount = 0;
 	};
 
 

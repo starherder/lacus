@@ -2,6 +2,8 @@
     {
         "name":"game_start",
         "desc": "story at game start.",
+        "camera_follow" : "true",
+        "game_pause":"true",
         "dialogue":[
             {"actor":"one", "emotion":"love", "word":"word_0", "duration":"1000"},
             {"actor":"two", "word":"word_1" },
@@ -12,6 +14,8 @@
     {
         "name":"ingame_one",
         "desc": "guild test.",
+        "camera_follow" : "false",
+        "game_pause":"false",
         "dialogue":[
             {"actor":"one", "word":"word_10" },
             {"actor":"one", "word":"word_11" },

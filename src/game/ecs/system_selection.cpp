@@ -28,6 +28,11 @@ namespace game
 			_context.registry().remove<CompSelection>(ent);
 		}
 
+		if (_context.gamePaused())
+		{
+			return;
+		}
+
 		if(_context.registry().valid(e.object))
 		{
 			_context.registry().emplace<CompSelection>(e.object, CompSelection{});

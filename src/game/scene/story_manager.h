@@ -18,6 +18,8 @@ namespace game
 	{
 		std::string name;
 		std::string desc;
+		bool camera_follow = false;
+		bool game_pause = false;
 		std::vector<StoryDialogue> dialogue;
 	};
 
@@ -42,6 +44,7 @@ namespace game
 
 	private:
 		int parseDuration(const nJson& item) const;
+		bool parseBool(const nJson& item, const std::string& key, bool defaultValue = false) const;
 
 	private:
 		GameContext* _context = nullptr;

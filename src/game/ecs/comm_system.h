@@ -26,6 +26,8 @@ namespace game {
 
 		virtual void update(float delta) {};
 
+		virtual bool updateWhenGamePaused() const { return false; }
+
 		virtual void draw() {};
 
 	protected:

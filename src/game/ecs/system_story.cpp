@@ -23,6 +23,8 @@ namespace game
 		for (auto storyPlayer : view)
 		{
 			auto& player = view.get<CompStoryPlayer>(storyPlayer);
+			followCamera(player);
+
 			player.dialogue_ticks -= _context.deltaTicks();
 			if (player.dialogue_ticks <= 0)
 			{
@@ -56,6 +58,14 @@ namespace game
 		player.actors = e.actors;
 		player.dialogue_index = 0;
 		player.dialogue_ticks = 0;
+		player.camera_follow = story->camera_follow;
+		player.game_pause = story->game_pause;
+
+		if (player.game_pause)
+		{
+			_context.pushGamePause();
+			_context.dispatcher().trigger(EvtObjectSelection{ entt::null });
+		}
 
 		startNextDialogue(storyPlayer, player);
 	}
@@ -66,13 +76,13 @@ namespace game
 		if (!story)
 		{
 			LogWarn("StorySystem::startNextDialogue story ({}) not found.", player.story_name);
-			_context.registry().destroy(storyPlayer);
+			finishStory(storyPlayer, player);
 			return;
 		}
 
 		if (player.dialogue_index >= story->dialogue.size())
 		{
-			_context.registry().destroy(storyPlayer);
+			finishStory(storyPlayer, player);
 			return;
 		}
 
@@ -81,9 +91,12 @@ namespace game
 		if (actorIt == player.actors.end() || !_context.registry().valid(actorIt->second))
 		{
 			LogWarn("StorySystem::startNextDialogue actor ({}) invalid.", dialogue.actor);
-			_context.registry().destroy(storyPlayer);
+			finishStory(storyPlayer, player);
 			return;
 		}
+
+		player.camera_target = actorIt->second;
+		followCamera(player);
 
 		EvtShowBubble evt;
 		evt.actor = actorIt->second;
@@ -93,6 +106,55 @@ namespace game
 
 		player.dialogue_ticks = getDialogueDuration(dialogue);
 		player.dialogue_index++;
+	}
+
+	void StorySystem::finishStory(entt::entity storyPlayer, CompStoryPlayer& player)
+	{
+		if (player.game_pause)
+		{
+			_context.popGamePause();
+			player.game_pause = false;
+		}
+
+		if (_context.registry().valid(storyPlayer))
+		{
+			_context.registry().destroy(storyPlayer);
+		}
+	}
+
+	void StorySystem::followCamera(CompStoryPlayer& player)
+	{
+		if (!player.camera_follow || !_context.registry().valid(player.camera_target))
+		{
+			return;
+		}
+
+		auto transform = _context.registry().try_get<CompTransform>(player.camera_target);
+		if (!transform)
+		{
+			return;
+		}
+
+		player.camera_target_pos = transform->position - _context.camera().getSize() / 2.0f;
+
+		const auto& curPos = _context.camera().getPos();
+		auto offset = player.camera_target_pos - curPos;
+		float distance = glm::length(offset);
+		if (distance <= 1.0f)
+		{
+			_context.camera().setPos(player.camera_target_pos);
+			return;
+		}
+
+		constexpr float cameraSpeed = 1200.0f;
+		float step = cameraSpeed * std::max(0.0f, _context.frameTicker().deltaSeconds());
+		if (step >= distance)
+		{
+			_context.camera().setPos(player.camera_target_pos);
+			return;
+		}
+
+		_context.camera().setPos(curPos + offset / distance * step);
 	}
 
 	int StorySystem::getDialogueDuration(const StoryDialogue& dialogue) const
