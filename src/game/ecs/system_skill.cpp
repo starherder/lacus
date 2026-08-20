@@ -1,4 +1,4 @@
-ï»¿#include "system_skill.h"
+#include "system_skill.h"
 
 #include <array>
 
@@ -26,7 +26,7 @@ namespace game
 	{
 		auto deltaTicks = _context.frameTicker().deltaTicks();
 
-		// å—å‡»ç‰¹æ•ˆ
+		// ÊÜ»÷ÌØĞ§
 		auto views1 = _context.registry().view<CompUnderAttack>();
 		for(auto& ent : views1)
 		{
@@ -40,7 +40,7 @@ namespace game
 		auto views = _context.registry().view<CompNameId, CompSkillComm>();
 		for (auto& ent : views)
 		{
-			// æŠ€èƒ½å†·å´
+			// ¼¼ÄÜÀäÈ´
 			auto& skillComm = views.get<CompSkillComm>(ent);
 			if (skillComm.state == SkillState::Cooling)
 			{
@@ -56,7 +56,7 @@ namespace game
 				}
 			}
 
-			// æ–½æ³•ç‰¹æ•ˆ
+			// Ê©·¨ÌØĞ§
 			if (skillComm.state == SkillState::Launching)
 			{
 				auto skillTween = _context.registry().try_get<CompSkillSpell>(ent);
@@ -67,7 +67,7 @@ namespace game
 			}
 		}
 
-		// å†²åˆº
+		// ³å´Ì
 		auto viewsSprint = _context.registry().view<CompSprint>();
 		for (auto& ent : viewsSprint)
 		{
@@ -78,7 +78,7 @@ namespace game
 			}
 		}
 
-		// é™·é˜±
+		// ÏİÚå
 		auto viewsTrap = _context.registry().view<CompTraps>();
 		for (auto& ent : viewsTrap)
 		{
@@ -89,7 +89,7 @@ namespace game
 			}
 		}
 
-		// å†²å‡»æ³¢
+		// ³å»÷²¨
 		auto viewsWave = _context.registry().view<CompWave>();
 		for (auto& ent : viewsWave)
 		{
@@ -100,7 +100,7 @@ namespace game
 			}
 		}
 
-		// é—ªç”µ
+		// ÉÁµç
 		auto viewsLightning = _context.registry().view<CompLightning>();
 		for (auto& ent : viewsLightning)
 		{
@@ -580,7 +580,7 @@ namespace game
 		}
 
 		auto pos = _context.scene().normalToGridPos(target);
-		auto trap = _context.objectFactory().createTrap(pos, pTrapCfgComp->range,
+		auto trap = _context.objectManager().createTrap(pos, pTrapCfgComp->range,
 														pTrapCfgComp->color, pTrapCfgComp->texture,
 														pTrapCfgComp->particle, shape_type);
 		
@@ -644,7 +644,7 @@ namespace game
 		float speed = compProjectile.speed == 0? 100 : compProjectile.speed;
 		int during = static_cast<int>((glm::distance(source, target) / speed) * 1000);
 
-		auto projectile = _context.objectFactory().createProjectile(source, target, compProjectile);
+		auto projectile = _context.objectManager().createProjectile(source, target, compProjectile);
 		if (!_context.registry().valid(projectile))
 		{
 			return;
@@ -668,7 +668,7 @@ namespace game
 			.via(tweentype)
 			.during(200);
 
-		// ç”Ÿæ•ˆï¼Œç­‰200mså†é”€æ¯ï¼Œç«‹åˆ»æ‘§æ¯æ˜¾å¾—æ•ˆæœåƒµç¡¬
+		// ÉúĞ§£¬µÈ200msÔÙÏú»Ù£¬Á¢¿Ì´İ»ÙÏÔµÃĞ§¹û½©Ó²
 		compShoot.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
 			if (t.isFinished()) {
 				return true;
@@ -764,7 +764,7 @@ namespace game
 				ticks = 2000;
 			}
 
-			_context.objectFactory().createSkyEffect(SkyEffect::Dark, Color{ 0,0,0,200 }, ticks-1000, 500, 500);
+			_context.objectManager().createSkyEffect(SkyEffect::Dark, Color{ 0,0,0,200 }, ticks-1000, 500, 500);
 		}
 	}
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "engine/application.h"
 #include "bevtree/bevtree.h"
@@ -20,7 +20,7 @@ namespace game {
 	class GameData;
 	class GamePlay;
 	class GameLogic;
-	class ObjectFactory;
+	class ObjectManager;
 
 	class GameContext final
 	{
@@ -81,7 +81,7 @@ namespace game {
 		int64_t currentTicks() { return _application.frameTicker().ticks(); }
 		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
 
-		ObjectFactory& objectFactory();
+		ObjectManager& objectManager();
 
 		entt::registry& registry();
 		entt::dispatcher& dispatcher();

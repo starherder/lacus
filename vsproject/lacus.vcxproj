@@ -230,7 +230,8 @@
     <ClCompile Include="..\src\game\logic\game_play_auto_chess.cpp" />
     <ClCompile Include="..\src\game\logic\game_play_tile_battle.cpp" />
     <ClCompile Include="..\src\game\scene\game_data.cpp" />
-    <ClCompile Include="..\src\game\scene\object_factory.cpp" />
+    <ClCompile Include="..\src\game\scene\object_manager.cpp" />
+    <ClCompile Include="..\src\game\scene\story_manager.cpp" />
     <ClCompile Include="..\src\game\scene\game_camera.cpp" />
     <ClCompile Include="..\src\game\scene\game_context.cpp" />
     <ClCompile Include="..\src\game\scene\game_scene.cpp" />
@@ -373,7 +374,8 @@
     <ClInclude Include="..\src\game\logic\game_play_auto_chess.h" />
     <ClInclude Include="..\src\game\logic\game_play_tile_battle.h" />
     <ClInclude Include="..\src\game\scene\game_data.h" />
-    <ClInclude Include="..\src\game\scene\object_factory.h" />
+    <ClInclude Include="..\src\game\scene\object_manager.h" />
+    <ClInclude Include="..\src\game\scene\story_manager.h" />
     <ClInclude Include="..\src\game\scene\game_camera.h" />
     <ClInclude Include="..\src\game\scene\game_context.h" />
     <ClInclude Include="..\src\game\scene\game_scene.h" />

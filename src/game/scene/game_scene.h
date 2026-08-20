@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 
 #include "quadtree/quad_tree.h"
 
@@ -6,7 +6,7 @@
 #include "tilemap/tile_map.h"
 
 #include "game/scene/game_context.h"
-#include "game/scene/object_factory.h"
+#include "game/scene/object_manager.h"
 #include "game/ecs/comm_event.h"
 #include "game/scene/game_data.h"
 #include "game/logic/game_play.h"
@@ -148,7 +148,7 @@ namespace game {
 
         entt::entity _hoverEntity = entt::null;
 
-        // åœºæ™¯å¯¹è±¡ï¼šåœ¨åœºæ™¯ä¸­æœ‰ä½ç½®ã€ç¢°æ’ã€ä¼šåŠ å…¥åˆ°å››å‰æ ‘ä¸­çš„å¯¹è±¡
+        // ³¡¾°¶ÔÏó£ºÔÚ³¡¾°ÖĞÓĞÎ»ÖÃ¡¢Åö×²¡¢»á¼ÓÈëµ½ËÄ²æÊ÷ÖĞµÄ¶ÔÏó
         std::set<entt::entity> _sceneObjects;
 
         QuadTreePtr _quadtree = nullptr;

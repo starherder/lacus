@@ -1,5 +1,5 @@
-﻿#include "form_cards.h"
-#include "game/scene/object_factory.h"
+#include "form_cards.h"
+#include "game/scene/object_manager.h"
 
 namespace game
 {
@@ -34,10 +34,10 @@ namespace game
 
     void FormCards::loadCars()
     {
-        auto& roleCfgs = _context.objectFactory().getAllRoleCfgIds();
+        auto& roleCfgs = _context.objectManager().getAllRoleCfgIds();
         for (auto& cfg : roleCfgs)
         {
-            auto& props = _context.objectFactory().getObjectCfgProperties(cfg);
+            auto& props = _context.objectManager().getObjectCfgProperties(cfg);
             _cardGroup->addCard(props);
         }
     }

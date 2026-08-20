@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game/scene/game_context.h"
-#include "game/scene/object_factory.h"
+#include "game/scene/object_manager.h"
 #include "game/ecs/comm_event.h"
 
 #include <set>

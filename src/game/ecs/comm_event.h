@@ -178,4 +178,9 @@ namespace game
 		std::string text;     // 气泡文字（可选，会用 Trans 译文）
 		std::string emotion;  // 表情名称（可选，如 "sad"、"love"）
 	};
+
+	struct EvtStartStory {
+		std::string name;
+		std::map<std::string, entt::entity> actors;
+	};
 }

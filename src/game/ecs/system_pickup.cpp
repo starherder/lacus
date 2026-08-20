@@ -47,7 +47,7 @@ namespace game
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
-        // 切换到屏幕空间
+        // 切换到屏幕空�?
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
 
         _context.scene().removeObjectFromScene(obj);
@@ -58,7 +58,7 @@ namespace game
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
 
-        _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
+        _context.objectManager().createParticleOnObject(obj, pickableComp.effect);
 
         pickableComp.tween = tweeny::from(curpos.x, curpos.y)
                                     .to(uipos.x, uipos.y)
@@ -99,7 +99,7 @@ namespace game
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
 
-        _context.objectFactory().createParticleOnObject(obj, pickableComp.effect);
+        _context.objectManager().createParticleOnObject(obj, pickableComp.effect);
 
         pickableComp.tween = tweeny::from(0.0f, 0.0f)
                                     .to(100.0f, 100.0f)

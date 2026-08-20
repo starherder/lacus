@@ -51,6 +51,8 @@ namespace game
         
         void drawCameraWindow();
 
+        void drawStoryWindow();
+
         void drawSelectEntityProps();
 
         void drawSkillWindow();
@@ -70,6 +72,7 @@ namespace game
 
         bool _showSkyWindow = false;
         bool _showCameraWindow = false;
+        bool _showStoryWindow = false;
 
         Vec2 _windowPos, _windowSize;
 

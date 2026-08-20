@@ -1,0 +1,22 @@
+[
+    {
+        "name":"game_start",
+        "desc": "story at game start.",
+        "dialogue":[
+            {"actor":"one", "emotion":"love", "word":"word_0", "duration":"1000"},
+            {"actor":"two", "word":"word_1" },
+            {"actor":"one", "emotion":"love" },
+            {"actor":"two", "emotion":"love", "word":"word_2" }
+        ]
+    },
+    {
+        "name":"ingame_one",
+        "desc": "guild test.",
+        "dialogue":[
+            {"actor":"one", "word":"word_10" },
+            {"actor":"one", "word":"word_11" },
+            {"actor":"one", "emotion":"love" },
+            {"actor":"one", "emotion":"love", "word":"word_12" }
+        ]
+    }
+]

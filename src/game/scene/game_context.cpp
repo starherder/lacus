@@ -1,7 +1,7 @@
-﻿#include "game_context.h"
+#include "game_context.h"
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
-#include "game/scene/object_factory.h"
+#include "game/scene/object_manager.h"
 #include "game/logic/game_play_tile_battle.h"
 
 
@@ -19,9 +19,9 @@ namespace game
 	}
 
 
-	ObjectFactory& GameContext::objectFactory()
+	ObjectManager& GameContext::objectManager()
 	{
-		return ObjectFactory::inst();
+		return ObjectManager::inst();
 	}
 
 	entt::registry& GameContext::registry()

@@ -6,7 +6,8 @@
 #include "game/ecs/system_utils.h"
 
 #include "game/scene/game_scene.h"
-#include "game/scene/object_factory.h"
+#include "game/scene/object_manager.h"
+#include "game/scene/story_manager.h"
 
 #include "game/ui/form_loading.h"
 #include "game/ui/form_start.h"
@@ -56,13 +57,21 @@ namespace game
     
 	void GameLogic::loadResource()
 	{
-        ObjectFactory::inst().init(&_context);
+        ObjectManager::inst().init(&_context);
+        StoryManager::inst().init(&_context);
 
         auto textdir = _context.resPath() / "localized/CHS/";
         auto res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
         if (!res) 
         {
             LogError("load translator file ({}) failed.", textdir.string());
+        }
+
+        auto storydir = _context.resPath() / "data/story/";
+        res = StoryManager::inst().load(storydir);
+        if (!res)
+        {
+            LogError("load story config: {} failed.", storydir.string());
         }
 
 	    auto sceneCfg = _context.resPath() / "scenes/scenes.json";
@@ -94,42 +103,42 @@ namespace game
         }
 
         auto roleCfgs =_context.resPath() / "data/role/";
-        res = ObjectFactory::inst().loadRoles(roleCfgs);
+        res = ObjectManager::inst().loadRoles(roleCfgs);
         if (!res) 
         {
             LogError("load role config: {} failed.", roleCfgs.string());
         }
 /*
         auto enemyCfgs = _context.resPath() / "data/role/";
-        res = ObjectFactory::inst().loadEnemies(enemyCfgs);
+        res = ObjectManager::inst().loadEnemies(enemyCfgs);
         if (!res) 
         {
             LogError("load enemy config: {} failed.", enemyCfgs.string());
         }
 */
         auto otherCfgs = _context.resPath() / "data/other/";
-        res = ObjectFactory::inst().loadOther(otherCfgs);
+        res = ObjectManager::inst().loadOther(otherCfgs);
         if (!res) 
         {
             LogError("load other config: {} failed.", otherCfgs.string());
         }
 
         auto itemCfgs =_context.resPath() / "data/item/";
-        res = ObjectFactory::inst().loadItems(itemCfgs);
+        res = ObjectManager::inst().loadItems(itemCfgs);
         if (!res) 
         {
             LogError("load item config: {} failed.", itemCfgs.string());
         }
 
         auto skilldir =_context.resPath() / "data/skill/";
-        res = ObjectFactory::inst().loadSkills(skilldir);
+        res = ObjectManager::inst().loadSkills(skilldir);
         if (!res) 
         {
             LogError("load skill config: {} failed.", skilldir.string());
         }
 
         auto buffdir =_context.resPath() / "data/buff/";
-        res = ObjectFactory::inst().loadBuffs(buffdir);
+        res = ObjectManager::inst().loadBuffs(buffdir);
         if (!res) 
         {
             LogError("load buff config: {} failed.", buffdir.string());
@@ -408,7 +417,14 @@ namespace game
 
     void GameLogic::onDebugReloadResource()
     {
-        ObjectFactory::inst().reloadAll();
+        ObjectManager::inst().reloadAll();
+
+        auto storydir = _context.resPath() / "data/story/";
+        auto res = StoryManager::inst().load(storydir);
+        if (!res)
+        {
+            LogError("load story config: {} failed.", storydir.string());
+        }
     }
 
     void GameLogic::closeAllForms()

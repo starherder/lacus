@@ -1,4 +1,4 @@
-ï»¿#include "game_scene.h"
+#include "game_scene.h"
 #include "game/game_config.h"
 #include "game/scene/scene_config.h"
 #include "game/logic/game_play_tile_battle.h"
@@ -22,12 +22,11 @@ GameScene::GameScene(GameContext& context)
 
     _context.dispatcher().sink<EvtRoleCrossGrid>().connect<&GameScene::onRoleCrossGrid>(this);
     _context.dispatcher().sink<EvtRoleDestroyed>().connect<&GameScene::onRoleDestroyed>(this);
-
     _context.dispatcher().sink<EvtMotionStop>().connect<&GameScene::onRoleMotionStop>(this);
 
     _context.eventDispatcher().onMouseMotion.connect(this, &GameScene::onMouseMotion, -1);
 
-    // é»˜è®¤ç©æ³•
+    // Ä¬ÈÏÍæ·¨
     _gamePlay = std::make_unique<GamePlayTileBattle>(_context);
     _context.setGamePlay(_gamePlay.get());
 }
@@ -400,26 +399,26 @@ void GameScene::initQuadTree()
 
 void GameScene::initPathFind()
 {
-    // é€šç”¨å¯»è·¯
+    // Í¨ÓÃÑ°Â·
     _context.pathFinder().clear();
     _context.pathFinder().setWorldSize(_tileMap.mapSize());
     _context.pathFinder().setHeuristic(AStar::Heuristic::euclidean);
     _context.pathFinder().setDiagonalMovement(false);
 
-    // é™†åœ°å¯»è·¯
+    // Â½µØÑ°Â·
     _context.landPathFinder().clear();
     _context.landPathFinder().setWorldSize(_tileMap.mapSize());
     _context.landPathFinder().setHeuristic(AStar::Heuristic::euclidean);
     _context.landPathFinder().setDiagonalMovement(false);
 
-    // éšœç¢ç‰©
+    // ÕÏ°­Îï
     for(auto& grid : _tileMap.collisionPoints()) 
     {
         _context.pathFinder().addCollision(grid);
         _context.landPathFinder().addCollision(grid);
     }
 
-    // é™†åœ°å¯»è·¯ï¼Œæ°´é¢ä¹Ÿæ˜¯éšœç¢ç‰©
+    // Â½µØÑ°Â·£¬Ë®ÃæÒ²ÊÇÕÏ°­Îï
     for (auto& grid : _tileMap.waterPoints())
     {
         _context.landPathFinder().addCollision(grid);
@@ -482,7 +481,7 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
 
 entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side)
 {
-    auto ent = ObjectFactory::inst().createObject(cfgid);
+    auto ent = ObjectManager::inst().createObject(cfgid);
     if(ent==entt::null) 
     {
         return ent;

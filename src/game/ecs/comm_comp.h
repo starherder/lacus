@@ -215,6 +215,14 @@ namespace game
         int lifetime = 3000;                 // 剩余毫秒
     };
 
+    struct CompStoryPlayer
+    {
+        std::string story_name;
+        std::map<std::string, entt::entity> actors;
+        size_t dialogue_index = 0;
+        int dialogue_ticks = 0;
+    };
+
     struct CompRolePick 
     {
         float range = 100.0f;

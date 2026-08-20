@@ -1,4 +1,4 @@
-﻿#include "object_factory.h"
+#include "object_manager.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -14,7 +14,7 @@
 namespace game 
 {
 
-	void ObjectFactory::init(GameContext* context)
+	void ObjectManager::init(GameContext* context)
 	{
 		_context = context;
 
@@ -29,7 +29,7 @@ namespace game
 		_jsonBuffCfgs.clear();
 	}
 
-	void ObjectFactory::reloadAll()
+	void ObjectManager::reloadAll()
 	{
 		init(_context);
 
@@ -46,7 +46,7 @@ namespace game
 		loadItems(_itemPath);
 	}
 
-	bool ObjectFactory::loadBuffs(const fs::path& buffdir)
+	bool ObjectManager::loadBuffs(const fs::path& buffdir)
 	{
 		assert(_context);
 
@@ -64,7 +64,7 @@ namespace game
 		return true;
 	}
 
-	bool ObjectFactory::loadSkills(const fs::path& skilldir)
+	bool ObjectManager::loadSkills(const fs::path& skilldir)
 	{
 		assert(_context);
 
@@ -82,7 +82,7 @@ namespace game
 		return true;
 	}
 
-	bool ObjectFactory::loadEnemies(const fs::path& cfgdir)
+	bool ObjectManager::loadEnemies(const fs::path& cfgdir)
 	{
 		assert(_context);
 
@@ -104,7 +104,7 @@ namespace game
 		return true;
 	}
 
-	bool ObjectFactory::loadOther(const fs::path& cfgdir)
+	bool ObjectManager::loadOther(const fs::path& cfgdir)
 	{
 		assert(_context);
 
@@ -125,7 +125,7 @@ namespace game
 
 		return true;
 	}
-	bool ObjectFactory::loadRoles(const fs::path& cfgdir)
+	bool ObjectManager::loadRoles(const fs::path& cfgdir)
 	{
 		assert(_context);
 
@@ -146,7 +146,7 @@ namespace game
 
 		return true;
 	}
-	bool ObjectFactory::loadItems(const fs::path& cfgdir)
+	bool ObjectManager::loadItems(const fs::path& cfgdir)
 	{
 		assert(_context);
 
@@ -164,7 +164,7 @@ namespace game
 		return true;
 	}
 	
-	std::string ObjectFactory::loadObjectCfg(const fs::path& cfgfile)
+	std::string ObjectManager::loadObjectCfg(const fs::path& cfgfile)
 	{
 		assert(_context);
 
@@ -197,7 +197,7 @@ namespace game
 		return cfgid;
 	}
 
-	std::string ObjectFactory::loadSkillCfg(const fs::path& cfgfile)
+	std::string ObjectManager::loadSkillCfg(const fs::path& cfgfile)
 	{
 		assert(_context);
 		auto jsonptr = std::make_shared<nlohmann::json>();
@@ -230,7 +230,7 @@ namespace game
 		return cfgid;
 	}
 
-	std::string ObjectFactory::loadBuffCfg(const fs::path& cfgfile)
+	std::string ObjectManager::loadBuffCfg(const fs::path& cfgfile)
 	{
 		assert(_context);
 
@@ -264,7 +264,7 @@ namespace game
 		return cfgid;
 	}
 
-	entt::entity ObjectFactory::createObject(const std::string& cfgid)
+	entt::entity ObjectManager::createObject(const std::string& cfgid)
 	{
 		assert(_context);
 
@@ -300,7 +300,7 @@ namespace game
 		return entt::null;
 	}
 
-	entt::entity ObjectFactory::createObject(const nJson& json)
+	entt::entity ObjectManager::createObject(const nJson& json)
 	{
 		assert(_context);
 
@@ -365,7 +365,7 @@ namespace game
 		return object;
 	}
 
-	entt::entity ObjectFactory::createSpawner(const nJson& json)
+	entt::entity ObjectManager::createSpawner(const nJson& json)
 	{
 		assert(_context);
 
@@ -393,7 +393,7 @@ namespace game
 		return object;
 	}
 
-	entt::entity ObjectFactory::createRole(const nJson& json)
+	entt::entity ObjectManager::createRole(const nJson& json)
 	{
 		auto role = createObject(json);
 		if(role == entt::null) 
@@ -531,11 +531,11 @@ namespace game
 		return role;
 	}
 
-	entt::entity ObjectFactory::createBuff(entt::entity owner, const std::string& cfgid)
+	entt::entity ObjectManager::createBuff(entt::entity owner, const std::string& cfgid)
 	{
 		if (!_context)
 		{
-			LogError("ObjectFactory need Load first.");
+			LogError("ObjectManager need Load first.");
 			return entt::null;
 		}
 
@@ -594,7 +594,7 @@ namespace game
 		return buff;
 	}
 
-	entt::entity ObjectFactory::createSkill(entt::entity owner, const std::string& cfgid)
+	entt::entity ObjectManager::createSkill(entt::entity owner, const std::string& cfgid)
 	{
 		assert(_context);
 
@@ -739,7 +739,7 @@ namespace game
 		return skill;
 	}
 
-	particle::ParticlePtr ObjectFactory::createParticleOnObject(entt::entity owner, const std::string& particle)
+	particle::ParticlePtr ObjectManager::createParticleOnObject(entt::entity owner, const std::string& particle)
 	{
 		assert(_context);
 
@@ -757,7 +757,7 @@ namespace game
 		return nullptr;
 	}
 
-	entt::entity ObjectFactory::createProjectile(const Vec2& source, const Vec2& target, const CompProjectileCfg& cfg)
+	entt::entity ObjectManager::createProjectile(const Vec2& source, const Vec2& target, const CompProjectileCfg& cfg)
 	{
 		assert(_context);
 
@@ -791,7 +791,7 @@ namespace game
 		return bullet;
 	}
 
-	entt::entity ObjectFactory::createTrap(const Vec2& target, float range, const Color& color, 
+	entt::entity ObjectManager::createTrap(const Vec2& target, float range, const Color& color, 
 										const std::string& texture, const std::string& particle, ShapeType shape_type)
 	{
 		assert(_context);
@@ -828,7 +828,7 @@ namespace game
 		return trap;
 	}
 
-	void ObjectFactory::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)
+	void ObjectManager::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)
 	{
 		assert(_context);
 
@@ -865,14 +865,14 @@ namespace game
 		_context->registry().emplace<CompSkyEffect>(sky, compSky);
 	}
 
-	void ObjectFactory::destroyObject(entt::entity entityid)
+	void ObjectManager::destroyObject(entt::entity entityid)
 	{
 		assert(_context);
 
 		_context->registry().destroy(entityid);
 	}
 
-	std::optional<utility::Var> ObjectFactory::jsonToVar(const nlohmann::json& value)
+	std::optional<utility::Var> ObjectManager::jsonToVar(const nlohmann::json& value)
 	{
 		try {
 			if (value.is_null()) {
@@ -908,13 +908,13 @@ namespace game
 		return std::nullopt;
 	}
 	
-	bool ObjectFactory::findObjectCfg(const std::string& cfgid)
+	bool ObjectManager::findObjectCfg(const std::string& cfgid)
 	{
 		auto it = _jsonObjectCfgs.find(cfgid);
 		return it != _jsonObjectCfgs.end();
 	}
 
-	const Properties& ObjectFactory::getObjectCfgProperties(const std::string& cfgid)
+	const Properties& ObjectManager::getObjectCfgProperties(const std::string& cfgid)
 	{
 		static Properties props;
 		props.clear();

@@ -32,15 +32,13 @@ namespace bevtree
         using Ptr = std::shared_ptr<BehaviorTree>;
 
         BehaviorTree(const std::string& name) : _name(name) { }
-
         ~BehaviorTree() {}
 
-        bool load(const XmlNode* root) override;
-
         const std::string& name() const { return _name; }
-        std::string& name() { return _name; }
 
         BevNode* getNode(const std::string& name);
+
+        bool load(const XmlNode* root) override;
 
     private:
         BevNodePtr loadNode(const XmlNode* node, BevNodePtr parent);

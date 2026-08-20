@@ -5,7 +5,6 @@
 	},
 
 	"display": {
-		"chess_size": "64,64",
 		"chess_corner": 5.0,
 
 		"chess_dead_ground_color": "#808080FF",

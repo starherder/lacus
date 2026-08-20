@@ -1,9 +1,9 @@
-﻿#include "form_main.h"
+#include "form_main.h"
 #include "form_scenes.h"
 #include "form_config.h"
 #include "form_start.h"
 
-#include "game/scene/object_factory.h"
+#include "game/scene/object_manager.h"
 #include "game/scene/game_camera.h"
 #include "game/scene/game_scene.h"
 #include "game/ui/form_scenes.h"
@@ -34,7 +34,7 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
 
 #if 0
-    auto& roleCfgs = _context.objectFactory().getAllRoleCfgIds();
+    auto& roleCfgs = _context.objectManager().getAllRoleCfgIds();
     for (auto& cfgid : roleCfgs)
     {
         _context.dataCenter().addHandCard(cfgid);
@@ -44,7 +44,7 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     auto& handCards = _context.dataCenter().getHandCards();
     for(auto& cfg : handCards)
     {
-        auto& props = _context.objectFactory().getObjectCfgProperties(cfg);
+        auto& props = _context.objectManager().getObjectCfgProperties(cfg);
         _cardGroup->addCard(props);
     }
 }

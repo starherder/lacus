@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "game/scene/game_context.h"
 #include "game/ecs/comm_comp.h"
@@ -9,16 +9,16 @@
 namespace game 
 {
 
-	class ObjectFactory final : public utility::ISingleton<ObjectFactory>
+	class ObjectManager final : public utility::ISingleton<ObjectManager>
 	{
 		using ConfigJsonMap = std::map<std::string, JsonPtr>;
 
 	public:
-		ObjectFactory() = default;
-		~ObjectFactory() = default;
+		ObjectManager() = default;
+		~ObjectManager() = default;
 
-		ObjectFactory(ObjectFactory&&) = delete;
-		ObjectFactory(const ObjectFactory&) = delete;
+		ObjectManager(ObjectManager&&) = delete;
+		ObjectManager(const ObjectManager&) = delete;
 
 		void init(GameContext* context);
 		void reloadAll();

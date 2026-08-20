@@ -1,4 +1,4 @@
-﻿#include "imform_debug.h"
+#include "imform_debug.h"
 #include "spdlog/spdlog.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/game_context.h"
@@ -15,6 +15,7 @@
 #include "game/logic/game_play_auto_chess.h"
 #include "game/logic_config.h"
 #include "game/ecs/comm_event.h"
+#include "game/scene/story_manager.h"
 
 
 namespace game 
@@ -143,6 +144,12 @@ void ImFormDebug::draw()
 
         ImGui::SameLine(0, 20);
 
+        if (ImGui::Button("story")) {
+            _showStoryWindow = !_showStoryWindow;
+        }
+
+        ImGui::SameLine(0, 20);
+
         if (ImGui::Button("reload resource"))
         {
             on_reload_res.emit();
@@ -176,7 +183,7 @@ void ImFormDebug::draw()
         ImGui::SameLine();
 
         static int select_obj_index = 0;
-        const auto& cfgs = ObjectFactory::inst().getAllObjectCfgIds();
+        const auto& cfgs = ObjectManager::inst().getAllObjectCfgIds();
         _selectCfgId = cfgs[select_obj_index];
 
         ImGui::SetNextItemWidth(150);
@@ -286,6 +293,11 @@ void ImFormDebug::draw()
     {
         drawCameraWindow();
     }
+
+    if (_showStoryWindow)
+    {
+        drawStoryWindow();
+    }
 }
 
 void ImFormDebug::drawSceneInfo()
@@ -303,6 +315,154 @@ void ImFormDebug::drawSceneInfo()
         
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "grid: {%d, %d}", _curGridInfo.grid.x, _curGridInfo.grid.y);
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "objs: %lu", _curGridInfo.objs.size());
+}
+
+void ImFormDebug::drawStoryWindow()
+{
+    ImGui::Begin("story", &_showStoryWindow);
+
+    const auto& stories = StoryManager::inst().getStories();
+    if (stories.empty())
+    {
+        ImGui::Text("no story");
+        ImGui::End();
+        return;
+    }
+
+    std::vector<const StoryConfig*> storyList;
+    storyList.reserve(stories.size());
+    for (const auto& [name, story] : stories)
+    {
+        storyList.push_back(&story);
+    }
+
+    static int selectStoryIndex = 0;
+    if (selectStoryIndex >= storyList.size())
+    {
+        selectStoryIndex = 0;
+    }
+
+    const StoryConfig* story = storyList[selectStoryIndex];
+    ImGui::SetNextItemWidth(220);
+    if (ImGui::BeginCombo("story##story_select", story->name.c_str()))
+    {
+        for (int i = 0; i < storyList.size(); i++)
+        {
+            bool selected = (selectStoryIndex == i);
+            if (ImGui::Selectable(storyList[i]->name.c_str(), selected))
+            {
+                selectStoryIndex = i;
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    story = storyList[selectStoryIndex];
+    ImGui::Text("desc: %s", story->desc.c_str());
+
+    std::vector<std::string> storyActors;
+    for (const auto& dialogue : story->dialogue)
+    {
+        if (std::find(storyActors.begin(), storyActors.end(), dialogue.actor) == storyActors.end())
+        {
+            storyActors.push_back(dialogue.actor);
+        }
+    }
+
+    struct DebugStoryActor
+    {
+        std::string name;
+        entt::entity entity = entt::null;
+    };
+
+    std::vector<DebugStoryActor> sceneActors;
+    auto view = _context->registry().view<CompNameId, CompComm>();
+    for (auto ent : view)
+    {
+        const auto& comm = view.get<CompComm>(ent);
+        if (comm.type != ObjectType::Npc)
+        {
+            continue;
+        }
+
+        const auto& name = view.get<CompNameId>(ent);
+        std::string actorName = name.name.empty() ? name.cfg_id : name.name;
+        if (actorName.empty())
+        {
+            actorName = std::format("entity_{}", entt::to_integral(ent));
+        }
+        sceneActors.push_back({ actorName, ent });
+    }
+
+    static std::string selectedStoryName;
+    static std::map<std::string, entt::entity> selectedActors;
+    if (selectedStoryName != story->name)
+    {
+        selectedStoryName = story->name;
+        selectedActors.clear();
+    }
+
+    std::map<std::string, entt::entity> params;
+    for (const auto& actor : storyActors)
+    {
+        if (!selectedActors.contains(actor) && !sceneActors.empty())
+        {
+            selectedActors[actor] = sceneActors.front().entity;
+        }
+
+        entt::entity selected = selectedActors.contains(actor) ? selectedActors[actor] : entt::null;
+        std::string preview = "none";
+        for (const auto& sceneActor : sceneActors)
+        {
+            if (sceneActor.entity == selected)
+            {
+                preview = sceneActor.name;
+                break;
+            }
+        }
+
+        ImGui::SetNextItemWidth(220);
+        auto label = actor + "##story_actor";
+        if (ImGui::BeginCombo(label.c_str(), preview.c_str()))
+        {
+            for (const auto& sceneActor : sceneActors)
+            {
+                bool isSelected = (sceneActor.entity == selected);
+                if (ImGui::Selectable(sceneActor.name.c_str(), isSelected))
+                {
+                    selectedActors[actor] = sceneActor.entity;
+                    _context->dispatcher().trigger(EvtObjectSelection{ sceneActor.entity });
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        if (selectedActors.contains(actor) && _context->registry().valid(selectedActors[actor]))
+        {
+            params[actor] = selectedActors[actor];
+        }
+    }
+
+    bool canStart = (params.size() == storyActors.size());
+    if (!canStart)
+    {
+        ImGui::TextColored(ImVec4(1, 0, 0, 1), "select all story actors first.");
+    }
+
+    if (!canStart)
+    {
+        ImGui::BeginDisabled();
+    }
+    if (ImGui::Button("start"))
+    {
+        _context->dispatcher().trigger(EvtStartStory{ story->name, params });
+    }
+    if (!canStart)
+    {
+        ImGui::EndDisabled();
+    }
+
+    ImGui::End();
 }
     
 void ImFormDebug::drawSelectEntityProps()
@@ -373,7 +533,7 @@ void ImFormDebug::roleExecSkill(entt::entity skill)
     auto& compName = _context->registry().get<CompNameId>(skill);
     auto& compSkill = _context->registry().get<CompSkillComm>(skill);
 
-    // 不需要目标
+    // ����ҪĿ��
     if (compSkill.type == SkillType::Other)
     {
         LogInfo("skill ({}) need NO enmey.", compName.cfg_id);
@@ -382,7 +542,7 @@ void ImFormDebug::roleExecSkill(entt::entity skill)
         return;
     }
 
-    // 需要目标，寻找目标
+    // ��ҪĿ�꣬Ѱ��Ŀ��
     auto dis = compSkill.distance;
     auto& objects = _context->scene().getObjectsInCircle(rolePos, dis);
     for (auto& [dis, target] : objects) 
@@ -467,7 +627,7 @@ void ImFormDebug::drawSkyWindow()
         Color c = { color.x, color.y, color.z, color.w };
         std::string particle = _particleNames[selectindex];
 
-        _context->objectFactory().createSkyEffect(SkyEffect::Dark, c, last, fadein, fadeout);
+        _context->objectManager().createSkyEffect(SkyEffect::Dark, c, last, fadein, fadeout);
     }
 
     ImGui::End();

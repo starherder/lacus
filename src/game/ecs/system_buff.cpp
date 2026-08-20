@@ -61,7 +61,7 @@ namespace game
 
 	void BuffSystem::onAddBuffToObject(const EvtAddBuff& e)
 	{
-		auto buff = _context.objectFactory().createBuff(e.target, e.cfgid);
+		auto buff = _context.objectManager().createBuff(e.target, e.cfgid);
 		if(!_context.registry().valid(buff))
 		{
 			//LogError("add buff ({}) failed.", e.cfgid);
@@ -136,7 +136,7 @@ namespace game
 
 	void BuffSystem::onPeriodExec(entt::entity target, entt::entity buff, entt::entity source)
 	{
-		// 改造 FightSystem::onRoleUnderAttack，发消息过去处理伤害
+		// 改�?FightSystem::onRoleUnderAttack，发消息过去处理伤害
 
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 		//LogInfo("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);

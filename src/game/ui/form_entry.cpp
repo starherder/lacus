@@ -1,9 +1,9 @@
-﻿#include "form_entry.h"
+#include "form_entry.h"
 #include "form_config.h"
 #include "form_cards.h"
 
 #include "game/ui/ui_logic_events.h"
-#include "game/scene/object_factory.h"
+#include "game/scene/object_manager.h"
 #include "game/scene/game_data.h"
 
 namespace game 
@@ -130,7 +130,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 	}
 
 	auto cfgid = card->getCfgid();
-	auto found = _context.objectFactory().findObjectCfg(cfgid);
+	auto found = _context.objectManager().findObjectCfg(cfgid);
 	if (!found)
 	{
 		LogError("FormEntry::onDropCard: drop item cfg({}) NOT found.", cfgid);
@@ -150,7 +150,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 	// add to hand card group
 	if (ptr->dst_group == handCardGroup)
 	{
-		auto& props = _context.objectFactory().getObjectCfgProperties(cfgid);
+		auto& props = _context.objectManager().getObjectCfgProperties(cfgid);
 		handCardGroup->addCard(props);
 
 		_context.dataCenter().addToCardGroup(cfgid);
@@ -172,7 +172,7 @@ void FormEntry::showCardGroup()
 	auto& roleCfgs = _context.dataCenter().getCardGroup();
 	for (auto& cfg : roleCfgs)
 	{
-		auto& props = _context.objectFactory().getObjectCfgProperties(cfg);
+		auto& props = _context.objectManager().getObjectCfgProperties(cfg);
 		cardGroup->addCard(props);
 	}
 
