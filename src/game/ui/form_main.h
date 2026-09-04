@@ -26,6 +26,8 @@ namespace game {
         
         void onShowScenes(Button* btn);
 
+        void onShowConfig(Button* btn);
+
 
     private:
         ui::Button* _btnScenes = nullptr;

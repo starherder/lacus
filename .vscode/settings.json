@@ -3,11 +3,6 @@
         "iostream": "cpp",
         "*.tcc": "cpp"
     },
-    // clangd 提供语法分析，禁用 C++ 扩展的 IntelliSense 避免冲突
-    "C_Cpp.intelliSenseEngine": "disabled",
-    // 禁用 C++ 扩展的自动文档解析，减少 CPU 占用
-    "C_Cpp.autocomplete": "disabled",
-    "C_Cpp.errorSquiggles": "disabled",
     "cmake.configureOnOpen": true,
     "cmake.buildDirectory": "${workspaceFolder}/build",
     "terminal.integrated.defaultProfile.windows": "Command Prompt",

@@ -214,6 +214,8 @@ namespace ui
         auto form = getFormAtPos(pos);
         if (form && form->visible())
         {
+            _mouseLeftCaptureForm = form;
+
             //moveToTop(form->name());
             form->onMouseLeftDown(pos);
 
@@ -223,13 +225,15 @@ namespace ui
 
     void GuiManager::onMouseLeftUp(const Vec2& pos)
     {
-        auto form = getFormAtPos(pos);
+        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(pos);
         if(form && form->visible())
         {
             form->onMouseLeftUp(pos);
 
             checkEventBreak(form);
         }
+
+        _mouseLeftCaptureForm = nullptr;
 
         if (_draggingData)
         {
@@ -267,7 +271,7 @@ namespace ui
             return;
         }
 
-        auto form = getFormAtPos(pos);
+        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(pos);
         if (!form || !form->visible()) 
         {
             return;

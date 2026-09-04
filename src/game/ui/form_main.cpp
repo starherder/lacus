@@ -28,6 +28,12 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
         btnScenes->on_click.connect(this, &FormMain::onShowScenes);
     }
 
+    auto btnConfig = getWidget<Button>("btn_config");
+    if (btnConfig)
+    {
+        btnConfig->on_click.connect(this, &FormMain::onShowConfig);
+    }
+
     _cardGroup = getWidget<CardGroup>("card_group");
     assert(_cardGroup);
 
@@ -125,6 +131,11 @@ void FormMain::onLeaveScene(Button* btn)
 void FormMain::onShowScenes(Button* btn)
 {
     ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ShowScenes, {});
+}
+
+void FormMain::onShowConfig(Button* btn)
+{
+    ui::GuiManager::inst().createForm<FormConfig>("form_config", _context);
 }
 
 

@@ -1,4 +1,4 @@
-﻿#include "window.h"
+#include "window.h"
 
 namespace engine {
 
@@ -110,10 +110,18 @@ bool Window::restore() {
     return true;
 }
 
+bool Window::isFullscreen() const {
+    if (!_window) return false;
+    return (SDL_GetWindowFlags(_window) & SDL_WINDOW_FULLSCREEN) != 0;
+}
+
 bool Window::setFullscreen(bool fullscreen) {
     if (!_window) return false;
-    SDL_SetWindowFullscreen(_window, fullscreen);
-    return true;
+    return SDL_SetWindowFullscreen(_window, fullscreen);
+}
+
+bool Window::toggleFullscreen() {
+    return setFullscreen(!isFullscreen());
 }
 
 const SDL_DisplayMode* Window::getFullscreenMode() {

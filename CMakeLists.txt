@@ -15,6 +15,8 @@ if(WIN32)
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
     # 解决object_factory.cpp等文件节数超过对象文件格式限制的问题
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
+    # 解决MSVC并行编译时多个cl.exe同时写入同一个PDB导致的C1041错误
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/FS>")
 endif()
 
 # 添加IMGUI_DISABLE_WIN32_FUNCTIONS定义以解决MinGW下的_wfopen问题

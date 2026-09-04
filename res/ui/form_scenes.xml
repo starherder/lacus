@@ -38,5 +38,7 @@
           <text text="东都" pos="1050,380" font_size="30" text_color="#FFFFFFFF" />
 
         </exgroup>
+
+        <button name="btn_close" pos="20,20" size="100,50" text="关闭" text_color="#FFFFFFFF" text_font="fonts/msyh.ttf" font_size="20" />
     </group>
 </form>

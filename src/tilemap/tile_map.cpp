@@ -340,6 +340,10 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
             {
                 LogError("load texture {} failed.", imagePath.string());
             }
+            else if (!SDL_SetTextureScaleMode(tileset->texture->texture(), SDL_SCALEMODE_NEAREST))
+            {
+                LogWarn("set tileset texture scale mode to nearest failed, texture = {}", imagePath.string());
+            }
         }
     }
 

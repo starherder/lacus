@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "wrapper.h"
 
@@ -36,7 +36,9 @@ public:
     bool maximize();
     bool minimize();
     bool restore();
+    bool isFullscreen() const;
     bool setFullscreen(bool fullscreen);
+    bool toggleFullscreen();
     const SDL_DisplayMode* getFullscreenMode();
     bool setFullscreenMode(const SDL_DisplayMode* mode);
 

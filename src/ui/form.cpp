@@ -261,6 +261,7 @@ void Form::onMouseLeftDown(const Vec2& pos)
     auto widget = _hoverWidget;
     if (widget && widget->acceptEvent())
     {
+        _mouseLeftCaptureWidget = widget;
         widget->setFocused(true);
         widget->onMouseLeftDown(pos);
         _focused = true;
@@ -271,11 +272,13 @@ void Form::onMouseLeftUp(const Vec2& pos)
 {
     if (isNoEvent()) return;
 
-    auto widget = _hoverWidget;
+    auto widget = _mouseLeftCaptureWidget ? _mouseLeftCaptureWidget : _hoverWidget;
     if (widget && widget->acceptEvent())
     {
         widget->onMouseLeftUp(pos);
     }
+
+    _mouseLeftCaptureWidget = nullptr;
 }
 
 void Form::onMouseRightDown(const Vec2& pos)
@@ -306,7 +309,7 @@ void Form::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
 {
     if (isNoEvent()) return;
 
-    auto widget = _hoverWidget;
+    auto widget = _mouseLeftCaptureWidget ? _mouseLeftCaptureWidget : _hoverWidget;
     if(!widget) 
     {
         return;

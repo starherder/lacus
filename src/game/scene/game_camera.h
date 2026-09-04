@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "engine/camera.h"
 #include "engine/application.h"
@@ -33,6 +33,10 @@ private:
     void onMouseWheel(const Vec2& pos, float dir);
 
     void onWindowResize(const Vec2& sz);
+
+    void onWindowEvent(WindowEventType type, const Vec2& sz);
+
+    void syncScreenSize(const Vec2& sz);
 
     void moveCamera(const Vec2& dir);
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "wrapper.h"
 #include "tweeny/tweeny.h"
@@ -24,6 +24,15 @@ namespace engine {
 		const Vec2& getSize() const { return _size; }
 		void setSize(const Vec2& size);
 
+		const Vec2& getViewSize() const { return _size; }
+		void setViewSize(const Vec2& size) { setSize(size); }
+
+		const Vec2& getScreenSize() const { return _screenSize; }
+		void setScreenSize(const Vec2& size);
+
+		float getViewScale() const { return _viewScale; }
+		const Vec2& getViewOffset() const { return _viewOffset; }
+
 		Vec2 worldToScreen(const Vec2& pos) const;
 		Vec2 screenToWorld(const Vec2& pos) const;
 
@@ -42,8 +51,14 @@ namespace engine {
 		void shake(int duration, int frequency, int ampl);
 
 	private:
+		void updateViewTransform();
+
+	private:
 		Vec2 _pos = {0, 0};
 		Vec2 _size = {1280, 1024};
+		Vec2 _screenSize = {1280, 1024};
+		float _viewScale = 1.0f;
+		Vec2 _viewOffset = {0, 0};
 
 		bool _limitInArea = false;
 		Rect _limitArea;
@@ -52,8 +67,7 @@ namespace engine {
 
 		tweeny::tween<float, float> _cameraTween;
 
-		// 先不管缩放旋转了
-		//Vec2 _scale;
+		// 先不管旋转了
 		//float _rotate;
 	};
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "wrapper.h"
 #include "utility/signalslot.h"
@@ -10,6 +10,9 @@ class EventDispatcher
 {
 public:
 	signals::Signal<const Vec2&> onWindowResized;
+	signals::Signal<WindowEventType, const Vec2&> onWindowEvent;
+	signals::Signal<const Vec2&> onWindowEnterFullscreen;
+	signals::Signal<const Vec2&> onWindowLeaveFullscreen;
 
 	signals::Signal<const Vec2&> onMouseLeftDown;
 	signals::Signal<const Vec2&> onMouseLeftUp;

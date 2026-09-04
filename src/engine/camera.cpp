@@ -1,11 +1,13 @@
-﻿#include "camera.h"
+#include "camera.h"
 
 namespace engine {
 
     Camera::Camera(const Vec2& pos, const Vec2& size)
     { 
         _pos = pos; 
-        _size = size; 
+        _size = size;
+        _screenSize = size;
+        updateViewTransform();
 
         _limitInArea = false;
         _limitArea = Rect{_pos, _size};
@@ -35,6 +37,30 @@ namespace engine {
         }
 
         _size = size;
+        updateViewTransform();
+    }
+
+    void Camera::setScreenSize(const Vec2& size)
+    {
+        _screenSize = size;
+        updateViewTransform();
+    }
+
+    void Camera::updateViewTransform()
+    {
+        if (_size.x <= 0.0f || _size.y <= 0.0f || _screenSize.x <= 0.0f || _screenSize.y <= 0.0f)
+        {
+            _viewScale = 1.0f;
+            _viewOffset = {0, 0};
+            return;
+        }
+
+        auto scaleX = _screenSize.x / _size.x;
+        auto scaleY = _screenSize.y / _size.y;
+        _viewScale = std::min(scaleX, scaleY);
+
+        auto displaySize = _size * _viewScale;
+        _viewOffset = (_screenSize - displaySize) * 0.5f;
     }
 
     void Camera::setLimitArea(bool limit, const Rect& area)
@@ -47,12 +73,12 @@ namespace engine {
 
     Vec2 Camera::worldToScreen(const Vec2& pos) const 
     { 
-        return pos - _pos; 
+        return (pos - _pos) * _viewScale + _viewOffset; 
     }
 
     Vec2 Camera::screenToWorld(const Vec2& pos) const 
     { 
-        return pos + _pos; 
+        return (pos - _viewOffset) / _viewScale + _pos; 
     }
 
     void Camera::update(float delta) 
@@ -87,7 +113,7 @@ namespace engine {
 
     Rect Camera::projectRect(const Rect& rect) const
     {
-        auto sz = rect.size();
+        auto sz = rect.size() * _viewScale;
         auto pos = worldToScreen(rect.pos());
         return {pos, sz};
     }

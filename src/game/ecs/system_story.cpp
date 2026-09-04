@@ -14,7 +14,7 @@ namespace game
 
 	StorySystem::~StorySystem()
 	{
-		_context.dispatcher().sink<EvtStartStory>().disconnect<&StorySystem::onStartStory>(this);
+		//_context.dispatcher().sink<EvtStartStory>().disconnect<&StorySystem::onStartStory>(this);
 	}
 
 	void StorySystem::update(float delta)

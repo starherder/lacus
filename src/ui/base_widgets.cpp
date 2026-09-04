@@ -305,7 +305,7 @@ namespace ui
 
     bool CheckBox::onLoad(XmlNode* node)
     {
-        if (!Button::load(node)) {
+        if (!Button::onLoad(node)) {
             return false;
         }
 

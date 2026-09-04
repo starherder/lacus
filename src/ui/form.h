@@ -107,6 +107,7 @@ private:
 
     std::unique_ptr<BackGroup> _rootGroup = nullptr;
     Widget* _hoverWidget = nullptr;
+    Widget* _mouseLeftCaptureWidget = nullptr;
 };
 
 

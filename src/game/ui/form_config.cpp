@@ -35,6 +35,15 @@ namespace game
                 _context.audioPlayer().setMusicVolume(bar->value() / 100.0f);
             });
         }
+
+        auto check_fullscreen = getWidget<ui::CheckBox>("check_fullscreen");
+        if (check_fullscreen)
+        {
+            check_fullscreen->setChecked(_context.window().isFullscreen());
+            check_fullscreen->on_check_changed.connect([this](ui::CheckBox* check) {
+                _context.window().setFullscreen(check->checked());
+            });
+        }
     }
 
     FormConfig::~FormConfig()

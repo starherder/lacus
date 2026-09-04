@@ -106,6 +106,7 @@ private:
     engine::Application* _app;
 
     Widget* _hoverWidget = nullptr;
+    Form* _mouseLeftCaptureForm = nullptr;
 
     DraggingPtr _draggingData = nullptr;
 

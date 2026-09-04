@@ -21,6 +21,14 @@
                 <slider name="slider_music" size="500,0" value="0" max_value="100" ground_color="#AAAAFFFF" border_color="#555555FF" border_size="1"/>
                 <widget />
             </hlayout>
+
+            <hlayout name="hlay_fullscreen" size="0,30" border_size="1">
+                <widget />
+                <label text="显示" size="50,0" text_color="#FFFFFFFF" font_size="30" />
+                <widget size="10,0" />
+                <check name="check_fullscreen" size="120,0" text="全屏" text_color="#FFFFFFFF" font_size="25" ground_color="#AAAAFFFF" border_color="#555555FF" border_size="1" />
+                <widget />
+            </hlayout>
             
             <hlayout name="hlay_other"  border_size="1">
             </hlayout>

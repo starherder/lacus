@@ -65,7 +65,7 @@ void FormScenes::onSizeChanged()
     auto btnClose = getWidget<ui::Button>("btn_close");
     if (btnClose)
     {
-        btnClose->setPos({ size().x - 100, 50 });
+        btnClose->setPos({ 20, 20 });
     }
 
     auto btnCards = getWidget<ui::Button>("btn_cards");

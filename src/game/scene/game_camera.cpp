@@ -1,4 +1,4 @@
-﻿#include "game_camera.h"
+#include "game_camera.h"
 #include <namespaceapi.h>
 #include "imform/imform_manager.h"
 
@@ -13,9 +13,10 @@ namespace game
         assert(app && "app is null");
         _application = app;
 
-        setSize(_application->window().getSize());
+        setScreenSize(_application->window().getSize());
 
         app->eventDispatcher().onWindowResized.connect(this, &GameCamera::onWindowResize);
+        app->eventDispatcher().onWindowEvent.connect(this, &GameCamera::onWindowEvent);
         app->eventDispatcher().onKeyDown.connect(this, &GameCamera::onKeyDown);
         app->eventDispatcher().onKeyUp.connect(this, &GameCamera::onKeyUp);
         app->eventDispatcher().onMouseLeftDrag.connect(this, &GameCamera::onMouseLeftDrag);
@@ -84,7 +85,7 @@ namespace game
         //LogInfo("GameCamera::onMouseLeftDrag, pos = ({}, {}), delta = ({}, {})", 
         //    pos.x, pos.y, delta.x, delta.y);
 
-        move(-delta);
+        move(-delta / getViewScale());
     }
     
     void GameCamera::onMouseWheel(const Vec2& pos, float dir)
@@ -97,7 +98,35 @@ namespace game
 
     void GameCamera::onWindowResize(const Vec2& sz)
     {
-        setSize(sz);
+        syncScreenSize(sz);
+    }
+
+    void GameCamera::onWindowEvent(WindowEventType type, const Vec2& sz)
+    {
+        switch (type)
+        {
+        case WindowEventType::PixelSizeChanged:
+        case WindowEventType::Maximized:
+        case WindowEventType::Restored:
+        case WindowEventType::EnterFullscreen:
+        case WindowEventType::LeaveFullscreen:
+        {
+            syncScreenSize(sz);
+        }break;
+        default:
+        {
+        }break;
+        }
+    }
+
+    void GameCamera::syncScreenSize(const Vec2& sz)
+    {
+        auto screenSize = sz;
+        if ((screenSize.x <= 0.0f || screenSize.y <= 0.0f) && _application)
+        {
+            screenSize = _application->window().getSize();
+        }
+        setScreenSize(screenSize);
     }
 
     void GameCamera::onUpdate(float deltaTime)

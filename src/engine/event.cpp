@@ -1,4 +1,4 @@
-﻿#include "event.h"
+#include "event.h"
 
 #include "magic_enum/magic_enum.h"
 
@@ -46,7 +46,36 @@ void EventDispatcher::run()
 		{
 		case SDL_EVENT_WINDOW_RESIZED:
 		{
-			onWindowResized({e.window.data1, e.window.data2});
+			Vec2 size{e.window.data1, e.window.data2};
+			onWindowResized(size);
+			onWindowEvent(WindowEventType::Resized, size);
+		}break;
+		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+		{
+			Vec2 size{e.window.data1, e.window.data2};
+			onWindowEvent(WindowEventType::PixelSizeChanged, size);
+		}break;
+		case SDL_EVENT_WINDOW_MAXIMIZED:
+		{
+			Vec2 size{e.window.data1, e.window.data2};
+			onWindowEvent(WindowEventType::Maximized, size);
+		}break;
+		case SDL_EVENT_WINDOW_RESTORED:
+		{
+			Vec2 size{e.window.data1, e.window.data2};
+			onWindowEvent(WindowEventType::Restored, size);
+		}break;
+		case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
+		{
+			Vec2 size{e.window.data1, e.window.data2};
+			onWindowEnterFullscreen(size);
+			onWindowEvent(WindowEventType::EnterFullscreen, size);
+		}break;
+		case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
+		{
+			Vec2 size{e.window.data1, e.window.data2};
+			onWindowLeaveFullscreen(size);
+			onWindowEvent(WindowEventType::LeaveFullscreen, size);
 		}break;
 		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		{
