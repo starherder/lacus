@@ -84,8 +84,8 @@ namespace game {
         GameData& dataCenter() { return _gameData; }
         entt::registry& registry() { return _registry;  }
 
+        entt::entity createMapObject(const tilemap::MapObject& mapObj);
         entt::entity createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side);
-        entt::entity createObjectInScene(const tilemap::MapObject& mapObj);
         
         void destroyObject(entt::entity id);
 

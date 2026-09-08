@@ -437,7 +437,7 @@ void GameScene::loadObjects()
     {
         for (auto& [id, obj] : layer->objects) 
         {
-            createObjectInScene(obj);
+            createMapObject(obj);
         }
     }
 }
@@ -474,7 +474,7 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
     return entt::null;
 }
 
-entt::entity GameScene::createObjectInScene(const tilemap::MapObject& mapObj)
+entt::entity GameScene::createMapObject(const tilemap::MapObject& mapObj)
 {
     auto optSide = _tileMap.getObjectProperty<int>(mapObj.id, "side");
     auto side = optSide ? (CampSide)optSide.value() : CampSide::None;
@@ -484,6 +484,8 @@ entt::entity GameScene::createObjectInScene(const tilemap::MapObject& mapObj)
     {
         return ent;
     }
+
+    return ent;
     
 /*
     auto meetEvent = _tileMap.getObjectProperty<std::string>(mapObj.id, "meet_role");
