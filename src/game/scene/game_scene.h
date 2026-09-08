@@ -85,6 +85,8 @@ namespace game {
         entt::registry& registry() { return _registry;  }
 
         entt::entity createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side);
+        entt::entity createObjectInScene(const tilemap::MapObject& mapObj);
+        
         void destroyObject(entt::entity id);
 
         void addObjectToScene(entt::entity id);
@@ -148,7 +150,6 @@ namespace game {
 
         entt::entity _hoverEntity = entt::null;
 
-        // 场景对象：在场景中有位置、碰撞、会加入到四叉树中的对象
         std::set<entt::entity> _sceneObjects;
 
         QuadTreePtr _quadtree = nullptr;

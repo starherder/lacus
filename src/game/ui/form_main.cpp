@@ -102,7 +102,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     auto pComm = _context.registry().try_get<CompComm>(ent);
     if (pComm)
     {
-        pComm->rank = (ArmRank)card->getData<int>("rank");
+        pComm->rank = (RoleRank)card->getData<int>("rank");
     }
 
     _context.dataCenter().removeHandCard(cfgid);

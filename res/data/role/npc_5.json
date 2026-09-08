@@ -4,6 +4,24 @@
   "type": "npc",
   "desc": "text_npc_desc_5",
   "icon":"role:5-0",
+  "profession":"warrior",
+
+  "role_event": {
+    "dead" : "none",
+    "born" : "none",
+    "meet" : [
+      {
+        "target": "npc_1",
+        "range" : 100,
+        "event" : "start_story",
+        "param" : {
+          "story":"npc_5_meet_npc_1",
+          "role_1":"self",
+          "role_2":"target"
+        }
+      }
+    ]
+  },
 
   "motion": {
     "speed": 150,

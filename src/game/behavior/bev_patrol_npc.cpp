@@ -302,8 +302,8 @@ namespace game {
 		}
 
 		_pickOK = false;
-		_context->dispatcher().sink< EvtRolePickItemStart>().connect<&BevNode_PickItem::onRolePickItemStart>(this);
-		_context->dispatcher().sink< EvtRoleCrossGrid>().connect<&BevNode_PickItem::onRoleEnterGrid>(this);
+		_context->dispatcher().sink<EvtRolePickItemStart>().connect<&BevNode_PickItem::onRolePickItemStart>(this);
+		_context->dispatcher().sink<EvtRoleCrossGrid>().connect<&BevNode_PickItem::onRoleEnterGrid>(this);
 	}
 
 	void BevNode_PickItem::terminate(Status s)

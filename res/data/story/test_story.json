@@ -22,5 +22,17 @@
             {"actor":"one", "emotion":"love" },
             {"actor":"one", "emotion":"love", "word":"word_12" }
         ]
+    },
+    {
+        "name":"npc_5_meet_npc_1",
+        "desc": "npc_0 meet npc_1 in scene.",
+        "camera_follow" : "true",
+        "game_pause":"true",
+        "dialogue":[
+            {"actor":"role_1", "word":"word_test_1"},
+            {"actor":"role_2", "word":"word_test_2"},
+            {"actor":"role_1", "word":"word_test_3"},
+            {"actor":"role_2", "word":"word_test_4", "emotion":"love" }
+        ]
     }
 ]

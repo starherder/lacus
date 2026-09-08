@@ -76,3 +76,8 @@ word_2=那就来吧，宝贝。
 word_10=首先你得这么这么着
 word_11=然后你再这么这么干
 word_12=最后你就那么那么着了
+
+word_test_1=啊，是你
+word_test_2=没错，是我
+word_test_3=你到底是谁？
+word_test_4=我就是我！

@@ -94,10 +94,18 @@ namespace game
             .to(nextPos.x, nextPos.y)
             .during(ticks)
             .via(tweenMode.c_str())
-            .onStep([entid, this](auto& t, float x, float y)
+            .onStep([entid, this, curGrid, nextGrid, nextPos](auto& t, float x, float y)
         {
             if (t.isFinished()) 
             {
+                _context.scene().setObjectPos(entid, nextPos);
+
+                EvtRoleCrossGrid e;
+                e.actor = entid;
+                e.cur_grid = curGrid;
+                e.lst_grid = nextGrid;
+                _context.dispatcher().trigger(e);
+
                 onMotionStop(entid);
                 return true;
             }

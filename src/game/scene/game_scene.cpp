@@ -4,6 +4,8 @@
 #include "game/logic/game_play_tile_battle.h"
 #include "game/logic/game_play_auto_chess.h"
 
+#include <algorithm>
+
 #ifdef _DevelopMode
 #include "game/ui/imform_debug.h"
 #endif
@@ -26,7 +28,7 @@ GameScene::GameScene(GameContext& context)
 
     _context.eventDispatcher().onMouseMotion.connect(this, &GameScene::onMouseMotion, -1);
 
-    // 默认玩法
+    // default gameplay is BOT
     _gamePlay = std::make_unique<GamePlayTileBattle>(_context);
     _context.setGamePlay(_gamePlay.get());
 }
@@ -399,26 +401,22 @@ void GameScene::initQuadTree()
 
 void GameScene::initPathFind()
 {
-    // 通用寻路
     _context.pathFinder().clear();
     _context.pathFinder().setWorldSize(_tileMap.mapSize());
     _context.pathFinder().setHeuristic(AStar::Heuristic::euclidean);
     _context.pathFinder().setDiagonalMovement(false);
 
-    // 陆地寻路
     _context.landPathFinder().clear();
     _context.landPathFinder().setWorldSize(_tileMap.mapSize());
     _context.landPathFinder().setHeuristic(AStar::Heuristic::euclidean);
     _context.landPathFinder().setDiagonalMovement(false);
 
-    // 障碍物
     for(auto& grid : _tileMap.collisionPoints()) 
     {
         _context.pathFinder().addCollision(grid);
         _context.landPathFinder().addCollision(grid);
     }
 
-    // 陆地寻路，水面也是障碍物
     for (auto& grid : _tileMap.waterPoints())
     {
         _context.landPathFinder().addCollision(grid);
@@ -439,10 +437,7 @@ void GameScene::loadObjects()
     {
         for (auto& [id, obj] : layer->objects) 
         {
-            auto optSide = _tileMap.getObjectProperty<int>(obj.id, "side");
-            auto side = optSide ? (CampSide)optSide.value() : CampSide::None;
-
-            createObjectInScene(obj.name, obj.pos, side);
+            createObjectInScene(obj);
         }
     }
 }
@@ -479,6 +474,29 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
     return entt::null;
 }
 
+entt::entity GameScene::createObjectInScene(const tilemap::MapObject& mapObj)
+{
+    auto optSide = _tileMap.getObjectProperty<int>(mapObj.id, "side");
+    auto side = optSide ? (CampSide)optSide.value() : CampSide::None;
+
+    auto ent = createObjectInScene(mapObj.name, mapObj.pos, side);
+    if(ent==entt::null)
+    {
+        return ent;
+    }
+    
+/*
+    auto meetEvent = _tileMap.getObjectProperty<std::string>(mapObj.id, "meet_role");
+    std::string strEventParam = meetEvent;
+
+    auto params = utility::StringUtil::split(strEventParam, "|");
+    if(!params.empty())
+    {
+        pcomm->role_meet[params[0]] = strEventParam;
+    }
+*/
+}
+
 entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side)
 {
     auto ent = ObjectManager::inst().createObject(cfgid);
@@ -510,7 +528,6 @@ entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2
     if (pcomm)
     {
         pcomm->side = side;
-
         if (pcomm->side == CampSide::Gangster)
         {
             _context.registry().emplace<CompAutoPick>(ent);
@@ -579,7 +596,6 @@ void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 
 void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
 {
-
 }
 
 void GameScene::onRoleMotionStop(const EvtMotionStop& e)

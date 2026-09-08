@@ -314,6 +314,7 @@ namespace game
 		comm.type = getNpcType(json.value("type", ""));
 		comm.desc = Trans(json.value("desc", ""));
 		comm.side = getCampSide(json.value("side", ""));
+		comm.profession = getRoleProfession(json.value("profession", ""));
 		_context->registry().emplace<CompComm>(object, comm);
 
 		CompTransform comtrans;

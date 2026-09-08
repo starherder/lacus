@@ -4,6 +4,7 @@
   "type": "npc",
   "desc": "text_npc_desc_2",
   "icon":"role:2-0",
+  "profession":"warrior",
 
   "motion": {
     "speed": 150,

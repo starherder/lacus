@@ -9,6 +9,7 @@
 #include "tweeny/tweeny.h"
 #include "particle/particle_manager.h"
 #include "bevtree/bevtree.h"
+#include <array>
 
 namespace engine
 {
@@ -36,20 +37,21 @@ namespace game
         Civilian,
     };
 
-    enum class ArmRank {
-        Leader, // 头领
-        Soldier, // 士兵
+    // 身份
+    enum class RoleRank {
+        Chief, // 头领
+        Adviser, // 军师
+        Soilder, // 战士
     };
 
-    enum class ArmProfession
-    {
-        Commander, // 指挥
-        Adviser, // 军师
+    // 职业
+    enum class RoleProfession {
+        Warrior, // 武士
+        Shooter,// 射手
+        Wizard,// 法师
+        Knight, //骑士
+        Marine,//水兵
         Medic, // 医生
-        Rider, // 骑兵
-        Foot, // 步兵
-        Archer, // 弓箭手
-        Wizard, // 法师
         Artisan, // 技工
     };
 
@@ -113,6 +115,8 @@ namespace game
     {
         std::string dead;
         std::string born;
+
+        //std::map<std::string, std::string> role_meet;
     };
 
     struct CompDestroy 
@@ -124,8 +128,8 @@ namespace game
         ObjectType type;
         std::string desc;
         CampSide side;
-        ArmRank rank;
-        //ArmProfession pro;
+        RoleRank rank;
+        RoleProfession profession;
     };
 
     struct CompTransform
@@ -320,6 +324,19 @@ namespace game
         return ObjectType::Other;
     };
 
+    inline RoleProfession getRoleProfession(const std::string& profession)
+    {
+        if (profession == "warrior") return RoleProfession::Warrior;
+        if (profession == "shooter") return RoleProfession::Shooter;
+        if (profession == "wizard") return RoleProfession::Wizard;
+        if (profession == "knight") return RoleProfession::Knight;
+        if (profession == "marine") return RoleProfession::Marine;
+        if (profession == "medic") return RoleProfession::Medic;
+        if (profession == "artisan") return RoleProfession::Artisan;
+
+        return RoleProfession::Warrior;
+    };
+
     inline CampSide getCampSide(const std::string& side)
     {
         if (side == "official") return CampSide::Officer;
@@ -329,6 +346,5 @@ namespace game
 
         return CampSide::None;
     };
-
 
 }

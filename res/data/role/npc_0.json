@@ -4,11 +4,7 @@
   "type": "npc",
   "desc": "text_npc_desc_0",
   "icon":"role:0-0",
-
-  "role_event": {
-    "dead" : "none",
-    "born" : "none"
-  },
+  "profession":"warrior",
 
   "motion": {
     "speed": 150,
