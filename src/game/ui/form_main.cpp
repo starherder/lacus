@@ -5,6 +5,7 @@
 
 #include "game/scene/object_manager.h"
 #include "game/scene/game_camera.h"
+#include "game/scene/game_data.h"
 #include "game/scene/game_scene.h"
 #include "game/ui/form_scenes.h"
 #include "game/ui/ui_logic_events.h"
@@ -43,11 +44,11 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     auto& roleCfgs = _context.objectManager().getAllRoleCfgIds();
     for (auto& cfgid : roleCfgs)
     {
-        _context.dataCenter().addHandCard(cfgid);
+        _context.gameData().addHandCard(cfgid);
     }
 #endif
 
-    auto& handCards = _context.dataCenter().getHandCards();
+    auto& handCards = _context.gameData().getHandCards();
     for(auto& cfg : handCards)
     {
         auto& props = _context.objectManager().getObjectCfgProperties(cfg);
@@ -105,7 +106,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
         pComm->rank = (RoleRank)card->getData<int>("rank");
     }
 
-    _context.dataCenter().removeHandCard(cfgid);
+    _context.gameData().removeHandCard(cfgid);
 
     //int index = card->getData<int>("index");
     //cardGroup->addWidget(ptr->widget, index);

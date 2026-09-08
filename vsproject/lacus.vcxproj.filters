@@ -373,6 +373,9 @@
     <ClCompile Include="..\src\game\scene\game_data.cpp">
       <Filter>game\scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\scene\save_manager.cpp">
+      <Filter>game\scene</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\game\ui\form_result.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
@@ -847,6 +850,9 @@
       <Filter>game\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\scene\game_data.h">
+      <Filter>game\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\scene\save_manager.h">
       <Filter>game\scene</Filter>
     </ClInclude>
     <ClInclude Include="..\src\game\ui\form_result.h">

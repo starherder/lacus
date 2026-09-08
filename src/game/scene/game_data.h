@@ -1,15 +1,15 @@
 #pragma once
 
-#include "game/scene/game_context.h"
-#include "game/scene/object_manager.h"
-#include "game/ecs/comm_event.h"
+#include "engine/wrapper.h"
 
 #include <set>
 
 namespace game
 {
+	using engine::nJson;
 	using StringVector = std::vector<std::string>;
 	using CardSet = std::multiset<std::string>;
+	using SceneSet = std::set<std::string>;
 
 	class GameData
 	{
@@ -28,10 +28,19 @@ namespace game
 		void removeFromCardGroup(const std::string& cfgid) { _cardGroup.erase(cfgid); }
 		void clearCardCard() { _cardGroup.clear(); }
 
+		const SceneSet& getClearedScenes() { return _clearedScenes; }
+		bool isSceneCleared(const std::string& sceneId) const { return _clearedScenes.contains(sceneId); }
+		void setSceneCleared(const std::string& sceneId) { _clearedScenes.insert(sceneId); }
+
+		nJson toJson() const;
+		bool fromJson(const nJson& json);
+
 	private:
 		CardSet _handCards;
 
 		CardSet _cardGroup;
+
+		SceneSet _clearedScenes;
 
 	};
 }

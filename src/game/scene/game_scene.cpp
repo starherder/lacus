@@ -446,6 +446,8 @@ void GameScene::unloadObjects()
 {
     _context.registry().clear();
 
+    _sceneObjects.clear();
+
     _collisionDebugRects.clear();
 }
 
@@ -486,17 +488,6 @@ entt::entity GameScene::createMapObject(const tilemap::MapObject& mapObj)
     }
 
     return ent;
-    
-/*
-    auto meetEvent = _tileMap.getObjectProperty<std::string>(mapObj.id, "meet_role");
-    std::string strEventParam = meetEvent;
-
-    auto params = utility::StringUtil::split(strEventParam, "|");
-    if(!params.empty())
-    {
-        pcomm->role_meet[params[0]] = strEventParam;
-    }
-*/
 }
 
 entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side)

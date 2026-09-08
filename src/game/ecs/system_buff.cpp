@@ -133,11 +133,8 @@ namespace game
 		}
 	}
 
-
 	void BuffSystem::onPeriodExec(entt::entity target, entt::entity buff, entt::entity source)
 	{
-		// 改�?FightSystem::onRoleUnderAttack，发消息过去处理伤害
-
 		auto& buffComm = _context.registry().get<CompBuffComm>(buff);
 		//LogInfo("buff({}) period exec : {}", buffComm.cfgid, buffComm.func);
 

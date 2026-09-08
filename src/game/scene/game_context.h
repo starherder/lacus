@@ -66,8 +66,8 @@ namespace game {
 		SceneConfig& sceneConfig() { return *_sceneConfig; }
 		void setSceneConfig(SceneConfig* config) { _sceneConfig = config; }
 
-		GamePlay& gamePlay();
-		void setGamePlay(GamePlay* gamePlay);
+		GamePlay& gamePlay() { return *_gamePlay; }
+		void setGamePlay(GamePlay* gamePlay) { _gamePlay = gamePlay; }
 
 		GameLogic& gameLogic() { return *_gameLogic; }
 		void setGameLogic(GameLogic* gameLogic) { _gameLogic = gameLogic; }
@@ -78,6 +78,9 @@ namespace game {
 		GameScript& gameScript() { return *_gameScript; }
 		void setGameScript(GameScript* script) { _gameScript = script; }
 
+		GameData& gameData() { return *_gameData; }
+		void setGameData(GameData* data) { _gameData = data; }
+
 		int64_t currentTicks() { return _application.frameTicker().ticks(); }
 		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
 
@@ -87,7 +90,6 @@ namespace game {
 		entt::dispatcher& dispatcher();
 
 		GameCamera& camera();
-		GameData& dataCenter();
 
 		OptPathList findPath(const Vec2i& srcGrid, const Vec2i& dstGrid, bool can_swim);
 
@@ -117,6 +119,8 @@ namespace game {
 		GamePlay* _gamePlay = nullptr;
 
 		GameLogic* _gameLogic = nullptr;
+
+		GameData* _gameData = nullptr;
 
 		PathFinder _pathFinder;
 

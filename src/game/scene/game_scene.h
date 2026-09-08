@@ -8,7 +8,6 @@
 #include "game/scene/game_context.h"
 #include "game/scene/object_manager.h"
 #include "game/ecs/comm_event.h"
-#include "game/scene/game_data.h"
 #include "game/logic/game_play.h"
 #include "game/scene/scene_config.h"
 
@@ -81,7 +80,6 @@ namespace game {
         const tilemap::TileMap& mapInfo() { return _tileMap; }
 
         GameCamera& camera() { return _camera; }
-        GameData& dataCenter() { return _gameData; }
         entt::registry& registry() { return _registry;  }
 
         entt::entity createMapObject(const tilemap::MapObject& mapObj);
@@ -146,11 +144,9 @@ namespace game {
 
         GameCamera _camera;
 
-        GameData _gameData;;
-
         entt::entity _hoverEntity = entt::null;
 
-        std::set<entt::entity> _sceneObjects;
+        EntitySet _sceneObjects;
 
         QuadTreePtr _quadtree = nullptr;
 

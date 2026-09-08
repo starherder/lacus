@@ -56,12 +56,12 @@ void FormEntry::onStart(Button* btn)
 	ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, 
 		{ _sceneFile, (int)SceneGameMode::GameMode_AutoChess });
 
-	_context.dataCenter().clearHandCard();
+	_context.gameData().clearHandCard();
 
-	auto& cardGroup = _context.dataCenter().getCardGroup();
+	auto& cardGroup = _context.gameData().getCardGroup();
 	for (auto& card : cardGroup) 
 	{
-		_context.dataCenter().addHandCard(card);
+		_context.gameData().addHandCard(card);
 	}
 }
 
@@ -143,7 +143,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 	if (ptr->src_group == handCardGroup && ptr->dst_group != handCardGroup)
 	{
 		handCardGroup->removeCard(card);
-		_context.dataCenter().removeFromCardGroup(card->getCfgid());
+		_context.gameData().removeFromCardGroup(card->getCfgid());
 		return;
 	}
 
@@ -153,7 +153,7 @@ void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
 		auto& props = _context.objectManager().getObjectCfgProperties(cfgid);
 		handCardGroup->addCard(props);
 
-		_context.dataCenter().addToCardGroup(cfgid);
+		_context.gameData().addToCardGroup(cfgid);
 
 		int index = card->getData<int>("index");
 		srcCardGroup->addWidget(ptr->widget, index);
@@ -169,13 +169,13 @@ void FormEntry::showCardGroup()
 		return;
 	}
 
-	auto& roleCfgs = _context.dataCenter().getCardGroup();
+	auto& roleCfgs = _context.gameData().getCardGroup();
 	for (auto& cfg : roleCfgs)
 	{
 		auto& props = _context.objectManager().getObjectCfgProperties(cfg);
 		cardGroup->addCard(props);
 	}
 
-	_context.dataCenter().clearHandCard();
+	_context.gameData().clearHandCard();
 }
 }

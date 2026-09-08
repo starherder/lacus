@@ -7,6 +7,7 @@
 
 #include "game/scene/game_scene.h"
 #include "game/scene/object_manager.h"
+#include "game/scene/save_manager.h"
 #include "game/scene/story_manager.h"
 
 #include "game/ui/form_loading.h"
@@ -14,7 +15,6 @@
 #include "game/ui/form_main.h"
 #include "game/ui/form_scenes.h"
 #include "game/ui/ui_logic_events.h"
-#include "game/ui/form_main.h"
 #include "game/ui/imform_debug.h"
 #include "game/ui/form_result.h"
 #include "game/ui/form_chess_tip.h"
@@ -38,6 +38,7 @@ namespace game
         _context.setGameScript(&_gameScript);
 	    _context.setSceneConfig(&_sceneConfig);
 		_context.setLogicConfig(&_logicConfig);
+        _context.setGameData(&_gameData);
 
         _gameScript.load(_context.resPath() / _gameConfig.script.entry);
 
@@ -157,6 +158,12 @@ namespace game
 
         auto animDir = _context.resPath() / "animations";
         _context.resourceMgr().animationManager().loadAll(animDir);
+
+        auto savePath = _context.resPath() / "save/game_data.json";
+        if (fs::exists(savePath))
+        {
+            SaveManager::inst().loadGameData(savePath, _context.gameData());
+        }
     }
 
     void GameLogic::init()
@@ -241,7 +248,7 @@ namespace game
             }
         }
 
-        int handCards = (int)_context.scene().dataCenter().getHandCards().size();
+        int handCards = (int)_context.gameData().getHandCards().size();
 
         if (liveRole == 0 && handCards == 0)
         {
@@ -254,6 +261,12 @@ namespace game
         if (_state == GameState::Finish)
         {
             return;
+        }
+
+        if (result == GameResult::Success && !_currentScene.empty())
+        {
+            _context.gameData().setSceneCleared(_currentScene);
+            SaveManager::inst().saveGameData(_context.resPath() / "save/game_data.json", _context.gameData());
         }
 
         _state = GameState::Finish;
@@ -311,12 +324,12 @@ namespace game
 
     bool GameLogic::restartScene()
     {
-        _context.dataCenter().clearHandCard();
+        _context.gameData().clearHandCard();
 
-        auto& cardGroup = _context.dataCenter().getCardGroup();
+        auto& cardGroup = _context.gameData().getCardGroup();
         for (auto& card : cardGroup)
         {
-            _context.dataCenter().addHandCard(card);
+            _context.gameData().addHandCard(card);
         }
 
         return switchScene(_currentScene);

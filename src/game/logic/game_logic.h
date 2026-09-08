@@ -9,6 +9,7 @@
 #include "game/game_config.h"
 #include "game/logic_config.h"
 #include "game/game_script.h"
+#include "game/scene/game_data.h"
 #include "game/scene/scene_config.h"
 
 #include "game/logic/game_play.h"
@@ -98,6 +99,8 @@ namespace game
 		SceneConfig _sceneConfig;
 		
 		GameScript _gameScript;
+
+		GameData _gameData;
 
 		GameState _state = GameState::Running;
 

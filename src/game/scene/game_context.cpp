@@ -34,21 +34,6 @@ namespace game
 		return scene().camera(); 
 	}
 
-	GameData& GameContext::dataCenter()
-	{
-		return _currentScene->dataCenter(); 
-	}
-
-	GamePlay& GameContext::gamePlay()
-	{
-		return *_gamePlay;
-	}
-
-	void GameContext::setGamePlay(GamePlay* gamePlay)
-	{
-		_gamePlay = gamePlay;
-	}
-
 	GameContext::OptPathList GameContext::findPath(const Vec2i& srcGrid, const Vec2i& dstGrid, bool can_swim)
 	{
 		if (can_swim)

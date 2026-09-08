@@ -2,6 +2,7 @@
 #include "spdlog/spdlog.h"
 #include "game/scene/game_scene.h"
 #include "game/scene/game_context.h"
+#include "game/scene/game_data.h"
 #include "game/scene/object_manager.h"
 #include "game/logic/game_play.h"
 #include "game/ecs/comp_fight.h"
