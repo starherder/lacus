@@ -102,8 +102,8 @@ namespace game
 
                 EvtRoleCrossGrid e;
                 e.actor = entid;
-                e.cur_grid = curGrid;
-                e.lst_grid = nextGrid;
+                e.lst_grid = curGrid;
+                e.cur_grid = nextGrid;
                 _context.dispatcher().trigger(e);
 
                 onMotionStop(entid);

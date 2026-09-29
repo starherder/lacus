@@ -522,7 +522,7 @@ namespace game
 			_turnType = GameTurnType::Moving;
 		}
 
-		LogInfo("swith turn to : {}", MagicEnumText(GameTurnType, _turnType));
+		//LogInfo("swith turn to : {}", MagicEnumText(GameTurnType, _turnType));
 
 		auto entviews = context().registry().view<CompGameTurn>();
 		for (auto& actor : entviews)

@@ -361,6 +361,16 @@ namespace game
 			_context->registry().emplace<CompPickable>(object, com);
 		}
 
+		if (json.contains("trigger"))
+		{
+			auto& triggerJs = json["trigger"];
+			CompTriggerArea trigger;
+			trigger.radius = triggerJs.value("radius", 0);
+			trigger.once = triggerJs.value("once", false);
+			trigger.event = triggerJs.value("event", "");
+			_context->registry().emplace<CompTriggerArea>(object, trigger);
+		}
+
 		//LogInfo("create object: cfg = ({}), object = ({})", cfgid, (uint32_t)object);
 		
 		return object;

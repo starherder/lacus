@@ -119,6 +119,14 @@ namespace game
         //std::map<std::string, std::string> role_meet;
     };
 
+    struct CompTriggerArea
+    {
+        int radius = 0;
+        bool once = false;
+        bool triggered = false;
+        std::string event;
+    };
+
     struct CompDestroy 
     {
     };

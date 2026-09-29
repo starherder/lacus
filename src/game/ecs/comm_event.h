@@ -67,6 +67,19 @@ namespace game
 		Vec2i cur_grid;
 	};
 
+	struct EvtRoleEnterTriggerArea {
+		entt::entity actor;
+		entt::entity trigger;
+		Vec2i lst_grid;
+		Vec2i cur_grid;
+	};
+
+	struct EvtExecTriggerEvent {
+		entt::entity actor;
+		entt::entity trigger;
+		std::string event;
+	};
+
 	struct EvtRolePickItemStart {
 		entt::entity actor;
 		entt::entity item;

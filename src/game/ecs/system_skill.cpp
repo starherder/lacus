@@ -26,7 +26,7 @@ namespace game
 	{
 		auto deltaTicks = _context.frameTicker().deltaTicks();
 
-		// ÊÜ»÷ÌØĞ§
+		// å—å‡»ç‰¹æ•ˆ
 		auto views1 = _context.registry().view<CompUnderAttack>();
 		for(auto& ent : views1)
 		{
@@ -40,7 +40,7 @@ namespace game
 		auto views = _context.registry().view<CompNameId, CompSkillComm>();
 		for (auto& ent : views)
 		{
-			// ¼¼ÄÜÀäÈ´
+			// æŠ€èƒ½å†·å´
 			auto& skillComm = views.get<CompSkillComm>(ent);
 			if (skillComm.state == SkillState::Cooling)
 			{
@@ -56,7 +56,7 @@ namespace game
 				}
 			}
 
-			// Ê©·¨ÌØĞ§
+			// æ–½æ³•ç‰¹æ•ˆ
 			if (skillComm.state == SkillState::Launching)
 			{
 				auto skillTween = _context.registry().try_get<CompSkillSpell>(ent);
@@ -67,7 +67,7 @@ namespace game
 			}
 		}
 
-		// ³å´Ì
+		// å†²åˆº
 		auto viewsSprint = _context.registry().view<CompSprint>();
 		for (auto& ent : viewsSprint)
 		{
@@ -78,7 +78,7 @@ namespace game
 			}
 		}
 
-		// ÏİÚå
+		// é™·é˜±
 		auto viewsTrap = _context.registry().view<CompTraps>();
 		for (auto& ent : viewsTrap)
 		{
@@ -89,7 +89,7 @@ namespace game
 			}
 		}
 
-		// ³å»÷²¨
+		// å†²å‡»æ³¢
 		auto viewsWave = _context.registry().view<CompWave>();
 		for (auto& ent : viewsWave)
 		{
@@ -100,7 +100,7 @@ namespace game
 			}
 		}
 
-		// ÉÁµç
+		// é—ªç”µ
 		auto viewsLightning = _context.registry().view<CompLightning>();
 		for (auto& ent : viewsLightning)
 		{
@@ -668,7 +668,7 @@ namespace game
 			.via(tweentype)
 			.during(200);
 
-		// ÉúĞ§£¬µÈ200msÔÙÏú»Ù£¬Á¢¿Ì´İ»ÙÏÔµÃĞ§¹û½©Ó²
+		// ç”Ÿæ•ˆï¼Œç­‰200mså†é”€æ¯ï¼Œç«‹åˆ»æ‘§æ¯æ˜¾å¾—æ•ˆæœåƒµç¡¬
 		compShoot.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
 			if (t.isFinished()) {
 				return true;

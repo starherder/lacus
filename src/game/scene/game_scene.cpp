@@ -3,6 +3,7 @@
 #include "game/scene/scene_config.h"
 #include "game/logic/game_play_tile_battle.h"
 #include "game/logic/game_play_auto_chess.h"
+#include "game/scene/trigger_grid_geometry.h"
 
 #include <algorithm>
 
@@ -200,7 +201,7 @@ void GameScene::normalToGridPos(entt::entity ent)
     }
 
     auto pos = normalToGridPos(pTrans->position);
-    pTrans->position = pos;
+    setObjectPos(ent, pos);
 }
 
 bool GameScene::load(const std::string& id)
@@ -333,13 +334,6 @@ void GameScene::onUpdate(float deltaTime)
 {
     _camera.update(deltaTime);
 
-    _quadtree->clear();
-
-    for (auto& obj : _sceneObjects)
-    {
-        _quadtree->add(obj);
-    }
-
     _gamePlay->update(deltaTime);
 
 #ifdef _DevelopMode
@@ -444,6 +438,11 @@ void GameScene::loadObjects()
 
 void GameScene::unloadObjects()
 {
+    if (_quadtree)
+    {
+        _quadtree->clear();
+    }
+
     _context.registry().clear();
 
     _sceneObjects.clear();
@@ -529,7 +528,7 @@ entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2
 
     _context.gamePlay().onActorCreate(ent);
 
-    _sceneObjects.insert(ent);
+    addObjectToScene(ent);
     return ent;
 }
 
@@ -549,17 +548,32 @@ void GameScene::destroyObject(entt::entity id)
 
 void GameScene::addObjectToScene(entt::entity id)
 {
-    _sceneObjects.insert(id);
+    auto [iter, inserted] = _sceneObjects.insert(id);
+    if (inserted && _quadtree)
+    {
+        _quadtree->add(id);
+    }
 }
 
 void GameScene::removeObjectFromScene(entt::entity id)
 {
-    _sceneObjects.erase(id);
+    auto iter = _sceneObjects.find(id);
+    if (iter == _sceneObjects.end())
+    {
+        return;
+    }
+
+    if (_quadtree && _quadtree->has(id))
+    {
+        _quadtree->remove(id);
+    }
+
+    _sceneObjects.erase(iter);
 }
 
 void GameScene::onRoleDestroyed(const EvtRoleDestroyed& e)
 {
-    _sceneObjects.erase(e.actor);
+    removeObjectFromScene(e.actor);
 }
 
 Vec2i GameScene::getObjectGrid(entt::entity id)
@@ -581,14 +595,64 @@ Vec2 GameScene::getObjectPos(entt::entity id)
 void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 {
     auto comp = _registry.try_get<CompTransform>(id);
-    if (comp)
+    if (!comp || comp->position == pos)
     {
-        comp->position = pos;
+        return;
+    }
+
+    bool updateQuadTree = false;
+    if (_quadtree && _quadtree->has(id))
+    {
+        auto newTransform = *comp;
+        newTransform.position = pos;
+
+        const auto oldBox = getGridAlignedAABB(*comp);
+        const auto newBox = getGridAlignedAABB(newTransform);
+        updateQuadTree = oldBox.x != newBox.x || oldBox.y != newBox.y
+            || oldBox.w != newBox.w || oldBox.h != newBox.h;
+
+        if (updateQuadTree)
+        {
+            _quadtree->remove(id);
+        }
+    }
+
+    comp->position = pos;
+
+    if (updateQuadTree)
+    {
+        _quadtree->add(id);
     }
 }
 
 void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
 {
+    const auto actorTrans = _registry.try_get<CompTransform>(e.actor);
+    if (!actorTrans)
+    {
+        return;
+    }
+
+    const auto actorGridSize = getObjectGridSize(*actorTrans);
+    const trigger_grid_geometry::GridSize actorSize{ actorGridSize.x, actorGridSize.y };
+    const trigger_grid_geometry::GridPoint lastGrid{ e.lst_grid.x, e.lst_grid.y };
+    const trigger_grid_geometry::GridPoint currentGrid{ e.cur_grid.x, e.cur_grid.y };
+
+    auto view = _registry.view<CompTransform, CompTriggerArea>();
+    for (auto triggerEntity : view)
+    {
+        if (triggerEntity == e.actor || !_sceneObjects.contains(triggerEntity))
+        {
+            continue;
+        }
+
+        const auto& triggerTrans = view.get<CompTransform>(triggerEntity);
+        const auto& trigger = view.get<CompTriggerArea>(triggerEntity);
+        const auto triggerGrid = getGridFromPos(triggerTrans.position);
+        const auto triggerGridSize = getObjectGridSize(triggerTrans);
+
+        //_context.dispatcher().trigger(EvtRoleEnterTriggerArea{ e.actor, triggerEntity, e.lst_grid, e.cur_grid });
+    }
 }
 
 void GameScene::onRoleMotionStop(const EvtMotionStop& e)

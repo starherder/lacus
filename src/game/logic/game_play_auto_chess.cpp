@@ -274,6 +274,8 @@ namespace game
             dstpos = pDragging->origin_pos;
         }
 
+        const auto lastGrid = _context.scene().getGridFromPos(pDragging->origin_pos);
+
         _context.scene().addObjectToScene(_selectEntity);
 
         _context.scene().setObjectPos(_selectEntity, dstpos);
@@ -288,8 +290,8 @@ namespace game
 
         EvtRoleCrossGrid e;
         e.actor = _selectEntity;
+        e.lst_grid = lastGrid;
         e.cur_grid = _context.scene().getObjectGrid(_selectEntity);
-        e.lst_grid = _context.scene().getObjectGrid(_selectEntity);
         _context.dispatcher().trigger(e);
 
         return true;

@@ -50,6 +50,12 @@ namespace game {
         bool load(const std::string& id) override;
         bool unload() override;
 
+        void onUpdate(float deltaTime) override;
+        void onDraw() override;
+
+        void onStart() override;
+        void onStop() override;
+
         Vec2 sceneSize();
         Vec2 scenePos();
 
@@ -61,21 +67,17 @@ namespace game {
         Vec2 getGridCenterPos(const Vec2i& grid);
         Vec2i getObjectGridSize(const CompTransform& trans);
         Vec2i getObjectLeftTopGrid(const CompTransform& trans);
+
         std::vector<Vec2i> getObjectGrids(const CompTransform& trans);
         std::vector<Vec2i> getObjectMoveEnterGrids(const CompTransform& trans, const Vec2i& dir);
+
         Rect getGridAlignedAABB(const CompTransform& trans);
         Rect getDisplayAABB(const CompTransform& trans);
+
         Vec2 normalToGridPos(const Vec2& pos);
         void normalToGridPos(entt::entity ent);
 
         void swichCoord(CompTransform& trans, CoordMode coordmode);
-
-
-        void onUpdate(float deltaTime) override;
-        void onDraw() override;
-
-        void onStart() override;
-        void onStop() override;
 
         const tilemap::TileMap& mapInfo() { return _tileMap; }
 
