@@ -3,7 +3,6 @@
 #include "game/scene/scene_config.h"
 #include "game/logic/game_play_tile_battle.h"
 #include "game/logic/game_play_auto_chess.h"
-#include "game/scene/trigger_grid_geometry.h"
 
 #include <algorithm>
 
@@ -627,31 +626,155 @@ void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 
 void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
 {
-    const auto actorTrans = _registry.try_get<CompTransform>(e.actor);
-    if (!actorTrans)
+    const auto pActorTrans = _registry.try_get<CompTransform>(e.actor);
+    if (!pActorTrans || !_sceneObjects.contains(e.actor))
     {
         return;
     }
 
-    const auto actorGridSize = getObjectGridSize(*actorTrans);
-    const trigger_grid_geometry::GridSize actorSize{ actorGridSize.x, actorGridSize.y };
-    const trigger_grid_geometry::GridPoint lastGrid{ e.lst_grid.x, e.lst_grid.y };
-    const trigger_grid_geometry::GridPoint currentGrid{ e.cur_grid.x, e.cur_grid.y };
+    const auto tile = tileSize();
+    const auto actorGridSize = getObjectGridSize(*pActorTrans);
 
-    auto view = _registry.view<CompTransform, CompTriggerArea>();
-    for (auto triggerEntity : view)
+    // 事件派发时机并不统一：step_motion 先 setObjectPos 再派发，auto_motion 先派发再 setObjectPos，
+    // 所以移动前后的位置一律用网格和占格尺寸推算，不依赖实时的 transform.position
+    auto getGridFootprintBox = [&](const Vec2i& grid, const Vec2i& gridSize) -> Rect
     {
-        if (triggerEntity == e.actor || !_sceneObjects.contains(triggerEntity))
+        // 奇偶规则和 getObjectLeftTopGrid 保持一致
+        const Vec2i leftTopGrid = {
+            grid.x - (gridSize.x % 2 == 0 ? 0 : gridSize.x / 2),
+            grid.y - (gridSize.y % 2 == 0 ? 0 : gridSize.y / 2) };
+
+        return Rect{ getGridLeftTopPos(leftTopGrid), Vec2{ gridSize.x * tile.x, gridSize.y * tile.y } };
+    };
+
+    auto boxCenter = [](const Rect& box) -> Vec2
+    {
+        return { box.x + box.w / 2.0f, box.y + box.h / 2.0f };
+    };
+
+    // 方框 target 是否在触发区内
+    // radius > 0 时是以 center 为圆心、radius 像素为半径的圆；radius == 0 时触发区就是 areaBox 自身占格
+    auto isInTriggerArea = [](const Rect& target, const Rect& areaBox, const Vec2& areaCenter, float areaRadius)
+    {
+        if (areaRadius <= 0.0f)
+        {
+            return areaBox.isIntersect(target);
+        }
+
+        const Vec2 nearest = {
+            std::clamp(areaCenter.x, target.x, target.x + target.w),
+            std::clamp(areaCenter.y, target.y, target.y + target.h) };
+
+        return glm::distance(areaCenter, nearest) <= areaRadius;
+    };
+
+    const auto lastBox = getGridFootprintBox(e.lst_grid, actorGridSize);
+    const auto curBox = getGridFootprintBox(e.cur_grid, actorGridSize);
+
+    // ---------------- 我进入了哪些角色的触发区 ----------------
+    EntityVector triggerEntities;
+    for (auto triggerEntity : _registry.view<CompTriggerArea>())
+    {
+        triggerEntities.push_back(triggerEntity);
+    }
+
+    for (auto triggerEntity : triggerEntities)
+    {
+        // 事件处理过程中可能销毁对象，所以每次都要重新校验
+        if (triggerEntity == e.actor || !_sceneObjects.contains(triggerEntity) || _registry.all_of<CompDead>(triggerEntity))
         {
             continue;
         }
 
-        const auto& triggerTrans = view.get<CompTransform>(triggerEntity);
-        const auto& trigger = view.get<CompTriggerArea>(triggerEntity);
-        const auto triggerGrid = getGridFromPos(triggerTrans.position);
-        const auto triggerGridSize = getObjectGridSize(triggerTrans);
+        const auto pTriggerTrans = _registry.try_get<CompTransform>(triggerEntity);
+        const auto pTrigger = _registry.try_get<CompTriggerArea>(triggerEntity);
+        if (!pTriggerTrans || !pTrigger)
+        {
+            continue;
+        }
 
-        //_context.dispatcher().trigger(EvtRoleEnterTriggerArea{ e.actor, triggerEntity, e.lst_grid, e.cur_grid });
+        // 触发物体是静止的，圆心用它当前的实时位置；radius == 0 时用它的占格
+        const auto triggerBox = getGridAlignedAABB(*pTriggerTrans);
+        const float triggerRadius = (float)pTrigger->radius;
+
+        const bool insideBefore = isInTriggerArea(lastBox, triggerBox, pTriggerTrans->position, triggerRadius);
+        const bool insideNow = isInTriggerArea(curBox, triggerBox, pTriggerTrans->position, triggerRadius);
+        if (insideBefore == insideNow)
+        {
+            continue;
+        }
+
+        if (insideNow)
+        {
+            _context.dispatcher().trigger(EvtRoleEnterTriggerArea{ e.actor, triggerEntity, e.lst_grid, e.cur_grid });
+        }
+        else
+        {
+            _context.dispatcher().trigger(EvtRoleLeaveTriggerArea{ e.actor, triggerEntity, e.lst_grid, e.cur_grid });
+        }
+    }
+
+    // ---------------- 哪些角色新进入了我的触发区 ----------------
+    const auto pActorTrigger = _registry.try_get<CompTriggerArea>(e.actor);
+    if (!pActorTrigger)
+    {
+        return;
+    }
+
+    // 我自己带着触发区移动，没有移动前的位置，圆心用移动前后的占格中心推算
+    const float actorRadius = std::max(0.0f, (float)pActorTrigger->radius);
+    const auto lastCenter = boxCenter(lastBox);
+    const auto curCenter = boxCenter(curBox);
+
+    auto inflateBox = [](const Rect& box, float margin) -> Rect
+    {
+        return Rect{ box.x - margin, box.y - margin, box.w + margin * 2.0f, box.h + margin * 2.0f };
+    };
+
+    auto unionBox = [](const Rect& lval, const Rect& rval) -> Rect
+    {
+        const float x = std::min(lval.x, rval.x);
+        const float y = std::min(lval.y, rval.y);
+
+        return Rect{ x, y, std::max(lval.x + lval.w, rval.x + rval.w) - x, std::max(lval.y + lval.h, rval.y + rval.h) - y };
+    };
+
+    // 只查询移动前后两段触发范围的外接框，不遍历全场
+    const auto queryBox = unionBox(inflateBox(lastBox, actorRadius), inflateBox(curBox, actorRadius));
+
+    const auto nearbyObjects = getObjectsInRect(queryBox);
+    for (auto role : nearbyObjects)
+    {
+        // 事件处理过程中可能销毁对象，所以每次都要重新校验
+        if (role == e.actor || !_sceneObjects.contains(role) || _registry.all_of<CompDead>(role))
+        {
+            continue;
+        }
+
+        const auto pRoleTrans = _registry.try_get<CompTransform>(role);
+        const auto pRoleComm = _registry.try_get<CompComm>(role);
+        if (!pRoleTrans || !pRoleComm || pRoleComm->type != ObjectType::Npc)
+        {
+            continue;
+        }
+
+        const auto roleBox = getGridAlignedAABB(*pRoleTrans);
+
+        const bool insideBefore = isInTriggerArea(roleBox, lastBox, lastCenter, actorRadius);
+        const bool insideNow = isInTriggerArea(roleBox, curBox, curCenter, actorRadius);
+        if (insideBefore == insideNow)
+        {
+            continue;
+        }
+
+        if (insideNow)
+        {
+            _context.dispatcher().trigger(EvtRoleEnterTriggerArea{ role, e.actor, e.lst_grid, e.cur_grid });
+        }
+        else
+        {
+            _context.dispatcher().trigger(EvtRoleLeaveTriggerArea{ role, e.actor, e.lst_grid, e.cur_grid });
+        }
     }
 }
 

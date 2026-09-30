@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "game/scene/game_context.h"
 #include "game/ecs/comp_fight.h"
@@ -68,6 +68,13 @@ namespace game
 	};
 
 	struct EvtRoleEnterTriggerArea {
+		entt::entity actor;
+		entt::entity trigger;
+		Vec2i lst_grid;
+		Vec2i cur_grid;
+	};
+
+	struct EvtRoleLeaveTriggerArea {
 		entt::entity actor;
 		entt::entity trigger;
 		Vec2i lst_grid;
