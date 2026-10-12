@@ -33,10 +33,10 @@ bool Form::load(const fs::path& filepath)
         return false;
     }
 
-    auto pos = ToVec2(ele->Attribute("pos"));
+    auto pos = WidgetUtils::parseVec2(ele->Attribute("pos"));
     setPos(pos);
 
-    auto size = ToVec2(ele->Attribute("size"));
+    auto size = WidgetUtils::parseVec2(ele->Attribute("size"));
     setSize(size);
 
     auto visible = ele->BoolAttribute("visible", true);
@@ -71,7 +71,7 @@ void Form::setMaximize(bool v)
     if (isMaximize())
     {
         setPos({ 0, 0 });
-        setSize(ui::GuiManager::inst().windowSize());
+        setSize(ui::GuiManager::inst().uiSize());
     }
 }
 
@@ -192,7 +192,7 @@ void Form::draw()
         return;
     }
 
-    GuiManager().inst().painter().pushClipRect({ _pos, _size });
+    GuiManager().inst().painter().pushClipRect(GuiManager::inst().uiToScreenRect({ _pos, _size }));
 
     _rootGroup->draw();
 
@@ -228,7 +228,7 @@ void Form::onWindowResized(const Vec2& size)
     if (isMaximize())
     {
         setPos({ 0, 0 });
-        setSize(ui::GuiManager::inst().windowSize());
+        setSize(ui::GuiManager::inst().uiSize());
     }
 }
 

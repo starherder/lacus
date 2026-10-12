@@ -48,7 +48,9 @@ namespace ui
             _fontName = DefaultFontName;
         }
 
-        _font = GuiManager::inst().fontManager().get(HashString(_fontName.c_str()), _fontSize);
+        int fontPixelSize = std::max(1, (int)std::round(GuiManager::inst().uiToScreenScalar((float)_fontSize)));
+        _font = GuiManager::inst().fontManager().get(HashString(_fontName.c_str()), fontPixelSize);
+        _fontMetricsVersion = GuiManager::inst().metrics().version;
     }
 
     bool Label::onLoad(XmlNode* node)
@@ -61,12 +63,12 @@ namespace ui
         _text = node->Attribute("text");
         WidgetUtils::parseColorIfValid(status().text_color, node->Attribute("text_color"));
 
-        _textPadding = ToVec2(node->Attribute("text_padding"));
+        _textPadding = WidgetUtils::parseVec2(node->Attribute("text_padding"));
         _textAlign = WidgetUtils::getAlign(node->Attribute("align"));
 
         _fontName = node->Attribute("font_name");
         _fontName = _fontName.empty() ? DefaultFontName : _fontName;
-        _fontSize = node->IntAttribute("font_size", 20);
+        _fontSize = (int)WidgetUtils::parseMetric(node->Attribute("font_size"), 20.0f);
 
         adjust();
 
@@ -75,10 +77,15 @@ namespace ui
 
     void Label::draw()
     {
+        if (_fontMetricsVersion != GuiManager::inst().metrics().version)
+        {
+            adjust();
+        }
+
         Widget::draw();
 
         auto& renderer = GuiManager::inst().renderer();
-        auto textSize = renderer.getTextSize(_text, _font);
+        auto textSize = GuiManager::inst().screenToUiDelta(renderer.getTextSize(_text, _font));
         auto realPos = getAbsPos();
 
         if(_textAlign == Align::Left)
@@ -101,7 +108,7 @@ namespace ui
         }
 
         auto& state = status();
-        GuiManager::inst().painter().drawText(_text, _font, realPos, state.text_color);
+        GuiManager::inst().painter().drawText(_text, _font, GuiManager::inst().uiToScreenPoint(realPos), state.text_color);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -124,7 +131,7 @@ namespace ui
 
         _fontName = node->Attribute("font_name");
         _fontName = _fontName.empty() ? Label::DefaultFontName : _fontName;
-        _fontSize = node->IntAttribute("font_size", 20);
+        _fontSize = (int)WidgetUtils::parseMetric(node->Attribute("font_size"), 20.0f);
 
         _text = node->Attribute("text");
         WidgetUtils::parseColorIfValid(_text_color, node->Attribute("text_color"));
@@ -150,16 +157,21 @@ namespace ui
             _fontName = Label::DefaultFontName;
         }
 
-        _font = GuiManager::inst().fontManager().get(HashString(_fontName.c_str()), _fontSize);
+        int fontPixelSize = std::max(1, (int)std::round(GuiManager::inst().uiToScreenScalar((float)_fontSize)));
+        _font = GuiManager::inst().fontManager().get(HashString(_fontName.c_str()), fontPixelSize);
+        _fontMetricsVersion = GuiManager::inst().metrics().version;
     }
 
     void TextBox::draw()
     {
-        auto& renderer = GuiManager::inst().renderer();
-        auto textSize = renderer.getTextSize(text(), _font);
+        if (_fontMetricsVersion != GuiManager::inst().metrics().version)
+        {
+            adjust();
+        }
+
         auto realPos = getAbsPos();
 
-        GuiManager::inst().painter().drawText(text(), _font, realPos, _text_color, size().x);
+        GuiManager::inst().painter().drawText(text(), _font, GuiManager::inst().uiToScreenPoint(realPos), _text_color, GuiManager::inst().uiToScreenScalar(size().x));
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -953,7 +965,7 @@ namespace ui
             return false;
         }
 
-        _itemHeight = node->FloatAttribute("item_height", 25.0f);
+        _itemHeight = WidgetUtils::parseMetric(node->Attribute("item_height"), 25.0f);
         return true;
     }
 

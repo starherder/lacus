@@ -58,9 +58,10 @@ namespace ui
             return;
         }
 
-        if(clipChildren())
+        bool pushedClip = clipChildren();
+        if(pushedClip)
         {
-            GuiManager::inst().painter().pushClipRect(getClipRect());
+            GuiManager::inst().painter().pushClipRect(GuiManager::inst().uiToScreenRect(getClipRect()));
         }
 
         Widget::draw();
@@ -70,8 +71,7 @@ namespace ui
             ptr->draw();
         }
 
-        auto parentGroup = dynamic_cast<Group*>(parent());
-        if (parentGroup && parentGroup->clipChildren())
+        if (pushedClip)
         {
             GuiManager::inst().painter().popClipRect();
         }
@@ -500,9 +500,9 @@ namespace ui
             return false;
         }
 
-        _padding = ToVec2(node->Attribute("pad"));
+        _padding = WidgetUtils::parseVec2(node->Attribute("pad"));
 
-        _spacing = node->FloatAttribute("space", 10.0f);
+        _spacing = WidgetUtils::parseMetric(node->Attribute("space"), 10.0f);
 
         adjustLayout();
         return true;

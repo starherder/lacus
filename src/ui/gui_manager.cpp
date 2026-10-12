@@ -28,6 +28,7 @@ namespace ui
     void GuiManager::init(engine::Application* app)
     {
         _app = app;
+        refreshMetrics();
 
         _app->eventDispatcher().onKeyDown.connect(this, &GuiManager::onKeyDown, -1);
         _app->eventDispatcher().onKeyUp.connect(this, &GuiManager::onKeyUp, -1);
@@ -46,6 +47,19 @@ namespace ui
         _app->eventDispatcher().onMouseMotion.connect(this, &GuiManager::onMouseMotion, -1);
 
         _app->eventDispatcher().onWindowResized.connect(this, &GuiManager::onWindowResized, -1);
+        _app->eventDispatcher().onWindowEvent.connect(this, &GuiManager::onWindowEvent, -1);
+        _app->eventDispatcher().onPointerEvent.connect(this, &GuiManager::onPointerEvent, -1);
+    }
+
+    void GuiManager::refreshMetrics()
+    {
+        if (!_app)
+        {
+            return;
+        }
+
+        auto windowSize = _app->window().getSize();
+        _metrics.update({(float)windowSize.x, (float)windowSize.y}, _app->window().getSafeArea(), _app->window().getDisplayScale());
     }
 
     void GuiManager::update(float delta)
@@ -59,7 +73,7 @@ namespace ui
 
         if (_draggingData && _draggingData->widget) 
         {
-            auto pos = _app->eventDispatcher().mousePos() + _draggingData->_offset;
+            auto pos = screenToUiPoint(_app->eventDispatcher().mousePos()) + _draggingData->_offset;
             _draggingData->widget->setPos(pos);
         }
     }
@@ -163,9 +177,28 @@ namespace ui
 
     void GuiManager::onWindowResized(const Vec2& size)
     {
+        refreshMetrics();
+
         for(auto& form : _forms)
         {
-            form->onWindowResized(size);
+            form->onWindowResized(uiSize());
+        }
+    }
+
+    void GuiManager::onWindowEvent(WindowEventType type, const Vec2& size)
+    {
+        if (type != WindowEventType::PixelSizeChanged &&
+            type != WindowEventType::DisplayScaleChanged &&
+            type != WindowEventType::SafeAreaChanged)
+        {
+            return;
+        }
+
+        refreshMetrics();
+
+        for(auto& form : _forms)
+        {
+            form->onWindowResized(uiSize());
         }
     }
 
@@ -179,12 +212,13 @@ namespace ui
 
     void GuiManager::onMouseLeftClick(const Vec2& pos)
     {
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = getFormAtPos(uiPos);
         if(form && form->visible())
         {
             //moveToTop(form->name());
 
-            form->onMouseLeftClick(pos);
+            form->onMouseLeftClick(uiPos);
 
             checkEventBreak(form);
         }
@@ -199,11 +233,12 @@ namespace ui
             //cardGroup->addWidget(ptr->widget, index);
             drop();
         }
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = getFormAtPos(uiPos);
         if(form && form->visible())
         {
             //moveToTop(form->name());
-            form->onMouseRightClick(pos);
+            form->onMouseRightClick(uiPos);
 
             checkEventBreak(form);
         }
@@ -211,13 +246,14 @@ namespace ui
 
     void GuiManager::onMouseLeftDown(const Vec2& pos)
     {
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = getFormAtPos(uiPos);
         if (form && form->visible())
         {
             _mouseLeftCaptureForm = form;
 
             //moveToTop(form->name());
-            form->onMouseLeftDown(pos);
+            form->onMouseLeftDown(uiPos);
 
             checkEventBreak(form);
         }
@@ -225,10 +261,11 @@ namespace ui
 
     void GuiManager::onMouseLeftUp(const Vec2& pos)
     {
-        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(uiPos);
         if(form && form->visible())
         {
-            form->onMouseLeftUp(pos);
+            form->onMouseLeftUp(uiPos);
 
             checkEventBreak(form);
         }
@@ -243,10 +280,11 @@ namespace ui
 
     void GuiManager::onMouseRightDown(const Vec2& pos)
     {
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = getFormAtPos(uiPos);
         if(form && form->visible())
         {
-            form->onMouseRightDown(pos);
+            form->onMouseRightDown(uiPos);
 
             checkEventBreak(form);
         }
@@ -254,10 +292,11 @@ namespace ui
 
     void GuiManager::onMouseRightUp(const Vec2& pos)
     {
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = getFormAtPos(uiPos);
         if(form && form->visible())
         {
-            form->onMouseRightUp(pos);
+            form->onMouseRightUp(uiPos);
 
             checkEventBreak(form);
         }
@@ -271,7 +310,9 @@ namespace ui
             return;
         }
 
-        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto uiOffset = screenToUiDelta(offset);
+        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(uiPos);
         if (!form || !form->visible()) 
         {
             return;
@@ -286,17 +327,18 @@ namespace ui
             return;
         }
 
-        form->onMouseLeftDrag(pos, offset);
+        form->onMouseLeftDrag(uiPos, uiOffset);
 
         checkEventBreak(form);
     }
 
     void GuiManager::onMouseWheel(const Vec2& pos, float dir)
     {
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto form = getFormAtPos(uiPos);
         if(form && form->visible())
         {
-            form->onMouseWheel(pos, dir);
+            form->onMouseWheel(uiPos, dir);
 
             checkEventBreak(form);
         }
@@ -304,12 +346,64 @@ namespace ui
 
     void GuiManager::onMouseMotion(const Vec2& pos, const Vec2& offset)
     {
-        auto form = getFormAtPos(pos);
+        auto uiPos = screenToUiPoint(pos);
+        auto uiOffset = screenToUiDelta(offset);
+        auto form = getFormAtPos(uiPos);
         if(form && form->visible())
         {
-            form->onMouseMotion(pos, offset);
+            form->onMouseMotion(uiPos, uiOffset);
                 
             checkEventBreak(form);
+        }
+    }
+
+    void GuiManager::onPointerEvent(const PointerEvent& event)
+    {
+        if (!event.touch || !event.primary)
+        {
+            return;
+        }
+
+        auto pos = screenToUiPoint(event.pos);
+        auto delta = screenToUiDelta(event.delta);
+
+        if (event.phase == PointerPhase::Down)
+        {
+            _touchDragging = false;
+            onMouseMotion(event.pos, {0.0f, 0.0f});
+            onMouseLeftDown(event.pos);
+            return;
+        }
+
+        if (event.phase == PointerPhase::Move)
+        {
+            onMouseMotion(event.pos, event.delta);
+            if (event.pressed)
+            {
+                if (glm::length(delta) > 0.0f)
+                {
+                    _touchDragging = true;
+                }
+                onMouseLeftDrag(event.pos, event.delta);
+            }
+            return;
+        }
+
+        if (event.phase == PointerPhase::Up)
+        {
+            onMouseLeftUp(event.pos);
+            if (!_touchDragging)
+            {
+                onMouseLeftClick(event.pos);
+            }
+            _touchDragging = false;
+            return;
+        }
+
+        if (event.phase == PointerPhase::Cancel)
+        {
+            _mouseLeftCaptureForm = nullptr;
+            _touchDragging = false;
         }
     }
 
@@ -338,7 +432,7 @@ namespace ui
         }
 
         auto wpos = widget->getAbsPos();
-        auto mpos = _app->eventDispatcher().mousePos();
+        auto mpos = screenToUiPoint(_app->eventDispatcher().mousePos());
 
         _draggingData = std::make_shared<DraggingData>();
         _draggingData->widget= parentGroup->moveOut(widget);
@@ -353,7 +447,7 @@ namespace ui
             return;
         }
 
-        auto pos = _app->eventDispatcher().mousePos();
+        auto pos = screenToUiPoint(_app->eventDispatcher().mousePos());
         auto widget = getWidgetAtPos(pos, false);
         
         while (widget) 

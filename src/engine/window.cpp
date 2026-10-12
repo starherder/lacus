@@ -47,6 +47,25 @@ Vec2i Window::getSizeInPixels() const {
     return {w, h};
 }
 
+float Window::getDisplayScale() const {
+    assert(_window);
+
+    float scale = SDL_GetWindowDisplayScale(_window);
+    return scale > 0.0f ? scale : 1.0f;
+}
+
+Rect Window::getSafeArea() const {
+    assert(_window);
+
+    SDL_Rect rect;
+    if (SDL_GetWindowSafeArea(_window, &rect)) {
+        return rect;
+    }
+
+    auto size = getSize();
+    return Rect{{0.0f, 0.0f}, Vec2{(float)size.x, (float)size.y}};
+}
+
 Vec2i Window::getPosition() const {
     assert(_window);
 

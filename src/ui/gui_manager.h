@@ -35,6 +35,18 @@ public:
     void draw();
 
     auto windowSize() { return _app->window().getSize(); }
+    const UiMetrics& metrics() const { return _metrics; }
+    const Vec2& uiSize() const { return _metrics.uiSize; }
+
+    Vec2 screenToUiPoint(const Vec2& pos) const { return _metrics.screenToUiPoint(pos); }
+    Vec2 screenToUiDelta(const Vec2& delta) const { return _metrics.screenToUiDelta(delta); }
+    Rect screenToUiRect(const Rect& rect) const { return _metrics.screenToUiRect(rect); }
+
+    Vec2 uiToScreenPoint(const Vec2& pos) const { return _metrics.uiToScreenPoint(pos); }
+    Vec2 uiToScreenDelta(const Vec2& delta) const { return _metrics.uiToScreenDelta(delta); }
+    Rect uiToScreenRect(const Rect& rect) const { return _metrics.uiToScreenRect(rect); }
+    float uiToScreenScalar(float value) const { return _metrics.uiToScreenScalar(value); }
+
     auto windowPos() { return _app->window().getPosition(); }
 
     auto& renderer() { return _app->renderer(); }
@@ -74,7 +86,10 @@ public:
     void moveToTop(const std::string& formName);
 
 private:
+    void refreshMetrics();
+
     void onWindowResized(const Vec2& size);
+    void onWindowEvent(WindowEventType type, const Vec2& size);
 
     void onKeyDown(KeyCode key);
     void onKeyUp(KeyCode key);
@@ -91,6 +106,8 @@ private:
     void onMouseLeftDrag(const Vec2& pos, const Vec2& offset);
     void onMouseWheel(const Vec2& pos, float dir);
     void onMouseMotion(const Vec2& pos, const Vec2& offset);
+
+    void onPointerEvent(const PointerEvent& event);
 
     Form* getFormAtPos(const Vec2& pos);
     Widget* getWidgetAtPos(const Vec2& pos, bool must_accept_event=true);
@@ -115,6 +132,9 @@ private:
     std::set<std::string> _pendingNames;
 
     std::map<std::string, WidgetCreatorPtr> _creators;
+
+    UiMetrics _metrics;
+    bool _touchDragging = false;
 
     static int _widgetId;
 };

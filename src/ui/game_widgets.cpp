@@ -367,9 +367,9 @@ namespace ui
 
         _coord = WidgetUtils::getCoord(node->Attribute("coordinate"));
         
-        _padding = ToVec2(node->Attribute("pad"));
+        _padding = WidgetUtils::parseVec2(node->Attribute("pad"));
 
-        _space = node->FloatAttribute("space");
+        _space = WidgetUtils::parseMetric(node->Attribute("space"));
 
         _overlap = node->BoolAttribute("overlap", true);
         

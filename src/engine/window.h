@@ -21,6 +21,9 @@ public:
     void setSize(const Vec2i& size);
     Vec2i getSizeInPixels() const;
 
+    float getDisplayScale() const;
+    Rect getSafeArea() const;
+
     // Window position
     Vec2i getPosition() const;
     void setPosition(const Vec2i& pos);

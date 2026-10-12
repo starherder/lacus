@@ -30,6 +30,59 @@ void EventDispatcher::setEventFilterFunc(EventFilterFunc func)
 	_eventFilter = func;
 }
 
+void EventDispatcher::emitPointerFromMouse(const Vec2& pos, const Vec2& delta, PointerPhase phase, bool pressed)
+{
+	PointerEvent pointer;
+	pointer.id = 0;
+	pointer.pos = pos;
+	pointer.delta = delta;
+	pointer.phase = phase;
+	pointer.primary = true;
+	pointer.pressed = pressed;
+	pointer.touch = false;
+	onPointerEvent.emit(pointer);
+}
+
+void EventDispatcher::emitPointerFromTouch(const Event& e, PointerPhase phase)
+{
+	SDL_Window* window = SDL_GetWindowFromID(e.tfinger.windowID);
+	int width = 0;
+	int height = 0;
+	if (window)
+	{
+		SDL_GetWindowSize(window, &width, &height);
+	}
+
+	Vec2 windowSize{ (float)width, (float)height };
+	Vec2 pos{ e.tfinger.x * windowSize.x, e.tfinger.y * windowSize.y };
+	Vec2 delta{ e.tfinger.dx * windowSize.x, e.tfinger.dy * windowSize.y };
+	_mousePos = pos;
+
+	if (phase == PointerPhase::Down && !_hasPrimaryFinger)
+	{
+		_primaryFinger = e.tfinger.fingerID;
+		_hasPrimaryFinger = true;
+	}
+
+	bool primary = !_hasPrimaryFinger || e.tfinger.fingerID == _primaryFinger;
+
+	PointerEvent pointer;
+	pointer.id = (std::int64_t)e.tfinger.fingerID;
+	pointer.pos = pos;
+	pointer.delta = delta;
+	pointer.phase = phase;
+	pointer.primary = primary;
+	pointer.pressed = phase == PointerPhase::Down || phase == PointerPhase::Move;
+	pointer.touch = true;
+	onPointerEvent.emit(pointer);
+
+	if ((phase == PointerPhase::Up || phase == PointerPhase::Cancel) && primary)
+	{
+		_hasPrimaryFinger = false;
+		_primaryFinger = 0;
+	}
+}
+
 void EventDispatcher::run()
 {
 	SDL_Event e;
@@ -79,8 +132,13 @@ void EventDispatcher::run()
 		}break;
 		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		{
+			if (e.button.which == SDL_TOUCH_MOUSEID)
+			{
+				break;
+			}
 			if (e.button.button == SDL_BUTTON_LEFT) 
 			{
+				emitPointerFromMouse({ e.button.x, e.button.y }, {0.0f, 0.0f}, PointerPhase::Down, true);
 				onMouseLeftDown({ e.button.x, e.button.y });
 			}
 			if (e.button.button == SDL_BUTTON_RIGHT)
@@ -90,8 +148,13 @@ void EventDispatcher::run()
 		}break;
 		case SDL_EVENT_MOUSE_BUTTON_UP:
 		{
+			if (e.button.which == SDL_TOUCH_MOUSEID)
+			{
+				break;
+			}
 			if (e.button.button == SDL_BUTTON_LEFT) 
 			{
+				emitPointerFromMouse({ e.button.x, e.button.y }, {0.0f, 0.0f}, PointerPhase::Up, false);
 				onMouseLeftUp({e.button.x, e.button.y});
 				onMouseLeftClicked.emit({e.button.x, e.button.y});
 
@@ -109,7 +172,13 @@ void EventDispatcher::run()
 		}break;
 		case SDL_EVENT_MOUSE_MOTION:
 		{
+			if (e.motion.which == SDL_TOUCH_MOUSEID)
+			{
+				break;
+			}
 			_mousePos = { e.motion.x, e.motion.y };
+
+			emitPointerFromMouse({ e.motion.x, e.motion.y }, { e.motion.xrel, e.motion.yrel }, PointerPhase::Move, (e.motion.state & SDL_BUTTON_LMASK) != 0);
 
 			onMouseMotion.emit({e.motion.x, e.motion.y}, {e.motion.xrel, e.motion.yrel});
 			if(e.motion.state & SDL_BUTTON_LMASK) 
@@ -132,6 +201,22 @@ void EventDispatcher::run()
 			float x, y; SDL_GetMouseState(&x, &y);
 			float dir = e.wheel.y;
 			onMouseWheel.emit({x, y}, dir);
+		}break;
+		case SDL_EVENT_FINGER_DOWN:
+		{
+			emitPointerFromTouch(e, PointerPhase::Down);
+		}break;
+		case SDL_EVENT_FINGER_MOTION:
+		{
+			emitPointerFromTouch(e, PointerPhase::Move);
+		}break;
+		case SDL_EVENT_FINGER_UP:
+		{
+			emitPointerFromTouch(e, PointerPhase::Up);
+		}break;
+		case SDL_EVENT_FINGER_CANCELED:
+		{
+			emitPointerFromTouch(e, PointerPhase::Cancel);
 		}break;
 		case SDL_EVENT_KEY_DOWN:
 		{

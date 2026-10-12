@@ -45,10 +45,21 @@ namespace engine
 
 	void Painter::popClipRect()
 	{
-		auto rect = _clipStack.top();
-		_application.renderer().setClipRect(rect);
+		if (_clipStack.empty())
+		{
+			return;
+		}
 
 		_clipStack.pop();
+		if (_clipStack.empty())
+		{
+			auto size = _application.window().getSize();
+			_application.renderer().setClipRect({Vec2{0.0f, 0.0f}, Vec2{(float)size.x, (float)size.y}});
+		}
+		else
+		{
+			_application.renderer().setClipRect(_clipStack.top());
+		}
 	}
 
 	void Painter::fillRect(const Color& color, const Rect& rect, float round)

@@ -171,16 +171,16 @@ bool Widget::load(XmlNode* node)
     _name = node->Attribute("name");
     _name = _name.empty() ? def_name : _name;
 
-    auto pos = ToVec2(node->Attribute("pos"));
+    auto pos = WidgetUtils::parseVec2(node->Attribute("pos"));
     setPos(pos);
 
-    auto size = ToVec2(node->Attribute("size"));
+    auto size = WidgetUtils::parseVec2(node->Attribute("size"));
     setSize(size);
 
-    auto borderSize = node->FloatAttribute("border_size");
+    auto borderSize = WidgetUtils::parseMetric(node->Attribute("border_size"));
     setBorderSize(borderSize);
 
-    auto borderRound = node->FloatAttribute("border_round");
+    auto borderRound = WidgetUtils::parseMetric(node->Attribute("border_round"));
     setBorderRound(borderRound);
 
     auto visible = node->BoolAttribute("visible", true);
@@ -228,28 +228,29 @@ void Widget::update(float delta)
 
 void Widget::draw()
 {
-    auto relPos = getAbsPos();
     auto& state = status();
     auto& painter = GuiManager::inst().painter();
+    auto& gui = GuiManager::inst();
 
-    Rect bksize = {relPos.x, relPos.y, _size.x, _size.y};
+    Rect bksize = gui.uiToScreenRect(getAbsRect());
+    float round = gui.uiToScreenScalar(borderRound());
 
     if(state.texture)
     {
-        painter.drawTexTile(state.texture, bksize, 0.0f, borderRound(), state.ground_color);
+        painter.drawTexTile(state.texture, bksize, 0.0f, round, state.ground_color);
     }
     else
     {
         if(state.ground_color.isValid())
         {
-            painter.fillRect(state.ground_color, bksize, borderRound());
+            painter.fillRect(state.ground_color, bksize, round);
         }
     }
             
     if(state.border_color.isValid())
     {
         auto& painter = GuiManager::inst().painter();
-        painter.drawRect(state.border_color, bksize, borderRound(), borderSize());
+        painter.drawRect(state.border_color, bksize, round, gui.uiToScreenScalar(borderSize()));
     }
 }
 

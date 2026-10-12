@@ -2,9 +2,29 @@
 
 #include "wrapper.h"
 #include "utility/signalslot.h"
+#include <cstdint>
 
 namespace engine 
 {
+
+enum class PointerPhase
+{
+	Down,
+	Up,
+	Move,
+	Cancel,
+};
+
+struct PointerEvent
+{
+	std::int64_t id = 0;
+	Vec2 pos = {0.0f, 0.0f};
+	Vec2 delta = {0.0f, 0.0f};
+	PointerPhase phase = PointerPhase::Move;
+	bool primary = true;
+	bool pressed = false;
+	bool touch = false;
+};
 
 class EventDispatcher
 {
@@ -31,6 +51,8 @@ public:
 
 	signals::Signal<const Vec2&, const Vec2&> onMouseMotion;
 	signals::Signal<const Vec2&, float> onMouseWheel;
+
+	signals::Signal<const PointerEvent&> onPointerEvent;
 
 	signals::Signal<KeyCode> onKeyDown;
 	signals::Signal<KeyCode> onKeyUp;
@@ -61,11 +83,16 @@ public:
 	void setEventFilterFunc(EventFilterFunc func);
 
 private:
+	void emitPointerFromMouse(const Vec2& pos, const Vec2& delta, PointerPhase phase, bool pressed);
+	void emitPointerFromTouch(const Event& e, PointerPhase phase);
+
 	entt::dispatcher _logicDispatcher;
 
 	Vec2 _mousePos;
 
 	bool _isDragging = false;
+	bool _hasPrimaryFinger = false;
+	SDL_FingerID _primaryFinger = 0;
 
 	EventFilterFunc _eventFilter;
 };

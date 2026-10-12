@@ -50,6 +50,30 @@ enum class Coordinate {
     Vertical,
 };
 
+struct UiMetrics
+{
+    Vec2 designSize = {1280.0f, 720.0f};
+    Vec2 windowSize = {1280.0f, 720.0f};
+    Rect safeArea = {0.0f, 0.0f, 1280.0f, 720.0f};
+    Vec2 uiSize = {1280.0f, 720.0f};
+
+    float scale = 1.0f;
+    float displayScale = 1.0f;
+    bool portrait = false;
+    unsigned int version = 0;
+
+    void update(const Vec2& window, const Rect& safe, float displayScale_);
+
+    Vec2 screenToUiPoint(const Vec2& point) const;
+    Vec2 screenToUiDelta(const Vec2& delta) const;
+    Rect screenToUiRect(const Rect& rect) const;
+
+    Vec2 uiToScreenPoint(const Vec2& point) const;
+    Vec2 uiToScreenDelta(const Vec2& delta) const;
+    Rect uiToScreenRect(const Rect& rect) const;
+    float uiToScreenScalar(float value) const;
+};
+
 class WidgetUtils
 {
 public:
@@ -65,6 +89,9 @@ public:
     static Align getAlign(const std::string& str);
 
     static void parseColorIfValid(Color& color, const char* hex);
+
+    static float parseMetric(const char* str, float defaultValue = 0.0f);
+    static Vec2 parseVec2(const char* str, const Vec2& defaultValue = {0.0f, 0.0f});
 };
 
 

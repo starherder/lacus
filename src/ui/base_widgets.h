@@ -54,6 +54,7 @@ protected:
     std::string _fontName;
     int _fontSize = DefaultFontSize;
     Font* _font = nullptr;
+    unsigned int _fontMetricsVersion = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -91,6 +92,7 @@ protected:
     int _fontSize = Label::DefaultFontSize;
 
     Font* _font = nullptr;
+    unsigned int _fontMetricsVersion = 0;
 };
 
 

@@ -166,7 +166,8 @@ bool Application::initWindow()
         LogInfo("Render driver[{}]: {}", i, name);
     }
 
-    bool res = _window->create(_config.window.title.c_str(), _config.window.width, _config.window.height, WindowFlags::Resizable);
+    auto windowFlags = (WindowFlags)((Uint64)WindowFlags::Resizable | (Uint64)WindowFlags::HighPixelDensity);
+    bool res = _window->create(_config.window.title.c_str(), _config.window.width, _config.window.height, windowFlags);
     if (!res) {
         LogError("Failed to create window");
         return false;
