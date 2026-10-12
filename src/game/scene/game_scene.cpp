@@ -681,7 +681,8 @@ void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
     for (auto triggerEntity : triggerEntities)
     {
         // 事件处理过程中可能销毁对象，所以每次都要重新校验
-        if (triggerEntity == e.actor || !_sceneObjects.contains(triggerEntity) || _registry.all_of<CompDead>(triggerEntity))
+        if (triggerEntity == e.actor || !_sceneObjects.contains(triggerEntity)
+            || _registry.any_of<CompDead, CompDestroy>(triggerEntity))
         {
             continue;
         }
@@ -693,12 +694,14 @@ void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
             continue;
         }
 
-        // 触发物体是静止的，圆心用它当前的实时位置；radius == 0 时用它的占格
+        // 圆心统一用占格中心，和下面"触发区主人自己移动"的算法保持一致；
+        // 偶数尺寸物体的 position 落在左上格，和占格中心差半格，不能直接用 position
         const auto triggerBox = getGridAlignedAABB(*pTriggerTrans);
-        const float triggerRadius = (float)pTrigger->radius;
+        const auto triggerCenter = boxCenter(triggerBox);
+        const float triggerRadius = std::max(0.0f, (float)pTrigger->radius);
 
-        const bool insideBefore = isInTriggerArea(lastBox, triggerBox, pTriggerTrans->position, triggerRadius);
-        const bool insideNow = isInTriggerArea(curBox, triggerBox, pTriggerTrans->position, triggerRadius);
+        const bool insideBefore = isInTriggerArea(lastBox, triggerBox, triggerCenter, triggerRadius);
+        const bool insideNow = isInTriggerArea(curBox, triggerBox, triggerCenter, triggerRadius);
         if (insideBefore == insideNow)
         {
             continue;
@@ -746,7 +749,8 @@ void GameScene::onRoleCrossGrid(const EvtRoleCrossGrid& e)
     for (auto role : nearbyObjects)
     {
         // 事件处理过程中可能销毁对象，所以每次都要重新校验
-        if (role == e.actor || !_sceneObjects.contains(role) || _registry.all_of<CompDead>(role))
+        if (role == e.actor || !_sceneObjects.contains(role)
+            || _registry.any_of<CompDead, CompDestroy>(role))
         {
             continue;
         }
