@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/application.h"
+#include "engine/painter/sdl_painter.h"
 #include "imform/imform.h"
 
 namespace engine {
@@ -10,6 +11,14 @@ namespace engine {
 namespace samples {
 
     using namespace engine;
+
+    enum class PainterDrawMode
+    {
+        Sdl,
+        Paint,
+        Gfx,
+        Im
+    };
 
     class ImGuiFormDraw : public imgui::ImForm
     {
@@ -109,47 +118,27 @@ namespace samples {
 
         void onClose() override ;
 
-        void setImDraw(bool visible) { _im_draw = visible; }
-
-        void setSdlDraw(bool visible) { _sdl_draw = visible; }
-
-        void setGfxDraw(bool visible) { _gfx_draw = visible; }
-
-        void setPaintDraw(bool visible) { _paint_draw = visible; }
+        PainterDrawMode drawMode() const { return _drawMode; }
+        void setDrawMode(PainterDrawMode mode) { _drawMode = mode; }
 
     private:
-        void drawShape();
-
-        void drawTexture();
-
-        void drawText();
-
-        void paint();
-
-        void gfx_paint();
-
-        void im_paint();
-
         void initGeometry();
 
-        void drawGeometry();
+        void drawPainterDemo(IPainter& painter, const Vec2& pos);
 
     private:
         engine::Texture* _texture = nullptr;
 
-        bool _im_draw = false;
+        PainterDrawMode _drawMode = PainterDrawMode::Paint;
 
-        bool _paint_draw = false;
-
-        bool _gfx_draw = false;
-
-        bool _sdl_draw = false;
+        std::unique_ptr<SdlPainter> _sdlPainter;
+        std::unique_ptr<Painter> _paintPainter;
+        std::unique_ptr<GfxPainter> _gfxPainter;
+        std::unique_ptr<ImPainter> _imPainter;
 
         struct VertexData {
             std::vector<Vertex> vertices;
             std::vector<int> indices;
         } _vertexData;
-
-        std::vector<std::vector<Vec2>> _lightning;
     };
 }

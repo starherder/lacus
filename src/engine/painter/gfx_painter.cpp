@@ -1,7 +1,7 @@
 #include "gfx_painter.h"
-#include "application.h"
-#include "texture.h"
-#include "font.h"
+#include "engine/application.h"
+#include "engine/texture.h"
+#include "engine/font.h"
 
 #include "SDL3_gfx/SDL3_gfxPrimitives.h"
 
@@ -194,9 +194,25 @@ namespace engine
 	void GfxPainter::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
 								const int* indices, int num_indices, const Vec2& pos, float scale)
 	{
-		fail_return(texture);
+		if (!vertices || num_vertices <= 0)
+		{
+			return;
+		}
 
-		_application.renderer().drawGeometry(texture, vertices, num_vertices, indices, num_indices);
+		if (pos == Vec2{ 0.0f, 0.0f } && scale == 1.0f)
+		{
+			_application.renderer().drawGeometry(texture, vertices, num_vertices, indices, num_indices);
+			return;
+		}
+
+		_geometryVertices.assign(vertices, vertices + num_vertices);
+		for (Vertex& vertex : _geometryVertices)
+		{
+			vertex.position.x = pos.x + vertex.position.x * scale;
+			vertex.position.y = pos.y + vertex.position.y * scale;
+		}
+
+		_application.renderer().drawGeometry(texture, _geometryVertices.data(), (int)_geometryVertices.size(), indices, num_indices);
 	}
 
 	void GfxPainter::drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color, float wrap_line)

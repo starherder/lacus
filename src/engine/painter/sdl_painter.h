@@ -1,8 +1,6 @@
 #pragma once
 
-#include "engine/wrapper.h"
-#include "utility/i_singleton.h"
-#include "i_painter.h"
+#include "engine/i_painter.h"
 
 namespace engine
 {
@@ -10,21 +8,18 @@ namespace engine
 	class Texture;
 	class Font;
 
-	class ImPainter : public IPainter
+	class SdlPainter : public IPainter
 	{
 	public:
-		ImPainter() = delete;
-		ImPainter(ImPainter&&) = delete;
-		ImPainter(const ImPainter&) = delete;
+		SdlPainter() = delete;
+		SdlPainter(SdlPainter&&) = delete;
+		SdlPainter(const SdlPainter&) = delete;
 
-		ImPainter(Application& app);
-		~ImPainter();
+		SdlPainter(Application& app);
+		~SdlPainter();
 
 		void init() override;
 		void quit() override;
-
-		void preFrame() override;
-		void postFrame() override;
 
 		void setClearColor(const Color& color) override;
 
@@ -48,25 +43,18 @@ namespace engine
 		void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
 		void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
 
-		void drawText(const std::string& text, Font* font, const Vec2& pos, 
+		void drawText(const std::string& text, Font* font, const Vec2& pos,
 			const Color& color = Color{ 255,255,255,255 }, float wrap_line = 0.0f) override;
 
-		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
-			const int* indices, int num_indices, const Vec2& pos = {0,0}, float scale=1.0f) override;
-
-		void drawLightning(const Color& color, const Vec2& beginPos, const Vec2& endPos, 
-			float displace, float min_displace=3, float thickness = 1) override;
-
-		void makeLightningData(std::vector<Vec2>& data, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace = 3) override;
-		void drawLightningData(const Color& color, const Vec2& pos, const std::vector<Vec2>& data, float thickness = 1.0f) override;
+		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
+			const int* indices, int num_indices, const Vec2& pos = { 0,0 }, float scale = 1.0f) override;
 
 	private:
-		void initDefaultFont(const std::string& fontName, int fontSize);
+		Rect defaultClipRect() const;
+		Rect currentClipRect() const;
+		void applyClipRect() const;
 
-		void drawRotateTexTile(TexTile* pTexTile, const Rect& dst, float radian, const Color& color = Color::White);
+	private:
+		std::vector<Rect> _clipStack;
 	};
-
-
-
-
 }

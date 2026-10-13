@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "wrapper.h"
+#include "engine/wrapper.h"
 #include "utility/i_singleton.h"
-#include "i_painter.h"
+#include "engine/i_painter.h"
 #include <stack>
 
 namespace engine 

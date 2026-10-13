@@ -59,6 +59,7 @@ public:
     ~SystemConfig() = default;
 
     bool load(const fs::path& filepath);
+    bool load(const fs::path& filepath, const fs::path& basePath);
     bool save();
 
 private:

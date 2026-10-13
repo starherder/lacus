@@ -1,0 +1,44 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "Win32",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe",
+            "compilerArgs": [
+                "/std:c++20"
+            ],
+            "includePath": [
+                "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Tools/MSVC/14.38.33130/include",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/shared",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/winrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/cppwinrt",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/ext",
+                "${workspaceFolder}/ext/SDL3/include",
+                "${workspaceFolder}/ext/spdlog/include",
+                "${workspaceFolder}/ext/tmxlite/include",
+                "${workspaceFolder}/ext/imgui",
+                "${workspaceFolder}/ext/imgui/backends",
+                "${workspaceFolder}/ext/lua/src",
+                "${workspaceFolder}/ext/luabridge"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/src",
+                    "${workspaceFolder}/ext"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "defines": [
+                "IMGUI_DISABLE_WIN32_FUNCTIONS"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "cppStandard": "c++20",
+            "cStandard": "c17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ]
+}

@@ -2,8 +2,7 @@
 
 #include "engine/wrapper.h"
 #include "utility/i_singleton.h"
-#include "i_painter.h"
-#include <stack>
+#include "engine/i_painter.h"
 
 namespace engine
 {
@@ -11,15 +10,15 @@ namespace engine
 	class Texture;
 	class Font;
 
-	class Painter : public IPainter
+	class ImPainter : public IPainter
 	{
 	public:
-		Painter() = delete;
-		Painter(Painter&&) = delete;
-		Painter(const Painter&) = delete;
+		ImPainter() = delete;
+		ImPainter(ImPainter&&) = delete;
+		ImPainter(const ImPainter&) = delete;
 
-		Painter(Application& app);
-		~Painter();
+		ImPainter(Application& app);
+		~ImPainter();
 
 		void init() override;
 		void quit() override;
@@ -33,7 +32,7 @@ namespace engine
 		void popClipRect() override;
 
 		void fillRect(const Color& color, const Rect& rect, float round = 0) override;
-		void drawRect(const Color& color, const Rect& rect, float round = 0, float lineWidth = 1) override;
+		void drawRect(const Color& color, const Rect& rect, float round = 0, float thickness = 1) override;
 
 		void drawCircle(const Color& color, const Vec2& center, float radius, int segments = 12, float thickness = 1.0f) override;
 		void fillCircle(const Color& color, const Vec2& center, float radius, int segments = 12) override;
@@ -49,37 +48,22 @@ namespace engine
 		void drawTexture(Texture* pTexture, const Rect& src, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
 		void drawTextureUV(Texture* pTexture, const Rect& uv, const Rect& dst, float round = 0.0f, const Color& color = Color::White) override;
 
-		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 }, float wrap_line=0.0f) override;
+		void drawText(const std::string& text, Font* font, const Vec2& pos, 
+			const Color& color = Color{ 255,255,255,255 }, float wrap_line = 0.0f) override;
 
-		bool isAntiAlaised() const { return _antiAliased; }
-		void setAntiAlaised(bool anti_aliased = true);
+		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices, 
+			const int* indices, int num_indices, const Vec2& pos = {0,0}, float scale=1.0f) override;
 
-	private:
-		void pathLineTo(const Vec2& pos);
+		void drawLightning(const Color& color, const Vec2& beginPos, const Vec2& endPos, 
+			float displace, float min_displace=3, float thickness = 1) override;
 
-		void pathArcTo(const Vec2& centre, float radius, float min, float max, int segments = 10);
-
-		void pathArcToFast(const Vec2& centre, float radius, int a_min_of_12, int a_max_of_12);
-
-		void pathRect(const Vec2& tl, const Vec2& br, float rounding = 0.0f);
-
-		void primRect(const Color& color, const Vec2& tl, const Vec2& br);
-
-		void strokePolyline(const Color& color, bool closed, float thickness);
-
-		void strokeConvexPolyFilled(const Color& color);
-
-		void drawPath();
+		void makeLightningData(std::vector<Vec2>& data, const Vec2& beginPos, const Vec2& endPos, float displace, float min_displace = 3) override;
+		void drawLightningData(const Color& color, const Vec2& pos, const std::vector<Vec2>& data, float thickness = 1.0f) override;
 
 	private:
-		std::stack<Rect> _clipStack;
+		void initDefaultFont(const std::string& fontName, int fontSize);
 
-		std::vector<Vec2> _vPaths;
-
-		std::vector<Vertex> _geometryVertices;
-		std::vector<int> _geometryIndices;
-
-		bool _antiAliased = false;
+		void drawRotateTexTile(TexTile* pTexTile, const Rect& dst, float radian, const Color& color = Color::White);
 	};
 
 

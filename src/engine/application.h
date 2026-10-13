@@ -12,9 +12,9 @@
 #include "audio_player.h"
 #include "animation.h"
 
-#include "painter.h"
-#include "gfx_painter.h"
-#include "im_painter.h"
+#include "engine/painter/painter.h"
+#include "engine/painter/gfx_painter.h"
+#include "engine/painter/im_painter.h"
 
 #include "utility/unsort_map.h"
 #include <map>

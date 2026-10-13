@@ -331,6 +331,7 @@ namespace engine
 			drawList->PushTextureID((void*)texture->texture());
 		}
 
+		unsigned int base_idx = drawList->_VtxCurrentIdx;
 		drawList->PrimReserve(indices_count, vertices_count);
 
 		for (int i = 0; i < vertices_count; i++)
@@ -353,7 +354,7 @@ namespace engine
 		{
 			for (int i = 0; i < indices_count; i++)
 			{
-				drawList->PrimWriteIdx(indices[i]);
+				drawList->PrimWriteIdx((ImDrawIdx)(base_idx + indices[i]));
 			}
 		}
 

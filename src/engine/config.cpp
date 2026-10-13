@@ -62,7 +62,12 @@ bool JsonConfig::save()
 }
 
 //-------------------------------------------------------------------------------
-bool SystemConfig::load(const fs::path& filepath) 
+bool SystemConfig::load(const fs::path& filepath)
+{
+    return load(filepath, fs::current_path());
+}
+
+bool SystemConfig::load(const fs::path& filepath, const fs::path& basePath)
 {
     if(!_json_config.load(filepath))
     {
@@ -97,7 +102,8 @@ bool SystemConfig::load(const fs::path& filepath)
         {
             auto& res_json = json["res"];
             std::string res_path_str = res_json["path"];
-            res.path = fs::current_path() / res_path_str;
+            fs::path res_path = res_path_str;
+            res.path = res_path.is_absolute() ? res_path : basePath / res_path;
         }
         else 
         {

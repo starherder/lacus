@@ -4,6 +4,48 @@
 
 namespace engine {
 
+namespace
+{
+	bool findConfigPath(std::string_view configFile, fs::path& outPath, fs::path& outBasePath)
+	{
+		fs::path configPath = configFile;
+		if (configPath.is_absolute())
+		{
+			if (!fs::exists(configPath))
+			{
+				return false;
+			}
+
+			outPath = fs::absolute(configPath);
+			outBasePath = fs::current_path();
+			return true;
+		}
+
+		std::vector<fs::path> basePaths;
+		basePaths.push_back(fs::current_path());
+
+		fs::path exePath = PathUtils::get_executable_path();
+		for (int i = 0; i < 4 && !exePath.empty(); ++i)
+		{
+			basePaths.push_back(exePath);
+			exePath = exePath.parent_path();
+		}
+
+		for (const fs::path& basePath : basePaths)
+		{
+			fs::path path = basePath / configPath;
+			if (fs::exists(path))
+			{
+				outPath = fs::absolute(path);
+				outBasePath = fs::absolute(basePath);
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
 Application::Application() 
 {
     _renderer = std::make_unique<Renderer>();
@@ -126,8 +168,15 @@ bool Application::init(std::string_view configFile, std::string_view logFile)
 
 bool Application::initConfig(std::string_view config_file) 
 {
-    auto path = fs::current_path() / config_file; 
-    if(!_config.load(path)) 
+    fs::path path;
+    fs::path basePath;
+    if (!findConfigPath(config_file, path, basePath))
+    {
+        LogError("config file({}) NOT found.", config_file);
+        return false;
+    }
+
+    if(!_config.load(path, basePath))
     {
         return false;
     }
