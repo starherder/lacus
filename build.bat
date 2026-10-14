@@ -4,16 +4,18 @@ setlocal enabledelayedexpansion
 :: ===========================================================================
 ::  Lacus one-click build script (CMake + Visual Studio generator)
 ::
-::  Usage:  build.bat [Debug|Release|RelWithDebInfo|MinSizeRel] [-nopause]
+::  Usage:  build.bat [rebuild] [Debug|Release|RelWithDebInfo|MinSizeRel] [-nopause]
 ::
 ::    build.bat                       build Debug (default)
 ::    build.bat Release               build Release
+::    build.bat rebuild               clean and build Debug
+::    build.bat Release rebuild       clean and build Release
 ::    build.bat Release -nopause      do not wait for a key when finished
 ::
 ::  Intermediate files : <root>\build
 ::  Executable         : <root>\bin\<Config>\Lacus.exe
 ::
-::  Delete the build directory if you want a clean configuration.
+::  Default builds are incremental. Use "rebuild" when you want a clean build.
 :: ===========================================================================
 
 set "ROOT=%~dp0"
@@ -23,22 +25,29 @@ set "BIN_DIR=%ROOT%\bin"
 set "PF86=%ProgramFiles(x86)%"
 set "PF=%ProgramFiles%"
 set "EXIT_CODE=0"
+set "CONFIG=Debug"
+set "REBUILD=0"
+set "NOPAUSE="
 
-set "CONFIG=%~1"
-if /i "%CONFIG%"=="-nopause" (
-    set "CONFIG="
-    set "NOPAUSE=-nopause"
-) else (
-    set "NOPAUSE=%~2"
-)
-
-if "%CONFIG%"=="" set "CONFIG=Debug"
-
-if /i not "%CONFIG%"=="Debug" if /i not "%CONFIG%"=="Release" if /i not "%CONFIG%"=="RelWithDebInfo" if /i not "%CONFIG%"=="MinSizeRel" (
-    echo [ERROR] Unknown configuration: "%CONFIG%"
-    echo         Available: Debug / Release / RelWithDebInfo / MinSizeRel
-    set "EXIT_CODE=1"
-    goto :finish
+for %%a in (%*) do (
+    if /i "%%~a"=="-nopause" (
+        set "NOPAUSE=-nopause"
+    ) else if /i "%%~a"=="rebuild" (
+        set "REBUILD=1"
+    ) else if /i "%%~a"=="Debug" (
+        set "CONFIG=Debug"
+    ) else if /i "%%~a"=="Release" (
+        set "CONFIG=Release"
+    ) else if /i "%%~a"=="RelWithDebInfo" (
+        set "CONFIG=RelWithDebInfo"
+    ) else if /i "%%~a"=="MinSizeRel" (
+        set "CONFIG=MinSizeRel"
+    ) else (
+        echo [ERROR] Unknown argument: "%%~a"
+        echo         Usage: build.bat [rebuild] [Debug^|Release^|RelWithDebInfo^|MinSizeRel] [-nopause]
+        set "EXIT_CODE=1"
+        goto :finish
+    )
 )
 
 :: ---- locate cmake ---------------------------------------------------------
@@ -75,6 +84,11 @@ echo [INFO] cmake     : !CMAKE_EXE!
 echo [INFO] source    : %ROOT%
 echo [INFO] build dir : %BUILD_DIR%
 echo [INFO] config    : %CONFIG%
+if "%REBUILD%"=="1" (
+    echo [INFO] mode      : rebuild
+) else (
+    echo [INFO] mode      : incremental
+)
 echo.
 
 :: ---- configure -----------------------------------------------------------
@@ -93,26 +107,39 @@ if not exist "%BUILD_DIR%\CMakeCache.txt" (
         )
     )
 ) else (
-    echo [INFO] Updating build files ...
-    "!CMAKE_EXE!" -S "%ROOT%" -B "%BUILD_DIR%"
-    if errorlevel 1 (
-        echo [ERROR] CMake configure failed.
-        set "EXIT_CODE=1"
-        goto :finish
+    if "%REBUILD%"=="1" (
+        echo [INFO] Updating build files before rebuild ...
+        "!CMAKE_EXE!" -S "%ROOT%" -B "%BUILD_DIR%"
+        if errorlevel 1 (
+            echo [ERROR] CMake configure failed.
+            set "EXIT_CODE=1"
+            goto :finish
+        )
+    ) else (
+        echo [INFO] Build cache found, skipping configure for incremental build.
     )
 )
 
 :: ---- build ---------------------------------------------------------------
 echo.
-echo [INFO] Building, this may take a while ...
-"!CMAKE_EXE!" --build "%BUILD_DIR%" --config %CONFIG% --parallel
+if "%REBUILD%"=="1" (
+    echo [INFO] Rebuilding from clean outputs, this may take a while ...
+    "!CMAKE_EXE!" --build "%BUILD_DIR%" --config %CONFIG% --clean-first --parallel
+) else (
+    echo [INFO] Building incrementally ...
+    "!CMAKE_EXE!" --build "%BUILD_DIR%" --config %CONFIG% --parallel
+)
 if errorlevel 1 (
     set "EXIT_CODE=!errorlevel!"
     goto :finish
 )
 
 echo.
-echo [OK] Build succeeded.
+if "%REBUILD%"=="1" (
+    echo [OK] Rebuild succeeded.
+) else (
+    echo [OK] Incremental build succeeded.
+)
 if exist "%BIN_DIR%\%CONFIG%\Lacus.exe" (
     echo      Executable : %BIN_DIR%\%CONFIG%\Lacus.exe
 ) else (

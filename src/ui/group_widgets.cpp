@@ -45,6 +45,11 @@ namespace ui
 
     void Group::update(float delta)
     {
+        if(!visible()) 
+        {
+            return;
+        }
+
         for(auto& ptr : _children) 
         {
             ptr->update(delta);
@@ -57,24 +62,25 @@ namespace ui
         {
             return;
         }
-
+/*
         bool pushedClip = clipChildren();
         if(pushedClip)
         {
             GuiManager::inst().painter().pushClipRect(GuiManager::inst().uiToScreenRect(getClipRect()));
         }
-
+*/
         Widget::draw();
 
         for(auto& ptr : _children) 
         {
             ptr->draw();
         }
-
+/*
         if (pushedClip)
         {
             GuiManager::inst().painter().popClipRect();
         }
+*/
     } 
     
     void Group::addWidget(WidgetPtr widget, int index)

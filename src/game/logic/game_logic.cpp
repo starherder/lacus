@@ -456,9 +456,6 @@ namespace game
             auto form = ui::GuiManager::inst().getForm<FormChessTip>("form_chess_tip");
             if (form)
             {
-                auto mousePos = _context.eventDispatcher().mousePos();
-                form->setPos(mousePos + Vec2{ 10, 10 });
-
                 form->setVisible(true);
                 form->showChessTip(obj);
             }

@@ -2,7 +2,7 @@
 
 <form maximize="true" size="600,500" ground_color="#005555FF" border_color="#555555FF" border_size="1">
    <group>
-        <exgroup name="exgroup_scenes" ground_color="#005555FF" size="2000,1000" >
+        <exgroup name="exgroup_scenes" ground_color="#005555FF">
   
             <button name="btn_scene_1" pos="100,100" size="128,192"  data="scene:demo_1" 
                 texture="scene:house1" 

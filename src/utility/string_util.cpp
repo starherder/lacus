@@ -18,22 +18,20 @@ namespace utility
                 [](unsigned char c) { return std::isdigit(c); });
     }
 
-	StrViewVector StringUtil::split(const std::string& str, char delimiter)
+	StringVector StringUtil::split(const std::string& str, char delimiter)
 	{
-		StrViewVector tokens;
-
-		std::string_view sv(str);
+		StringVector tokens;
 
 		size_t start = 0;
-		size_t end = sv.find(delimiter);
+		size_t end = str.find(delimiter);
 
-		while (end != std::string_view::npos) {
-			tokens.push_back(sv.substr(start, end - start));
+		while (end != std::string::npos) {
+			tokens.push_back(str.substr(start, end - start));
 			start = end + 1;
-			end = sv.find(delimiter, start);
+			end = str.find(delimiter, start);
 		}
 
-		tokens.push_back(sv.substr(start));
+		tokens.push_back(str.substr(start));
 		return tokens;
 	}
 

@@ -12,13 +12,6 @@ FormScenes::FormScenes(const std::string& name, GameContext& context) : FormLogi
 {
     load(_context.resPath() / "ui/form_scenes.xml");
 
-    auto group = getWidget<ExpandGroup>("exgroup_scenes");
-    if(group)
-    {
-        group->setPos({0, 0});
-        group->setSize(size());
-    }
-
     auto btnClose = getWidget<ui::Button>("btn_close");
     if (btnClose)
     {

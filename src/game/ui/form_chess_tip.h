@@ -15,6 +15,8 @@ namespace game
         void showChessTip(entt::entity obj);
 
     private:
+        void updateTipPos();
+
         void onUpdate(float delta) override;
 
         void onSizeChanged() override;

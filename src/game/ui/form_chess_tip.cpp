@@ -1,7 +1,10 @@
 ﻿#include "form_chess_tip.h"
 #include "game/ecs/comm_comp.h"
 #include "game/ecs/comp_fight.h"
+#include "ui/gui_manager.h"
 #include "utility/translator.h"
+
+#include <algorithm>
 
 namespace game
 {
@@ -23,6 +26,8 @@ namespace game
 
     void FormChessTip::showChessTip(entt::entity obj)
     {
+        updateTipPos();
+
         auto pNameId = _context.registry().try_get<CompNameId>(obj);
         if (pNameId)
         {
@@ -60,10 +65,24 @@ namespace game
         }
     }
 
+    void FormChessTip::updateTipPos()
+    {
+        auto& gui = ui::GuiManager::inst();
+        auto mousePos = gui.screenToUiPoint(_context.eventDispatcher().mousePos());
+        auto tipPos = mousePos + Vec2{ 10.0f, 10.0f };
+        const Vec2 maxPos{
+            std::max(0.0f, gui.uiSize().x - size().x),
+            std::max(0.0f, gui.uiSize().y - size().y)
+        };
+
+        tipPos.x = std::clamp(tipPos.x, 0.0f, maxPos.x);
+        tipPos.y = std::clamp(tipPos.y, 0.0f, maxPos.y);
+        setPos(tipPos);
+    }
+
     void FormChessTip::onUpdate(float delta)
     {
-        auto mousePos = _context.eventDispatcher().mousePos();
-        setPos(mousePos + Vec2{10, 10});
+        updateTipPos();
     }
 
     void FormChessTip::onSizeChanged()
