@@ -839,31 +839,37 @@ namespace game
 		return trap;
 	}
 
-	void ObjectManager::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)
+	void ObjectManager::createSkyEffect(const SkyEffectParam& param)
 	{
 		assert(_context);
-		LogInfo("createSkyEffect: effect = {}, color = {}, last = {}, fadein = {}, fadeout = {}", 
-			magic_enum::enum_name(effect).data(), color.toHexString(), last, fadein, fadeout);
+		LogInfo("createSkyEffect: color = {}, last = {}, fadein = {}, fadeout = {}, particle = {}", 
+			 param.color.toHexString(), param.lastMs, param.fadeInMs, param.fadeOutMs, param.particle);
 
 		auto sky = _context->registry().create();
+
 		CompTransform trans;
 		trans.position = { 0, 0 };
+		trans.coord_mode = CoordMode::ScreenSpace;
 		_context->registry().emplace<CompTransform>(sky, trans);
 
+		if (!param.particle.empty())
+		{
+			createParticleOnObject(sky, param.particle);
+		}
+
 		CompSkyEffect compSky;
-		compSky.color = color;
-		compSky.effect = effect;
+		compSky.color = param.color;
 		compSky.tween = tweeny::from(0.0f)
-			.to((float)color.a).via("linear").during(fadein)
-			.to((float)color.a).via("linear").during(last)
-			.to(0.0f).via("linear").during(fadeout)
-			.onStep([sky, effect, this](auto& t, float alpha) {
+			.to(param.color.a).via("linear").during(param.fadeInMs)
+			.to(param.color.a).via("linear").during(param.lastMs)
+			.to(0.0f).via("linear").during(param.fadeOutMs)
+			.onStep([sky, this, maxAlpha = param.color.a](auto& t, float alpha) {
 				if (!_context->registry().valid(sky)) {
 					return true;
 				}
 
 				if (t.isFinished()) {
-					LogInfo("sky effect({}) finish", magic_enum::enum_name(effect).data());
+					LogInfo("sky effect finish");
 					_context->registry().emplace<CompDestroy>(sky);
 					return true;
 				}
@@ -872,6 +878,12 @@ namespace game
 
 				auto& compSky = _context->registry().get<CompSkyEffect>(sky);
 				compSky.color.a = static_cast<uint8_t>(alpha);
+				if (auto* particle = _context->registry().try_get<CompBindParticle>(sky);
+					particle && particle->particle)
+				{
+					const float alphaScale = maxAlpha > 0 ? alpha / static_cast<float>(maxAlpha) : 0.0f;
+					particle->particle->SetAlphaScale(alphaScale);
+				}
 				return false;
 			});
 

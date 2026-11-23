@@ -678,7 +678,13 @@ void ImFormDebug::drawSkyWindow()
         Color c = { color.x, color.y, color.z, color.w };
         std::string particle = _particleNames[selectindex];
 
-        _context->objectManager().createSkyEffect(SkyEffect::Dark, c, last, fadein, fadeout);
+		SkyEffectParam skyParam;
+		skyParam.color = c;
+		skyParam.fadeInMs = fadein;
+		skyParam.lastMs = last;
+		skyParam.fadeOutMs = fadeout;
+		skyParam.particle = particle;
+        _context->objectManager().createSkyEffect(skyParam);
     }
 
     ImGui::End();

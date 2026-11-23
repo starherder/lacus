@@ -81,6 +81,11 @@ namespace engine {
         return (pos - _viewOffset) / _viewScale + _pos; 
     }
 
+    Vec2 Camera::screenToViewport(const Vec2& pos) const
+    {
+        return pos * _viewScale + _viewOffset;
+    }
+
     void Camera::update(float delta) 
     {
         if (_shaking)
@@ -99,6 +104,11 @@ namespace engine {
 	Vec2 Camera::projectPoint(const Vec2& point) const
     {
         return worldToScreen(point);
+    }
+
+    Vec2 Camera::projectScreenPoint(const Vec2& point) const
+    {
+        return screenToViewport(point);
     }
 
     void Camera::projectVertices(std::vector<Vertex>& verts) const 

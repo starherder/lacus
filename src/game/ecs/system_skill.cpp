@@ -1,4 +1,5 @@
 #include "system_skill.h"
+#include "comm_comp.h"
 
 #include <array>
 
@@ -764,7 +765,12 @@ namespace game
 				ticks = 2000;
 			}
 
-			_context.objectManager().createSkyEffect(SkyEffect::Dark, Color{ 0,0,0,200 }, ticks-1000, 500, 500);
+			SkyEffectParam skyParam;
+			skyParam.color = Color{ 0,0,0,200 };
+			skyParam.fadeInMs = 500;
+			skyParam.lastMs = ticks - 1000;
+			skyParam.fadeOutMs = 500;
+			_context.objectManager().createSkyEffect(skyParam);
 		}
 	}
 

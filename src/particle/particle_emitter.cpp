@@ -14,6 +14,8 @@ namespace particle
 
 	ParticleEmitter::~ParticleEmitter()
 	{
+		stopEmitting();
+
 		if ( _particleEffect ) {
 			delete _particleEffect;
 		}
@@ -114,6 +116,8 @@ namespace particle
 	
 	void ParticleEmitter::startEmitting()
 	{
+		_elapsed = 0;
+		_emitCounter = 0;
 		_canEmit = true;
 	}
 
@@ -126,5 +130,8 @@ namespace particle
 			ParticleMemory::freeParticle(ele);
 		}
 		_particleList.clear();
+
+		_elapsed = 0;
+		_emitCounter = 0;
 	}
 }

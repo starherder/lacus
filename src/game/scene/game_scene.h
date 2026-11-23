@@ -107,8 +107,6 @@ namespace game {
 
         int getGridWalkType(const Vec2i& grid);
 
-        SkyEffect getSkyEffect();
-
         void setDebugInfo(bool show);
 
         auto& getCollisionDebugRects() { return _collisionDebugRects; }

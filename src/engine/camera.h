@@ -35,6 +35,7 @@ namespace engine {
 
 		Vec2 worldToScreen(const Vec2& pos) const;
 		Vec2 screenToWorld(const Vec2& pos) const;
+		Vec2 screenToViewport(const Vec2& pos) const;
 
         void update(float delta);
 
@@ -43,6 +44,7 @@ namespace engine {
         virtual bool handleEvent(const Event& event);
 
 		Vec2 projectPoint(const Vec2& point) const;
+		Vec2 projectScreenPoint(const Vec2& point) const;
 		void projectVertices(std::vector<Vertex>& verts) const;
 
 		Rect projectRect(const Rect& rect) const;

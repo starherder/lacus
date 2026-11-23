@@ -81,16 +81,17 @@ namespace game
         ScreenSpace,
     };
 
-    enum class SkyEffect
+    struct SkyEffectParam
     {
-        None,
-        Dark,
-        Fog,
-        Cold,
-        Hot,
-        Rain,
-    };
+        Color color = Color::Yellow;
+        
+        int fadeInMs = 500;
+        int lastMs = 2000;
+        int fadeOutMs = 1000;
 
+        std::string particle;
+    };
+    
     enum class ShapeType
     {
         Circle,
@@ -295,8 +296,6 @@ namespace game
 
     struct CompSkyEffect
     {
-        SkyEffect effect;
-
         Color color;
 
         tweeny::tween<float> tween;

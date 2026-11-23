@@ -475,16 +475,10 @@ void RenderSystem::drawParticles()
         auto& compTransform = parEnts.get<CompTransform>(ent);
         auto& compParticle = parEnts.get<CompBindParticle>(ent);
 
-        Camera* pcamera = nullptr;
-        if(compTransform.coord_mode == CoordMode::WorldSpace)
-        {
-            pcamera = &camera;
-        }
-
         auto& particle = compParticle.particle;
         if (particle)
         {
-            particle->Draw(pcamera);
+            particle->Draw(&camera, compTransform.coord_mode == CoordMode::ScreenSpace);
         }
     }
 }

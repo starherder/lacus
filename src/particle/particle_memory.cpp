@@ -31,11 +31,13 @@ namespace particle
 		}
 		_particlePool.clear();
 		_unusedParticleList.clear();
+		_freeIndex = 0;
+		_init = false;
 	}
 
 	ParticleCfg* ParticleMemory::allocParticle()
 	{
-		if ( (_freeIndex >= _particlePool.size() - 1) ) {
+		if ( _freeIndex >= static_cast<int>(_unusedParticleList.size()) ) {
 			return nullptr;
 		}
 		else {

@@ -4,6 +4,8 @@
 #include "engine/application.h"
 #include "tinyxml2/tinyxml2.h"
 
+#include <algorithm>
+
 #define MAX_PARTICLE	8192
 
 namespace particle
@@ -135,7 +137,7 @@ namespace particle
 		}
 	}
 
-	void Particle::Draw(engine::Camera* camera)
+	void Particle::Draw(engine::Camera* camera, bool screenSpace)
 	{
 		auto particleList = _emitter->getParticleList();
 		if ( particleList->empty() ) return;
@@ -159,12 +161,20 @@ namespace particle
 			Vec2 p3 = {x + c + s, y + c - s};
 			Vec2 p4 = {x + c - s, y - c - s};
 
-			if(camera) 
+			if(camera)
 			{
-				p1 = camera->projectPoint(p1);
-				p2 = camera->projectPoint(p2);
-				p3 = camera->projectPoint(p3);
-				p4 = camera->projectPoint(p4);
+				if (screenSpace) {
+					p1 = camera->projectScreenPoint(p1);
+					p2 = camera->projectScreenPoint(p2);
+					p3 = camera->projectScreenPoint(p3);
+					p4 = camera->projectScreenPoint(p4);
+				}
+				else {
+					p1 = camera->projectPoint(p1);
+					p2 = camera->projectPoint(p2);
+					p3 = camera->projectPoint(p3);
+					p4 = camera->projectPoint(p4);
+				}
 			}
 
 			_vertexData[i * 4 + 0].position = ToPoint(p1);
@@ -172,10 +182,12 @@ namespace particle
 			_vertexData[i * 4 + 2].position = ToPoint(p3);
 			_vertexData[i * 4 + 3].position = ToPoint(p4);
 
-			_vertexData[i * 4 + 0].color = particle->cColor;
-			_vertexData[i * 4 + 1].color = particle->cColor;
-			_vertexData[i * 4 + 2].color = particle->cColor;
-			_vertexData[i * 4 + 3].color = particle->cColor;
+			Color color = particle->cColor;
+			color.a = static_cast<uint8_t>(std::clamp(color.a * _alphaScale, 0.0f, 255.0f));
+			_vertexData[i * 4 + 0].color = color;
+			_vertexData[i * 4 + 1].color = color;
+			_vertexData[i * 4 + 2].color = color;
+			_vertexData[i * 4 + 3].color = color;
 
 			i++;
 		}
@@ -316,6 +328,11 @@ namespace particle
 		{
 			_emitter->stopEmitting();
 		}
+	}
+
+	void Particle::SetAlphaScale(float alpha)
+	{
+		_alphaScale = std::clamp(alpha, 0.0f, 1.0f);
 	}
 
 	bool Particle::IsPlaying()
@@ -484,7 +501,7 @@ namespace particle
 
 		for (const auto& entry : std::filesystem::directory_iterator(cfgdir))
 		{
-			if (entry.is_regular_file())
+			if (entry.is_regular_file() && entry.path().extension() == ".xml")
 			{
 				auto filename = entry.path();
 

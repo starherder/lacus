@@ -29,10 +29,13 @@ namespace particle
 		void SetDescription(const ParticleDescription& desc);
 
 		void Update(float dt);
-		void Draw(engine::Camera* camera = nullptr);
+		void Draw(engine::Camera* camera = nullptr, bool screenSpace = false);
 
 		void Start();
 		void Stop();
+
+		void SetAlphaScale(float alpha);
+		float GetAlphaScale() const { return _alphaScale; }
 
 		Vec2 GetPos();
 		void SetPos(const Vec2& pos);
@@ -63,6 +66,8 @@ namespace particle
 		std::vector<Vertex> _vertexData;
 
 		std::vector<int> _indices;
+
+		float _alphaScale = 1.0f;
 
 #define Particle_Editor_Mode
 #ifdef Particle_Editor_Mode

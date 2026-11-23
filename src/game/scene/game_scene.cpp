@@ -920,18 +920,6 @@ const GameScene::EntityDisMap& GameScene::getObjectsInCircle(const Vec2& center,
     return result;
 }
 
-SkyEffect GameScene::getSkyEffect()
-{
-    auto views = _registry.view<CompSkyEffect>();
-    for (auto ent : views)
-    {
-        auto& compSky = _context.registry().get<CompSkyEffect>(ent);
-        return compSky.effect;
-    }
-
-    return SkyEffect::None;
-}
-
 void GameScene::onMouseMotion(const Vec2& pos, const Vec2& offset)
 {
     auto scenePos = camera().screenToWorld(pos);

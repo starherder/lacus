@@ -43,7 +43,7 @@ namespace game
 
 		particle::ParticlePtr createParticleOnObject(entt::entity owner, const std::string& particle);
 
-		void createSkyEffect(SkyEffect effect,  Color color, int last,int fadein = 500, int fadeout = 500);
+		void createSkyEffect(const SkyEffectParam& param);
 
 		bool setObjectDisplayLayer(entt::entity entityid, DisplayLayer layer);
 
