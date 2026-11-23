@@ -212,7 +212,7 @@ namespace samples
         float ts = application()->frameTicker().deltaSeconds();
 
         static int passed_ms = 0;
-        passed_ms += application()->frameTicker().deltaTicks();
+        passed_ms += application()->frameTicker().deltaMs();
         if(passed_ms > 10)
         {
             if(_addDel)

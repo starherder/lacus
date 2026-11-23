@@ -24,7 +24,7 @@ namespace game
 
 	void SkillSystem::update(float delta)
 	{
-		auto deltaTicks = _context.frameTicker().deltaTicks();
+		auto deltaTicks = _context.frameTicker().deltaMs();
 
 		// 受击特效
 		auto views1 = _context.registry().view<CompUnderAttack>();

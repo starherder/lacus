@@ -35,7 +35,7 @@ namespace game
 			auto& ownerTrans = _context.registry().get<CompTransform>(bufCom.owner);
 			trans.position = ownerTrans.position + Vec2{ownerTrans.size.x/2, -ownerTrans.size.y/2} + trans.size/2.0f;
 
-			bufCom.onUpdate(_context.applicaton().frameTicker().deltaTicks());
+			bufCom.onUpdate(_context.applicaton().frameTicker().deltaMs());
 		}
 
 		//-----------------------------------------------------------------------------

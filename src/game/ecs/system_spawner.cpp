@@ -37,7 +37,7 @@ namespace game
                 }
                 else
                 {
-                    spawner.cur_tick += _context.applicaton().frameTicker().deltaTicks();
+                    spawner.cur_tick += _context.applicaton().frameTicker().deltaMs();
                 }
             }
             else

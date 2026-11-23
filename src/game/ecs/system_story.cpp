@@ -25,7 +25,7 @@ namespace game
 			auto& player = view.get<CompStoryPlayer>(storyPlayer);
 			followCamera(player);
 
-			player.dialogue_ticks -= _context.deltaTicks();
+			player.dialogue_ticks -= _context.deltaMs();
 			if (player.dialogue_ticks <= 0)
 			{
 				startNextDialogue(storyPlayer, player);

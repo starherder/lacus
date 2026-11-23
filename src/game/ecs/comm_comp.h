@@ -299,7 +299,7 @@ namespace game
 
         Color color;
 
-        tweeny::tween<int> tween;
+        tweeny::tween<float> tween;
     };
 
     struct CompSpawner

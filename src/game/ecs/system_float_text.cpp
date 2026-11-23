@@ -21,7 +21,7 @@ namespace game
 		for (auto& ent : ent_view)
 		{
 			auto& compText = ent_view.get<CompFightText>(ent);
-            compText.tween.step(_context.deltaTicks());
+            compText.tween.step(_context.deltaMs());
 		}
 	}
 

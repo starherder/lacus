@@ -110,7 +110,7 @@ namespace samples {
     {
         if (!_tween.isFinished() || _easeMode==EaseMode::Yoyo)
         {
-            auto delta = application()->frameTicker().deltaTicks();
+            auto delta = application()->frameTicker().deltaMs();
             //LogInfo("delta = {}, time_point = {}, point = {}", 
             //    delta, _tween.currentTimePoint(), _tween.point());
 

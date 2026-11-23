@@ -32,7 +32,7 @@ public:
 
     float deltaSeconds() const { return _deltaTicks/1000.0f; }
 
-    int deltaTicks() const { return _deltaTicks; }
+    int deltaMs() const { return _deltaTicks; }
 
     uint64_t ticks() const;
 

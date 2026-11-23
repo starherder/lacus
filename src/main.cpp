@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 
     engine::Application app;
 
-    app.init("res/system.json", "log/lacus.log");
+    app.init("res/system.json");
 
     samples::SamplePluginManager::inst().init(app);
 

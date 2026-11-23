@@ -38,7 +38,7 @@ Color RenderSystem::getForeColor(CampSide side)
 
 void RenderSystem::update(float delta)
 {
-    auto delta_tick = _context.frameTicker().deltaTicks();
+    auto delta_tick = _context.frameTicker().deltaMs();
 
     auto par_view = _context.registry().view<CompTransform, CompBindParticle>();
     for (auto& ent : par_view)
@@ -57,7 +57,7 @@ void RenderSystem::update(float delta)
     {
         auto& skyEffect = sky_view.get<CompSkyEffect>(ent);
 
-        skyEffect.tween.step(delta);
+        skyEffect.tween.step(delta_tick);
     }
 
     auto sel_view = _context.registry().view<CompSelection>();

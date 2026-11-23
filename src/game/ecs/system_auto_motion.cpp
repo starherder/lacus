@@ -28,7 +28,7 @@ namespace game
         for (auto& ent : shoot_view)
         {
             auto& compTween = shoot_view.get<CompShoot>(ent);
-            auto delta = _context.frameTicker().deltaTicks();
+            auto delta = _context.frameTicker().deltaMs();
             compTween.tween.step(delta);
         }
 
@@ -47,7 +47,7 @@ namespace game
                 continue;
             }
 
-            auto delta = _context.frameTicker().deltaTicks();
+            auto delta = _context.frameTicker().deltaMs();
             motion.tween.step(delta);
 
             if(motion.tween.progress() >= 1.0f)

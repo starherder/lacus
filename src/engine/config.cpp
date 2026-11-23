@@ -94,8 +94,15 @@ bool SystemConfig::load(const fs::path& filepath, const fs::path& basePath)
         if(json.contains("log"))
         {
             auto& log_json = json["log"];
-            log.level = log_json["level"];
-            log.pattern = log_json["pattern"];
+            log.level = log_json.value("level", log.level);
+            log.pattern = log_json.value("pattern", log.pattern);
+            std::string log_file_str = log_json.value("file", log.file.string());
+            fs::path log_path = log_file_str;
+            log.file = log_path.is_absolute() ? log_path : basePath / log_path;
+        }
+        else if (log.file.is_relative())
+        {
+            log.file = basePath / log.file;
         }
 
         if(json.contains("res"))

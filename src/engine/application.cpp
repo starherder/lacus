@@ -1,6 +1,8 @@
 ﻿#include "application.h"
 #include "resource.h"
+#include <chrono>
 #include <memory>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace engine {
 
@@ -124,7 +126,7 @@ void Application::run()
     close();
 }
 
-bool Application::init(std::string_view configFile, std::string_view logFile)
+bool Application::init(std::string_view configFile)
 {
     SDL_Log("---------------- engine init ----------------");
 
@@ -134,7 +136,7 @@ bool Application::init(std::string_view configFile, std::string_view logFile)
         return false;
     }
 
-    if(!initLog(logFile)) 
+    if(!initLog()) 
     {
         SDL_Log("init spdlog failed.");
         return false;
@@ -187,12 +189,41 @@ bool Application::initConfig(std::string_view config_file)
     return true;
 }
 
-bool Application::initLog(std::string_view logFile) 
+bool Application::initLog() 
 {
-    spdlog::set_level((spdlog::level::level_enum)_config.log.level);
-    spdlog::set_pattern(_config.log.pattern);
-    
-    return true;
+    try
+    {
+        fs::path logPath = _config.log.file;
+        if (logPath.is_relative())
+        {
+            logPath = fs::current_path() / logPath;
+        }
+
+        if (logPath.has_parent_path())
+        {
+            fs::create_directories(logPath.parent_path());
+        }
+
+        spdlog::drop("lacus");
+        auto logger = spdlog::basic_logger_mt("lacus", logPath.string(), true);
+        spdlog::set_default_logger(logger);
+        spdlog::set_level((spdlog::level::level_enum)_config.log.level);
+        spdlog::set_pattern(_config.log.pattern);
+        spdlog::flush_every(std::chrono::seconds(1));
+
+        LogInfo("log file: {}", logPath.string());
+        return true;
+    }
+    catch (const spdlog::spdlog_ex& e)
+    {
+        SDL_Log("init spdlog failed: %s", e.what());
+        return false;
+    }
+    catch (const std::exception& e)
+    {
+        SDL_Log("init spdlog failed: %s", e.what());
+        return false;
+    }
 }
 
 bool Application::initWindow()
@@ -307,6 +338,7 @@ bool Application::close()
     painter().quit();
 
     SDL_Quit();
+    spdlog::shutdown();
     return true;
 }
 

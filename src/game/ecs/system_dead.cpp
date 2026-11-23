@@ -48,7 +48,7 @@ namespace game
 			{
 				_context.scene().destroyObject(ent);
 			}
-			compDead.ticks += _context.applicaton().frameTicker().deltaTicks();
+			compDead.ticks += _context.applicaton().frameTicker().deltaMs();
 		}
 	}
 

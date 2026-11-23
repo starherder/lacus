@@ -842,6 +842,8 @@ namespace game
 	void ObjectManager::createSkyEffect(SkyEffect effect,  Color color, int last, int fadein, int fadeout)
 	{
 		assert(_context);
+		LogInfo("createSkyEffect: effect = {}, color = {}, last = {}, fadein = {}, fadeout = {}", 
+			magic_enum::enum_name(effect).data(), color.toHexString(), last, fadein, fadeout);
 
 		auto sky = _context->registry().create();
 		CompTransform trans;
@@ -851,11 +853,11 @@ namespace game
 		CompSkyEffect compSky;
 		compSky.color = color;
 		compSky.effect = effect;
-		compSky.tween = tweeny::from(0)
-			.to(color.a).via("linear").during(fadein)
-			.to(color.a).via("linear").during(last)
-			.to(0).via("linear").during(fadeout)
-			.onStep([sky, effect, this](auto& t, int a) {
+		compSky.tween = tweeny::from(0.0f)
+			.to((float)color.a).via("linear").during(fadein)
+			.to((float)color.a).via("linear").during(last)
+			.to(0.0f).via("linear").during(fadeout)
+			.onStep([sky, effect, this](auto& t, float alpha) {
 				if (!_context->registry().valid(sky)) {
 					return true;
 				}
@@ -866,10 +868,10 @@ namespace game
 					return true;
 				}
 
-				LogInfo("sky.color.a = {}", a);
+				LogInfo("sky.color.a = {}, t.progress = {}", alpha, t.progress());
 
 				auto& compSky = _context->registry().get<CompSkyEffect>(sky);
-				compSky.color.a = a;
+				compSky.color.a = static_cast<uint8_t>(alpha);
 				return false;
 			});
 

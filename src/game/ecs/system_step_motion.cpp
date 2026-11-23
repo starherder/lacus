@@ -32,7 +32,7 @@ namespace game
                 continue;
             }
 
-            auto delta = _context.frameTicker().deltaTicks();
+            auto delta = _context.frameTicker().deltaMs();
             motion.tween.step(delta);
         }
     }

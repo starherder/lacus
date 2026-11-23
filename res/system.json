@@ -8,6 +8,7 @@
 
   "log": {
     "level": 0,
+    "file": "log/lacus.log",
     "pattern": "[%H:%M:%S.%e] [%l] [%!():%#] %v"
   },
 

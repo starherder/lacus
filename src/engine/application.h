@@ -33,7 +33,7 @@ public:
     Application(const Application& app) = delete;
     Application& operator=(const Application& app) = delete;
 
-    bool init(std::string_view configFile, std::string_view logFile);
+    bool init(std::string_view configFile);
 
     void run();
 
@@ -75,7 +75,7 @@ private:
     bool postFrame();
     
     bool initConfig(std::string_view configFile);
-    bool initLog(std::string_view logFile);
+    bool initLog();
     bool initWindow();
     bool initRenderer();
     bool initAudioPlayer();

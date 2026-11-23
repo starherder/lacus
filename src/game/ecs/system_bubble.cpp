@@ -49,7 +49,7 @@ void BubbleSystem::update(float delta)
         int fadeout_ms = _context.gameConfig().bubble.fadeout_ms;
         int lifetime_ms = _context.gameConfig().bubble.lifetime_ms;
 
-        bubble.lifetime -= _context.deltaTicks();
+        bubble.lifetime -= _context.deltaMs();
         if (bubble.lifetime < 0)
         {
             removeBubbleEmotionAnim(_context, bubble);

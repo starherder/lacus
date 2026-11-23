@@ -40,6 +40,7 @@ public:
 	{
         int level = 0;
         std::string pattern = "[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] %v";
+        fs::path file = "log/lacus.log";
     }log;
 
     struct resCfg

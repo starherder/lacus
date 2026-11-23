@@ -82,7 +82,7 @@ namespace game {
 		void setGameData(GameData* data) { _gameData = data; }
 
 		int64_t currentTicks() { return _application.frameTicker().ticks(); }
-		int deltaTicks() { return _application.frameTicker().deltaTicks(); }
+		int deltaMs() { return _application.frameTicker().deltaMs(); }
 
 		ObjectManager& objectManager();
 

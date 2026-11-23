@@ -23,7 +23,7 @@ namespace game
             auto& pickComp = views.get<CompPickable>(ent);
             if(pickComp.picked)
             {
-                auto delta = _context.frameTicker().deltaTicks();
+                auto delta = _context.frameTicker().deltaMs();
                 pickComp.tween.step(delta);
             }
         }
@@ -32,7 +32,7 @@ namespace game
         for(auto& ent : roleViews)
         {
             auto& pickComp = roleViews.get<CompAutoPick>(ent);
-            pickComp.ticks += _context.frameTicker().deltaTicks();
+            pickComp.ticks += _context.frameTicker().deltaMs();
 
             if(pickComp.ticks > _context.gameConfig().pickup.pick_period)
             {
@@ -47,7 +47,7 @@ namespace game
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
-        // 切换到屏幕空�?
+        // 切换到屏幕空�?
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
 
         _context.scene().removeObjectFromScene(obj);
