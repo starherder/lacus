@@ -39,6 +39,7 @@ namespace particle
 
 		Vec2 GetPos();
 		void SetPos(const Vec2& pos);
+		void SetOwnerPos(const Vec2& pos);
 
 		bool IsPlaying();
 
@@ -68,6 +69,7 @@ namespace particle
 		std::vector<int> _indices;
 
 		float _alphaScale = 1.0f;
+		Vec2 _localEmitPos = {0.0f, 0.0f};
 
 #define Particle_Editor_Mode
 #ifdef Particle_Editor_Mode

@@ -103,6 +103,7 @@ namespace particle
 	void Particle::SetDescription(const ParticleDescription& desc)
 	{
 		SetTexture(desc.sTexture);
+		_localEmitPos = desc.vEmitPos;
 
 		if (_emitter) {
 			_emitter->setDecription(desc);
@@ -311,6 +312,14 @@ namespace particle
 		if (_emitter)
 		{
 			_emitter->SetEmitPos({(float)pos.x, (float)pos.y});
+		}
+	}
+
+	void Particle::SetOwnerPos(const Vec2& pos)
+	{
+		if (_emitter)
+		{
+			_emitter->SetEmitPos(_localEmitPos + pos);
 		}
 	}
 

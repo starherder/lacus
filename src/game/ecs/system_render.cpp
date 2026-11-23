@@ -47,7 +47,7 @@ void RenderSystem::update(float delta)
         auto& compParticle = par_view.get<CompBindParticle>(ent);
         if (compParticle.particle)
         {
-            compParticle.particle->SetPos(compTransform.position + compTransform.visual_offset);
+            compParticle.particle->SetOwnerPos(compTransform.position + compTransform.visual_offset);
             compParticle.particle->Update(delta);
         }
     }

@@ -391,7 +391,6 @@ namespace samples
             return;
         }
 
-        _particle->SetPos({ 500, 500 });
         _particle->Start();
 
         auto form = imgui::ImFormManager::inst().getForm<ImParticleEditor>("particle_editor");
