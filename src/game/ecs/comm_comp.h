@@ -248,6 +248,14 @@ namespace game
         Vec2 camera_target_pos = { 0.0f, 0.0f };
     };
 
+    struct CompDialogPlayer
+    {
+        std::string dialog_name;
+        size_t dialogue_index = 0;
+        int dialogue_ticks = 0;
+        bool game_pause = false;
+    };
+
     struct CompRolePick 
     {
         float range = 100.0f;

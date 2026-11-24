@@ -1,0 +1,28 @@
+[
+    {
+        "name":"talk_0",
+        "type" : "ui",
+        "desc": "test talk 0.",
+        "camera_follow" : "false",
+        "game_pause":"true",
+        "dialogue":[
+            {"actor":"npc_0", "word":"word_test_1"},
+            {"actor":"npc_1", "word":"word_test_2"},
+            {"actor":"npc_0", "word":"word_test_3"},
+            {"actor":"npc_1", "word":"word_test_4", "emotion":"love" }
+        ]
+    },
+    {
+        "name":"talk_1",
+        "type" : "ui",
+        "desc": "test talk 1.",
+        "camera_follow" : "false",
+        "game_pause":"true",
+        "dialogue":[
+            {"actor":"npc_2", "word":"word_test_1"},
+            {"actor":"npc_3", "word":"word_test_2"},
+            {"actor":"npc_2", "word":"word_test_3"},
+            {"actor":"npc_3", "word":"word_test_4", "emotion":"love" }
+        ]
+    }
+]

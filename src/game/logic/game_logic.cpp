@@ -9,6 +9,7 @@
 #include "game/scene/object_manager.h"
 #include "game/scene/save_manager.h"
 #include "game/scene/story_manager.h"
+#include "game/scene/dialog_manager.h"
 
 #include "game/ui/form_loading.h"
 #include "game/ui/form_start.h"
@@ -60,6 +61,7 @@ namespace game
 	{
         ObjectManager::inst().init(&_context);
         StoryManager::inst().init(&_context);
+        DialogManager::inst().init(&_context);
 
         auto textdir = _context.resPath() / "localized/CHS/";
         auto res = utility::StringTranslator::inst().load(utility::Language::SimpleChinese, textdir);
@@ -73,6 +75,13 @@ namespace game
         if (!res)
         {
             LogError("load story config: {} failed.", storydir.string());
+        }
+
+        auto dialogdir = _context.resPath() / "data/dialog/";
+        res = DialogManager::inst().load(dialogdir);
+        if (!res)
+        {
+            LogError("load dialog config: {} failed.", dialogdir.string());
         }
 
 	    auto sceneCfg = _context.resPath() / "scenes/scenes.json";
@@ -440,6 +449,13 @@ namespace game
         if (!res)
         {
             LogError("load story config: {} failed.", storydir.string());
+        }
+
+        auto dialogdir = _context.resPath() / "data/dialog/";
+        res = DialogManager::inst().load(dialogdir);
+        if (!res)
+        {
+            LogError("load dialog config: {} failed.", dialogdir.string());
         }
     }
 

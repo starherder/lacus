@@ -14,7 +14,8 @@
   "trigger" : {
     "radius" : 150,
     "once" : true,
-    "event" : "start_story"
+    "event" : "start_story",
+    "story" : "game_start"
   },
 
   "under_attack": {

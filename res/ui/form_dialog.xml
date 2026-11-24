@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form maximize="true" accept_event="true">
+  <vlayout name="vlay_dialog_root" ground_color="#00000044">
+    <widget accept_event="false" />
+    <hlayout name="hlay_dialog" size="0,260" pad="28,22" ground_color="#151823EE" border_color="#D8C47AFF" border_size="2">
+      <vlayout name="vlay_left" size="180,0" accept_event="false">
+        <label name="lbl_avatar_left" size="150,150" texture="role:0-0" ground_color="#FFFFFFFF" border_color="#E8E8E8FF" border_size="2" />
+        <label name="lbl_actor_left" size="150,34" text="" text_color="#F5DE89FF" font_name="fonts/msyh.ttf" font_size="20" />
+        <widget accept_event="false" />
+      </vlayout>
+      <vlayout name="vlay_text" pad="14,0" accept_event="false">
+        <hlayout name="hlay_head" size="0,42" accept_event="false">
+          <label name="lbl_speaker" size="220,0" text="" text_color="#FFEAA0FF" font_name="fonts/msyh.ttf" font_size="24" align="left" />
+          <widget accept_event="false" />
+          <label name="lbl_progress" size="80,0" text="" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="18" />
+        </hlayout>
+        <text name="txt_dialog" text="" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="24" />
+        <hlayout name="hlay_next" size="0,46">
+          <widget accept_event="false" />
+          <button name="btn_next" size="110,40" text="继续" text_color="#FFFFFFFF" text_color_hover="#FFF0A6FF" ground_color="#3A3F53FF" ground_color_hover="#4E5878FF" border_color="#D8C47AFF" border_size="1" font_name="fonts/msyh.ttf" font_size="22" />
+        </hlayout>
+      </vlayout>
+      <vlayout name="vlay_right" size="180,0" accept_event="false">
+        <label name="lbl_avatar_right" size="150,150" texture="role:1-0" ground_color="#FFFFFFFF" border_color="#E8E8E8FF" border_size="2" />
+        <label name="lbl_actor_right" size="150,34" text="" text_color="#F5DE89FF" font_name="fonts/msyh.ttf" font_size="20" />
+        <widget accept_event="false" />
+      </vlayout>
+    </hlayout>
+  </vlayout>
+</form>

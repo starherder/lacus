@@ -203,4 +203,11 @@ namespace game
 		std::string name;
 		std::map<std::string, entt::entity> actors;
 	};
+
+	struct EvtStartDialog {
+		std::string name;
+	};
+
+	struct EvtDialogNext {
+	};
 }
