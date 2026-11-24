@@ -42,8 +42,7 @@ namespace particle
 		fail_return(pe && particle);
 
 		/* 粒子起始位置 */
-		particle->vPos.x = pe->GetEmitPos().x + pe->GetEmitPosVar().x * utility::rand_minus1_1();
-		particle->vPos.y = pe->GetEmitPos().y + pe->GetEmitPosVar().y * utility::rand_minus1_1();
+		particle->vPos = pe->randomEmitPos();
 
 		particle->vStartPos = pe->GetEmitPos();
 		particle->vChangePos = particle->vPos;

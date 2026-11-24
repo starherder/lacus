@@ -42,6 +42,11 @@ namespace particle
 		return it == props.end() ? 0.0f : std::stof(it->second);
 	};
 
+	static auto getBool = [](const PropMap& props, const std::string& name) {
+		auto it = props.find(name);
+		return it == props.end() ? false : std::stoi(it->second) != 0;
+	};
+
 	static auto getVec2 = [](const PropMap& props, const std::string& name) {
 		auto it = props.find(name);
 		if (it == props.end()) {
@@ -236,6 +241,22 @@ namespace particle
 		desc.vEmitPos = getVec2(props, "start_pos");
 		desc.vEmitPosVar = getVec2(props, "start_pos_variance");
 
+		desc.emitterShape = (EmitterShape)getInt(props, "emitter_shape");
+		desc.vEmitShapeSize = getVec2(props, "emitter_shape_size");
+		desc.fEmitShapeRadius = getFloat(props, "emitter_shape_radius");
+		desc.fEmitShapeRotation = getFloat(props, "emitter_shape_rotation");
+		desc.bEmitShapeEdgeOnly = getBool(props, "emitter_shape_edge_only");
+
+		if (props.find("emitter_shape") == props.end())
+		{
+			desc.emitterShape = EmitterShape::EMITTER_SHAPE_RECT;
+		}
+
+		if (props.find("emitter_shape_size") == props.end())
+		{
+			desc.vEmitShapeSize = desc.vEmitPosVar * 2.0f;
+		}
+
 		desc.fEmitAngle = getFloat(props, "angle");
 		desc.fEmitAngleVar = getFloat(props, "angle_variance");
 
@@ -390,6 +411,11 @@ namespace particle
 		props["texture_file"] = _descript.sTexture;
 		props["start_pos"] = vec2ToString(_descript.vEmitPos);
 		props["start_pos_variance"] = vec2ToString(_descript.vEmitPosVar);
+		props["emitter_shape"] = std::to_string((int)_descript.emitterShape);
+		props["emitter_shape_size"] = vec2ToString(_descript.vEmitShapeSize);
+		props["emitter_shape_radius"] = std::to_string(_descript.fEmitShapeRadius);
+		props["emitter_shape_rotation"] = std::to_string(_descript.fEmitShapeRotation);
+		props["emitter_shape_edge_only"] = _descript.bEmitShapeEdgeOnly ? "1" : "0";
 
 		props["angle"] = std::to_string(_descript.fEmitAngle);
 		props["angle_variance"] = std::to_string(_descript.fEmitAngleVar);

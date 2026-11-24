@@ -18,6 +18,7 @@ namespace particle
 
 		void emitParticles(float dt);
 		void addParticle();
+		Vec2 randomEmitPos() const;
 
 		void update(float dt);
 
@@ -42,6 +43,13 @@ namespace particle
 		/* 发射器发射粒子给粒子的初速度大小 */
 		MemberFunction(float, EmitSpeed, emitSpeed);
 		MemberFunction(float, EmitSpeedVar, emitSpeedVar);
+
+		/* 发射器形状 */
+		MemberFunction(EmitterShape, EmitShape, emitShape);
+		MemberFunction(Vec2, EmitShapeSize, emitShapeSize);
+		MemberFunction(float, EmitShapeRadius, emitShapeRadius);
+		MemberFunction(float, EmitShapeRotation, emitShapeRotation);
+		MemberFunction(bool, EmitShapeEdgeOnly, emitShapeEdgeOnly);
 
 		/* 粒子数量 */
 		MemberFunction(int, ParticleCount, particleCount);

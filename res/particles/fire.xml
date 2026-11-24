@@ -6,6 +6,11 @@
     <emmiter>
         <prop name="start_pos" value="400.000000,400.000000"/>
         <prop name="start_pos_variance" value="10.000000,10.000000"/>
+        <prop name="emitter_shape" value="2"/>
+        <prop name="emitter_shape_size" value="20.000000,20.000000"/>
+        <prop name="emitter_shape_radius" value="0.000000"/>
+        <prop name="emitter_shape_rotation" value="0.000000"/>
+        <prop name="emitter_shape_edge_only" value="0"/>
         <prop name="angle" value="-90.000000"/>
         <prop name="angle_variance" value="8.000000"/>
         <prop name="speed" value="150.000000"/>

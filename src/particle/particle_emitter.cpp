@@ -4,6 +4,14 @@
 
 namespace particle
 {
+	static Vec2 rotateVec2(const Vec2& vec, float degree)
+	{
+		float radian = DegreeToRadian(degree);
+		float c = cosf(radian);
+		float s = sinf(radian);
+		return Vec2{ vec.x * c - vec.y * s, vec.x * s + vec.y * c };
+	}
+
 	ParticleEmitter::ParticleEmitter()
 		: _particleEffect(nullptr)
 		, _canEmit(true)
@@ -32,6 +40,12 @@ namespace particle
 
 		emitSpeed = desc.fEmitSpeed;
 		emitSpeedVar = desc.fEmitSpeedVar;
+
+		emitShape = desc.emitterShape;
+		emitShapeSize = desc.vEmitShapeSize;
+		emitShapeRadius = desc.fEmitShapeRadius;
+		emitShapeRotation = desc.fEmitShapeRotation;
+		emitShapeEdgeOnly = desc.bEmitShapeEdgeOnly;
 
 		emitRate = desc.fEmitRate;
 		duration = desc.fDuration;
@@ -106,6 +120,51 @@ namespace particle
 		/* 存储粒子并初始化粒子 */
 		_particleList.push_back(particle);
 		_particleEffect->initParticle(this, particle);
+	}
+
+	Vec2 ParticleEmitter::randomEmitPos() const
+	{
+		switch (emitShape)
+		{
+		case EmitterShape::EMITTER_SHAPE_POINT:
+		{
+			return emitPos;
+		}break;
+		case EmitterShape::EMITTER_SHAPE_LINE:
+		{
+			Vec2 offset{ emitShapeSize.x * utility::rand_minus1_1() * 0.5f, 0.0f };
+			return emitPos + rotateVec2(offset, emitShapeRotation);
+		}break;
+		case EmitterShape::EMITTER_SHAPE_CIRCLE:
+		{
+			float angle = PI_2 * utility::rand_0_1();
+			float radius = std::max(0.0f, emitShapeRadius);
+			float dist = emitShapeEdgeOnly ? radius : radius * sqrtf(utility::rand_0_1());
+			return emitPos + Vec2{ cosf(angle), sinf(angle) } * dist;
+		}break;
+		case EmitterShape::EMITTER_SHAPE_RECT:
+		default:
+		{
+			Vec2 offset{
+				emitShapeSize.x * utility::rand_minus1_1() * 0.5f,
+				emitShapeSize.y * utility::rand_minus1_1() * 0.5f
+			};
+
+			if (emitShapeEdgeOnly)
+			{
+				if (utility::rand_0_1() < 0.5f) {
+					offset.x = emitShapeSize.x * 0.5f * (utility::rand_0_1() < 0.5f ? -1.0f : 1.0f);
+				}
+				else {
+					offset.y = emitShapeSize.y * 0.5f * (utility::rand_0_1() < 0.5f ? -1.0f : 1.0f);
+				}
+			}
+
+			return emitPos + rotateVec2(offset, emitShapeRotation);
+		}break;
+		}
+
+		return emitPos;
 	}
 
 

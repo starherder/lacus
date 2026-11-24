@@ -6,6 +6,11 @@
     <emmiter>
         <prop name="start_pos" value="640.000000,360.000000"/>
         <prop name="start_pos_variance" value="640.000000,360.000000"/>
+        <prop name="emitter_shape" value="2"/>
+        <prop name="emitter_shape_size" value="1280.000000,720.000000"/>
+        <prop name="emitter_shape_radius" value="0.000000"/>
+        <prop name="emitter_shape_rotation" value="0.000000"/>
+        <prop name="emitter_shape_edge_only" value="0"/>
         <prop name="angle" value="0.000000" desc="0度向右，发射器角度90度向下"/>
         <prop name="angle_variance" value="360.000000"/>
         <prop name="speed" value="4.000000" desc="粒子发射初速度"/>

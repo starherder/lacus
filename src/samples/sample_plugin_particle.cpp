@@ -108,6 +108,62 @@ namespace samples
 			if (ImGui::InputFloat2("emit pos var", emitPosVar))
 			{
 				_particleDescript.vEmitPosVar = { emitPosVar[0], emitPosVar[1] };
+				if (_particleDescript.emitterShape == EmitterShape::EMITTER_SHAPE_RECT)
+				{
+					_particleDescript.vEmitShapeSize = _particleDescript.vEmitPosVar * 2.0f;
+				}
+				_modified = true;
+			}
+
+			int emitShape = (int)_particleDescript.emitterShape;
+			if (ImGui::RadioButton("EMITTER_SHAPE_POINT", &emitShape, 0))
+			{
+				_particleDescript.emitterShape = (EmitterShape)emitShape;
+				_modified = true;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::RadioButton("EMITTER_SHAPE_LINE", &emitShape, 1))
+			{
+				_particleDescript.emitterShape = (EmitterShape)emitShape;
+				_modified = true;
+			}
+
+			if (ImGui::RadioButton("EMITTER_SHAPE_RECT", &emitShape, 2))
+			{
+				_particleDescript.emitterShape = (EmitterShape)emitShape;
+				_modified = true;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::RadioButton("EMITTER_SHAPE_CIRCLE", &emitShape, 3))
+			{
+				_particleDescript.emitterShape = (EmitterShape)emitShape;
+				_modified = true;
+			}
+
+			float emitShapeSize[2] = { _particleDescript.vEmitShapeSize.x, _particleDescript.vEmitShapeSize.y };
+			if (ImGui::InputFloat2("emit shape size", emitShapeSize))
+			{
+				_particleDescript.vEmitShapeSize = { emitShapeSize[0], emitShapeSize[1] };
+				_particleDescript.vEmitPosVar = _particleDescript.vEmitShapeSize * 0.5f;
+				_modified = true;
+			}
+
+			if (ImGui::InputFloat("emit shape radius", &_particleDescript.fEmitShapeRadius))
+			{
+				_modified = true;
+			}
+
+			if (ImGui::InputFloat("emit shape rotation", &_particleDescript.fEmitShapeRotation))
+			{
+				_modified = true;
+			}
+
+			if (ImGui::Checkbox("emit shape edge only", &_particleDescript.bEmitShapeEdgeOnly))
+			{
 				_modified = true;
 			}
 

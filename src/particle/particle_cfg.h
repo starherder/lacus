@@ -7,8 +7,8 @@ namespace particle
 	/* 发射器类型 */
 	enum class EmitterType
 	{
-		EMITTER_TYPE_GRAVITY,	/* 重力模式 */
-		EMITTER_TYPE_RADIUS		/* 半径模式 */
+		EMITTER_TYPE_GRAVITY,	/* 重力模式，受重力、速度、加速度影响 */
+		EMITTER_TYPE_RADIUS		/* 辐射模式，不受重力影响，以极坐标绕原点运行 */
 	};
 
 	/* 粒子运动模式 */
@@ -16,6 +16,15 @@ namespace particle
 	{
 		MOTION_MODE_FREE,		/* 粒子运动和发射器无关 */
 		MOTION_MODE_RELATIVE	/* 粒子运动跟随发射器位置 */
+	};
+
+	/* 发射器形状 */
+	enum class EmitterShape
+	{
+		EMITTER_SHAPE_POINT,	/* 点 */
+		EMITTER_SHAPE_LINE,		/* 线段 */
+		EMITTER_SHAPE_RECT,		/* 矩形 */
+		EMITTER_SHAPE_CIRCLE	/* 圆形 */
 	};
 
 	/* 重力模式 */
@@ -91,6 +100,12 @@ namespace particle
 				
 		float fEmitSpeed = 0.0f;			/* 发射器发射粒子速度 */
 		float fEmitSpeedVar = 0.0f;
+
+		EmitterShape emitterShape = EmitterShape::EMITTER_SHAPE_RECT;
+		Vec2 vEmitShapeSize = {0, 0};			/* 线段/矩形大小 */
+		float fEmitShapeRadius = 0.0f;			/* 圆形半径 */
+		float fEmitShapeRotation = 0.0f;			/* 线段/矩形旋转角度 */
+		bool bEmitShapeEdgeOnly = false;			/* 是否只从边缘发射 */
 
 		int nParticleCount = 0;			/* 粒子数量 */
 		float fEmitRate = 0.0f;			/* 粒子每秒发射速率 */
