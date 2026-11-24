@@ -27,6 +27,41 @@ namespace particle
 		Circle // 圆形。
 	};
 
+	// 粒子坐标空间。
+	enum class CoordinateSpace
+	{
+		Inherit, // 使用外部 draw 调用传入的坐标空间。
+		World, // 世界坐标。
+		Screen // 屏幕坐标。
+	};
+
+	// 数值变化曲线。
+	enum class ValueCurve
+	{
+		Linear,
+		EaseIn,
+		EaseOut,
+		EaseInOut,
+		SmoothStep,
+		Pulse
+	};
+
+	// 拖尾模式。
+	enum class TrailMode
+	{
+		None,
+		Stretch
+	};
+
+	// 风场参数。
+	struct WindMode
+	{
+		Vec2 force = {0, 0}; // 恒定风力。
+		Vec2 forceVar = {0, 0}; // 每个粒子的风力随机范围。
+		Vec2 wave = {0, 0}; // 周期风力。
+		float waveSpeed = 0.0f; // 周期风速度。
+	};
+
 	// 重力模式参数。
 	struct GravityMode
 	{
@@ -61,15 +96,28 @@ namespace particle
 
 		Color color = {0, 0, 0, 0};
 		Color deltaColor = {0, 0, 0, 0};
+		Color beginColor = {0, 0, 0, 0};
+		Color endColor = {0, 0, 0, 0};
 
 		float currentSize = 0.0f;
 		float size = 0.0f;
 		float deltaSize = 0.0f;
+		float beginSize = 0.0f;
+		float endSize = 0.0f;
 
 		float rotation = 0.0f;
 		float deltaRotation = 0.0f;
+		float beginRotation = 0.0f;
+		float endRotation = 0.0f;
 
+		float life = 0.0f;
+		float elapsedLife = 0.0f;
 		float remainingLife = 0.0f;
+		Vec2 lastPos = {0, 0};
+		Vec2 velocity = {0, 0};
+		Vec2 windForce = {0, 0};
+		Vec2 windOffset = {0, 0};
+		float windPhase = 0.0f;
 
 		// 重力模式运行数据。
 		struct GravityModeData
@@ -132,9 +180,24 @@ namespace particle
 		float endSpin = 0.0f; // 结束旋转角度。
 		float endSpinVar = 0.0f; // 结束旋转角度随机范围。
 
-		std::string texture; // 粒子贴图。
+		std::string texture; // 粒子贴图，支持图片路径或 tileset:tile。
+		CoordinateSpace coordinateSpace = CoordinateSpace::Inherit; // 坐标空间。
+		BlendMode blendMode = BlendMode::Blend; // 混合模式。
+
+		ValueCurve colorCurve = ValueCurve::Linear; // 颜色曲线。
+		ValueCurve sizeCurve = ValueCurve::Linear; // 大小曲线。
+		ValueCurve spinCurve = ValueCurve::Linear; // 旋转曲线。
+
+		TrailMode trailMode = TrailMode::None; // 拖尾模式。
+		float trailLength = 0.0f; // 拖尾长度。
+		float trailWidth = 0.0f; // 拖尾宽度，0 表示使用粒子大小。
+		float trailAlphaScale = 0.35f; // 尾部透明度倍率。
+
+		std::string subEmitter; // 粒子死亡时触发的子发射器。
+		int subEmitterCount = 1; // 每个死亡粒子触发的子发射器数量。
 
 		GravityMode gravityMode;
 		RadiusMode radiusMode;
+		WindMode windMode;
 	};
 }

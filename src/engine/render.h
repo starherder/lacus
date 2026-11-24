@@ -99,6 +99,8 @@ public:
     bool getRenderVSync(int* vsync) const;
     
     auto getSdlRenderer() const { return _renderer; };
+
+    void destroyTextRenderer();
     
 private:
     // 渲染器销毁

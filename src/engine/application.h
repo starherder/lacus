@@ -103,6 +103,9 @@ private:
     fs::path _resPath;
 
     bool _running = true;
+    bool _closed = false;
+    bool _painterInited = false;
+    bool _logInited = false;
 };
 
 

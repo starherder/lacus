@@ -2,6 +2,8 @@
 #include "particle_effect.h"
 #include "particle_memory.h"
 
+#include "engine/i_painter.h"
+
 namespace particle
 {
 	static Vec2 rotateVec2(const Vec2& vec, float degree)
@@ -22,12 +24,7 @@ namespace particle
 
 	ParticleEmitter::~ParticleEmitter()
 	{
-		stopEmitting();
-
-		if ( _particleEffect )
-		{
-			delete _particleEffect;
-		}
+		clearParticles();
 	}
 
 	void ParticleEmitter::setDescription(const ParticleDescription& desc)
@@ -53,49 +50,97 @@ namespace particle
 		_particleCount = desc.particleCount;
 
 		// 根据发射器类型创建 effect。
-		ParticleEffect* effect = nullptr;
+		std::unique_ptr<ParticleEffect> effect;
 		if ( desc.emitterType == EmitterType::Gravity )
 		{
-			effect = new GravityParticleEffect();
+			effect = std::make_unique<GravityParticleEffect>();
 		}
 		else
 		{
-			effect = new RadialParticleEffect();
+			effect = std::make_unique<RadialParticleEffect>();
 		}
 
 		assert(effect);
 		fail_return(effect);
 
 		effect->setDescription(desc);
-		this->setParticleEffect(effect);
+		this->setParticleEffect(std::move(effect));
+		clearParticles();
 	}
 
-	void ParticleEmitter::setParticleEffect(ParticleEffect* effect)
+	void ParticleEmitter::setParticleEffect(std::unique_ptr<ParticleEffect> effect)
 	{
-		if ( _particleEffect )
+		_particleEffect = std::move(effect);
+	}
+
+	void ParticleEmitter::setDeathCallback(std::function<void(const Vec2&)> callback)
+	{
+		_deathCallback = std::move(callback);
+	}
+
+	void ParticleEmitter::emitParticleDeath(const Vec2& pos)
+	{
+		if (_deathCallback)
 		{
-			delete _particleEffect;
+			_deathCallback(pos);
 		}
-		_particleEffect = effect;
 	}
 
 	void ParticleEmitter::update(float dt)
 	{
-		if ( _canEmit == false ) return;
-
-		this->emitParticles(dt);
+		if ( _canEmit )
+		{
+			this->emitParticles(dt);
+		}
 		if (_particleEffect)
 		{
 			_particleEffect->update(this, dt);
 		}
 	}
 
+	void ParticleEmitter::drawDebug(engine::IPainter& painter, const Color& color, float thickness) const
+	{
+		const float pointSize = 8.0f;
+		painter.drawLine(color, _emitPos + Vec2{-pointSize, 0.0f}, _emitPos + Vec2{pointSize, 0.0f}, thickness);
+		painter.drawLine(color, _emitPos + Vec2{0.0f, -pointSize}, _emitPos + Vec2{0.0f, pointSize}, thickness);
+
+		switch (_emitShape)
+		{
+		case EmitterShape::Point:
+			break;
+		case EmitterShape::Line:
+		{
+			Vec2 half = rotateVec2({_emitShapeSize.x * 0.5f, 0.0f}, _emitShapeRotation);
+			painter.drawLine(color, _emitPos - half, _emitPos + half, thickness);
+		}
+		break;
+		case EmitterShape::Circle:
+		{
+			painter.drawCircle(color, _emitPos, std::max(0.0f, _emitShapeRadius), 48, thickness);
+		}
+		break;
+		case EmitterShape::Rect:
+		default:
+		{
+			Vec2 half = _emitShapeSize * 0.5f;
+			Vec2 points[] = {
+				_emitPos + rotateVec2({-half.x, -half.y}, _emitShapeRotation),
+				_emitPos + rotateVec2({ half.x, -half.y}, _emitShapeRotation),
+				_emitPos + rotateVec2({ half.x,  half.y}, _emitShapeRotation),
+				_emitPos + rotateVec2({-half.x,  half.y}, _emitShapeRotation)
+			};
+			painter.drawLines(color, points, 4, true, thickness);
+		}
+		break;
+		}
+	}
+
 	void ParticleEmitter::emitParticles(float dt)
 	{
-		_emitRate = _emitRate == 0 ? 1 : _emitRate;
+		float emitRate = _emitRate <= 0.0f ? 1.0f : _emitRate;
 
 		// 单个粒子的发射间隔。
-		float emit_particle_time = 1 / _emitRate;
+		float emit_particle_time = 1.0f / emitRate;
 
 		// 累计待发射时间。
 		if ( _particleList.size() < _particleCount )
@@ -104,7 +149,7 @@ namespace particle
 		}
 
 		// 按累计时间补发粒子。
-		while ( _particleList.size() < _particleCount && _emitCounter > 0 )
+		while ( _particleList.size() < _particleCount && _emitCounter >= emit_particle_time )
 		{
 			this->addParticle();
 			_emitCounter -= emit_particle_time;
@@ -114,13 +159,14 @@ namespace particle
 		if ( _duration != -1 && _duration < _elapsed )
 		{
 			_elapsed = 0;
-			this->stopEmitting();
+			_canEmit = false;
 		}
 	}
 
 	void ParticleEmitter::addParticle()
 	{
 		if ( _particleList.size() == _particleCount ) return;
+		fail_return(_particleEffect);
 
 		ParticleCfg* particle = ParticleMemory::allocParticle();
 		fail_return(particle);
@@ -187,6 +233,11 @@ namespace particle
 	{
 		return _canEmit;
 	}
+
+	bool ParticleEmitter::isActive() const
+	{
+		return _canEmit || !_particleList.empty();
+	}
 	
 	void ParticleEmitter::startEmitting()
 	{
@@ -198,7 +249,12 @@ namespace particle
 	void ParticleEmitter::stopEmitting()
 	{
 		_canEmit = false;
+		_elapsed = 0;
+		_emitCounter = 0;
+	}
 
+	void ParticleEmitter::clearParticles()
+	{
 		// 释放仍在发射器中的粒子。
 		for ( auto& ele : _particleList )
 		{
@@ -208,5 +264,15 @@ namespace particle
 
 		_elapsed = 0;
 		_emitCounter = 0;
+	}
+
+	std::vector<ParticleCfg*>* ParticleEmitter::getParticleList()
+	{
+		return &_particleList;
+	}
+
+	ParticleEffect* ParticleEmitter::getParticleEffect()
+	{
+		return _particleEffect.get();
 	}
 }

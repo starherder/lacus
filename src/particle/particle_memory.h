@@ -9,15 +9,19 @@ namespace particle
 	public:
 		static void initParticleMemory(int size);
 		static void freeParticleMemory();
+		static void reserveParticleMemory(int size);
 
 		static ParticleCfg* allocParticle();
 		static void freeParticle(ParticleCfg* particle);
 
 	private:
+		static ParticleCfg* createParticle();
+
 		static std::vector<ParticleCfg*> _particlePool;
 		static std::vector<ParticleCfg*> _unusedParticleList;
 
 		static int	_freeIndex;
 		static bool _init;
+		static int _growSize;
 	};
 }

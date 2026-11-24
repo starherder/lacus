@@ -1,0 +1,46 @@
+<tilset name="effect">
+  <texture file="textures/bot/etc.png" >
+    <tile name="arrow" rect="0,388,16,120" center="0.5,1.0"/>
+    <tile name="gold_arrow" rect="24,385,24,125" center="0.5,1.0"/>
+    <tile name="fire_arrow" rect="54,350,30,160" center="0.5,1.0"/>
+
+    <tile name="yellow_slash" rect="200,264,42,49" />
+    <tile name="blue_slash" rect="254,269,42,40" />
+    <tile name="red_hit" rect="197,321,41,37" />
+    <tile name="blue_hit" rect="254,322,41,35" />
+    <tile name="blue_burst" rect="191,372,63,55" />
+    <tile name="red_burst" rect="201,438,42,37" />
+
+    <tile name="cyan_aura" rect="105,332,73,74" />
+    <tile name="red_aura" rect="106,413,72,74" />
+    <tile name="fireball" rect="312,266,66,89" />
+    <tile name="burning_hit" rect="389,273,55,66" />
+    <tile name="yellow_spark" rect="545,294,20,21" />
+    <tile name="light_cross" rect="285,386,58,60" />
+    <tile name="ice_spark" rect="366,383,61,59" />
+    <tile name="light_orb" rect="452,380,74,74" />
+
+    <tile name="ice_small" rect="204,490,46,84" />
+    <tile name="ice_large" rect="267,464,72,82" />
+    <tile name="fire_column" rect="357,470,44,111" />
+    <tile name="crystal_large" rect="423,476,71,119" />
+    <tile name="crystal_medium" rect="505,489,43,93" />
+    <tile name="crystal_small" rect="562,489,31,77" />
+
+    <tile name="money_bag" rect="7,601,54,54" />
+    <tile name="lightning_cloud" rect="128,636,292,198" />
+    <tile name="yellow_portal" rect="425,621,68,87" />
+    <tile name="blue_ring" rect="514,628,83,67" />
+    <tile name="flame_large" rect="426,747,72,87" />
+    <tile name="flame_small" rect="514,751,46,83" />
+    <tile name="flame_tall" rect="584,733,66,101" />
+
+    <tile name="level_cleared" rect="338,4,636,77" />
+    <tile name="game_over" rect="687,90,319,76" />
+    <tile name="level_up_text" rect="667,743,143,25" />
+    <tile name="critical_text" rect="861,742,138,27" />
+    <tile name="block_text" rect="668,775,103,25" />
+    <tile name="parry_text" rect="793,775,100,26" />
+    <tile name="double_attack_text" rect="668,803,190,27" />
+  </texture>
+</tilset>

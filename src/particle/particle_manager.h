@@ -57,6 +57,8 @@ namespace particle
 		static ParticleDescription createParticleDescription(const std::string& filename);
 
 		void setTexture(const std::string& file);
+		void emitSubParticle(const Vec2& pos);
+		void drawParticleList(const std::vector<ParticleCfg*>* particleList, engine::Camera* camera, bool screenSpace);
 
 	private:
 		std::string _name;
@@ -64,7 +66,7 @@ namespace particle
 
 		std::unique_ptr<ParticleEmitter> _emitter = nullptr;
 
-		Texture* _texture = nullptr;
+		TexTile* _texTile = nullptr;
 
 		std::vector<Vertex> _vertexData;
 
@@ -72,16 +74,15 @@ namespace particle
 
 		float _alphaScale = 1.0f;
 		Vec2 _localEmitPos = {0.0f, 0.0f};
+		std::vector<std::shared_ptr<Particle>> _subParticles;
 
-#define Particle_Editor_Mode
-#ifdef Particle_Editor_Mode
 	public:
 		ParticleDescription& description();
 		void reset();
 		void save();
+
 	private:
 		ParticleDescription _descript;
-#endif
 	};
 
 	using ParticlePtr = std::shared_ptr<Particle> ;

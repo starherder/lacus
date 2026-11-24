@@ -3,6 +3,8 @@
 #include "engine/application.h"
 #include "particle/particle_manager.h"
 
+#include <cmath>
+
 namespace samples 
 {
 
@@ -18,6 +20,121 @@ namespace samples
 	static auto setFloatColor = [](float* buf)
 	{
 		return Color{ buf[0], buf[1], buf[2], buf[3] };
+	};
+
+	struct EnumItem
+	{
+		const char* name;
+		int value;
+	};
+
+	static const char* getEnumName(const EnumItem* items, int count, int value)
+	{
+		for (int i = 0; i < count; ++i)
+		{
+			if (items[i].value == value)
+			{
+				return items[i].name;
+			}
+		}
+		return "Unknown";
+	}
+
+	static bool enumCombo(const char* label, int& value, const EnumItem* items, int count)
+	{
+		bool modified = false;
+		if (ImGui::BeginCombo(label, getEnumName(items, count, value)))
+		{
+			for (int i = 0; i < count; ++i)
+			{
+				bool selected = value == items[i].value;
+				if (ImGui::Selectable(items[i].name, selected))
+				{
+					value = items[i].value;
+					modified = true;
+				}
+				if (selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		return modified;
+	}
+
+	static Vec2 editorScreenCenter()
+	{
+		ImVec2 size = ImGui::GetIO().DisplaySize;
+		if (size.x <= 0.0f || size.y <= 0.0f)
+		{
+			return {640.0f, 360.0f};
+		}
+		return {size.x * 0.5f, size.y * 0.5f};
+	}
+
+	static bool movePointEmitterFromOrigin(ParticleDescription& desc)
+	{
+		if (desc.emitterShape != EmitterShape::Point)
+		{
+			return false;
+		}
+
+		if (std::abs(desc.emitPos.x) > 0.001f || std::abs(desc.emitPos.y) > 0.001f)
+		{
+			return false;
+		}
+
+		desc.emitPos = editorScreenCenter();
+		desc.emitPosVar = {0.0f, 0.0f};
+		return true;
+	}
+
+	static const EnumItem CoordinateSpaceItems[] = {
+		{"Inherit", (int)CoordinateSpace::Inherit},
+		{"World", (int)CoordinateSpace::World},
+		{"Screen", (int)CoordinateSpace::Screen}
+	};
+
+	static const EnumItem BlendModeItems[] = {
+		{"None", (int)BlendMode::None},
+		{"Blend", (int)BlendMode::Blend},
+		{"Blend premultiplied", (int)BlendMode::BlendPremultiplied},
+		{"Add", (int)BlendMode::Add},
+		{"Add premultiplied", (int)BlendMode::AddPremultiplied},
+		{"Mod", (int)BlendMode::Mod},
+		{"Mul", (int)BlendMode::Mul}
+	};
+
+	static const EnumItem EmitterShapeItems[] = {
+		{"Point", (int)EmitterShape::Point},
+		{"Line", (int)EmitterShape::Line},
+		{"Rect", (int)EmitterShape::Rect},
+		{"Circle", (int)EmitterShape::Circle}
+	};
+
+	static const EnumItem MotionModeItems[] = {
+		{"Free", (int)MotionMode::Free},
+		{"Relative", (int)MotionMode::Relative}
+	};
+
+	static const EnumItem EmitterTypeItems[] = {
+		{"Gravity", (int)EmitterType::Gravity},
+		{"Radius", (int)EmitterType::Radius}
+	};
+
+	static const EnumItem ValueCurveItems[] = {
+		{"Linear", (int)ValueCurve::Linear},
+		{"EaseIn", (int)ValueCurve::EaseIn},
+		{"EaseOut", (int)ValueCurve::EaseOut},
+		{"EaseInOut", (int)ValueCurve::EaseInOut},
+		{"SmoothStep", (int)ValueCurve::SmoothStep},
+		{"Pulse", (int)ValueCurve::Pulse}
+	};
+
+	static const EnumItem TrailModeItems[] = {
+		{"None", (int)TrailMode::None},
+		{"Stretch", (int)TrailMode::Stretch}
 	};
 
 	ImParticleEditor::ImParticleEditor(Particle* particle) : _particle(particle)
@@ -89,11 +206,27 @@ namespace samples
 				on_particle_save.emit();
 			}
 
-			char bufTexture[32] = { 0 };
-			strcpy_s(bufTexture, 32, _particleDescript.texture.c_str());
-			if (ImGui::InputText("texture", bufTexture, 32))
+			ImGui::Checkbox("debug emitter", &_showEmitterDebug);
+
+			char bufTexture[128] = { 0 };
+			strcpy_s(bufTexture, sizeof(bufTexture), _particleDescript.texture.c_str());
+			if (ImGui::InputText("texture", bufTexture, sizeof(bufTexture)))
 			{
 				_particleDescript.texture = bufTexture;
+				_modified = true;
+			}
+
+			int coordinateSpace = (int)_particleDescript.coordinateSpace;
+			if (enumCombo("coordinate space", coordinateSpace, CoordinateSpaceItems, IM_ARRAYSIZE(CoordinateSpaceItems)))
+			{
+				_particleDescript.coordinateSpace = (CoordinateSpace)coordinateSpace;
+				_modified = true;
+			}
+
+			int blendMode = (int)_particleDescript.blendMode;
+			if (enumCombo("blend mode", blendMode, BlendModeItems, IM_ARRAYSIZE(BlendModeItems)))
+			{
+				_particleDescript.blendMode = (BlendMode)blendMode;
 				_modified = true;
 			}
 
@@ -116,31 +249,10 @@ namespace samples
 			}
 
 			int emitShape = (int)_particleDescript.emitterShape;
-			if (ImGui::RadioButton("Point", &emitShape, 0))
+			if (enumCombo("emitter shape", emitShape, EmitterShapeItems, IM_ARRAYSIZE(EmitterShapeItems)))
 			{
 				_particleDescript.emitterShape = (EmitterShape)emitShape;
-				_modified = true;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Line", &emitShape, 1))
-			{
-				_particleDescript.emitterShape = (EmitterShape)emitShape;
-				_modified = true;
-			}
-
-			if (ImGui::RadioButton("Rect", &emitShape, 2))
-			{
-				_particleDescript.emitterShape = (EmitterShape)emitShape;
-				_modified = true;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Circle", &emitShape, 3))
-			{
-				_particleDescript.emitterShape = (EmitterShape)emitShape;
+				movePointEmitterFromOrigin(_particleDescript);
 				_modified = true;
 			}
 
@@ -189,6 +301,12 @@ namespace samples
 
 			if (ImGui::InputInt("particle count", &_particleDescript.particleCount))
 			{
+				_particleDescript.emitRate = 0.0f;
+				_modified = true;
+			}
+
+			if (ImGui::InputFloat("emission rate", &_particleDescript.emitRate))
+			{
 				_modified = true;
 			}
 
@@ -198,32 +316,42 @@ namespace samples
 			}
 
 			int motionMode = (int)_particleDescript.motionMode;
-			if (ImGui::RadioButton("Free", &motionMode, 0))
-			{
-				_particleDescript.motionMode = (MotionMode)motionMode;
-				_modified = true;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Relative", &motionMode, 1))
+			if (enumCombo("motion mode", motionMode, MotionModeItems, IM_ARRAYSIZE(MotionModeItems)))
 			{
 				_particleDescript.motionMode = (MotionMode)motionMode;
 				_modified = true;
 			}
 
 			int emitType = (int)_particleDescript.emitterType;
-			if (ImGui::RadioButton("Gravity", &emitType, 0))
+			if (enumCombo("emitter type", emitType, EmitterTypeItems, IM_ARRAYSIZE(EmitterTypeItems)))
 			{
 				_particleDescript.emitterType = (EmitterType)emitType;
 				_modified = true;
 			}
 
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Radius", &emitType, 1))
+			float wind[2] = { _particleDescript.windMode.force.x, _particleDescript.windMode.force.y };
+			if (ImGui::InputFloat2("wind", wind))
 			{
-				_particleDescript.emitterType = (EmitterType)emitType;
+				_particleDescript.windMode.force = { wind[0], wind[1] };
+				_modified = true;
+			}
+
+			float windVar[2] = { _particleDescript.windMode.forceVar.x, _particleDescript.windMode.forceVar.y };
+			if (ImGui::InputFloat2("wind var", windVar))
+			{
+				_particleDescript.windMode.forceVar = { windVar[0], windVar[1] };
+				_modified = true;
+			}
+
+			float windWave[2] = { _particleDescript.windMode.wave.x, _particleDescript.windMode.wave.y };
+			if (ImGui::InputFloat2("wind wave", windWave))
+			{
+				_particleDescript.windMode.wave = { windWave[0], windWave[1] };
+				_modified = true;
+			}
+
+			if (ImGui::InputFloat("wind wave speed", &_particleDescript.windMode.waveSpeed))
+			{
 				_modified = true;
 			}
 
@@ -286,6 +414,7 @@ namespace samples
 
 			if (ImGui::InputFloat("life", &_particleDescript.life))
 			{
+				_particleDescript.emitRate = 0.0f;
 				_modified = true;
 			}
 
@@ -323,6 +452,60 @@ namespace samples
 			{
 				_particleDescript.beginSpinVar = spinVar[0];
 				_particleDescript.endSpinVar = spinVar[1];
+				_modified = true;
+			}
+
+			int colorCurve = (int)_particleDescript.colorCurve;
+			if (enumCombo("color curve", colorCurve, ValueCurveItems, IM_ARRAYSIZE(ValueCurveItems)))
+			{
+				_particleDescript.colorCurve = (ValueCurve)colorCurve;
+				_modified = true;
+			}
+
+			int sizeCurve = (int)_particleDescript.sizeCurve;
+			if (enumCombo("size curve", sizeCurve, ValueCurveItems, IM_ARRAYSIZE(ValueCurveItems)))
+			{
+				_particleDescript.sizeCurve = (ValueCurve)sizeCurve;
+				_modified = true;
+			}
+
+			int spinCurve = (int)_particleDescript.spinCurve;
+			if (enumCombo("spin curve", spinCurve, ValueCurveItems, IM_ARRAYSIZE(ValueCurveItems)))
+			{
+				_particleDescript.spinCurve = (ValueCurve)spinCurve;
+				_modified = true;
+			}
+
+			int trailMode = (int)_particleDescript.trailMode;
+			if (enumCombo("trail mode", trailMode, TrailModeItems, IM_ARRAYSIZE(TrailModeItems)))
+			{
+				_particleDescript.trailMode = (TrailMode)trailMode;
+				_modified = true;
+			}
+
+			float trailParams[3] = {
+				_particleDescript.trailLength,
+				_particleDescript.trailWidth,
+				_particleDescript.trailAlphaScale
+			};
+			if (ImGui::InputFloat3("trail len/width/alpha", trailParams))
+			{
+				_particleDescript.trailLength = trailParams[0];
+				_particleDescript.trailWidth = trailParams[1];
+				_particleDescript.trailAlphaScale = trailParams[2];
+				_modified = true;
+			}
+
+			char subEmitterBuff[128] = { 0 };
+			strcpy_s(subEmitterBuff, sizeof(subEmitterBuff), _particleDescript.subEmitter.c_str());
+			if (ImGui::InputText("sub emitter", subEmitterBuff, sizeof(subEmitterBuff)))
+			{
+				_particleDescript.subEmitter = subEmitterBuff;
+				_modified = true;
+			}
+
+			if (ImGui::InputInt("sub emitter count", &_particleDescript.subEmitterCount))
+			{
 				_modified = true;
 			}
 
@@ -376,6 +559,9 @@ namespace samples
     {
         ParticleManager::inst().init(application());
 
+		auto texturedir = application()->resPath() / "textures/";
+		application()->resourceManager().textureManager().loadAllTexSets(texturedir);
+
 		auto cfgfile = application()->resPath() / "particles/";
 
         bool res = ParticleManager::inst().loadParticles(cfgfile);
@@ -423,6 +609,12 @@ namespace samples
         if (_particle) 
         {
             _particle->draw();
+			auto form = imgui::ImFormManager::inst().getForm<ImParticleEditor>("particle_editor");
+			auto emitter = _particle->getEmitter();
+			if (form && form->showEmitterDebug() && emitter)
+			{
+				emitter->drawDebug(application()->painter(), Color::Cyan, 2.0f);
+			}
         }
     }
 
@@ -448,6 +640,12 @@ namespace samples
         }
 
         _particle->start();
+		auto& desc = _particle->description();
+		if (movePointEmitterFromOrigin(desc))
+		{
+			_particle->setDescription(desc);
+			_particle->start();
+		}
 
         auto form = imgui::ImFormManager::inst().getForm<ImParticleEditor>("particle_editor");
         if(form)

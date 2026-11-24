@@ -27,12 +27,14 @@ namespace samples
 		void draw() override;
 
         void setParticle(Particle* particle) { _particle = particle; }
+        bool showEmitterDebug() const { return _showEmitterDebug; }
 
 	private:
 		int _selectIndex = 0;
 		std::vector<const char*> _nameVector;
 
 		bool _modified = false;
+        bool _showEmitterDebug = true;
         Particle* _particle = nullptr;
 	};
 

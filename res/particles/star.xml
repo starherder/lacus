@@ -2,6 +2,8 @@
 <particle version="1.0">
     <system>
         <prop name="texture_file" value="particles/star.png"/>
+        <prop name="coordinate_space" value="2"/>
+        <prop name="blend_mode" value="2"/>
     </system>
     <emmiter>
         <prop name="start_pos" value="640.000000,360.000000"/>
@@ -18,6 +20,7 @@
         <prop name="emit_type" value="0"/>
         <prop name="duration" value="-1.000000" desc="发射持续时间，-1表示一直发射"/>
         <prop name="max_particles" value="700" desc="粒子最大数量"/>
+        <prop name="emission_rate" value="0.000000"/>
         <prop name="life_span" value="1.600000" desc="例子存在时间"/>
         <prop name="life_span_variance" value="1.000000"/>
     </emmiter>
@@ -34,6 +37,15 @@
         <prop name="start_rotation_variance" value="360.000000"/>
         <prop name="finish_rotation" value="180.000000"/>
         <prop name="finish_rotation_variance" value="360.000000"/>
+        <prop name="color_curve" value="2"/>
+        <prop name="size_curve" value="4"/>
+        <prop name="spin_curve" value="0"/>
+        <prop name="trail_mode" value="0"/>
+        <prop name="trail_length" value="0.000000"/>
+        <prop name="trail_width" value="0.000000"/>
+        <prop name="trail_alpha_scale" value="0.350000"/>
+        <prop name="sub_emitter" value=""/>
+        <prop name="sub_emitter_count" value="1"/>
         <prop name="motion_mode" value="0"/>
         <prop name="gravity" value="0.000000,0.000000"/>
         <prop name="radial_acc" value="0.000000"/>
@@ -46,5 +58,9 @@
         <prop name="max_radius_variance" value="0.000000"/>
         <prop name="rotate_speed" value="0.000000"/>
         <prop name="rotate_speed_variance" value="0.000000"/>
+        <prop name="wind" value="0.000000,0.000000"/>
+        <prop name="wind_variance" value="0.000000,0.000000"/>
+        <prop name="wind_wave" value="0.000000,0.000000"/>
+        <prop name="wind_wave_speed" value="0.000000"/>
     </effect>
 </particle>

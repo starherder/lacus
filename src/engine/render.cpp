@@ -235,10 +235,17 @@ bool Renderer::present() const {
 }
 
 void Renderer::destroy() {
+    destroyTextRenderer();
+
     if (_renderer) {
         SDL_DestroyRenderer(_renderer);
         _renderer = nullptr;
     }
+}
+
+void Renderer::destroyTextRenderer()
+{
+    _textRenderer.reset();
 }
 
 bool Renderer::flushRenderer() const {

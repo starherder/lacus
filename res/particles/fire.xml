@@ -2,49 +2,65 @@
 <particle version="1.0">
     <system>
         <prop name="texture_file" value="particles/round.png"/>
+        <prop name="coordinate_space" value="0"/>
+        <prop name="blend_mode" value="2"/>
     </system>
     <emmiter>
-        <prop name="start_pos" value="400.000000,400.000000"/>
-        <prop name="start_pos_variance" value="10.000000,10.000000"/>
+        <prop name="start_pos" value="640.000000,430.000000"/>
+        <prop name="start_pos_variance" value="24.000000,10.000000"/>
         <prop name="emitter_shape" value="2"/>
-        <prop name="emitter_shape_size" value="20.000000,20.000000"/>
+        <prop name="emitter_shape_size" value="48.000000,20.000000"/>
         <prop name="emitter_shape_radius" value="0.000000"/>
         <prop name="emitter_shape_rotation" value="0.000000"/>
         <prop name="emitter_shape_edge_only" value="0"/>
         <prop name="angle" value="-90.000000"/>
-        <prop name="angle_variance" value="8.000000"/>
-        <prop name="speed" value="150.000000"/>
-        <prop name="speed_variance" value="20.000000"/>
+        <prop name="angle_variance" value="18.000000"/>
+        <prop name="speed" value="92.000000"/>
+        <prop name="speed_variance" value="36.000000"/>
         <prop name="emit_type" value="0"/>
         <prop name="duration" value="-1.000000"/>
-        <prop name="max_particles" value="1000"/>
-        <prop name="life_span" value="2.000000"/>
-        <prop name="life_span_variance" value="0.300000"/>
+        <prop name="max_particles" value="220"/>
+        <prop name="emission_rate" value="150.000000"/>
+        <prop name="life_span" value="1.050000"/>
+        <prop name="life_span_variance" value="0.280000"/>
     </emmiter>
     <effect>
-        <prop name="start_color" value="204,52,0,204"/>
-        <prop name="start_color_variance" value="0,0,0,204"/>
-        <prop name="finish_color" value="241,248,4,204"/>
-        <prop name="finish_color_variance" value="0,0,0,0"/>
-        <prop name="start_size" value="30.000000"/>
-        <prop name="start_size_variance" value="10.000000"/>
-        <prop name="finish_size" value="0.000000"/>
-        <prop name="finish_size_variance" value="0.000000"/>
+        <prop name="start_color" value="255,210,80,230"/>
+        <prop name="start_color_variance" value="0,45,45,40"/>
+        <prop name="finish_color" value="160,28,0,0"/>
+        <prop name="finish_color_variance" value="50,20,0,0"/>
+        <prop name="start_size" value="36.000000"/>
+        <prop name="start_size_variance" value="16.000000"/>
+        <prop name="finish_size" value="8.000000"/>
+        <prop name="finish_size_variance" value="6.000000"/>
         <prop name="start_rotation" value="0.000000"/>
-        <prop name="start_rotation_variance" value="0.000000"/>
-        <prop name="finish_rotation" value="0.000000"/>
-        <prop name="finish_rotation_variance" value="0.000000"/>
+        <prop name="start_rotation_variance" value="90.000000"/>
+        <prop name="finish_rotation" value="120.000000"/>
+        <prop name="finish_rotation_variance" value="120.000000"/>
+        <prop name="color_curve" value="2"/>
+        <prop name="size_curve" value="3"/>
+        <prop name="spin_curve" value="0"/>
+        <prop name="trail_mode" value="0"/>
+        <prop name="trail_length" value="0.000000"/>
+        <prop name="trail_width" value="0.000000"/>
+        <prop name="trail_alpha_scale" value="0.350000"/>
+        <prop name="sub_emitter" value=""/>
+        <prop name="sub_emitter_count" value="1"/>
         <prop name="motion_mode" value="0"/>
-        <prop name="gravity" value="0.000000,10.000000"/>
+        <prop name="gravity" value="0.000000,-42.000000"/>
         <prop name="radial_acc" value="0.000000"/>
         <prop name="radial_acc_variance" value="0.000000"/>
-        <prop name="tangent_acc" value="0.000000"/>
-        <prop name="tangent_acc_variance" value="0.000000"/>
+        <prop name="tangent_acc" value="12.000000"/>
+        <prop name="tangent_acc_variance" value="22.000000"/>
         <prop name="min_radius" value="0.000000"/>
         <prop name="min_radius_variance" value="0.000000"/>
         <prop name="max_radius" value="0.000000"/>
         <prop name="max_radius_variance" value="0.000000"/>
         <prop name="rotate_speed" value="0.000000"/>
         <prop name="rotate_speed_variance" value="0.000000"/>
+        <prop name="wind" value="10.000000,-8.000000"/>
+        <prop name="wind_variance" value="24.000000,10.000000"/>
+        <prop name="wind_wave" value="35.000000,8.000000"/>
+        <prop name="wind_wave_speed" value="4.000000"/>
     </effect>
 </particle>

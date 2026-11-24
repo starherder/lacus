@@ -2,6 +2,8 @@
 <particle version="1.0">
     <system>
         <prop name="texture_file" value="particles/fallenLeaves.png"/>
+        <prop name="coordinate_space" value="2"/>
+        <prop name="blend_mode" value="1"/>
     </system>
     <emmiter>
         <prop name="start_pos" value="640.000000,-60.000000"/>
@@ -18,6 +20,7 @@
         <prop name="emit_type" value="0"/>
         <prop name="duration" value="-1.000000"/>
         <prop name="max_particles" value="900"/>
+        <prop name="emission_rate" value="0.000000"/>
         <prop name="life_span" value="18.000000"/>
         <prop name="life_span_variance" value="6.000000"/>
     </emmiter>
@@ -34,6 +37,15 @@
         <prop name="start_rotation_variance" value="180.000000"/>
         <prop name="finish_rotation" value="900.000000"/>
         <prop name="finish_rotation_variance" value="720.000000"/>
+        <prop name="color_curve" value="4"/>
+        <prop name="size_curve" value="4"/>
+        <prop name="spin_curve" value="4"/>
+        <prop name="trail_mode" value="0"/>
+        <prop name="trail_length" value="0.000000"/>
+        <prop name="trail_width" value="0.000000"/>
+        <prop name="trail_alpha_scale" value="0.350000"/>
+        <prop name="sub_emitter" value=""/>
+        <prop name="sub_emitter_count" value="1"/>
         <prop name="motion_mode" value="0"/>
         <prop name="gravity" value="6.000000,14.000000"/>
         <prop name="radial_acc" value="0.000000"/>
@@ -46,5 +58,9 @@
         <prop name="max_radius_variance" value="0.000000"/>
         <prop name="rotate_speed" value="0.000000"/>
         <prop name="rotate_speed_variance" value="0.000000"/>
+        <prop name="wind" value="18.000000,0.000000"/>
+        <prop name="wind_variance" value="22.000000,0.000000"/>
+        <prop name="wind_wave" value="35.000000,0.000000"/>
+        <prop name="wind_wave_speed" value="1.200000"/>
     </effect>
 </particle>

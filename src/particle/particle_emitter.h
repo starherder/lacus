@@ -1,7 +1,14 @@
 #pragma once
 #include "particle_cfg.h"
 
-#include <list>
+#include <functional>
+#include <memory>
+#include <vector>
+
+namespace engine
+{
+	class IPainter;
+}
 
 namespace particle
 {
@@ -14,28 +21,26 @@ namespace particle
 		~ParticleEmitter();
 
 		void setDescription(const ParticleDescription& desc);
-		void setParticleEffect(ParticleEffect* effect);
+		void setParticleEffect(std::unique_ptr<ParticleEffect> effect);
+		void setDeathCallback(std::function<void(const Vec2&)> callback);
+		void emitParticleDeath(const Vec2& pos);
 
 		void emitParticles(float dt);
 		void addParticle();
 		Vec2 randomEmitPos() const;
 
 		void update(float dt);
+		void drawDebug(engine::IPainter& painter, const Color& color, float thickness = 1.0f) const;
 
 		void startEmitting();
 		void stopEmitting();
+		void clearParticles();
 
 		bool isEmitting();
+		bool isActive() const;
 
-		std::list<ParticleCfg*>* getParticleList()
-		{
-			return &_particleList;
-		}
-
-		ParticleEffect* getParticleEffect()
-		{
-			return _particleEffect;
-		}
+		std::vector<ParticleCfg*>* getParticleList();
+		ParticleEffect* getParticleEffect();
 
 		// 发射器位置。
 		MemberFunction(Vec2, EmitPos, _emitPos);
@@ -66,8 +71,9 @@ namespace particle
 		MemberFunction(float, Duration, _duration);
 
 	private:
-		ParticleEffect* _particleEffect;
-		std::list<ParticleCfg*> _particleList;
+		std::unique_ptr<ParticleEffect> _particleEffect;
+		std::vector<ParticleCfg*> _particleList;
+		std::function<void(const Vec2&)> _deathCallback;
 
 		bool _canEmit;
 		float _elapsed;

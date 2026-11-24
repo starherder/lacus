@@ -55,6 +55,10 @@ namespace particle
 
 		GravityMode _gravityMode;
 		RadiusMode _radiusMode;
+		WindMode _windMode;
+		ValueCurve _colorCurve = ValueCurve::Linear;
+		ValueCurve _sizeCurve = ValueCurve::Linear;
+		ValueCurve _spinCurve = ValueCurve::Linear;
 	};
 
 	// 重力模式粒子效果。

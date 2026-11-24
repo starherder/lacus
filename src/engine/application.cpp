@@ -65,6 +65,7 @@ Application::Application()
 
 Application::~Application() 
 {
+    close();
 }
 
 fs::path Application::runPath() 
@@ -211,6 +212,7 @@ bool Application::initLog()
         spdlog::set_pattern(_config.log.pattern);
         spdlog::flush_every(std::chrono::seconds(1));
 
+        _logInited = true;
         LogInfo("log file: {}", logPath.string());
         return true;
     }
@@ -271,6 +273,7 @@ bool Application::initRenderer()
     }
 
     painter().init();
+    _painterInited = true;
 
     LogInfo("renderer created.");
     return true;
@@ -328,17 +331,55 @@ void Application::drawUI()
 
 bool Application::close() 
 {
+    if (_closed)
+    {
+        return true;
+    }
+    _closed = true;
+
     for(auto& plugin : _plugins)
     {
         plugin.second->close();
     }   
-    
-    LogInfo("---------------- engine closed ----------------");
+    _plugins.clear();
 
-    painter().quit();
+    if (_logInited)
+    {
+        LogInfo("---------------- engine closed ----------------");
+    }
+
+    if (_audioPlayer)
+    {
+        _audioPlayer->close();
+    }
+
+    if (_ipainter)
+    {
+        if (_painterInited)
+        {
+            _ipainter->quit();
+            _painterInited = false;
+        }
+        _ipainter.reset();
+    }
+
+    if (_renderer)
+    {
+        _renderer->destroyTextRenderer();
+    }
+
+    _resourceMgr.reset();
+    _audioPlayer.reset();
+    _eventDispatcher.reset();
+    _renderer.reset();
+    _window.reset();
 
     SDL_Quit();
-    spdlog::shutdown();
+    if (_logInited)
+    {
+        spdlog::shutdown();
+        _logInited = false;
+    }
     return true;
 }
 
