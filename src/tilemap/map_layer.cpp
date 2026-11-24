@@ -12,24 +12,30 @@ void LoaderUtils::loadProperties(const json& json, Properties& properties)
             const auto& name = prop.value("name", "");
             const auto& type = prop.value("type", "");
 
-            if(type=="bool") {
+            if(type=="bool") 
+            {
                 properties[name] = prop.value("value", false);
             }
-            else if(type=="int") {
+            else if(type=="int") 
+            {
                 properties[name] = prop.value("value", 0);
             }
-            else if(type=="float") {
+            else if(type=="float") 
+            {
                 properties[name] = prop.value("value", 0.0f);
             }
-            else if(type=="string") {
+            else if(type=="string") 
+            {
                 properties[name] = prop.value("value", "");
             }
-            else if(type=="color") {
+            else if(type=="color") 
+            {
                 auto strcolor = prop.value("value", "");
                 engine::Color color; color.fromHexString(strcolor);
                 properties[name] = (uint32_t)color;
             }
-            else if(type=="file") {
+            else if(type=="file") 
+            {
                 const auto& strfile = prop.value("value", "");
                 properties[name] = strfile;
             }
@@ -78,19 +84,24 @@ bool MapLayer::load(const json& json)
     tint_color.fromHexString(json.value("tintcolor", "#ffffffff"));
 
     auto stype = json.value("type", "");
-    if(stype=="tilelayer") {
+    if(stype=="tilelayer") 
+    {
         type = MapLayerType::TileLayer;
     }
-    else if(stype=="objectgroup") {
+    else if(stype=="objectgroup") 
+    {
         type = MapLayerType::ObjectLayer;
     }
-    else if(stype=="imagelayer") {
+    else if(stype=="imagelayer") 
+    {
         type = MapLayerType::ImageLayer;
     }
-    else if(stype=="group") {
+    else if(stype=="group") 
+    {
         type = MapLayerType::GroupLayer;
     }
-    else  {
+    else  
+    {
         LogError("unknown layer type: {}", stype);
         return false;
     }   

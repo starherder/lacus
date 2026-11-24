@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "particle_cfg.h"
 
 namespace particle
@@ -10,57 +10,54 @@ namespace particle
 	{
 	public:
 		ParticleEffect();
-		virtual ~ParticleEffect() {}
+		virtual ~ParticleEffect() = default;
 
-		void setDecription(const ParticleDescription& desc);
+		void setMotionMode(MotionMode mode);
+		void setDescription(const ParticleDescription& desc);
 
-		/* 初始化粒子 */
+		// 初始化单个粒子。
 		virtual void initParticle(ParticleEmitter* pe, ParticleCfg* particle);
 
-		/* 更新粒子 */
+		// 更新当前 effect 管理的粒子。
 		virtual void update(ParticleEmitter* pe, float dt) = 0;
 
-		void setMotionMode(MotionMode mode) { motionMode = mode; }
-
 	public:
-		/* 粒子生命周期 */
-		VirtualMemberFunction(float, Life, life);
-		VirtualMemberFunction(float, LifeVar, lifeVar);
+		// 粒子生命周期。
+		VirtualMemberFunction(float, Life, _life);
+		VirtualMemberFunction(float, LifeVar, _lifeVar);
 
-		/* 粒子起始颜色  */
-		VirtualMemberFunction(Color, BeginColor, beginColor);
-		VirtualMemberFunction(Color, BeginColorVar, beginColorVar);
+		// 粒子起始颜色。
+		VirtualMemberFunction(Color, BeginColor, _beginColor);
+		VirtualMemberFunction(Color, BeginColorVar, _beginColorVar);
 
-		/* 粒子结束颜色 */
-		VirtualMemberFunction(Color, EndColor, endColor);
-		VirtualMemberFunction(Color, EndColorVar, endColorVar);
+		// 粒子结束颜色。
+		VirtualMemberFunction(Color, EndColor, _endColor);
+		VirtualMemberFunction(Color, EndColorVar, _endColorVar);
 
-		/* 粒子起始大小 */
-		VirtualMemberFunction(float, BeginSize, beginSize);
-		VirtualMemberFunction(float, BeginSizeVar, beginSizeVar);
+		// 粒子起始大小。
+		VirtualMemberFunction(float, BeginSize, _beginSize);
+		VirtualMemberFunction(float, BeginSizeVar, _beginSizeVar);
 
-		/* 粒子结束大小 */
-		VirtualMemberFunction(float, EndSize, endSize);
-		VirtualMemberFunction(float, EndSizeVar, endSizeVar);
+		// 粒子结束大小。
+		VirtualMemberFunction(float, EndSize, _endSize);
+		VirtualMemberFunction(float, EndSizeVar, _endSizeVar);
 
-		/* 粒子起始旋转角度 */
-		VirtualMemberFunction(float, BeginSpin, beginSpin);
-		VirtualMemberFunction(float, BeginSpinVar, beginSpinVar);
+		// 粒子起始旋转角度。
+		VirtualMemberFunction(float, BeginSpin, _beginSpin);
+		VirtualMemberFunction(float, BeginSpinVar, _beginSpinVar);
 
-		/* 粒子结束旋转角度 */
-		VirtualMemberFunction(float, EndSpin, endSpin);
-		VirtualMemberFunction(float, EndSpinVar, endSpinVar);
+		// 粒子结束旋转角度。
+		VirtualMemberFunction(float, EndSpin, _endSpin);
+		VirtualMemberFunction(float, EndSpinVar, _endSpinVar);
 
-	public:
-		MotionMode motionMode;
+	protected:
+		MotionMode _motionMode;
 
-		GravityMode gravityMode;
-		RadiusMode radiusMode;
+		GravityMode _gravityMode;
+		RadiusMode _radiusMode;
 	};
 
-	//---------------------------------------------------------------------
-	// GravityParticleEffect
-	//---------------------------------------------------------------------
+	// 重力模式粒子效果。
 	class GravityParticleEffect : public ParticleEffect
 	{
 	public:
@@ -68,9 +65,7 @@ namespace particle
 		void update(ParticleEmitter* pe, float dt) override;
 	};
 
-	//---------------------------------------------------------------------
-	// RadialParticleEffect
-	//---------------------------------------------------------------------
+	// 半径模式粒子效果。
 	class RadialParticleEffect : public ParticleEffect
 	{
 	public:

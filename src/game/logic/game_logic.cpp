@@ -146,7 +146,7 @@ namespace game
         }
 
         auto particleCfgs =_context.resPath() / "particles/";
-        res = particle::ParticleManager::inst().LoadParticles(particleCfgs);
+        res = particle::ParticleManager::inst().loadParticles(particleCfgs);
         if (!res) 
         {
             LogError("load partiles config: {} failed.", particleCfgs.string());

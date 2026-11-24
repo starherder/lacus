@@ -35,7 +35,7 @@ void ImFormDebug::init(GameContext* context)
 {
     _context = context;
 
-    auto& particles = particle::ParticleManager::inst().GetAllParticleConfigs();
+    auto& particles = particle::ParticleManager::inst().getAllParticleConfigs();
     for (auto& [name, file] : particles) 
     {
         _particleNames.push_back(name.c_str());

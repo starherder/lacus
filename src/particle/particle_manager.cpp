@@ -1,4 +1,4 @@
-﻿#include "particle_manager.h"
+#include "particle_manager.h"
 #include "particle_memory.h"
 
 #include "engine/application.h"
@@ -12,13 +12,15 @@ namespace particle
 {
 	typedef std::map<std::string, std::string> PropMap;
 
-	static auto vec2ToString = [](const Vec2& vec) {
+	static auto vec2ToString = [](const Vec2& vec)
+	{
 		std::string val;
 		val.append(std::to_string(vec.x)).append(",").append(std::to_string(vec.y));
 		return val;
 	};
 
-	static auto color4ToString = [](const Color& c) {
+	static auto color4ToString = [](const Color& c)
+	{
 		std::string val; 
 		val.append(std::to_string(c.r)).append(",")
 			.append(std::to_string(c.g)).append(",")
@@ -27,43 +29,53 @@ namespace particle
 		return val;
 	};
 
-	static auto getString = [](const PropMap& props, const std::string& name) {
+	static auto getString = [](const PropMap& props, const std::string& name)
+	{
 		auto it = props.find(name);
 		return it == props.end() ? "" : it->second;
 	};
 
-	static auto getInt = [](const PropMap& props, const std::string& name) {
+	static auto getInt = [](const PropMap& props, const std::string& name)
+	{
 		auto it = props.find(name);
 		return it == props.end() ? 0 : std::stoi(it->second);
 	};
 
-	static auto getFloat = [](const PropMap& props, const std::string& name) {
+	static auto getFloat = [](const PropMap& props, const std::string& name)
+	{
 		auto it = props.find(name);
 		return it == props.end() ? 0.0f : std::stof(it->second);
 	};
 
-	static auto getBool = [](const PropMap& props, const std::string& name) {
+	static auto getBool = [](const PropMap& props, const std::string& name)
+	{
 		auto it = props.find(name);
 		return it == props.end() ? false : std::stoi(it->second) != 0;
 	};
 
-	static auto getVec2 = [](const PropMap& props, const std::string& name) {
+	static auto getVec2 = [](const PropMap& props, const std::string& name)
+	{
 		auto it = props.find(name);
-		if (it == props.end()) {
+		if (it == props.end())
+		{
 			return Vec2(0.0f, 0.0f);
 		}
-		else {
+		else
+		{
 			float x, y; sscanf_s(it->second.c_str(), "%f,%f", &x, &y);
 			return Vec2(x, y);
 		}
 	};
 
-	static auto getColor4f = [](const PropMap& props, const std::string& name) {
+	static auto getColor4f = [](const PropMap& props, const std::string& name)
+	{
 		auto it = props.find(name);
-		if (it == props.end()) {
+		if (it == props.end())
+		{
 			return Color();
 		}
-		else {
+		else
+		{
 			int r, g, b, a; sscanf_s(it->second.c_str(), "%d,%d,%d,%d", &r, &g, &b, &a);
 			return Color(r, g, b, a);
 		}
@@ -83,41 +95,44 @@ namespace particle
 	}
 
 
-	void Particle::SetTexture(const std::string& file)
-	{
-		auto& textureMgr = ParticleManager::inst().GetApplication()->resourceManager().textureManager();
+	void Particle::setTexture(const std::string& file)
 
-		m_Texture = textureMgr.get(HashString(file.c_str()));
-		if (!m_Texture)
+	{
+		auto& textureMgr = ParticleManager::inst().getApplication()->resourceManager().textureManager();
+
+		_texture = textureMgr.get(HashString(file.c_str()));
+		if (!_texture)
 		{
-			LogError("Particle::SetTexture: {} failed. texture not found.", file);
+			LogError("Particle::setTexture: {} failed. texture not found.", file);
 			return;
 		}
 	}
 
-	void Particle::Load(const std::string& filename)
+	void Particle::load(const std::string& filename)
 	{
 		_file = filename;
 
-		auto fullpath = ParticleManager::inst().GetApplication()->resPath() / filename;
+		auto fullpath = ParticleManager::inst().getApplication()->resPath() / filename;
 		
-		ParticleDescription&& desc = CreateParticleDescription(fullpath.string());
-		SetDescription(desc);
+		ParticleDescription&& desc = createParticleDescription(fullpath.string());
+		setDescription(desc);
 	}
 
-	void Particle::SetDescription(const ParticleDescription& desc)
+	void Particle::setDescription(const ParticleDescription& desc)
 	{
-		SetTexture(desc.sTexture);
-		_localEmitPos = desc.vEmitPos;
+		setTexture(desc.texture);
+		_localEmitPos = desc.emitPos;
 
-		if (_emitter) {
-			_emitter->setDecription(desc);
+		if (_emitter)
+		{
+			_emitter->setDescription(desc);
 		}
 
-		_vertexData.resize(desc.nParticleCount * 4);
-		_indices.resize(desc.nParticleCount * 6);
+		_vertexData.resize(desc.particleCount * 4);
+		_indices.resize(desc.particleCount * 6);
 
-		for (int i = 0; i < desc.nParticleCount; i++) {
+		for (int i = 0; i < desc.particleCount; i++)
+		{
 			_vertexData[i * 4 + 0].tex_coord = { 0, 0 };
 			_vertexData[i * 4 + 1].tex_coord = { 0, 1 };
 			_vertexData[i * 4 + 2].tex_coord = { 1, 1 };
@@ -136,14 +151,15 @@ namespace particle
 #endif
 	}
 
-	void Particle::Update(float dt)
+	void Particle::update(float dt)
 	{
-		if (_emitter) {
+		if (_emitter)
+		{
 			_emitter->update(dt);
 		}
 	}
 
-	void Particle::Draw(engine::Camera* camera, bool screenSpace)
+	void Particle::draw(engine::Camera* camera, bool screenSpace)
 	{
 		auto particleList = _emitter->getParticleList();
 		if ( particleList->empty() ) return;
@@ -151,16 +167,17 @@ namespace particle
 		float s = 0, c = 0, x = 0, y = 0;
 		int vertexIndex = 0, indexIndex = 0, i = 0;
 
-		for ( auto& particle : *particleList) {
+		for ( auto& particle : *particleList)
+		{
 			assert(particle);
 			fail_continue(particle);
 
-			float hsize = particle->fSize / 2.0f;
-			c = cosf(particle->fRotation) * hsize;
-			s = sinf(particle->fRotation) * hsize;
+			float hsize = particle->size / 2.0f;
+			c = cosf(particle->rotation) * hsize;
+			s = sinf(particle->rotation) * hsize;
 
-			x = particle->vPos.x;
-			y = particle->vPos.y;
+			x = particle->pos.x;
+			y = particle->pos.y;
 
 			Vec2 p1 = {x - c - s, y - c + s};
 			Vec2 p2 = {x - c + s, y + c + s};
@@ -169,13 +186,15 @@ namespace particle
 
 			if(camera)
 			{
-				if (screenSpace) {
+				if (screenSpace)
+				{
 					p1 = camera->projectScreenPoint(p1);
 					p2 = camera->projectScreenPoint(p2);
 					p3 = camera->projectScreenPoint(p3);
 					p4 = camera->projectScreenPoint(p4);
 				}
-				else {
+				else
+				{
 					p1 = camera->projectPoint(p1);
 					p2 = camera->projectPoint(p2);
 					p3 = camera->projectPoint(p3);
@@ -188,7 +207,7 @@ namespace particle
 			_vertexData[i * 4 + 2].position = ToPoint(p3);
 			_vertexData[i * 4 + 3].position = ToPoint(p4);
 
-			Color color = particle->cColor;
+			Color color = particle->color;
 			color.a = static_cast<uint8_t>(std::clamp(color.a * _alphaScale, 0.0f, 255.0f));
 			_vertexData[i * 4 + 0].color = color;
 			_vertexData[i * 4 + 1].color = color;
@@ -201,11 +220,11 @@ namespace particle
 		int vex_count = particleList->size() * 4;
 		int idx_count = particleList->size() * 6;
 
-		auto& renderer = ParticleManager::inst().GetApplication()->renderer();
-		renderer.drawGeometry(m_Texture, _vertexData.data(), _vertexData.size(), _indices.data(), _indices.size());
+		auto& renderer = ParticleManager::inst().getApplication()->renderer();
+		renderer.drawGeometry(_texture, _vertexData.data(), _vertexData.size(), _indices.data(), _indices.size());
 	}
 
-	ParticleDescription Particle::CreateParticleDescription(const std::string& filename)
+	ParticleDescription Particle::createParticleDescription(const std::string& filename)
 	{
 		using namespace tinyxml2;
 
@@ -221,9 +240,11 @@ namespace particle
 
 		XMLElement* root = doc.RootElement();
 		XMLElement* secEle = root->FirstChildElement();
-		while (secEle) {
+		while (secEle)
+		{
 			XMLElement* propEle = secEle->FirstChildElement("prop");
-			while (propEle) {
+			while (propEle)
+			{
 				std::string propName = propEle->Attribute("name");
 				std::string propValue = propEle->Attribute("value");
 				props.insert({propName, propValue});
@@ -235,116 +256,116 @@ namespace particle
 		}
 
 		// desc
-		desc.sTexture = getString(props, "texture_file");
+		desc.texture = getString(props, "texture_file");
 
 		// emmiter
-		desc.vEmitPos = getVec2(props, "start_pos");
-		desc.vEmitPosVar = getVec2(props, "start_pos_variance");
+		desc.emitPos = getVec2(props, "start_pos");
+		desc.emitPosVar = getVec2(props, "start_pos_variance");
 
 		desc.emitterShape = (EmitterShape)getInt(props, "emitter_shape");
-		desc.vEmitShapeSize = getVec2(props, "emitter_shape_size");
-		desc.fEmitShapeRadius = getFloat(props, "emitter_shape_radius");
-		desc.fEmitShapeRotation = getFloat(props, "emitter_shape_rotation");
-		desc.bEmitShapeEdgeOnly = getBool(props, "emitter_shape_edge_only");
+		desc.emitShapeSize = getVec2(props, "emitter_shape_size");
+		desc.emitShapeRadius = getFloat(props, "emitter_shape_radius");
+		desc.emitShapeRotation = getFloat(props, "emitter_shape_rotation");
+		desc.emitShapeEdgeOnly = getBool(props, "emitter_shape_edge_only");
 
 		if (props.find("emitter_shape") == props.end())
 		{
-			desc.emitterShape = EmitterShape::EMITTER_SHAPE_RECT;
+			desc.emitterShape = EmitterShape::Rect;
 		}
 
 		if (props.find("emitter_shape_size") == props.end())
 		{
-			desc.vEmitShapeSize = desc.vEmitPosVar * 2.0f;
+			desc.emitShapeSize = desc.emitPosVar * 2.0f;
 		}
 
-		desc.fEmitAngle = getFloat(props, "angle");
-		desc.fEmitAngleVar = getFloat(props, "angle_variance");
+		desc.emitAngle = getFloat(props, "angle");
+		desc.emitAngleVar = getFloat(props, "angle_variance");
 
-		desc.fEmitSpeed = getFloat(props, "speed");
-		desc.fEmitSpeedVar = getFloat(props, "speed_variance");
+		desc.emitSpeed = getFloat(props, "speed");
+		desc.emitSpeedVar = getFloat(props, "speed_variance");
 
 		desc.emitterType = (EmitterType)getInt(props, "emit_type");
-		desc.fDuration = getFloat(props, "duration");
+		desc.duration = getFloat(props, "duration");
 
-		desc.nParticleCount = getInt(props, "max_particles");
+		desc.particleCount = getInt(props, "max_particles");
 
-		desc.fLife = getFloat(props, "life_span");
-		desc.fLifeVar = getFloat(props, "life_span_variance");
+		desc.life = getFloat(props, "life_span");
+		desc.lifeVar = getFloat(props, "life_span_variance");
 
 
 		// effect
-		desc.cBeginColor = getColor4f(props, "start_color");
-		desc.cBeginColorVar = getColor4f(props, "start_color_variance");
+		desc.beginColor = getColor4f(props, "start_color");
+		desc.beginColorVar = getColor4f(props, "start_color_variance");
 
-		desc.cEndColor = getColor4f(props, "finish_color");
-		desc.cEndColorVar = getColor4f(props, "finish_color_variance");
+		desc.endColor = getColor4f(props, "finish_color");
+		desc.endColorVar = getColor4f(props, "finish_color_variance");
 
-		desc.fBeginSize = getFloat(props, "start_size");
-		desc.fBeginSizeVar = getFloat(props, "start_size_variance");
+		desc.beginSize = getFloat(props, "start_size");
+		desc.beginSizeVar = getFloat(props, "start_size_variance");
 
-		desc.fEndSize = getFloat(props, "finish_size");
-		desc.fEndSizeVar = getFloat(props, "finish_size_variance");
+		desc.endSize = getFloat(props, "finish_size");
+		desc.endSizeVar = getFloat(props, "finish_size_variance");
 
-		desc.fBeginSpin = getFloat(props, "start_rotation");
-		desc.fBeginSpinVar = getFloat(props, "start_rotation_variance");
+		desc.beginSpin = getFloat(props, "start_rotation");
+		desc.beginSpinVar = getFloat(props, "start_rotation_variance");
 
-		desc.fEndSpin = getFloat(props, "finish_rotation");
-		desc.fEndSpinVar = getFloat(props, "finish_rotation_variance");
+		desc.endSpin = getFloat(props, "finish_rotation");
+		desc.endSpinVar = getFloat(props, "finish_rotation_variance");
 
 		desc.motionMode = (MotionMode)getInt(props, "motion_mode");
 
-		desc.gravityMode.vGravity = getVec2(props, "gravity");
-		desc.gravityMode.fRadialAccel = getFloat(props, "radial_acc");
-		desc.gravityMode.fRadialAccelVar = getFloat(props, "radial_acc_variance");
-		desc.gravityMode.fTangentialAccel = getFloat(props, "tangent_acc");
-		desc.gravityMode.fTangentialAccelVar = getFloat(props, "tangent_acc_variance");
-		desc.radiusMode.fBeginRadius = getFloat(props, "min_radius");
-		desc.radiusMode.fBeginRadiusVar = getFloat(props, "min_radius_variance");
-		desc.radiusMode.fEndRadius = getFloat(props, "max_radius");
-		desc.radiusMode.fEndRadiusVar = getFloat(props, "max_radius_variance");
-		desc.radiusMode.fSpinPerSecond = getFloat(props, "rotate_speed");
-		desc.radiusMode.fSpinPerSecondVar = getFloat(props, "rotate_speed_variance");
+		desc.gravityMode.gravity = getVec2(props, "gravity");
+		desc.gravityMode.radialAccel = getFloat(props, "radial_acc");
+		desc.gravityMode.radialAccelVar = getFloat(props, "radial_acc_variance");
+		desc.gravityMode.tangentialAccel = getFloat(props, "tangent_acc");
+		desc.gravityMode.tangentialAccelVar = getFloat(props, "tangent_acc_variance");
+		desc.radiusMode.beginRadius = getFloat(props, "min_radius");
+		desc.radiusMode.beginRadiusVar = getFloat(props, "min_radius_variance");
+		desc.radiusMode.endRadius = getFloat(props, "max_radius");
+		desc.radiusMode.endRadiusVar = getFloat(props, "max_radius_variance");
+		desc.radiusMode.spinPerSecond = getFloat(props, "rotate_speed");
+		desc.radiusMode.spinPerSecondVar = getFloat(props, "rotate_speed_variance");
 
-		CorrectDescription(desc);
+		correctDescription(desc);
 
 		return desc;
 	}
 
 	// 修正一些数据
-	void Particle::CorrectDescription(ParticleDescription& desc)
+	void Particle::correctDescription(ParticleDescription& desc)
 	{
-		desc.fLife = FloatEqual(desc.fLife, 0) ? 0.1 : desc.fLife;
-		desc.fEmitRate = desc.nParticleCount / desc.fLife;
+		desc.life = FloatEqual(desc.life, 0) ? 0.1 : desc.life;
+		desc.emitRate = desc.particleCount / desc.life;
 	}
 
-	Vec2 Particle::GetPos()
+	Vec2 Particle::getPos()
 	{
 		if (_emitter)
 		{
-			Vec2&& pos = _emitter->GetEmitPos();
+			Vec2&& pos = _emitter->getEmitPos();
 			return { (int)pos.x, (int)pos.y};
 		}
 
 		return {0,0};
 	}
 
-	void Particle::SetPos(const Vec2& pos)
+	void Particle::setPos(const Vec2& pos)
 	{
 		if (_emitter)
 		{
-			_emitter->SetEmitPos({(float)pos.x, (float)pos.y});
+			_emitter->setEmitPos({(float)pos.x, (float)pos.y});
 		}
 	}
 
-	void Particle::SetOwnerPos(const Vec2& pos)
+	void Particle::setOwnerPos(const Vec2& pos)
 	{
 		if (_emitter)
 		{
-			_emitter->SetEmitPos(_localEmitPos + pos);
+			_emitter->setEmitPos(_localEmitPos + pos);
 		}
 	}
 
-	void Particle::Start()
+	void Particle::start()
 	{
 		if (_emitter)
 		{
@@ -352,7 +373,7 @@ namespace particle
 		}
 	}
 	
-	void Particle::Stop()
+	void Particle::stop()
 	{
 		if (_emitter)
 		{
@@ -360,112 +381,129 @@ namespace particle
 		}
 	}
 
-	void Particle::SetAlphaScale(float alpha)
+	void Particle::setAlphaScale(float alpha)
 	{
 		_alphaScale = std::clamp(alpha, 0.0f, 1.0f);
 	}
 
-	bool Particle::IsPlaying()
+	float Particle::getAlphaScale() const
+	{
+		return _alphaScale;
+	}
+
+	bool Particle::isPlaying()
 	{
 		return _emitter && _emitter->isEmitting();
 	}
 
-	std::string Particle::GetName()
+	std::string Particle::getName()
 	{
 		return _name;
 	}
 
-	std::string Particle::GetFile()
+	std::string Particle::getFile()
 	{
 		return _file;
 	}
 
+	ParticleEffect* Particle::getEffect()
+	{
+		return _emitter->getParticleEffect();
+	}
+
+	ParticleEmitter* Particle::getEmitter()
+	{
+		return _emitter.get();
+	}
+
 #ifdef Particle_Editor_Mode
 
-	ParticleDescription& Particle::Description()
+	ParticleDescription& Particle::description()
 	{
 		return _descript;
 	}
 
-	void Particle::Reset()
+	void Particle::reset()
 	{
-		CorrectDescription(_descript);
+		correctDescription(_descript);
 
-		SetDescription(_descript);
+		setDescription(_descript);
 	}
 
-	void Particle::Save()
+	void Particle::save()
 	{
 		using namespace tinyxml2;
-		auto fullpath = ParticleManager::inst().GetApplication()->resPath() / _file;
+		auto fullpath = ParticleManager::inst().getApplication()->resPath() / _file;
 		
 		tinyxml2::XMLDocument doc;
 		XMLError error = doc.LoadFile(fullpath.string().c_str());
 		if (error != XML_SUCCESS)
 		{
-			LogError("Particle::Save: open file {} failed. err = {}", fullpath.string(), (int)error);
+			LogError("Particle::save: open file {} failed. err = {}", fullpath.string(), (int)error);
 			return;
 		}
 
 		PropMap props;
-		props["texture_file"] = _descript.sTexture;
-		props["start_pos"] = vec2ToString(_descript.vEmitPos);
-		props["start_pos_variance"] = vec2ToString(_descript.vEmitPosVar);
+		props["texture_file"] = _descript.texture;
+		props["start_pos"] = vec2ToString(_descript.emitPos);
+		props["start_pos_variance"] = vec2ToString(_descript.emitPosVar);
 		props["emitter_shape"] = std::to_string((int)_descript.emitterShape);
-		props["emitter_shape_size"] = vec2ToString(_descript.vEmitShapeSize);
-		props["emitter_shape_radius"] = std::to_string(_descript.fEmitShapeRadius);
-		props["emitter_shape_rotation"] = std::to_string(_descript.fEmitShapeRotation);
-		props["emitter_shape_edge_only"] = _descript.bEmitShapeEdgeOnly ? "1" : "0";
+		props["emitter_shape_size"] = vec2ToString(_descript.emitShapeSize);
+		props["emitter_shape_radius"] = std::to_string(_descript.emitShapeRadius);
+		props["emitter_shape_rotation"] = std::to_string(_descript.emitShapeRotation);
+		props["emitter_shape_edge_only"] = _descript.emitShapeEdgeOnly ? "1" : "0";
 
-		props["angle"] = std::to_string(_descript.fEmitAngle);
-		props["angle_variance"] = std::to_string(_descript.fEmitAngleVar);
-		props["speed"] = std::to_string(_descript.fEmitSpeed);
-		props["speed_variance"] = std::to_string(_descript.fEmitSpeedVar);
+		props["angle"] = std::to_string(_descript.emitAngle);
+		props["angle_variance"] = std::to_string(_descript.emitAngleVar);
+		props["speed"] = std::to_string(_descript.emitSpeed);
+		props["speed_variance"] = std::to_string(_descript.emitSpeedVar);
 
 		props["emit_type"] = std::to_string((int)_descript.emitterType);
-		props["duration"] = std::to_string(_descript.fDuration);
-		props["max_particles"] = std::to_string(_descript.nParticleCount);
+		props["duration"] = std::to_string(_descript.duration);
+		props["max_particles"] = std::to_string(_descript.particleCount);
 
-		props["life_span"] = std::to_string(_descript.fLife);
-		props["life_span_variance"] = std::to_string(_descript.fLifeVar);
+		props["life_span"] = std::to_string(_descript.life);
+		props["life_span_variance"] = std::to_string(_descript.lifeVar);
 
-		props["start_color"] = color4ToString(_descript.cBeginColor);
-		props["start_color_variance"] = color4ToString(_descript.cBeginColorVar);
-		props["finish_color"] = color4ToString(_descript.cEndColor);
-		props["finish_color_variance"] = color4ToString(_descript.cEndColorVar);
+		props["start_color"] = color4ToString(_descript.beginColor);
+		props["start_color_variance"] = color4ToString(_descript.beginColorVar);
+		props["finish_color"] = color4ToString(_descript.endColor);
+		props["finish_color_variance"] = color4ToString(_descript.endColorVar);
 
-		props["start_size"] = std::to_string(_descript.fBeginSize);
-		props["start_size_variance"] = std::to_string(_descript.fBeginSizeVar);
-		props["finish_size"] = std::to_string(_descript.fEndSize);
-		props["finish_size_variance"] = std::to_string(_descript.fEndSizeVar);
+		props["start_size"] = std::to_string(_descript.beginSize);
+		props["start_size_variance"] = std::to_string(_descript.beginSizeVar);
+		props["finish_size"] = std::to_string(_descript.endSize);
+		props["finish_size_variance"] = std::to_string(_descript.endSizeVar);
 
-		props["start_rotation"] = std::to_string(_descript.fBeginSpin);
-		props["start_rotation_variance"] = std::to_string(_descript.fBeginSpinVar);
+		props["start_rotation"] = std::to_string(_descript.beginSpin);
+		props["start_rotation_variance"] = std::to_string(_descript.beginSpinVar);
 
-		props["finish_rotation"] = std::to_string(_descript.fEndSpin);
-		props["finish_rotation_variance"] = std::to_string(_descript.fEndSpinVar);
+		props["finish_rotation"] = std::to_string(_descript.endSpin);
+		props["finish_rotation_variance"] = std::to_string(_descript.endSpinVar);
 
 		props["motion_mode"] = std::to_string((int)_descript.motionMode);
 
-		props["gravity"] = vec2ToString(_descript.gravityMode.vGravity);
-		props["radial_acc"] = std::to_string(_descript.gravityMode.fRadialAccel);
-		props["radial_acc_variance"] = std::to_string(_descript.gravityMode.fRadialAccelVar);
-		props["tangent_acc"] = std::to_string(_descript.gravityMode.fTangentialAccel);
-		props["tangent_acc_variance"] = std::to_string(_descript.gravityMode.fTangentialAccelVar);
+		props["gravity"] = vec2ToString(_descript.gravityMode.gravity);
+		props["radial_acc"] = std::to_string(_descript.gravityMode.radialAccel);
+		props["radial_acc_variance"] = std::to_string(_descript.gravityMode.radialAccelVar);
+		props["tangent_acc"] = std::to_string(_descript.gravityMode.tangentialAccel);
+		props["tangent_acc_variance"] = std::to_string(_descript.gravityMode.tangentialAccelVar);
 
-		props["min_radius"] = std::to_string(_descript.radiusMode.fBeginRadius);
-		props["min_radius_variance"] = std::to_string(_descript.radiusMode.fBeginRadiusVar);
-		props["max_radius"] = std::to_string(_descript.radiusMode.fEndRadius);
-		props["max_radius_variance"] = std::to_string(_descript.radiusMode.fEndRadiusVar);
-		props["rotate_speed"] = std::to_string(_descript.radiusMode.fSpinPerSecond);
-		props["rotate_speed_variance"] = std::to_string(_descript.radiusMode.fSpinPerSecondVar);
+		props["min_radius"] = std::to_string(_descript.radiusMode.beginRadius);
+		props["min_radius_variance"] = std::to_string(_descript.radiusMode.beginRadiusVar);
+		props["max_radius"] = std::to_string(_descript.radiusMode.endRadius);
+		props["max_radius_variance"] = std::to_string(_descript.radiusMode.endRadiusVar);
+		props["rotate_speed"] = std::to_string(_descript.radiusMode.spinPerSecond);
+		props["rotate_speed_variance"] = std::to_string(_descript.radiusMode.spinPerSecondVar);
 
 
 		XMLElement* root = doc.RootElement();
 		XMLElement* secEle = root->FirstChildElement();
-		while (secEle) {
+		while (secEle)
+		{
 			XMLElement* propEle = secEle->FirstChildElement("prop");
-			while (propEle) {
+			while (propEle)
+			{
 				std::string propName = propEle->Attribute("name");
 
 				std::string propValue = props[propName];
@@ -500,7 +538,7 @@ namespace particle
 		_application = app;
 	}
 
-	ParticlePtr ParticleManager::CreateParticle(const std::string& name)
+	ParticlePtr ParticleManager::createParticle(const std::string& name)
 	{
 		auto it = _particleFiles.find(name);
 		if (it==_particleFiles.end())
@@ -514,22 +552,33 @@ namespace particle
 			const std::string& file = it->second;
 			//LogInfo("create particle OK, name={}, file={}", name, file);
 
-			pParticle->Load(file);
-			pParticle->Stop();
+			pParticle->load(file);
+			pParticle->stop();
 		}
 
 		return pParticle;
 	}
 
+	const StringStringMap& ParticleManager::getAllParticleConfigs()
+	{
+		return _particleFiles;
+	}
 
-	bool ParticleManager::Reload()
+	engine::Application* ParticleManager::getApplication()
+	{
+		return _application;
+	}
+
+
+	bool ParticleManager::reload()
+
 	{
 		if(_cfgDir.empty()) return false;
 
-		return LoadParticles(_cfgDir);
+		return loadParticles(_cfgDir);
 	}
 	
-	bool ParticleManager::LoadParticles(const std::filesystem::path& cfgdir)
+	bool ParticleManager::loadParticles(const std::filesystem::path& cfgdir)
 	{
 		_cfgDir = cfgdir;
 		_particleFiles.clear();

@@ -47,8 +47,8 @@ void RenderSystem::update(float delta)
         auto& compParticle = par_view.get<CompBindParticle>(ent);
         if (compParticle.particle)
         {
-            compParticle.particle->SetOwnerPos(compTransform.position + compTransform.visual_offset);
-            compParticle.particle->Update(delta);
+            compParticle.particle->setOwnerPos(compTransform.position + compTransform.visual_offset);
+            compParticle.particle->update(delta);
         }
     }
 
@@ -478,7 +478,7 @@ void RenderSystem::drawParticles()
         auto& particle = compParticle.particle;
         if (particle)
         {
-            particle->Draw(&camera, compTransform.coord_mode == CoordMode::ScreenSpace);
+            particle->draw(&camera, compTransform.coord_mode == CoordMode::ScreenSpace);
         }
     }
 }

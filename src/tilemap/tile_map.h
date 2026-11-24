@@ -5,13 +5,16 @@
 #include "map_tilset.h"
 #include "engine/camera.h"
 
-namespace engine {
+namespace engine 
+{
     class Renderer;
 }
 
-namespace tilemap {
+namespace tilemap 
+{
 
-    class TileMap {
+    class TileMap 
+    {
     public:
         TileMap() = default;
         ~TileMap() = default;
@@ -121,7 +124,8 @@ namespace tilemap {
     std::optional<T> TileMap::getTileProperty(int tileGid, const std::string& name) const
     {
         auto maptile = getInfoOfTile(tileGid);
-        if(!maptile) {
+        if(!maptile) 
+        {
             return std::nullopt;
         }
 
@@ -144,7 +148,8 @@ namespace tilemap {
     std::optional<T> TileMap::getLayerProperty(int id, const std::string& name) const
     {
         auto layer = getLayer(id);
-        if(!layer) {
+        if(!layer) 
+        {
             return std::nullopt;
         }
 
@@ -155,25 +160,30 @@ namespace tilemap {
     std::optional<T> TileMap::getObjectProperty(int layerId, int objectId, const std::string& name) const
     {
         auto layer = getLayer(layerId);
-        if(!layer || layer->type != MapLayerType::ObjectLayer) {
+        if(!layer || layer->type != MapLayerType::ObjectLayer) 
+        {
             return std::nullopt;
         }
 
         auto objectLayer = dynamic_cast<ObjectLayer*>(layer);
-        if(!objectLayer) {
+        if(!objectLayer) 
+        {
             return std::nullopt;
         }
 
         auto it = objectLayer->objects.find(objectId);
-        if(it == objectLayer->objects.end()) {
+        if(it == objectLayer->objects.end()) 
+        {
             return std::nullopt;
         }
 
         // get prop in object
         auto& object = it->second;
         auto iter = object.properties.find(name);
-        if(iter == object.properties.end()) {
-            if(object.gid > 0) {
+        if(iter == object.properties.end()) 
+        {
+            if(object.gid > 0) 
+            {
                 // get prop in tileset
                 return getTileProperty<T>(object.gid, name);
             }

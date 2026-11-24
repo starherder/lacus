@@ -1,4 +1,4 @@
-﻿#include "particle_memory.h"
+#include "particle_memory.h"
 
 namespace particle
 {
@@ -10,14 +10,17 @@ namespace particle
 
 
 	void ParticleMemory::initParticleMemory(int size)
+
 	{
 		if ( _init ) return;
 		_init = true;
 
 		ParticleCfg* particle = nullptr;
-		for ( int i = 0; i < size; i++ ) {
+		for ( int i = 0; i < size; i++ )
+		{
 			particle = new ParticleCfg;
-			if (particle) {
+			if (particle)
+			{
 				_particlePool.push_back(particle);
 				_unusedParticleList.push_back(particle);
 			}
@@ -26,7 +29,8 @@ namespace particle
 
 	void ParticleMemory::freeParticleMemory()
 	{
-		for ( auto& particle : _particlePool ) {
+		for ( auto& particle : _particlePool )
+		{
 			delete particle;
 		}
 		_particlePool.clear();
@@ -37,10 +41,12 @@ namespace particle
 
 	ParticleCfg* ParticleMemory::allocParticle()
 	{
-		if ( _freeIndex >= static_cast<int>(_unusedParticleList.size()) ) {
+		if ( _freeIndex >= static_cast<int>(_unusedParticleList.size()) )
+		{
 			return nullptr;
 		}
-		else {
+		else
+		{
 			return _unusedParticleList[_freeIndex++];
 		}
 	}

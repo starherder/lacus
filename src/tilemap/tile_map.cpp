@@ -12,7 +12,8 @@ namespace tilemap {
 ImageLayer* TileMap::getBkgroundLayer()
 {
     auto layer = getLayer((int)LayerId::BkGround);
-    if (layer && layer->type == MapLayerType::ImageLayer) {
+    if (layer && layer->type == MapLayerType::ImageLayer) 
+    {
         return dynamic_cast<ImageLayer*>(layer);
     }
     return nullptr;
@@ -21,7 +22,8 @@ ImageLayer* TileMap::getBkgroundLayer()
 TileLayer* TileMap::getTileLayer()
 {
     auto layer = getLayer((int)LayerId::TileMap);
-    if (layer && layer->type == MapLayerType::TileLayer) {
+    if (layer && layer->type == MapLayerType::TileLayer) 
+    {
         return dynamic_cast<TileLayer*>(layer);
     }
     return nullptr;
@@ -30,7 +32,8 @@ TileLayer* TileMap::getTileLayer()
 ObjectLayer* TileMap::getObjectLayer()
 {
     auto layer = getLayer((int)LayerId::Object);
-    if (layer && layer->type == MapLayerType::ObjectLayer) {
+    if (layer && layer->type == MapLayerType::ObjectLayer) 
+    {
         return dynamic_cast<ObjectLayer*>(layer);
     }
     return nullptr;
@@ -39,7 +42,8 @@ ObjectLayer* TileMap::getObjectLayer()
 TileLayer* TileMap::getDecorateLayer()
 {
     auto layer = getLayer((int)LayerId::Decorate);
-    if (layer && layer->type == MapLayerType::TileLayer) {
+    if (layer && layer->type == MapLayerType::TileLayer) 
+    {
         return dynamic_cast<TileLayer*>(layer);
     }
     return nullptr;
@@ -210,7 +214,8 @@ bool TileMap::load_mapdata(const json& json_data)
 
 bool TileMap::load_layers(const json& json)
 {
-    for (const auto& layer_json : json) {
+    for (const auto& layer_json : json) 
+    {
         auto id = layer_json.value("id", 0);
         auto type = layer_json.value("type", "");
 
@@ -233,9 +238,11 @@ bool TileMap::load_layers(const json& json)
         else if(type=="group")
         {
             layer = std::make_shared<GroupLayer>();
-            if(layer_json.contains("layers")) {
+            if(layer_json.contains("layers")) 
+            {
                 auto& layers = layer_json["layers"];
-                if(!load_layers(layers)) {
+                if(!load_layers(layers)) 
+                {
                     LogWarn("load sub-layers for group layer {} failed", id);
                 }
             }
@@ -258,15 +265,18 @@ bool TileMap::load_one_tileset(const fs::path& filepath, int firstgid)
     LogInfo("load tileset: {}, firstgid: {}", filepath.string(), firstgid);
 
     std::ifstream file(filepath);
-    if (!file.is_open()) {
+    if (!file.is_open()) 
+    {
         LogError("tileset open file {} failed.", filepath.string());
         return false;
     }
 
     nlohmann::json json_data;
-    try {
+    try 
+    {
         file >> json_data;
-    } catch (const nlohmann::json::parse_error& e) {
+    } catch (const nlohmann::json::parse_error& e) 
+    {
         LogError("tilset parse json failed: {}", e.what());
         return false;
     }
@@ -408,14 +418,18 @@ void TileMap::bakeTileLayer(engine::ResourceManager& resourceMgr, TileLayer& lay
                     verts.emplace_back(vert);
 
                     auto it = tileset.tiles.find(idIndex);
-                    if(it != tileset.tiles.end() ) {
+                    if(it != tileset.tiles.end() ) 
+                    {
                         auto& tile = it->second;
                         auto optWalktype = tile.properties.get<int>("walktype");
-                        if(optWalktype){
-                            if (optWalktype.value() == (int)WalkType::Collision) {
+                        if(optWalktype)
+                        {
+                            if (optWalktype.value() == (int)WalkType::Collision) 
+                            {
                                 _collisionPoints.push_back({ x, y });
                             }
-                            else if (optWalktype.value() == (int)WalkType::Swim) {
+                            else if (optWalktype.value() == (int)WalkType::Swim) 
+                            {
                                 _waterPoints.push_back({ x, y });
                             }
                         }

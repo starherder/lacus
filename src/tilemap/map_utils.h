@@ -7,14 +7,16 @@
 #include "utility/dynamic_struct.h"
 #include "nlohmann/json.hpp"
 
-namespace tilemap {
+namespace tilemap 
+{
 
     using namespace engine;
 
     using json = nlohmann::json;
     using Properties = utility::DynamicStruct<std::string>;
 
-    enum class WalkType {
+    enum class WalkType 
+    {
         Collision = 0,
         Walk = 1,
         Swim = 2,
@@ -27,7 +29,8 @@ namespace tilemap {
         GroupLayer
     };
 
-    enum class LayerId {
+    enum class LayerId 
+    {
         Invalid = 0,
         BkGround = 1,
         TileMap = 2,
@@ -35,7 +38,8 @@ namespace tilemap {
         Decorate = 4,
     };
 
-    struct MapDrawCall {
+    struct MapDrawCall 
+    {
         std::vector<engine::Vertex> vertices;
 
         // vertices on camera
@@ -43,9 +47,9 @@ namespace tilemap {
         engine::Texture* texture;
     };
 
-    struct LoaderUtils {
+    struct LoaderUtils 
+    {
         static void loadProperties(const json& json, Properties& properties);
     };
-
 
 }

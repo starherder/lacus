@@ -3,8 +3,8 @@
 #include "map_utils.h"
 
 
-namespace tilemap {
-
+namespace tilemap 
+{
 	struct TileAnimation 
 	{
 		struct Frame 

@@ -1,4 +1,4 @@
-﻿#include "particle_emitter.h"
+#include "particle_emitter.h"
 #include "particle_effect.h"
 #include "particle_memory.h"
 
@@ -17,59 +17,63 @@ namespace particle
 		, _canEmit(true)
 		, _elapsed(0)
 		, _emitCounter(0)
-	{
+		{
 	}
 
 	ParticleEmitter::~ParticleEmitter()
 	{
 		stopEmitting();
 
-		if ( _particleEffect ) {
+		if ( _particleEffect )
+		{
 			delete _particleEffect;
 		}
 	}
 
-	void ParticleEmitter::setDecription(const ParticleDescription& desc)
+	void ParticleEmitter::setDescription(const ParticleDescription& desc)
 	{
-		/* 发射器属性 */
-		emitPos = desc.vEmitPos;
-		emitPosVar = desc.vEmitPosVar;
+		// 应用发射器属性。
+		_emitPos = desc.emitPos;
+		_emitPosVar = desc.emitPosVar;
 
-		emitAngle = desc.fEmitAngle;
-		emitAngleVar = desc.fEmitAngleVar;
+		_emitAngle = desc.emitAngle;
+		_emitAngleVar = desc.emitAngleVar;
 
-		emitSpeed = desc.fEmitSpeed;
-		emitSpeedVar = desc.fEmitSpeedVar;
+		_emitSpeed = desc.emitSpeed;
+		_emitSpeedVar = desc.emitSpeedVar;
 
-		emitShape = desc.emitterShape;
-		emitShapeSize = desc.vEmitShapeSize;
-		emitShapeRadius = desc.fEmitShapeRadius;
-		emitShapeRotation = desc.fEmitShapeRotation;
-		emitShapeEdgeOnly = desc.bEmitShapeEdgeOnly;
+		_emitShape = desc.emitterShape;
+		_emitShapeSize = desc.emitShapeSize;
+		_emitShapeRadius = desc.emitShapeRadius;
+		_emitShapeRotation = desc.emitShapeRotation;
+		_emitShapeEdgeOnly = desc.emitShapeEdgeOnly;
 
-		emitRate = desc.fEmitRate;
-		duration = desc.fDuration;
-		particleCount = desc.nParticleCount;
+		_emitRate = desc.emitRate;
+		_duration = desc.duration;
+		_particleCount = desc.particleCount;
 
-		/* 创建粒子 effect */
+		// 根据发射器类型创建 effect。
 		ParticleEffect* effect = nullptr;
-		if ( desc.emitterType == EmitterType::EMITTER_TYPE_GRAVITY ) {
+		if ( desc.emitterType == EmitterType::Gravity )
+		{
 			effect = new GravityParticleEffect();
 		}
-		else {
+		else
+		{
 			effect = new RadialParticleEffect();
 		}
 
 		assert(effect);
 		fail_return(effect);
 
-		effect->setDecription(desc);
+		effect->setDescription(desc);
 		this->setParticleEffect(effect);
 	}
 
 	void ParticleEmitter::setParticleEffect(ParticleEffect* effect)
 	{
-		if ( _particleEffect ) {
+		if ( _particleEffect )
+		{
 			delete _particleEffect;
 		}
 		_particleEffect = effect;
@@ -80,31 +84,35 @@ namespace particle
 		if ( _canEmit == false ) return;
 
 		this->emitParticles(dt);
-		if (_particleEffect) {
+		if (_particleEffect)
+		{
 			_particleEffect->update(this, dt);
 		}
 	}
 
 	void ParticleEmitter::emitParticles(float dt)
 	{
-		emitRate = emitRate == 0 ? 1 : emitRate;
+		_emitRate = _emitRate == 0 ? 1 : _emitRate;
 
-		/* 发射一个粒子所用时间 */
-		float emit_particle_time = 1 / emitRate;
+		// 单个粒子的发射间隔。
+		float emit_particle_time = 1 / _emitRate;
 
-		/* 累计发射时间 */
-		if ( _particleList.size() < particleCount ) {
+		// 累计待发射时间。
+		if ( _particleList.size() < _particleCount )
+		{
 			_emitCounter += dt;
 		}
 
-		/* 在时间 emit_counter 发射 emit_counter / rate 个粒子 */
-		while ( _particleList.size() < particleCount && _emitCounter > 0 ) {
+		// 按累计时间补发粒子。
+		while ( _particleList.size() < _particleCount && _emitCounter > 0 )
+		{
 			this->addParticle();
 			_emitCounter -= emit_particle_time;
 		}
 
 		_elapsed += dt;
-		if ( duration != -1 && duration < _elapsed ) {
+		if ( _duration != -1 && _duration < _elapsed )
+		{
 			_elapsed = 0;
 			this->stopEmitting();
 		}
@@ -112,63 +120,70 @@ namespace particle
 
 	void ParticleEmitter::addParticle()
 	{
-		if ( _particleList.size() == particleCount ) return;
+		if ( _particleList.size() == _particleCount ) return;
 
 		ParticleCfg* particle = ParticleMemory::allocParticle();
 		fail_return(particle);
 
-		/* 存储粒子并初始化粒子 */
+		// 存储粒子并初始化。
 		_particleList.push_back(particle);
 		_particleEffect->initParticle(this, particle);
 	}
 
 	Vec2 ParticleEmitter::randomEmitPos() const
 	{
-		switch (emitShape)
+		switch (_emitShape)
 		{
-		case EmitterShape::EMITTER_SHAPE_POINT:
+		case EmitterShape::Point:
 		{
-			return emitPos;
-		}break;
-		case EmitterShape::EMITTER_SHAPE_LINE:
+			return _emitPos;
+		}
+		break;
+		case EmitterShape::Line:
 		{
-			Vec2 offset{ emitShapeSize.x * utility::rand_minus1_1() * 0.5f, 0.0f };
-			return emitPos + rotateVec2(offset, emitShapeRotation);
-		}break;
-		case EmitterShape::EMITTER_SHAPE_CIRCLE:
+			Vec2 offset{ _emitShapeSize.x * utility::rand_minus1_1() * 0.5f, 0.0f };
+			return _emitPos + rotateVec2(offset, _emitShapeRotation);
+		}
+		break;
+		case EmitterShape::Circle:
 		{
 			float angle = PI_2 * utility::rand_0_1();
-			float radius = std::max(0.0f, emitShapeRadius);
-			float dist = emitShapeEdgeOnly ? radius : radius * sqrtf(utility::rand_0_1());
-			return emitPos + Vec2{ cosf(angle), sinf(angle) } * dist;
-		}break;
-		case EmitterShape::EMITTER_SHAPE_RECT:
+			float radius = std::max(0.0f, _emitShapeRadius);
+			float dist = _emitShapeEdgeOnly ? radius : radius * sqrtf(utility::rand_0_1());
+			return _emitPos + Vec2{ cosf(angle), sinf(angle) } * dist;
+		}
+		break;
+		case EmitterShape::Rect:
 		default:
 		{
 			Vec2 offset{
-				emitShapeSize.x * utility::rand_minus1_1() * 0.5f,
-				emitShapeSize.y * utility::rand_minus1_1() * 0.5f
+				_emitShapeSize.x * utility::rand_minus1_1() * 0.5f,
+				_emitShapeSize.y * utility::rand_minus1_1() * 0.5f
 			};
 
-			if (emitShapeEdgeOnly)
+			if (_emitShapeEdgeOnly)
 			{
-				if (utility::rand_0_1() < 0.5f) {
-					offset.x = emitShapeSize.x * 0.5f * (utility::rand_0_1() < 0.5f ? -1.0f : 1.0f);
+				if (utility::rand_0_1() < 0.5f)
+				{
+					offset.x = _emitShapeSize.x * 0.5f * (utility::rand_0_1() < 0.5f ? -1.0f : 1.0f);
 				}
-				else {
-					offset.y = emitShapeSize.y * 0.5f * (utility::rand_0_1() < 0.5f ? -1.0f : 1.0f);
+				else
+				{
+					offset.y = _emitShapeSize.y * 0.5f * (utility::rand_0_1() < 0.5f ? -1.0f : 1.0f);
 				}
 			}
 
-			return emitPos + rotateVec2(offset, emitShapeRotation);
-		}break;
+			return _emitPos + rotateVec2(offset, _emitShapeRotation);
+		}
+		break;
 		}
 
-		return emitPos;
+		return _emitPos;
 	}
 
 
 	bool ParticleEmitter::isEmitting()
+
 	{
 		return _canEmit;
 	}
@@ -184,8 +199,9 @@ namespace particle
 	{
 		_canEmit = false;
 
-		/* 释放所有未发射的粒子 */
-		for ( auto& ele : _particleList ) {
+		// 释放仍在发射器中的粒子。
+		for ( auto& ele : _particleList )
+		{
 			ParticleMemory::freeParticle(ele);
 		}
 		_particleList.clear();

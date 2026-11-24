@@ -3,10 +3,10 @@
 #include "map_utils.h"
 
 
-namespace tilemap {
-
-
-    struct MapObject {
+namespace tilemap 
+{
+    struct MapObject 
+    {
         int id = -1;
         int gid = -1;
         std::string name;
@@ -38,7 +38,6 @@ namespace tilemap {
 
         virtual bool load(const json& json);
     };
-
 
     struct ImageLayer : public MapLayer 
     {
@@ -75,6 +74,5 @@ namespace tilemap {
     struct GroupLayer : public MapLayer {
         bool load(const json& json) override;
     };
-
 
 }

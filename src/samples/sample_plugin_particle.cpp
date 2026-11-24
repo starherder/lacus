@@ -31,7 +31,7 @@ namespace samples
 
 	void ImParticleEditor::init()
 	{
-		auto& particles = ParticleManager::inst().GetAllParticleConfigs();
+		auto& particles = ParticleManager::inst().getAllParticleConfigs();
 		for (auto& [name, file] : particles)
 		{
 			_nameVector.push_back(name.c_str());
@@ -57,12 +57,12 @@ namespace samples
 
 		if(_particle)
 		{
-			auto _particleDescript = _particle->Description();
+			auto _particleDescript = _particle->description();
 
 			ImGui::Separator();
 			
 			char nameBuff[32] = { 0 };
-			strcpy_s(nameBuff, 32, _particle->GetName().c_str());
+			strcpy_s(nameBuff, 32, _particle->getName().c_str());
 			ImGui::LabelText("name", nameBuff);
 
 			static std::string btnText = "Stop";
@@ -90,33 +90,33 @@ namespace samples
 			}
 
 			char bufTexture[32] = { 0 };
-			strcpy_s(bufTexture, 32, _particleDescript.sTexture.c_str());
+			strcpy_s(bufTexture, 32, _particleDescript.texture.c_str());
 			if (ImGui::InputText("texture", bufTexture, 32))
 			{
-				_particleDescript.sTexture = bufTexture;
+				_particleDescript.texture = bufTexture;
 				_modified = true;
 			}
 
-			float emitPos[2] = { _particleDescript.vEmitPos.x, _particleDescript.vEmitPos.y };
+			float emitPos[2] = { _particleDescript.emitPos.x, _particleDescript.emitPos.y };
 			if (ImGui::InputFloat2("emit pos", emitPos))
 			{
-				_particleDescript.vEmitPos = { emitPos[0], emitPos[1] };
+				_particleDescript.emitPos = { emitPos[0], emitPos[1] };
 				_modified = true;
 			}
 
-			float emitPosVar[2] = { _particleDescript.vEmitPosVar.x, _particleDescript.vEmitPosVar.y };
+			float emitPosVar[2] = { _particleDescript.emitPosVar.x, _particleDescript.emitPosVar.y };
 			if (ImGui::InputFloat2("emit pos var", emitPosVar))
 			{
-				_particleDescript.vEmitPosVar = { emitPosVar[0], emitPosVar[1] };
-				if (_particleDescript.emitterShape == EmitterShape::EMITTER_SHAPE_RECT)
+				_particleDescript.emitPosVar = { emitPosVar[0], emitPosVar[1] };
+				if (_particleDescript.emitterShape == EmitterShape::Rect)
 				{
-					_particleDescript.vEmitShapeSize = _particleDescript.vEmitPosVar * 2.0f;
+					_particleDescript.emitShapeSize = _particleDescript.emitPosVar * 2.0f;
 				}
 				_modified = true;
 			}
 
 			int emitShape = (int)_particleDescript.emitterShape;
-			if (ImGui::RadioButton("EMITTER_SHAPE_POINT", &emitShape, 0))
+			if (ImGui::RadioButton("Point", &emitShape, 0))
 			{
 				_particleDescript.emitterShape = (EmitterShape)emitShape;
 				_modified = true;
@@ -124,13 +124,13 @@ namespace samples
 
 			ImGui::SameLine();
 
-			if (ImGui::RadioButton("EMITTER_SHAPE_LINE", &emitShape, 1))
+			if (ImGui::RadioButton("Line", &emitShape, 1))
 			{
 				_particleDescript.emitterShape = (EmitterShape)emitShape;
 				_modified = true;
 			}
 
-			if (ImGui::RadioButton("EMITTER_SHAPE_RECT", &emitShape, 2))
+			if (ImGui::RadioButton("Rect", &emitShape, 2))
 			{
 				_particleDescript.emitterShape = (EmitterShape)emitShape;
 				_modified = true;
@@ -138,67 +138,67 @@ namespace samples
 
 			ImGui::SameLine();
 
-			if (ImGui::RadioButton("EMITTER_SHAPE_CIRCLE", &emitShape, 3))
+			if (ImGui::RadioButton("Circle", &emitShape, 3))
 			{
 				_particleDescript.emitterShape = (EmitterShape)emitShape;
 				_modified = true;
 			}
 
-			float emitShapeSize[2] = { _particleDescript.vEmitShapeSize.x, _particleDescript.vEmitShapeSize.y };
+			float emitShapeSize[2] = { _particleDescript.emitShapeSize.x, _particleDescript.emitShapeSize.y };
 			if (ImGui::InputFloat2("emit shape size", emitShapeSize))
 			{
-				_particleDescript.vEmitShapeSize = { emitShapeSize[0], emitShapeSize[1] };
-				_particleDescript.vEmitPosVar = _particleDescript.vEmitShapeSize * 0.5f;
+				_particleDescript.emitShapeSize = { emitShapeSize[0], emitShapeSize[1] };
+				_particleDescript.emitPosVar = _particleDescript.emitShapeSize * 0.5f;
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("emit shape radius", &_particleDescript.fEmitShapeRadius))
+			if (ImGui::InputFloat("emit shape radius", &_particleDescript.emitShapeRadius))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("emit shape rotation", &_particleDescript.fEmitShapeRotation))
+			if (ImGui::InputFloat("emit shape rotation", &_particleDescript.emitShapeRotation))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::Checkbox("emit shape edge only", &_particleDescript.bEmitShapeEdgeOnly))
+			if (ImGui::Checkbox("emit shape edge only", &_particleDescript.emitShapeEdgeOnly))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("angle", &_particleDescript.fEmitAngle))
+			if (ImGui::InputFloat("angle", &_particleDescript.emitAngle))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("angle var", &_particleDescript.fEmitAngleVar))
+			if (ImGui::InputFloat("angle var", &_particleDescript.emitAngleVar))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("speed", &_particleDescript.fEmitSpeed))
+			if (ImGui::InputFloat("speed", &_particleDescript.emitSpeed))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("speed var", &_particleDescript.fEmitSpeedVar))
+			if (ImGui::InputFloat("speed var", &_particleDescript.emitSpeedVar))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputInt("particle count", &_particleDescript.nParticleCount))
+			if (ImGui::InputInt("particle count", &_particleDescript.particleCount))
 			{
 				_modified = true;
 			}
 
-			if (ImGui::InputFloat("duration", &_particleDescript.fDuration))
+			if (ImGui::InputFloat("duration", &_particleDescript.duration))
 			{
 				_modified = true;
 			}
 
 			int motionMode = (int)_particleDescript.motionMode;
-			if (ImGui::RadioButton("MOTION_MODE_FREE", &motionMode, 0))
+			if (ImGui::RadioButton("Free", &motionMode, 0))
 			{
 				_particleDescript.motionMode = (MotionMode)motionMode;
 				_modified = true;
@@ -206,14 +206,14 @@ namespace samples
 
 			ImGui::SameLine();
 
-			if (ImGui::RadioButton("MOTION_MODE_RELATIVE", &motionMode, 1))
+			if (ImGui::RadioButton("Relative", &motionMode, 1))
 			{
 				_particleDescript.motionMode = (MotionMode)motionMode;
 				_modified = true;
 			}
 
 			int emitType = (int)_particleDescript.emitterType;
-			if (ImGui::RadioButton("EMITTER_TYPE_GRAVITY", &emitType, 0))
+			if (ImGui::RadioButton("Gravity", &emitType, 0))
 			{
 				_particleDescript.emitterType = (EmitterType)emitType;
 				_modified = true;
@@ -221,147 +221,147 @@ namespace samples
 
 			ImGui::SameLine();
 
-			if (ImGui::RadioButton("EMITTER_TYPE_RADIUS", &emitType, 1))
+			if (ImGui::RadioButton("Radius", &emitType, 1))
 			{
 				_particleDescript.emitterType = (EmitterType)emitType;
 				_modified = true;
 			}
 
-			if (emitType == (int)EmitterType::EMITTER_TYPE_GRAVITY)
+			if (emitType == (int)EmitterType::Gravity)
 			{
-				float grav[2] = { _particleDescript.gravityMode.vGravity.x, _particleDescript.gravityMode.vGravity.y };
+				float grav[2] = { _particleDescript.gravityMode.gravity.x, _particleDescript.gravityMode.gravity.y };
 				if (ImGui::InputFloat2("gravity", grav))
 				{
-					_particleDescript.gravityMode.vGravity = { grav[0], grav[1] };
+					_particleDescript.gravityMode.gravity = { grav[0], grav[1] };
 					_modified = true;
 				}
 
-				if (ImGui::InputFloat("tangent accel", &_particleDescript.gravityMode.fTangentialAccel))
+				if (ImGui::InputFloat("tangent accel", &_particleDescript.gravityMode.tangentialAccel))
 				{
 					_modified = true;
 				}
-				if (ImGui::InputFloat("tangent accel var", &_particleDescript.gravityMode.fTangentialAccelVar))
+				if (ImGui::InputFloat("tangent accel var", &_particleDescript.gravityMode.tangentialAccelVar))
 				{
 					_modified = true;
 				}
 
-				if (ImGui::InputFloat("Radio accel", &_particleDescript.gravityMode.fRadialAccel))
+				if (ImGui::InputFloat("Radio accel", &_particleDescript.gravityMode.radialAccel))
 				{
 					_modified = true;
 				}
-				if (ImGui::InputFloat("Radio accel var", &_particleDescript.gravityMode.fRadialAccelVar))
+				if (ImGui::InputFloat("Radio accel var", &_particleDescript.gravityMode.radialAccelVar))
 				{
 					_modified = true;
 				}
 			}
-			else if (emitType == (int)EmitterType::EMITTER_TYPE_RADIUS)
+			else if (emitType == (int)EmitterType::Radius)
 			{
-				if (ImGui::InputFloat("begin radius", &_particleDescript.radiusMode.fBeginRadius))
+				if (ImGui::InputFloat("begin radius", &_particleDescript.radiusMode.beginRadius))
 				{
 					_modified = true;
 				}
-				if (ImGui::InputFloat("begin radius var", &_particleDescript.radiusMode.fBeginRadiusVar))
-				{
-					_modified = true;
-				}
-
-				if (ImGui::InputFloat("end radius", &_particleDescript.radiusMode.fEndRadius))
-				{
-					_modified = true;
-				}
-				if (ImGui::InputFloat("end radius var", &_particleDescript.radiusMode.fEndRadiusVar))
+				if (ImGui::InputFloat("begin radius var", &_particleDescript.radiusMode.beginRadiusVar))
 				{
 					_modified = true;
 				}
 
-				if (ImGui::InputFloat("spin speed", &_particleDescript.radiusMode.fSpinPerSecond))
+				if (ImGui::InputFloat("end radius", &_particleDescript.radiusMode.endRadius))
 				{
 					_modified = true;
 				}
-				if (ImGui::InputFloat("spin speed var", &_particleDescript.radiusMode.fSpinPerSecondVar))
+				if (ImGui::InputFloat("end radius var", &_particleDescript.radiusMode.endRadiusVar))
+				{
+					_modified = true;
+				}
+
+				if (ImGui::InputFloat("spin speed", &_particleDescript.radiusMode.spinPerSecond))
+				{
+					_modified = true;
+				}
+				if (ImGui::InputFloat("spin speed var", &_particleDescript.radiusMode.spinPerSecondVar))
 				{
 					_modified = true;
 				}
 			}
 
-			if (ImGui::InputFloat("life", &_particleDescript.fLife))
-			{
-				_modified = true;
-			}
-
-			if (ImGui::InputFloat("life var", &_particleDescript.fLifeVar))
+			if (ImGui::InputFloat("life", &_particleDescript.life))
 			{
 				_modified = true;
 			}
 
-			float size[2] = { _particleDescript.fBeginSize, _particleDescript.fEndSize };
+			if (ImGui::InputFloat("life var", &_particleDescript.lifeVar))
+			{
+				_modified = true;
+			}
+
+			float size[2] = { _particleDescript.beginSize, _particleDescript.endSize };
 			if (ImGui::InputFloat2("BeginEnd size", size))
 			{
-				_particleDescript.fBeginSize = size[0];
-				_particleDescript.fEndSize = size[1];
+				_particleDescript.beginSize = size[0];
+				_particleDescript.endSize = size[1];
 				_modified = true;
 			}
 
-			float sizeVar[2] = { _particleDescript.fBeginSizeVar, _particleDescript.fEndSizeVar };
+			float sizeVar[2] = { _particleDescript.beginSizeVar, _particleDescript.endSizeVar };
 			if (ImGui::InputFloat2("BeginEnd size var", sizeVar))
 			{
-				_particleDescript.fBeginSizeVar = sizeVar[0];
-				_particleDescript.fEndSizeVar = sizeVar[1];
+				_particleDescript.beginSizeVar = sizeVar[0];
+				_particleDescript.endSizeVar = sizeVar[1];
 				_modified = true;
 			}
 
-			float spin[2] = { _particleDescript.fBeginSpin, _particleDescript.fEndSpin };
+			float spin[2] = { _particleDescript.beginSpin, _particleDescript.endSpin };
 			if (ImGui::InputFloat2("BeginEnd spin", spin))
 			{
-				_particleDescript.fBeginSpin = spin[0];
-				_particleDescript.fEndSpin = spin[1];
+				_particleDescript.beginSpin = spin[0];
+				_particleDescript.endSpin = spin[1];
 				_modified = true;
 			}
 
-			float spinVar[2] = { _particleDescript.fBeginSpinVar, _particleDescript.fEndSpinVar };
+			float spinVar[2] = { _particleDescript.beginSpinVar, _particleDescript.endSpinVar };
 			if (ImGui::InputFloat2("BeginEnd spin var", spinVar))
 			{
-				_particleDescript.fBeginSpinVar = spinVar[0];
-				_particleDescript.fEndSpinVar = spinVar[1];
+				_particleDescript.beginSpinVar = spinVar[0];
+				_particleDescript.endSpinVar = spinVar[1];
 				_modified = true;
 			}
 
 			float begColor[4] = { 0 };
-			setColorFloat(_particleDescript.cBeginColor, begColor);
+			setColorFloat(_particleDescript.beginColor, begColor);
 			if (ImGui::ColorEdit4("Begin Color", begColor))
 			{
-				_particleDescript.cBeginColor = setFloatColor(begColor);
+				_particleDescript.beginColor = setFloatColor(begColor);
 				_modified = true;
 			}
 
 			float begColorVar[4] = { 0 };
-			setColorFloat(_particleDescript.cBeginColorVar, begColorVar);
+			setColorFloat(_particleDescript.beginColorVar, begColorVar);
 			if (ImGui::ColorEdit4("Begin Color Var", begColorVar))
 			{
-				_particleDescript.cBeginColorVar = setFloatColor(begColorVar);
+				_particleDescript.beginColorVar = setFloatColor(begColorVar);
 				_modified = true;
 			}
 
 			float endColor[4] = { 0 };
-			setColorFloat(_particleDescript.cEndColor, endColor);
+			setColorFloat(_particleDescript.endColor, endColor);
 			if (ImGui::ColorEdit4("End Color", endColor))
 			{
-				_particleDescript.cEndColor = setFloatColor(endColor);
+				_particleDescript.endColor = setFloatColor(endColor);
 				_modified = true;
 			}
 
 			float endColorVar[4] = { 0 };
-			setColorFloat(_particleDescript.cEndColorVar, endColorVar);
+			setColorFloat(_particleDescript.endColorVar, endColorVar);
 			if (ImGui::ColorEdit4("End Color Var", endColorVar))
 			{
-				_particleDescript.cEndColorVar = setFloatColor(endColorVar);
+				_particleDescript.endColorVar = setFloatColor(endColorVar);
 				_modified = true;
 			}
 
 			if (_modified)
 			{
-                _particle->CorrectDescription(_particleDescript);
-                _particle->SetDescription(_particleDescript);
+                _particle->correctDescription(_particleDescript);
+                _particle->setDescription(_particleDescript);
                 
 				_modified = false;
 			}
@@ -378,7 +378,7 @@ namespace samples
 
 		auto cfgfile = application()->resPath() / "particles/";
 
-        bool res = ParticleManager::inst().LoadParticles(cfgfile);
+        bool res = ParticleManager::inst().loadParticles(cfgfile);
         if (!res) {
             LogError("load particles failed.");
             return;
@@ -414,7 +414,7 @@ namespace samples
     {
         if (_particle) 
         {
-            _particle->Update(application()->frameTicker().deltaSeconds());
+            _particle->update(application()->frameTicker().deltaSeconds());
         }
     }
 
@@ -422,7 +422,7 @@ namespace samples
     {
         if (_particle) 
         {
-            _particle->Draw();
+            _particle->draw();
         }
     }
 
@@ -434,20 +434,20 @@ namespace samples
 	{
 		if (!_particle) return;
 
-		auto parpos = _particle->GetPos();
-		_particle->SetPos(parpos + offset);
+		auto parpos = _particle->getPos();
+		_particle->setPos(parpos + offset);
 	}
 
     void SamplePluginParticle::onParticleSelect(const char* particle)
     {
-        _particle = particle::ParticleManager::inst().CreateParticle(particle);
+        _particle = particle::ParticleManager::inst().createParticle(particle);
         if (!_particle)
         {
             LogError("create particle ({}) failed.", particle);
             return;
         }
 
-        _particle->Start();
+        _particle->start();
 
         auto form = imgui::ImFormManager::inst().getForm<ImParticleEditor>("particle_editor");
         if(form)
@@ -460,7 +460,7 @@ namespace samples
     {
         if (_particle)
         {
-            _particle->Start();
+            _particle->start();
         }
     }
     
@@ -468,7 +468,7 @@ namespace samples
     {
         if (_particle)
         {
-            _particle->Stop();
+            _particle->stop();
         }
     }
     
@@ -476,7 +476,7 @@ namespace samples
     {
         if (_particle)
         {
-            _particle->Save();
+            _particle->save();
         }
     }
 
@@ -484,7 +484,7 @@ namespace samples
     {
         if(_particle)
         {
-            onParticleSelect(_particle->GetName().c_str());
+            onParticleSelect(_particle->getName().c_str());
         }
     }
 }

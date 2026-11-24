@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "particle_cfg.h"
 #include "particle_emitter.h"
@@ -15,54 +15,56 @@ namespace particle
 	class Particle
 	{
 	public:
-		typedef std::map<std::string, std::string> ParticleConfigMap;
+		using ParticleConfigMap = std::map<std::string, std::string>;
 
 	public:
 		Particle(const std::string& name);
 		~Particle();
 
-		std::string GetName();
-		std::string GetFile();
+		// 返回配置名和配置文件路径。
+		std::string getName();
+		std::string getFile();
 
-		void Load(const std::string& cfgdir);
+		// 从 xml 配置加载粒子。
+		void load(const std::string& cfgdir);
 
-		void SetDescription(const ParticleDescription& desc);
+		// 应用粒子描述。
+		void setDescription(const ParticleDescription& desc);
 
-		void Update(float dt);
-		void Draw(engine::Camera* camera = nullptr, bool screenSpace = false);
+		void update(float dt);
+		void draw(engine::Camera* camera = nullptr, bool screenSpace = false);
 
-		void Start();
-		void Stop();
+		void start();
+		void stop();
 
-		void SetAlphaScale(float alpha);
-		float GetAlphaScale() const { return _alphaScale; }
+		void setAlphaScale(float alpha);
+		float getAlphaScale() const;
 
-		Vec2 GetPos();
-		void SetPos(const Vec2& pos);
-		void SetOwnerPos(const Vec2& pos);
+		Vec2 getPos();
+		void setPos(const Vec2& pos);
+		void setOwnerPos(const Vec2& pos);
 
-		bool IsPlaying();
+		bool isPlaying();
 
-		ParticleEffect* GetEffect() { return _emitter->getParticleEffect(); }
-		ParticleEmitter* GetEmitter() { return _emitter.get(); }
+		ParticleEffect* getEffect();
+		ParticleEmitter* getEmitter();
 
-		// 修正一些数据(Editor 用)
-		static void CorrectDescription(ParticleDescription& desc);
+		// 修正编辑器输入数据。
+		static void correctDescription(ParticleDescription& desc);
 
 	private:
-		// 创建粒子描述
-		static ParticleDescription CreateParticleDescription(const std::string& filename);
+		// 从 xml 创建粒子描述。
+		static ParticleDescription createParticleDescription(const std::string& filename);
 
-		void SetTexture(const std::string& file);
+		void setTexture(const std::string& file);
 
 	private:
 		std::string _name;
 		std::string _file;
 
-		//ParticleEmitter* _emitter;
 		std::unique_ptr<ParticleEmitter> _emitter = nullptr;
 
-		Texture* m_Texture = nullptr;
+		Texture* _texture = nullptr;
 
 		std::vector<Vertex> _vertexData;
 
@@ -74,9 +76,9 @@ namespace particle
 #define Particle_Editor_Mode
 #ifdef Particle_Editor_Mode
 	public:
-		ParticleDescription& Description();
-		void Reset();
-		void Save();
+		ParticleDescription& description();
+		void reset();
+		void save();
 	private:
 		ParticleDescription _descript;
 #endif
@@ -84,10 +86,7 @@ namespace particle
 
 	using ParticlePtr = std::shared_ptr<Particle> ;
 
-	//-------------------------------------------------------------------------------
-	// 粒子系统管理器
-	// ParticleSystemManager
-	//-------------------------------------------------------------------------------
+	// 粒子系统管理器。
 	class ParticleManager : public utility::ISingleton<ParticleManager>
 	{
 		friend class Particle;
@@ -98,16 +97,16 @@ namespace particle
 
 		void init(engine::Application* app);
 
-		bool LoadParticles(const std::filesystem::path& file);
+		bool loadParticles(const std::filesystem::path& file);
 
-		bool Reload();
+		bool reload();
 
-		ParticlePtr CreateParticle(const std::string& name);
+		ParticlePtr createParticle(const std::string& name);
 
-		const auto& GetAllParticleConfigs() { return _particleFiles; }
+		const StringStringMap& getAllParticleConfigs();
 
 	private:
-		engine::Application* GetApplication() { return _application; }
+		engine::Application* getApplication();
 
 	private:
 		engine::Application* _application;

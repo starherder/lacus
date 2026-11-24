@@ -754,12 +754,12 @@ namespace game
 	{
 		assert(_context);
 
-		auto particlePtr = particle::ParticleManager::inst().CreateParticle(particle);
+		auto particlePtr = particle::ParticleManager::inst().createParticle(particle);
 		if (particlePtr)
 		{
 			CompBindParticle compParticle;
 			compParticle.particle = particlePtr;
-			compParticle.particle->Start();
+			compParticle.particle->start();
 			_context->registry().emplace<CompBindParticle>(owner, compParticle);
 
 			return particlePtr;
@@ -882,7 +882,7 @@ namespace game
 					particle && particle->particle)
 				{
 					const float alphaScale = maxAlpha > 0 ? alpha / static_cast<float>(maxAlpha) : 0.0f;
-					particle->particle->SetAlphaScale(alphaScale);
+					particle->particle->setAlphaScale(alphaScale);
 				}
 				return false;
 			});

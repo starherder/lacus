@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 
 #include "engine/wrapper.h"
@@ -19,29 +19,48 @@ namespace particle
 
 
 #define DefineGetter(vtype, name, mem) \
-vtype Get##name() {return mem;}							
+vtype get##name() \
+{ \
+	return mem; \
+}
 
 #define DefineSetter(vtype, name, mem) \
-void Set##name(const vtype& val){mem=val;}			
+void set##name(const vtype& val) \
+{ \
+	mem = val; \
+}
 
 #define DefineGetterSetter(vtype, name, mem) DefineGetter(vtype, name, mem); DefineSetter(vtype, name, mem);
 
 #define MemberFunction(type, funcname, valname)		\
 	public:												\
-	void Set##funcname(type val) { valname = val; }		\
-	type Get##funcname() const { return valname; }		\
+	void set##funcname(type val)						\
+	{													\
+		valname = val;									\
+	}													\
+	type get##funcname() const							\
+	{													\
+		return valname;									\
+	}													\
 	protected:											\
 	type valname
 
 #define VirtualMemberFunction(type, funcname, valname)			\
 	public:														\
-	virtual void Set##funcname(type val) { valname = val; }		\
-	virtual type Get##funcname() const { return valname; }		\
+	virtual void set##funcname(type val)						\
+	{															\
+		valname = val;											\
+	}															\
+	virtual type get##funcname() const							\
+	{															\
+		return valname;											\
+	}															\
 	protected:													\
 	type valname
 
 
 	static bool FloatEqual(float lval, float rval, float epsilon = 0.000001)
+
 	{
 		return lval >= (rval - epsilon) && lval <= (rval + epsilon);
 	}

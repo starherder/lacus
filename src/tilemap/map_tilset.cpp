@@ -5,7 +5,8 @@ namespace tilemap {
 
 	void TileAnimation::load(const json& json_data)
 	{
-		for(auto& fr : json_data) {
+		for(auto& fr : json_data) 
+		{
 			auto tileid = fr.value("tileid", 0);
 			auto duration = fr.value("duration", 100);
 			frames.emplace_back(tileid, duration);
