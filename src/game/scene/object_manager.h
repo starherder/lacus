@@ -6,6 +6,8 @@
 #include "utility/dynamic_struct.h"
 #include "utility/i_singleton.h"
 
+#include <set>
+
 namespace game 
 {
 
@@ -64,6 +66,10 @@ namespace game
 		std::string loadObjectCfg(const fs::path& rolescfg);
 		std::string loadSkillCfg(const fs::path& skillcfg);
 		std::string loadBuffCfg(const fs::path& skillcfg);
+
+		bool resolveObjectTemplates(const std::vector<std::string>& cfgids);
+		bool resolveObjectTemplate(const std::string& cfgid, std::set<std::string>& resolving, std::set<std::string>& resolved);
+		void mergeObjectTemplateJson(nJson& target, const nJson& overrideJson) const;
 
 		entt::entity createObject(const nJson& value);
 		entt::entity createRole(const nJson& json);

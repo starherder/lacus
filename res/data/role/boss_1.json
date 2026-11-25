@@ -1,61 +1,27 @@
 {
   "id": "boss_1",
+  "template": "npc_0",
   "name": "text_boss_name_1",
-  "type": "npc",
   "desc": "text_boss_desc_1",
-  "icon":"role:0-0",
-
   "role_event": {
-    "dead" : "level_clear",
-    "born" : "none"
+    "dead": "level_clear",
+    "born": "none"
   },
-
-  "motion": {
-    "speed": 150,
-    "swim_speed" :  50
-  },
-
-  "under_attack": {
-    "during" :  100,
-    "prev_tween": "cubicIn",
-    "post_tween": "cubicOut"
-  },
-
-  "patrol": {
-    "raduis": 100
-  },
-
   "behavior": {
     "bevtree": ""
   },
-
   "display": {
     "size": "192,192",
-    "#groud_color": "#FFAA00FF",
-    "#border_color": "#555555FF",
-    "#font_color": "#555555FF",
-    "font_file": "fonts/msyh.ttf",
-    "font_size": 18,
-    "texture": "chess:wizzard",
-    "ground_texture": "chess:chess_bg"
+    "texture": "chess:wizzard"
   },
-
   "base_prop": {
-    "level" : 100,
-    "roll" : 100,
+    "level": 100,
+    "roll": 100,
     "str": 800,
     "cst": 800,
     "dex": 400,
     "met": 200
   },
-
-  "skills": [
-    "skill_combat"
-  ],
-
-
-  "buffs": [],
-
-  "items": [ "item_coin", "item_coin", "item_poision", "item_medicine" ]
-
+  "profession": null,
+  "trigger": null
 }

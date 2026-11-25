@@ -5,14 +5,93 @@
     <tile name="arm_archer" rect="160,0,80,80" />
     <tile name="guard" rect="240,0,80,80" />
     <tile name="archer" rect="320,0,80,80" />
+    <tile name="weapon_bow" rect="960,0,32,80" />
+    <tile name="weapon_sword" rect="992,0,32,80" />
 
     <tile name="stone" rect="0,80,80,80" />
+    <tile name="rock_small" rect="0,80,80,80" />
+    <tile name="rock_large" rect="80,80,80,80" />
+    <tile name="skeleton_sword" rect="160,80,80,80" />
+    <tile name="skeleton_archer" rect="240,80,80,80" />
     <tile name="strik" rect="320,80,80,80" />
+    <tile name="orc_sword" rect="320,80,80,80" />
+    <tile name="orc_archer" rect="400,80,80,80" />
+    <tile name="zombie" rect="480,80,80,80" />
+    <tile name="mummy" rect="560,80,80,80" />
+
+    <tile name="axe_guard" rect="0,160,80,80" />
+    <tile name="axe_archer" rect="80,160,80,80" />
+    <tile name="dark_guard" rect="160,160,80,80" />
+    <tile name="dark_archer" rect="240,160,80,80" />
     <tile name="arm_axe" rect="320,160,80,80" />
+    <tile name="banner_guard" rect="400,160,80,80" />
+    <tile name="crossbow_guard" rect="480,160,80,80" />
+    <tile name="blob_guard" rect="560,160,80,80" />
+    <tile name="demon_guard" rect="640,160,80,80" />
+    <tile name="golem_guard" rect="720,160,80,80" />
+
     <tile name="wizzard" rect="0,240,80,80" />
+    <tile name="wizard" rect="0,240,80,80" />
+    <tile name="wolf_sword" rect="0,240,80,80" />
+    <tile name="wolf_archer" rect="80,240,80,80" />
+    <tile name="wolf_mace" rect="160,240,80,80" />
+    <tile name="helmet_guard" rect="240,240,80,80" />
+
+    <tile name="spider" rect="0,320,80,80" />
+    <tile name="snake" rect="80,320,80,80" />
+    <tile name="scorpion" rect="160,320,80,80" />
+    <tile name="lion" rect="240,320,80,80" />
+    <tile name="egg" rect="320,320,80,80" />
+
+    <tile name="grass_small" rect="0,400,80,80" />
+    <tile name="grass_large" rect="80,400,80,80" />
+    <tile name="tree" rect="160,400,80,80" />
+    <tile name="bush" rect="240,400,80,80" />
+    <tile name="grave_cross" rect="320,400,80,80" />
+    <tile name="tombstone" rect="400,400,80,80" />
+    <tile name="cactus" rect="480,400,80,80" />
+    <tile name="boulder" rect="560,400,80,80" />
+    <tile name="skull" rect="640,400,80,80" />
+    <tile name="bones" rect="720,400,80,80" />
+    <tile name="pillar" rect="800,400,80,80" />
+
+    <tile name="card_slime" rect="0,480,240,240" />
+    <tile name="card_skeleton" rect="240,480,240,240" />
+    <tile name="card_scorpion" rect="480,480,240,240" />
+    <tile name="card_dark_knight" rect="720,480,240,240" />
+    <tile name="card_dragon" rect="0,720,240,240" />
+    <tile name="card_empty_0" rect="240,720,240,240" />
+    <tile name="card_empty_1" rect="480,720,240,240" />
+    <tile name="card_empty_2" rect="720,720,240,240" />
   </texture>
   <texture file="textures/bot/etc.png" >
     <tile name="chess_bg" rect="3,3,74,74" />
+    <tile name="chess_bg_dark" rect="83,3,74,74" />
     <tile name="grass" rect="243,3,74,74" />
+    <tile name="terrain_red" rect="0,80,80,80" />
+    <tile name="terrain_gray" rect="80,80,80,80" />
+    <tile name="terrain_brown" rect="0,160,80,80" />
+    <tile name="terrain_tile" rect="80,160,80,80" />
+
+    <tile name="gold_panel_top" rect="805,273,216,39" />
+    <tile name="stone_panel_top" rect="805,315,219,42" />
+    <tile name="stone_panel_empty" rect="805,365,219,45" />
+    <tile name="stone_panel_middle" rect="805,414,219,43" />
+    <tile name="stone_panel_large" rect="635,470,373,229" />
+    <tile name="gold_line" rect="627,721,384,13" />
+
+    <tile name="select_panel" rect="0,835,320,189" />
+    <tile name="control_panel" rect="320,835,160,189" />
+    <tile name="stat_panel" rect="480,835,480,189" />
+    <tile name="select_all" rect="98,921,139,41" />
+    <tile name="button_up_left" rect="321,853,48,48" />
+    <tile name="button_up" rect="369,853,48,48" />
+    <tile name="button_up_right" rect="417,853,48,48" />
+    <tile name="button_left" rect="321,901,48,48" />
+    <tile name="button_center" rect="369,901,48,48" />
+    <tile name="button_right" rect="417,901,48,48" />
+    <tile name="button_down_left" rect="321,949,48,48" />
+    <tile name="button_down" rect="369,949,48,48" />
+    <tile name="button_down_right" rect="417,949,48,48" />
   </texture>
 </tilset>

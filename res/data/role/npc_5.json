@@ -1,76 +1,49 @@
 {
   "id": "npc_5",
+  "template": "npc_0",
   "name": "text_npc_name_5",
-  "type": "npc",
   "desc": "text_npc_desc_5",
-  "icon":"role:5-0",
-  "profession":"warrior",
-
+  "icon": "role:5-0",
   "role_event": {
-    "dead" : "none",
-    "born" : "none",
-    "meet" : [
+    "dead": "none",
+    "born": "none",
+    "meet": [
       {
         "target": "npc_1",
-        "range" : 100,
-        "event" : "start_story",
-        "param" : {
-          "story":"npc_5_meet_npc_1",
-          "role_1":"self",
-          "role_2":"target"
+        "range": 100,
+        "event": "start_story",
+        "param": {
+          "story": "npc_5_meet_npc_1",
+          "role_1": "self",
+          "role_2": "target"
         }
       }
     ]
   },
-
   "motion": {
-    "speed": 150,
     "swim_speed": 0
   },
-
-  "under_attack": {
-    "during": 100,
-    "prev_tween": "cubicIn",
-    "post_tween": "cubicOut"
-  },
-
-  "patrol": {
-    "raduis": 100
-  },
-
-  "behavior": {
-    "bevtree": "npc_patrol"
-  },
-
   "display": {
-    "size": "64,64",
     "#groud_color": "#AAAAFFFF",
-    "#border_color": "#555555FF",
     "#font_color": "#FF5555FF",
-    "font_file": "fonts/msyh.ttf",
-    "font_size": 18,
-    "texture": "chess:strik",
-    "ground_texture": "chess:chess_bg"
+    "texture": "chess:strik"
   },
-
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level": 1,
     "roll": 20,
     "str": 50,
     "cst": 50,
     "dex": 60,
     "met": 60
   },
-
   "skills": [
     "skill_wave_range",
     "skill_wave_cross",
     "skill_wave"
   ],
-
-
-  "buffs": [],
-
-  "items": [  "item_poision", "item_medicine" ]
+  "items": [
+    "item_poision",
+    "item_medicine"
+  ],
+  "trigger": null
 }

@@ -1,58 +1,34 @@
 {
   "id": "npc_3",
+  "template": "npc_0",
   "name": "text_npc_name_3",
-  "type": "npc",
   "desc": "text_npc_desc_3",
-  "icon":"role:3-0",
-  "profession":"warrior",
-
+  "icon": "role:3-0",
   "motion": {
-    "speed": 150
+    "swim_speed": null
   },
-
-  "under_attack": {
-    "during": 100,
-    "prev_tween": "cubicIn",
-    "post_tween": "cubicOut"
-  },
-
-  "patrol": {
-    "raduis": 100
-  },
-
   "behavior": {
     "bevtree": "npc_step_battle"
   },
-
   "display": {
-    "size": "64,64",
     "#groud_color": "#FFAAAAFF",
-    "#border_color": "#555555FF",
     "#font_color": "#FF5555FF",
     "#texture": "textures/icon/sry1.png",
     "#tex_rect": "0,0,0.25,0.5",
-    "font_file": "fonts/msyh.ttf",
-    "font_size": 18,
-    "texture": "chess:stone",
-    "ground_texture": "chess:chess_bg"
+    "texture": "chess:stone"
   },
-
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level": 1,
     "roll": 20,
     "str": 60,
     "cst": 40,
-    "dex": 90,
-    "met": 20
+    "dex": 90
   },
-
   "skills": [
     "skill_sprint"
   ],
-
-
-  "buffs": [],
-
-  "items": [ "item_coin" ]
+  "items": [
+    "item_coin"
+  ],
+  "trigger": null
 }

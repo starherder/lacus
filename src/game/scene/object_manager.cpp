@@ -11,6 +11,8 @@
 #include "utility/translator.h"
 #include "magic_enum/magic_enum.h"
 
+#include <set>
+
 namespace game 
 {
 
@@ -144,7 +146,7 @@ namespace game
 			}
 		}
 
-		return true;
+		return resolveObjectTemplates(_roleCfgIds);
 	}
 	bool ObjectManager::loadItems(const fs::path& cfgdir)
 	{
@@ -195,6 +197,108 @@ namespace game
 		_objectCfgIds.push_back(cfgid);
 		_jsonObjectCfgs[cfgid] = jsonptr;
 		return cfgid;
+	}
+
+	bool ObjectManager::resolveObjectTemplates(const std::vector<std::string>& cfgids)
+	{
+		std::set<std::string> resolving;
+		std::set<std::string> resolved;
+
+		bool result = true;
+		for (const auto& cfgid : cfgids)
+		{
+			result = resolveObjectTemplate(cfgid, resolving, resolved) && result;
+		}
+
+		return result;
+	}
+
+	bool ObjectManager::resolveObjectTemplate(const std::string& cfgid, std::set<std::string>& resolving, std::set<std::string>& resolved)
+	{
+		if (resolved.contains(cfgid))
+		{
+			return true;
+		}
+
+		if (resolving.contains(cfgid))
+		{
+			LogError("object ({}) template circular reference.", cfgid);
+			return false;
+		}
+
+		auto it = _jsonObjectCfgs.find(cfgid);
+		if (it == _jsonObjectCfgs.end() || !it->second)
+		{
+			LogError("object ({}) cfg NOT found.", cfgid);
+			return false;
+		}
+
+		auto& json = *it->second;
+		std::string templateId;
+		if (json.contains("template") && json["template"].is_string())
+		{
+			templateId = json["template"].get<std::string>();
+		}
+
+		if (templateId.empty())
+		{
+			resolved.insert(cfgid);
+			return true;
+		}
+
+		resolving.insert(cfgid);
+		if (!resolveObjectTemplate(templateId, resolving, resolved))
+		{
+			resolving.erase(cfgid);
+			return false;
+		}
+
+		auto templateIt = _jsonObjectCfgs.find(templateId);
+		if (templateIt == _jsonObjectCfgs.end() || !templateIt->second)
+		{
+			LogError("object ({}) template ({}) cfg NOT found.", cfgid, templateId);
+			resolving.erase(cfgid);
+			return false;
+		}
+
+		nJson merged = *templateIt->second;
+		mergeObjectTemplateJson(merged, json);
+		merged["id"] = cfgid;
+
+		_jsonObjectCfgs[cfgid] = std::make_shared<nJson>(std::move(merged));
+
+		resolving.erase(cfgid);
+		resolved.insert(cfgid);
+		return true;
+	}
+
+	void ObjectManager::mergeObjectTemplateJson(nJson& target, const nJson& overrideJson) const
+	{
+		if (!overrideJson.is_object())
+		{
+			return;
+		}
+
+		for (auto iter = overrideJson.begin(); iter != overrideJson.end(); ++iter)
+		{
+			const auto& key = iter.key();
+			const auto& value = iter.value();
+
+			if (value.is_null())
+			{
+				target.erase(key);
+				continue;
+			}
+
+			auto targetIt = target.find(key);
+			if (targetIt != target.end() && targetIt->is_object() && value.is_object())
+			{
+				mergeObjectTemplateJson(*targetIt, value);
+				continue;
+			}
+
+			target[key] = value;
+		}
 	}
 
 	std::string ObjectManager::loadSkillCfg(const fs::path& cfgfile)

@@ -14,10 +14,19 @@ namespace samples {
 
     enum class PainterDrawMode
     {
+        None,
         Sdl,
         Paint,
         Gfx,
         Im
+    };
+
+    enum class DrawPreviewMode
+    {
+        None,
+        Texture,
+        Animation,
+        DrawList,
     };
 
     class ImGuiFormDraw : public imgui::ImForm
@@ -121,6 +130,11 @@ namespace samples {
         PainterDrawMode drawMode() const { return _drawMode; }
         void setDrawMode(PainterDrawMode mode) { _drawMode = mode; }
 
+        DrawPreviewMode previewMode() const { return _previewMode; }
+        void setPreviewMode(DrawPreviewMode mode) { _previewMode = mode; }
+
+        Vec2 previewCenter();
+
     private:
         void initGeometry();
 
@@ -130,6 +144,7 @@ namespace samples {
         engine::Texture* _texture = nullptr;
 
         PainterDrawMode _drawMode = PainterDrawMode::Paint;
+        DrawPreviewMode _previewMode = DrawPreviewMode::DrawList;
 
         std::unique_ptr<SdlPainter> _sdlPainter;
         std::unique_ptr<Painter> _paintPainter;

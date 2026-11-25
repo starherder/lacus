@@ -1,56 +1,29 @@
 {
   "id": "npc_101",
+  "template": "npc_0",
   "name": "text_npc_name_101",
-  "type": "npc",
   "desc": "text_npc_desc_101",
   "icon": "role:1-0",
-  "profession":"warrior",
-
   "motion": {
-    "speed": 150,
     "swim_speed": 250
   },
-
-  "under_attack": {
-    "during": 100,
-    "prev_tween": "cubicIn",
-    "post_tween": "cubicOut"
-  },
-
-  "patrol": {
-    "raduis": 100
-  },
-
-  "behavior": {
-    "bevtree": "npc_patrol"
-  },
-
   "display": {
-    "size": "64,64",
     "#groud_color": "#FFFF00FF",
-    "#border_color": "#555555FF",
-    "#font_color": "#555555FF",
-    "font_file": "fonts/msyh.ttf",
-    "font_size": 18,
-    "texture": "chess:archer"
+    "texture": "chess:archer",
+    "ground_texture": null
   },
-
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level": 1,
-    "roll": 10,
     "str": 20,
     "cst": 20,
-    "dex": 20,
-    "met": 20
+    "dex": 20
   },
-
   "skills": [
     "skill_archery"
   ],
-
-  "buffs": [],
-
-  "items": [ "item_coin", "item_medicine" ]
-
+  "items": [
+    "item_coin",
+    "item_medicine"
+  ],
+  "trigger": null
 }

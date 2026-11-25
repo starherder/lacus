@@ -1,56 +1,29 @@
 {
   "id": "npc_2",
+  "template": "npc_0",
   "name": "text_npc_name_2",
-  "type": "npc",
   "desc": "text_npc_desc_2",
-  "icon":"role:2-0",
-  "profession":"warrior",
-
-  "motion": {
-    "speed": 150,
-    "swim_speed": 50
-  },
-
-  "under_attack": {
-    "during": 100,
-    "prev_tween": "cubicIn",
-    "post_tween": "cubicOut"
-  },
-
-  "patrol": {
-    "raduis": 100
-  },
-
-  "behavior": {
-    "bevtree": "npc_patrol"
-  },
-
+  "icon": "role:2-0",
   "display": {
-    "size": "64,64",
     "#groud_color": "#FFAAFFFF",
-    "#border_color": "#555555FF",
-    "#font_color": "#555555FF",
-    "font_file": "fonts/msyh.ttf",
-    "font_size": 18,
-    "texture": "chess:wizzard",
-    "ground_texture": "chess:chess_bg"
+    "texture": "chess:wizzard"
   },
-
   "base_prop": {
     "desc": "str:力量,cst:体质,dex:敏捷,met:心智",
-    "level": 1,
     "roll": 20,
     "str": 20,
     "cst": 40,
     "dex": 80,
     "met": 90
   },
-
   "skills": [
-    "skill_lightning", "skill_poison"
+    "skill_lightning",
+    "skill_poison"
   ],
-
-  "buffs": [],
-
-  "items": [ "item_coin", "item_coin", "item_poision" ]
+  "items": [
+    "item_coin",
+    "item_coin",
+    "item_poision"
+  ],
+  "trigger": null
 }

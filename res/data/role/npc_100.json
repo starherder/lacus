@@ -1,57 +1,12 @@
 {
   "id": "npc_100",
+  "template": "npc_0",
   "name": "text_npc_name_100",
-  "type": "npc",
   "desc": "text_npc_desc_100",
-  "icon": "role:0-0",
-  "profession":"warrior",
-
-  "motion": {
-    "speed": 150,
-    "swim_speed": 50
-  },
-
-  "under_attack": {
-    "during": 100,
-    "prev_tween": "cubicIn",
-    "post_tween": "cubicOut"
-  },
-
-  "patrol": {
-    "raduis": 100
-  },
-
-  "behavior": {
-    "bevtree": "npc_patrol"
-  },
-
-  "display": {
-    "size": "64,64",
-    "#groud_color": "#FFAA00FF",
-    "#border_color": "#555555FF",
-    "#font_color": "#555555FF",
-    "font_file": "fonts/msyh.ttf",
-    "font_size": 18,
-    "texture": "chess:guard",
-    "ground_texture": "chess:chess_bg"
-  },
-
   "base_prop": {
-    "level": 1,
-    "roll": 10,
     "str": 20,
     "cst": 20,
-    "dex": 20,
-    "met": 20
+    "dex": 20
   },
-
-  "skills": [
-    "skill_combat"
-  ],
-
-
-  "buffs": [],
-
-  "items": [ "item_coin", "item_coin", "item_poision", "item_medicine" ]
-
+  "trigger": null
 }

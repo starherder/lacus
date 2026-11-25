@@ -64,6 +64,7 @@ namespace samples {
             {
                 auto selectTile = _texTiles[textile_select_index];
                 _selectTile = _application->resourceManager().textureManager().getTexTile(selectTile, _selectTexSet);
+                _plugin->setPreviewMode(DrawPreviewMode::Texture);
             }
 
             // color
@@ -101,11 +102,16 @@ namespace samples {
 
         ImGui::End();
 
-        auto& painter = _application->painter();
+        if (_plugin->previewMode() != DrawPreviewMode::Texture)
+        {
+            return;
+        }
 
+        auto& painter = _application->painter();
         if (_selectTile)
         {
-            Rect rect = Rect{ 100.0f, 100.0f, _selectTile->rect().w * _scale, _selectTile->rect().h * _scale };
+            Vec2 previewSize = _selectTile->rect().size() * _scale;
+            Rect rect = Rect{ _plugin->previewCenter() - previewSize / 2.0f, previewSize };
 
             if (showGround)
             {
@@ -183,6 +189,7 @@ namespace samples {
             if (_selectAnim)
             {
                 _selectAnim->play();
+                _plugin->setPreviewMode(DrawPreviewMode::Animation);
             }
         }
 
@@ -245,12 +252,19 @@ namespace samples {
             // update animation
             _selectAnim->update(_application->frameTicker().deltaSeconds());
 
+            if (_plugin->previewMode() != DrawPreviewMode::Animation)
+            {
+                ImGui::End();
+                return;
+            }
+
             // draw preview
             auto tex = _selectAnim->getCurrentTexture();
             if (tex)
             {
                 float previewSize = 150.0f;
-                Rect dstRect = {Vec2{50.0f, 50.0f}, Vec2{previewSize, previewSize}};
+                Vec2 size = { previewSize, previewSize };
+                Rect dstRect = { _plugin->previewCenter() - size / 2.0f, size };
                 _selectAnim->draw(_application->painter(), dstRect);
             }
         }
@@ -271,24 +285,34 @@ namespace samples {
         {
             PainterDrawMode mode = _plugin->drawMode();
 
+            if (ImGui::RadioButton("none_draw", mode == PainterDrawMode::None))
+            {
+                _plugin->setDrawMode(PainterDrawMode::None);
+                _plugin->setPreviewMode(DrawPreviewMode::None);
+            }
+            ImGui::SameLine();
             if (ImGui::RadioButton("sdl_draw", mode == PainterDrawMode::Sdl))
             {
                 _plugin->setDrawMode(PainterDrawMode::Sdl);
+                _plugin->setPreviewMode(DrawPreviewMode::DrawList);
             }
             ImGui::SameLine();
             if (ImGui::RadioButton("paint_draw", mode == PainterDrawMode::Paint))
             {
                 _plugin->setDrawMode(PainterDrawMode::Paint);
+                _plugin->setPreviewMode(DrawPreviewMode::DrawList);
             }
             ImGui::SameLine();
             if (ImGui::RadioButton("gfx_draw", mode == PainterDrawMode::Gfx))
             {
                 _plugin->setDrawMode(PainterDrawMode::Gfx);
+                _plugin->setPreviewMode(DrawPreviewMode::DrawList);
             }
             ImGui::SameLine();
             if (ImGui::RadioButton("im_draw", mode == PainterDrawMode::Im))
             {
                 _plugin->setDrawMode(PainterDrawMode::Im);
+                _plugin->setPreviewMode(DrawPreviewMode::DrawList);
             }
         }
         ImGui::End();
@@ -358,10 +382,17 @@ namespace samples {
 
     void SamplePluginDraw::onDraw() 
     {
+        if (_previewMode != DrawPreviewMode::DrawList || _drawMode == PainterDrawMode::None)
+        {
+            return;
+        }
+
         const Vec2 pos = { 180.0f, 160.0f };
 
         switch (_drawMode)
         {
+        case PainterDrawMode::None:
+            break;
         case PainterDrawMode::Sdl:
             drawPainterDemo(*_sdlPainter, pos);
             break;
@@ -377,6 +408,12 @@ namespace samples {
             drawPainterDemo(*_imPainter, pos);
             break;
         }
+    }
+
+    Vec2 SamplePluginDraw::previewCenter()
+    {
+        auto windowSize = application()->window().getSize();
+        return Vec2{ (float)windowSize.x / 3.0f, (float)windowSize.y / 2.0f };
     }
 
     void SamplePluginDraw::onClose() 
