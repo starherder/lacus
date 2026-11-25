@@ -9,12 +9,6 @@ namespace game
     class FormStart : public FormLogicBase
     {
     public:
-        signals::Signal<> on_start_game;
-        signals::Signal<> on_resume_game;
-        signals::Signal<> on_config_game;
-        signals::Signal<> on_exit_game;
-
-    public:
         FormStart(const std::string& name) = delete;
         FormStart(const std::string& name, GameContext& context);
         ~FormStart();

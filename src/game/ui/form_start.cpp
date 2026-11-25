@@ -48,7 +48,7 @@ void FormStart::onUpdate(float delta)
 
 void FormStart::onStart(Button* btn)
 {
-	on_start_game.emit();
+	_context.gameLogic().startFirstScene();
 }
 
 void FormStart::onTileBattle(Button* btn)
@@ -70,7 +70,6 @@ void FormStart::onConfig(Button* btn)
 
 void FormStart::onExit(Button* btn)
 {
-	on_exit_game.emit();
 }
 
 void FormStart::onSizeChanged()

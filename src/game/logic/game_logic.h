@@ -60,15 +60,10 @@ namespace game
 		void showMainForm(bool visible);
 		void showScenesForm();
 
-	private:
 		void startFirstScene();
 
+	private:
 		void onSceneLoadProgress(float progress);
-
-		void onStartNewGame();
-		void onResumeGame();
-		void onConfigGame();
-		void onExitGame();
 
 		void onUICustomEvent(int eventId, const utility::VarList& varlist);
 

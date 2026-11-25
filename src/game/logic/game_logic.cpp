@@ -215,12 +215,6 @@ namespace game
 
     void GameLogic::start()
     {
-        auto formStart = ui::GuiManager::inst().showForm<FormStart>("form_start", _context);
-        formStart->on_start_game.connect(this, &GameLogic::onStartNewGame);
-        formStart->on_resume_game.connect(this, &GameLogic::onResumeGame);
-        formStart->on_config_game.connect(this, &GameLogic::onConfigGame);
-        formStart->on_exit_game.connect(this, &GameLogic::onExitGame);
-        
         auto form_debug = imgui::ImFormManager::inst().showForm<ImFormDebug>("ImFormDebug");
         if (form_debug)
         {
@@ -228,6 +222,8 @@ namespace game
             form_debug->on_reload_res.connect(this, &GameLogic::onDebugReloadResource);
             form_debug->on_reload_script.connect(this, &GameLogic::onDebugReloadScript);
         }
+
+        ui::GuiManager::inst().showForm<FormStart>("form_start", _context);
     }
 
     void GameLogic::checkGameState()
@@ -287,28 +283,9 @@ namespace game
         imgui::ImFormManager::inst().closeForm("ImFormDebug");
     }
 
-    void GameLogic::onStartNewGame()
-    {
-        startFirstScene();
-    }
-
-    void GameLogic::onResumeGame()
-    {
-    }
-
-    void GameLogic::onConfigGame()
-    {
-    }
-
-    void GameLogic::onExitGame()
-    {
-    }
-
     void GameLogic::startFirstScene()
     {
         closeAllForms();
-
-        //showLoadingForm(true);
 
         showScenesForm();
 

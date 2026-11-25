@@ -47,10 +47,10 @@ namespace game
         auto& nameComp = _context.registry().get<CompNameId>(obj);
         auto& transComp = _context.registry().get<CompTransform>(obj);
 
+        _context.scene().removeObjectFromScene(obj);
+
         // 切换到屏幕空�?
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
-
-        _context.scene().removeObjectFromScene(obj);
 
         const auto& curpos = transComp.position;
         const Vec2 uipos = { 0, 0 };
@@ -133,7 +133,8 @@ namespace game
         auto compComm = _context.registry().try_get<CompComm>(role);
         auto compPick = _context.registry().try_get<CompAutoPick>(role);
         auto compTrans = _context.registry().try_get<CompTransform>(role);
-        if (!compComm || !compPick || !compTrans)
+        auto deadOrDestroy = _context.registry().any_of<CompDead, CompDestroy>(role);
+        if (!compComm || !compPick || !compTrans || deadOrDestroy)
         {
             return;
         }
