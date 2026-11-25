@@ -5,6 +5,7 @@
 #include "spdlog/spdlog.h"
 #include "config.h"
 #include <optional>
+#include <string_view>
 
 namespace engine
 {
@@ -68,6 +69,16 @@ public:
     static std::optional<fs::path> get_relative_path(const fs::path& path, const fs::path& base);
     
     static uintmax_t calculate_directory_size(const fs::path& dir);
+};
+
+class PlatformUtils
+{
+public:
+    static void setConsoleVisible(bool visible);
+
+    static bool findConfigPath(std::string_view configFile, fs::path& outPath, fs::path& outBasePath);
+
+    static std::optional<fs::file_time_type> getLastWriteTime(const fs::path& path);
 };
 
 

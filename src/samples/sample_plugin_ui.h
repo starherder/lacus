@@ -36,6 +36,7 @@ namespace samples
         void hideCppPreviewForms();
         void showCppPreviewForms();
         void hideXmlPreview();
+        ui::Form* loadXmlForm(const std::string& formName, bool force);
         void reloadXmlForms();
         void updateSelectedFormName();
 
@@ -51,6 +52,8 @@ namespace samples
         std::string _selectFormName;
         std::string _xmlPreviewFormName;
         std::vector<std::string> _hiddenCppFormNames;
+        std::map<std::string, fs::file_time_type> _xmlWriteTimes;
+        std::map<std::string, fs::file_time_type> _xmlFailedWriteTimes;
     };
 
 

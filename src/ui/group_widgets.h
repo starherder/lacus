@@ -21,6 +21,9 @@ public:
     bool clipChildren() const { return _clipChildren; }
     void setClipChildren(bool clip) { _clipChildren = clip; }
 
+    const Vec2& padding() const { return _padding; }
+    void setPadding(const Vec2& padding);
+
     Rect getClipRect() const;
 
     template<typename WidgetType>
@@ -49,6 +52,7 @@ protected:
 
     virtual void onChildAdded(Widget* child);
     virtual void onChildRemoved(Widget* child);
+    virtual void onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding);
 
     void onChildSizeChanged(Widget* child) override;
     void onChildVisibleChanged(Widget* child) override;
@@ -56,6 +60,9 @@ protected:
     void onPosChanged(const Vec2& oldPos, const Vec2& newPos) override;
     void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
     void onVisibleChanged(bool oldVisual, bool newVisual) override;
+
+protected:
+    Vec2 _padding = { 0.0f, 0.0f };
 
 private:
     std::list<WidgetPtr> _children;
@@ -102,6 +109,9 @@ protected:
 
     Vec2 getContentPos() const override { return _contentPos; }
 
+    virtual bool isContentWidget(Widget* child) const;
+    virtual Vec2 getContentEndPadding() const { return _padding; }
+
     void onHorizontalSlide(class SliderBar* slider);
     void onVerticalSlide(class SliderBar* slider);
 
@@ -119,7 +129,7 @@ protected:
 
     void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
 
-private:
+protected:
     const int slider_bar_size = 25;
 
     Vec2 _contentPos = { 0, 0 };
@@ -131,15 +141,55 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
+class GridGroup : public ExpandGroup
+{
+public:
+    GridGroup() = delete;
+    GridGroup(const std::string& name, Widget* parent = nullptr);
+    ~GridGroup() = default;
+
+    const Vec2& spacing() const { return _spacing; }
+    void setSpacing(const Vec2& spacing);
+
+    int rows() const { return _rows; }
+    void setRows(int rows);
+
+    int columns() const { return _columns; }
+    void setColumns(int columns);
+
+protected:
+    bool onLoad(XmlNode* node) override;
+
+    bool isContentWidget(Widget* child) const override;
+    Vec2 getContentEndPadding() const override { return _contentEndPadding; }
+
+    void adjustLayout();
+
+    void onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding) override;
+
+    void onChildAdded(Widget* child) override;
+    void onChildRemoved(Widget* child) override;
+    void onChildPosChanged(Widget* child) override;
+    void onChildSizeChanged(Widget* child) override;
+    void onChildVisibleChanged(Widget* child) override;
+
+    void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
+
+private:
+    Vec2 _spacing = { 20.0f, 20.0f };
+    Vec2 _contentEndPadding = { 20.0f, 20.0f };
+    int _rows = 1;
+    int _columns = 1;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////
+
 class HorizontalLayout : public Group
 {
 public:
     HorizontalLayout() = delete;
     ~HorizontalLayout() = default;
 	HorizontalLayout(const std::string& name, Widget* parent = nullptr);
-
-    const Vec2& padding() { return _padding; }
-    void setPadding(const Vec2& padding) { _padding = padding; }
 
     float spacing() { return _spacing; }
     void setSpacing(float spacing) { _spacing = spacing; }
@@ -153,13 +203,13 @@ protected:
 
     void onChildAdded(Widget* child) override;
     void onChildRemoved(Widget* child) override;
+    void onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding) override;
 
     void onChildPosChanged(Widget* child) override;
     void onChildSizeChanged(Widget* child) override;
     void onChildVisibleChanged(Widget* child) override;
 
 protected:
-    Vec2 _padding = Vec2{10, 10};
     float _spacing = 10; 
 };
 

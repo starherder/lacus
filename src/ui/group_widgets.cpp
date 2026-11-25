@@ -4,13 +4,34 @@
 #include "gui_manager.h"
 #include "widget.h"
 
+#include <algorithm>
+
 namespace ui 
 {
 
     DeclareWidgetType(Group, "group");
     DeclareWidgetType(ExpandGroup, "exgroup");
+    DeclareWidgetType(GridGroup, "gridgroup");
     DeclareWidgetType(HLayout, "hlayout");
     DeclareWidgetType(VLayout, "vlayout");
+
+    struct GridGroupGrids_Creator : public WidgetCreator
+    {
+        const char* typeName() override { return "grids"; }
+        WidgetPtr create(const std::string& name, Widget* widget) override
+        {
+            return std::make_shared<GridGroup>(name, widget);
+        }
+    };
+
+    struct GridGroupGrids_Initializer
+    {
+        GridGroupGrids_Initializer()
+        {
+            ui::GuiManager::inst().addWidgetCreator<GridGroupGrids_Creator>();
+        }
+        ~GridGroupGrids_Initializer() = default;
+    } g_GridGroupGrids_Initializer;
 
 	Group::Group(const std::string& name, Widget* parent) : Widget(name, parent)
     {
@@ -23,6 +44,8 @@ namespace ui
     bool Group::onLoad(XmlNode* node)
     {
         _clipChildren = node->BoolAttribute("clip_children", true);
+        _padding = WidgetUtils::parseVec2OrMetric(node->Attribute("pad"), _padding);
+        _padding = WidgetUtils::parseVec2OrMetric(node->Attribute("padding"), _padding);
 
         auto child = node->FirstChildElement();
         while (child)
@@ -62,27 +85,38 @@ namespace ui
         {
             return;
         }
-/*
+
         bool pushedClip = clipChildren();
         if(pushedClip)
         {
             GuiManager::inst().painter().pushClipRect(GuiManager::inst().uiToScreenRect(getClipRect()));
         }
-*/
+
         Widget::draw();
 
         for(auto& ptr : _children) 
         {
             ptr->draw();
         }
-/*
+
         if (pushedClip)
         {
             GuiManager::inst().painter().popClipRect();
         }
-*/
     } 
     
+    void Group::setPadding(const Vec2& padding)
+    {
+        auto oldPadding = _padding;
+        if (oldPadding == padding)
+        {
+            return;
+        }
+
+        _padding = padding;
+        onPaddingChanged(oldPadding, _padding);
+    }
+
     void Group::addWidget(WidgetPtr widget, int index)
     {
         if(!widget)
@@ -224,6 +258,10 @@ namespace ui
     {
     }
 
+    void Group::onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding)
+    {
+    }
+
     void Group::onChildSizeChanged(Widget* child) 
     {
     }
@@ -291,6 +329,7 @@ namespace ui
 
     ExpandGroup::ExpandGroup(const std::string& name, Widget* parent) : Group(name, parent)
     {
+        _padding = { 20.0f, 20.0f };
         _contentPos = {0, 0};
         _contentSize = size();
 
@@ -322,6 +361,11 @@ namespace ui
 
         adjustContent();
         return true;
+    }
+
+    bool ExpandGroup::isContentWidget(Widget* child) const
+    {
+        return child && child != _horizonSlider && child != _verticalSlider;
     }
 
     void ExpandGroup::onHorizontalSlide(SliderBar* slider)
@@ -416,7 +460,7 @@ namespace ui
         Vec2 contentRB = { 0, 0 };
         for (auto& ctrl : children())
         {
-            if (ctrl->name() == "__h_slider__" || ctrl->name() == "__v_slider__")
+            if (!isContentWidget(ctrl.get()))
             {
                 continue;
             }
@@ -432,44 +476,84 @@ namespace ui
             }
         }
 
-        if (_horizonSlider && _horizonSlider->visible()) 
-        {
-            contentRB.x += _horizonSlider->size().x;
-        }
-
-        if (_verticalSlider && _verticalSlider->visible())
-        {
-            contentRB.y += _verticalSlider->size().y;
-        }
+        contentRB += getContentEndPadding();
 
         _contentSize = contentRB;
 
+        bool showHorizontal = false;
+        bool showVertical = false;
+        Vec2 viewportSize = size();
+        for (int i = 0; i < 2; ++i)
+        {
+            viewportSize = {
+                size().x - (showVertical ? slider_bar_size : 0.0f),
+                size().y - (showHorizontal ? slider_bar_size : 0.0f)
+            };
+
+            bool needHorizontal = _contentSize.x > viewportSize.x;
+            bool needVertical = _contentSize.y > viewportSize.y;
+            if (needHorizontal == showHorizontal && needVertical == showVertical)
+            {
+                break;
+            }
+
+            showHorizontal = needHorizontal;
+            showVertical = needVertical;
+        }
+
+        viewportSize = {
+            size().x - (showVertical ? slider_bar_size : 0.0f),
+            size().y - (showHorizontal ? slider_bar_size : 0.0f)
+        };
+
+        float maxHorizontal = std::max(0.0f, _contentSize.x - viewportSize.x);
+        float maxVertical = std::max(0.0f, _contentSize.y - viewportSize.y);
+
+        _contentPos.x = showHorizontal ? std::clamp(_contentPos.x, -maxHorizontal, 0.0f) : 0.0f;
+        _contentPos.y = showVertical ? std::clamp(_contentPos.y, -maxVertical, 0.0f) : 0.0f;
+
         if (_horizonSlider)
         {
-            float hxoffset = (_verticalSlider && _verticalSlider->visible()) ? slider_bar_size : 0;
+            float hxoffset = showVertical ? slider_bar_size : 0;
             Vec2 hssize{ size().x - hxoffset, slider_bar_size};
             Vec2 hspos{ 0, size().y - slider_bar_size};
 
             _horizonSlider->rawSetPos(hspos);
             _horizonSlider->rawSetSize(hssize);
 
-            _horizonSlider->rawSetValue(_contentPos.x);
-            _horizonSlider->rawSetMaxValue(_contentSize.x - size().x);
-            _horizonSlider->rawSetVisible(_contentSize.x > size().x);
+            if (showHorizontal)
+            {
+                _horizonSlider->rawSetMaxValue(maxHorizontal);
+                _horizonSlider->setValue(-_contentPos.x);
+            }
+            else
+            {
+                _horizonSlider->rawSetValue(0.0f);
+            }
+
+            _horizonSlider->rawSetVisible(showHorizontal);
         }
 
         if (_verticalSlider)
         {
-            float vyoffset = (_horizonSlider && _horizonSlider->visible()) ? slider_bar_size : 0;
+            float vyoffset = showHorizontal ? slider_bar_size : 0;
             Vec2 vssize{ slider_bar_size, size().y - vyoffset};
             Vec2 vspos{ size().x - slider_bar_size, 0 };
 
             _verticalSlider->rawSetPos(vspos);
             _verticalSlider->rawSetSize(vssize);
 
-            _verticalSlider->rawSetValue(_contentPos.x);
-            _verticalSlider->rawSetMaxValue(_contentSize.y - size().y);
-            _verticalSlider->rawSetVisible(_contentSize.y > size().y);
+            if (showVertical)
+            {
+                _verticalSlider->rawSetMaxValue(maxVertical);
+                _verticalSlider->setValue(-_contentPos.y);
+            }
+            else
+            {
+                _verticalSlider->rawSetValue(0.0f);
+            }
+
+            _verticalSlider->rawSetVisible(showVertical);
         }
 
         adjustScrollbar();
@@ -486,12 +570,175 @@ namespace ui
     {
         std::vector<Widget*> result;
         for(auto child : children()) {
-            if(child.get() != _horizonSlider && child.get() != _verticalSlider) {
+            if(isContentWidget(child.get())) {
                 result.push_back(child.get());
             }
         }
         return result;
     }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    GridGroup::GridGroup(const std::string& name, Widget* parent)
+        : ExpandGroup(name, parent)
+    {
+        _contentEndPadding = _padding;
+    }
+
+    void GridGroup::setSpacing(const Vec2& spacing)
+    {
+        _spacing = spacing;
+        adjustLayout();
+    }
+
+    void GridGroup::setRows(int rows)
+    {
+        _rows = std::max(1, rows);
+        adjustLayout();
+    }
+
+    void GridGroup::setColumns(int columns)
+    {
+        _columns = std::max(1, columns);
+        adjustLayout();
+    }
+
+    bool GridGroup::onLoad(XmlNode* node)
+    {
+        if (!ExpandGroup::onLoad(node))
+        {
+            return false;
+        }
+
+        _spacing = WidgetUtils::parseVec2OrMetric(node->Attribute("space"), _spacing);
+        _spacing = WidgetUtils::parseVec2OrMetric(node->Attribute("spacing"), _spacing);
+
+        _rows = std::max(1, node->IntAttribute("row", _rows));
+        _rows = std::max(1, node->IntAttribute("rows", _rows));
+
+        _columns = std::max(1, node->IntAttribute("col", _columns));
+        _columns = std::max(1, node->IntAttribute("cols", _columns));
+        _columns = std::max(1, node->IntAttribute("columns", _columns));
+
+        adjustLayout();
+        return true;
+    }
+
+    bool GridGroup::isContentWidget(Widget* child) const
+    {
+        return ExpandGroup::isContentWidget(child);
+    }
+
+    void GridGroup::onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding)
+    {
+        adjustLayout();
+    }
+
+    void GridGroup::adjustLayout()
+    {
+        auto widgets = items();
+
+        Vec2 cellSize = { 0.0f, 0.0f };
+        std::vector<Widget*> visibleWidgets;
+        for (auto widget : widgets)
+        {
+            if (!widget || !widget->visible())
+            {
+                continue;
+            }
+
+            visibleWidgets.push_back(widget);
+            cellSize.x = std::max(cellSize.x, widget->size().x);
+            cellSize.y = std::max(cellSize.y, widget->size().y);
+        }
+
+        if (visibleWidgets.empty())
+        {
+            _contentEndPadding = _padding;
+            ExpandGroup::adjustContent();
+            return;
+        }
+
+        int index = 0;
+        int columns = std::max(1, _columns);
+        Vec2 contentRB = { 0.0f, 0.0f };
+        for (auto widget : visibleWidgets)
+        {
+            int row = index / columns;
+            int col = index % columns;
+
+            Vec2 pos = {
+                _padding.x + col * (cellSize.x + _spacing.x),
+                _padding.y + row * (cellSize.y + _spacing.y)
+            };
+            widget->rawSetPos(pos);
+
+            contentRB.x = std::max(contentRB.x, pos.x + widget->size().x);
+            contentRB.y = std::max(contentRB.y, pos.y + widget->size().y);
+
+            index++;
+        }
+
+        int contentRows = std::max(_rows, (int)((visibleWidgets.size() + columns - 1) / columns));
+        Vec2 desiredContentSize = {
+            _padding.x * 2.0f + columns * cellSize.x + (columns - 1) * _spacing.x,
+            _padding.y * 2.0f + contentRows * cellSize.y + (contentRows - 1) * _spacing.y
+        };
+        _contentEndPadding = {
+            std::max(_padding.x, desiredContentSize.x - contentRB.x),
+            std::max(_padding.y, desiredContentSize.y - contentRB.y)
+        };
+
+        ExpandGroup::adjustContent();
+    }
+
+    void GridGroup::onChildAdded(Widget* child)
+    {
+        ExpandGroup::onChildAdded(child);
+        adjustLayout();
+    }
+
+    void GridGroup::onChildRemoved(Widget* child)
+    {
+        ExpandGroup::onChildRemoved(child);
+        adjustLayout();
+    }
+
+    void GridGroup::onChildPosChanged(Widget* child)
+    {
+        if (!isContentWidget(child))
+        {
+            ExpandGroup::onChildPosChanged(child);
+            return;
+        }
+
+        adjustLayout();
+    }
+
+    void GridGroup::onChildSizeChanged(Widget* child)
+    {
+        if (!isContentWidget(child))
+        {
+            ExpandGroup::onChildSizeChanged(child);
+            return;
+        }
+
+        adjustLayout();
+    }
+
+    void GridGroup::onChildVisibleChanged(Widget* child)
+    {
+        if (isContentWidget(child))
+        {
+            adjustLayout();
+        }
+    }
+
+    void GridGroup::onSizeChanged(const Vec2& oldPos, const Vec2& newPos)
+    {
+        ExpandGroup::onSizeChanged(oldPos, newPos);
+        adjustLayout();
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
 	HorizontalLayout::HorizontalLayout(const std::string& name, Widget* parent )
@@ -505,8 +752,6 @@ namespace ui
         {
             return false;
         }
-
-        _padding = WidgetUtils::parseVec2(node->Attribute("pad"));
 
         _spacing = WidgetUtils::parseMetric(node->Attribute("space"), 10.0f);
 
@@ -582,6 +827,11 @@ namespace ui
     }
 
     void HorizontalLayout::onChildRemoved(Widget* child) 
+    {
+        adjustLayout();
+    }
+
+    void HorizontalLayout::onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding)
     {
         adjustLayout();
     }

@@ -259,13 +259,20 @@ void Form::onMouseLeftDown(const Vec2& pos)
 {
     if (isNoEvent()) return;
 
+    if (!getRect().contains(pos))
+    {
+        return;
+    }
+
+    onMouseMotion(pos, { 0.0f, 0.0f });
+    _focused = true;
+
     auto widget = _hoverWidget;
     if (widget && widget->acceptEvent())
     {
         _mouseLeftCaptureWidget = widget;
         widget->setFocused(true);
         widget->onMouseLeftDown(pos);
-        _focused = true;
     }
 }
 

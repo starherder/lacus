@@ -187,4 +187,21 @@ Vec2 WidgetUtils::parseVec2(const char* str, const Vec2& defaultValue)
     return {parseMetric(x.c_str(), defaultValue.x), parseMetric(y.c_str(), defaultValue.y)};
 }
 
+Vec2 WidgetUtils::parseVec2OrMetric(const char* str, const Vec2& defaultValue)
+{
+    if (!str)
+    {
+        return defaultValue;
+    }
+
+    std::string token = str;
+    if (token.find(',') != std::string::npos)
+    {
+        return parseVec2(str, defaultValue);
+    }
+
+    float metric = parseMetric(str, defaultValue.x);
+    return { metric, metric };
+}
+
 }

@@ -77,6 +77,11 @@ namespace samples
 			if (ImGui::Button("reload all", { 200, 30 })) {
 				reloadXmlForms();
 			}
+
+			if (_previewMode == PreviewMode::Xml)
+			{
+				showXmlPreview(_selectFormName);
+			}
 		}
 		ImGui::End();
 	}
@@ -104,14 +109,11 @@ namespace samples
 
 		_xmlPreviewFormName = formName;
 
-		auto form = ui::GuiManager::inst().getForm<ui::Form>(_xmlPreviewFormName);
+		auto form = loadXmlForm(_xmlPreviewFormName, false);
 		if (form)
 		{
 			form->show();
-			return;
 		}
-
-		ui::GuiManager::inst().loadForm(_xmlPreviewFormName, _application->resPath() / _xmlPreviewFormName);
 	}
 
 	void ImFormUIViewer::hideCppPreviewForms()
@@ -160,19 +162,88 @@ namespace samples
 		}
 	}
 
+	ui::Form* ImFormUIViewer::loadXmlForm(const std::string& formName, bool force)
+	{
+		if (formName.empty())
+		{
+			return nullptr;
+		}
+
+		auto filepath = _application->resPath() / formName;
+		auto writeTime = PlatformUtils::getLastWriteTime(filepath);
+		auto form = ui::GuiManager::inst().getForm<ui::Form>(formName);
+
+		if (!force && writeTime)
+		{
+			auto failedIt = _xmlFailedWriteTimes.find(formName);
+			if (failedIt != _xmlFailedWriteTimes.end() && failedIt->second == *writeTime)
+			{
+				return form;
+			}
+		}
+
+		bool needLoad = force || !form;
+		if (writeTime)
+		{
+			auto it = _xmlWriteTimes.find(formName);
+			if (it == _xmlWriteTimes.end() || it->second != *writeTime)
+			{
+				needLoad = true;
+			}
+		}
+
+		if (!needLoad)
+		{
+			return form;
+		}
+
+		if (form)
+		{
+			if (!form->load(filepath))
+			{
+				if (writeTime)
+				{
+					_xmlFailedWriteTimes[formName] = *writeTime;
+				}
+
+				return form;
+			}
+		}
+		else
+		{
+			form = ui::GuiManager::inst().loadForm(formName, filepath);
+			if (!form)
+			{
+				if (writeTime)
+				{
+					_xmlFailedWriteTimes[formName] = *writeTime;
+				}
+
+				return nullptr;
+			}
+		}
+
+		if (writeTime)
+		{
+			_xmlWriteTimes[formName] = *writeTime;
+			_xmlFailedWriteTimes.erase(formName);
+		}
+
+		return form;
+	}
+
 	void ImFormUIViewer::reloadXmlForms()
 	{
 		setSkinPath(_uiSkinPath);
 
 		for (const auto& formName : _formNames)
 		{
-			auto form = ui::GuiManager::inst().getForm<ui::Form>(formName);
-			if (!form)
+			if (!ui::GuiManager::inst().getForm<ui::Form>(formName))
 			{
 				continue;
 			}
 
-			form->load(_application->resPath() / formName);
+			loadXmlForm(formName, true);
 		}
 
 		if (_previewMode == PreviewMode::Xml)

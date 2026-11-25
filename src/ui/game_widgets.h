@@ -80,9 +80,6 @@ namespace ui
         bool isOverlap() { return _overlap; }
         void setOverlap(bool enable);
 
-        const Vec2& padding() { return _padding; }
-        void setPadding(const Vec2& padding);
-
         float spacing() { return _space; }
         void setSpacing(float space);
 
@@ -96,6 +93,7 @@ namespace ui
 
         void onChildAdded(Widget* child) override;
         void onChildRemoved(Widget* child) override;
+        void onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding) override;
 
         void onSizeChanged(const Vec2& oldPos, const Vec2& newPos) override;
 
@@ -109,8 +107,6 @@ namespace ui
 
     private:
         ui::Coordinate _coord = ui::Coordinate::Horizontal;
-
-        Vec2 _padding = {10.0f, 10.0f};
 
         float _space = 10.0f;
 

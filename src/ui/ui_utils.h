@@ -92,6 +92,7 @@ public:
 
     static float parseMetric(const char* str, float defaultValue = 0.0f);
     static Vec2 parseVec2(const char* str, const Vec2& defaultValue = {0.0f, 0.0f});
+    static Vec2 parseVec2OrMetric(const char* str, const Vec2& defaultValue = {0.0f, 0.0f});
 };
 
 

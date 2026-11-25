@@ -1,4 +1,13 @@
 ﻿#include "misc.h"
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <Windows.h>
+#endif
 
 
 namespace engine {
@@ -116,6 +125,70 @@ uintmax_t PathUtils::calculate_directory_size(const fs::path& dir)
     }
     
     return total_size;
+}
+
+void PlatformUtils::setConsoleVisible(bool visible)
+{
+#ifdef _WIN32
+    HWND console = GetConsoleWindow();
+    if (!console)
+    {
+        return;
+    }
+
+    ShowWindow(console, visible ? SW_SHOW : SW_HIDE);
+#endif
+}
+
+bool PlatformUtils::findConfigPath(std::string_view configFile, fs::path& outPath, fs::path& outBasePath)
+{
+    fs::path configPath = configFile;
+    if (configPath.is_absolute())
+    {
+        if (!fs::exists(configPath))
+        {
+            return false;
+        }
+
+        outPath = fs::absolute(configPath);
+        outBasePath = fs::current_path();
+        return true;
+    }
+
+    std::vector<fs::path> basePaths;
+    basePaths.push_back(fs::current_path());
+
+    fs::path exePath = PathUtils::get_executable_path();
+    for (int i = 0; i < 4 && !exePath.empty(); ++i)
+    {
+        basePaths.push_back(exePath);
+        exePath = exePath.parent_path();
+    }
+
+    for (const fs::path& basePath : basePaths)
+    {
+        fs::path path = basePath / configPath;
+        if (fs::exists(path))
+        {
+            outPath = fs::absolute(path);
+            outBasePath = fs::absolute(basePath);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::optional<fs::file_time_type> PlatformUtils::getLastWriteTime(const fs::path& path)
+{
+    std::error_code error;
+    auto time = fs::last_write_time(path, error);
+    if (error)
+    {
+        return std::nullopt;
+    }
+
+    return time;
 }
 
 }

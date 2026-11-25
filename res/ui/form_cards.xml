@@ -10,14 +10,29 @@
             <button name="btn_close" size="100,50" text="关闭"  text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="20" />
         </hlayout>
 
-        <widget />
+        <hlayout name="hlay_card_group" pad="20,20" size="0,400">
+            <gridgroup name="grid_card_preview" pad="20,20" space="16,16" rows="4" cols="7" ground_color="#F6FAF2EE" border_color="#2F6B3FFF" border_size="2">
+                <button name="btn_grid_card_01" size="180,70" text="卡片01" font_size="20" />
+                <button name="btn_grid_card_02" size="180,70" text="卡片02" font_size="20" />
+                <button name="btn_grid_card_03" size="180,70" text="卡片03" font_size="20" />
+                <button name="btn_grid_card_04" size="180,70" text="卡片04" font_size="20" />
+                <button name="btn_grid_card_05" size="180,70" text="卡片05" font_size="20" />
+                <button name="btn_grid_card_06" size="180,70" text="卡片06" font_size="20" />
+                <button name="btn_grid_card_07" size="180,70" text="卡片07" font_size="20" />
+                <button name="btn_grid_card_08" size="180,70" text="卡片08" font_size="20" />
+                <button name="btn_grid_card_09" size="180,70" text="卡片09" font_size="20" />
+                <button name="btn_grid_card_10" size="180,70" text="卡片10" font_size="20" />
+                <button name="btn_grid_card_11" size="180,70" text="卡片11" font_size="20" />
+                <button name="btn_grid_card_12" size="180,70" text="卡片12" font_size="20" />
+                <button name="btn_grid_card_13" size="180,70" text="卡片13" font_size="20" />
+                <button name="btn_grid_card_14" size="180,70" text="卡片14" font_size="20" />
+            </gridgroup>
 
-        <hlayout name="hlay_card_desc" pad="20,20" size="0,400">
-            <widget />
-            <label name="lbl_card_1" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" />
-            <label name="lbl_card_1" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" />
+
             <!--label name="lbl_card_1" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" /-->
-            <card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
+            <!--label name="lbl_card_2" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" /-->
+            <!--label name="lbl_card_3" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" /-->
+            <!--card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
               <vlayout name="cards-test" pad="10,10" accept_event="false">
                 <hlayout size="0,50" accept_event="false">
                   <label name="lbl_name" size="100,0" text="zhangsan" text_color="#222222FF" font_size="25" accept_event="false"/>
@@ -35,15 +50,14 @@
                   <widget size="10,0"/>
                 </hlayout>
               </vlayout>
-            </card>
+            </card-->
 
-            <widget />
         </hlayout>
 
         <hlayout >
         </hlayout>
 
-        <card_group name="card_group" size="0,200" can_dropin="true" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
+        <card_group name="all_card_group" size="0,200" can_dropin="true" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
           <card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
             <vlayout name="cards-test" pad="10,10" accept_event="false">
               <hlayout size="0,50" accept_event="false">

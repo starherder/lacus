@@ -168,6 +168,7 @@ namespace ui
 
     CardGroup::CardGroup(const std::string& name, Widget* parent) : Group(name, parent)
     {
+        _padding = { 10.0f, 10.0f };
         setClipChildren(false);
     }
 
@@ -330,13 +331,6 @@ namespace ui
         adjustChildren();
     }
 
-    void CardGroup::setPadding(const Vec2& padding)
-    {
-        _padding = padding;
-
-        adjustChildren();
-    }
-
     void CardGroup::setSpacing(float space)
     {
         _space = space;
@@ -356,6 +350,11 @@ namespace ui
         adjustChildren();
     }
 
+    void CardGroup::onPaddingChanged(const Vec2& oldPadding, const Vec2& newPadding)
+    {
+        adjustChildren();
+    }
+
     bool CardGroup::onLoad(XmlNode* node)
     {
         if (!node || !Widget::onLoad(node)) 
@@ -367,7 +366,8 @@ namespace ui
 
         _coord = WidgetUtils::getCoord(node->Attribute("coordinate"));
         
-        _padding = WidgetUtils::parseVec2(node->Attribute("pad"));
+        _padding = WidgetUtils::parseVec2OrMetric(node->Attribute("pad"), _padding);
+        _padding = WidgetUtils::parseVec2OrMetric(node->Attribute("padding"), _padding);
 
         _space = WidgetUtils::parseMetric(node->Attribute("space"));
 

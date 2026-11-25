@@ -3,6 +3,8 @@
 #include "magic_enum/magic_enum.h"
 #include "ui_utils.h"
 
+#include <algorithm>
+
 namespace ui 
 {
     DeclareWidgetType(Label, "label");
@@ -751,23 +753,13 @@ namespace ui
 
     void SliderBar::setMaxValue(float maxValue)
     {
-        _maxValue = maxValue;
+        _maxValue = std::max(0.0f, maxValue);
         setValue(_value);
     }
 
     void SliderBar::rawSetMaxValue(float maxval)
     {
-        if (maxval < _value)
-        {
-            _maxValue = _value;
-        }
-        else 
-        {
-            _maxValue = maxval;
-        }
-
-        _maxValue = _maxValue == 0 ? 100 : _maxValue;
-
+        _maxValue = std::max(0.0f, maxval);
         rawSetValue(_value);
     }
 
@@ -802,7 +794,7 @@ namespace ui
         rawSetValue(value);
 
         auto sliderPos = _slider->pos();
-        float progress = std::clamp(_value / _maxValue, 0.0f, 1.0f);
+        float progress = _maxValue > 0.0f ? std::clamp(_value / _maxValue, 0.0f, 1.0f) : 0.0f;
 
         if (_direction == Coordinate::Horizontal)
         {
@@ -822,7 +814,7 @@ namespace ui
 
     void SliderBar::adjustSliderSize()
     {
-        float progress = std::clamp(_value/_maxValue, 0.0f, 1.0f);
+        float progress = _maxValue > 0.0f ? std::clamp(_value / _maxValue, 0.0f, 1.0f) : 0.0f;
 
         auto sliderPos = _slider->pos();
         Vec2 sliderSize;
