@@ -1,6 +1,8 @@
 ﻿#include "form_result.h"
 #include "utility/translator.h"
 #include "game/ui/ui_logic_events.h"
+#include "game/ui/form_scenes.h"
+#include "game/logic/game_logic.h"
 
 namespace game
 {
@@ -52,11 +54,11 @@ namespace game
 
     void FormResult::onRestart(Button* btn)
     {
-        ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ReplayLevel, {});
+        _context.gameLogic().restartScene();
     }
 
     void FormResult::onLeave(Button* btn)
     {
-        ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ShowScenes, {});
+        ui::GuiManager::inst().showForm<FormScenes>("form_scenes", _context);
     }
 }

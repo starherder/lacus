@@ -59,6 +59,27 @@ public:
     static const Color LightYellow;
     static const Color DarkYellow;
 
+    static const Color Orange;
+    static const Color PaleOrange;
+    static const Color LightOrange;
+    static const Color DarkOrange;
+
+    static const Color Brown;
+    static const Color PaleBrown;
+    static const Color LightBrown;
+    static const Color DarkBrown;
+
+    static const Color Olive;
+    static const Color PaleOlive;
+    static const Color LightOlive;
+    static const Color DarkOlive;
+
+    static const Color ForestGreen;
+    static const Color MossGreen;
+    static const Color LeafGreen;
+    static const Color Cream;
+    static const Color SilverWhite;
+
     static const Color Cyan;
     static const Color PaleCyan;
     static const Color LightCyan;

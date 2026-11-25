@@ -60,44 +60,44 @@ float UiMetrics::uiToScreenScalar(float value) const
 
 
 const WidgetStatus WidgetUtils::normalStatus = WidgetStatus{
-                                        .ground_color = Color::Light,
-                                        .text_color = Color::Black,
-                                        .border_color = Color::Gray,
+                                        .ground_color = Color::PaleGreen,
+                                        .text_color = Color::DarkGreen,
+                                        .border_color = Color::ForestGreen,
                                         .texture = nullptr
 };
 
 const WidgetStatus WidgetUtils::hoveredStatus = WidgetStatus{
-                                        .ground_color = Color::White,
-                                        .text_color = Color::Gray,
-                                        .border_color = Color::DarkGreen,
+                                        .ground_color = Color::SilverWhite,
+                                        .text_color = Color::DarkGreen,
+                                        .border_color = Color::LeafGreen,
                                         .texture = nullptr
 };
 
 const WidgetStatus WidgetUtils::pressedStatus = WidgetStatus{
-                                        .ground_color = Color::Gray,
-                                        .text_color = Color::Black,
+                                        .ground_color = Color::LightGreen,
+                                        .text_color = Color::DarkGreen,
                                         .border_color = Color::DarkGreen,
                                         .texture = nullptr
 };
 
 const WidgetStatus WidgetUtils::disabledStatus = WidgetStatus{
-                                        .ground_color = Color::Dark,
-                                        .text_color = Color::Black,
-                                        .border_color = Color::Gray,
+                                        .ground_color = Color(225, 232, 222),
+                                        .text_color = Color::MossGreen,
+                                        .border_color = Color::PaleOlive,
                                         .texture = nullptr
 };
 
 const WidgetStatus WidgetUtils::selectedStatus = WidgetStatus{
-                                        .ground_color = Color::Gray,
-                                        .text_color = Color::Yellow,
-                                        .border_color = Color::Yellow,
+                                        .ground_color = Color(185, 230, 170),
+                                        .text_color = Color::DarkGreen,
+                                        .border_color = Color::ForestGreen,
                                         .texture = nullptr
 };
 
 const WidgetStatus WidgetUtils::selectHoverStatus = WidgetStatus{
-                                        .ground_color = Color::Gray,
-                                        .text_color = Color::Yellow,
-                                        .border_color = Color::Green,
+                                        .ground_color = Color::SilverWhite,
+                                        .text_color = Color::ForestGreen,
+                                        .border_color = Color::LightGreen,
                                         .texture = nullptr
 };
 

@@ -4,8 +4,19 @@
 #include "engine/color.h"
 #include "ui/game_widgets.h"
 
+#include <algorithm>
+
 namespace samples 
 {
+	namespace
+	{
+		constexpr const char* kCppPreviewFormName = "form_sample_demo";
+		constexpr const char* kCppPreviewFormNames[] = {
+			kCppPreviewFormName,
+			"form_cars",
+			"form_layout",
+		};
+	}
 
 	void ImFormUIViewer::setSkinPath(const fs::path& skinPath) 
 	{
@@ -15,7 +26,7 @@ namespace samples
 
 		for (const auto& entry : std::filesystem::recursive_directory_iterator(skinPath))
 		{
-			if (entry.is_regular_file())
+			if (entry.is_regular_file() && entry.path().extension() == ".xml")
 			{
 				auto audioname = entry.path().lexically_relative(_application->resPath());
 				_formNames.push_back(audioname.string());
@@ -26,6 +37,8 @@ namespace samples
 		{
 			_formList.push_back(name.c_str());
 		}
+
+		updateSelectedFormName();
 	}
 
 	void ImFormUIViewer::onInit()
@@ -39,23 +52,150 @@ namespace samples
 			const ImGuiViewport* viewport = ImGui::GetMainViewport();
 			ImGui::SetNextWindowSize({ viewport->Size.x, 500 });
 
-			static std::string form_name;
-
-			static int listbox_item_current = 0;
-			if (ImGui::ListBox("##form_list", &listbox_item_current, _formList.data(), (int)_formList.size()))
+			if (ImGui::RadioButton("c++", _previewMode == PreviewMode::Cpp))
 			{
-				form_name = _formList[listbox_item_current];
+				_previewMode = PreviewMode::Cpp;
+				showCppPreview();
+			}
+			ImGui::SameLine();
+			if (ImGui::RadioButton("xml", _previewMode == PreviewMode::Xml))
+			{
+				_previewMode = PreviewMode::Xml;
+				showXmlPreview(_selectFormName);
+			}
 
-				ui::GuiManager::inst().closeAllForms();
+			if (ImGui::ListBox("##form_list", &_selectFormIndex, _formList.data(), (int)_formList.size()))
+			{
+				updateSelectedFormName();
 
-				ui::GuiManager::inst().loadForm(form_name, _application->resPath() / form_name);
+				if (_previewMode == PreviewMode::Xml)
+				{
+					showXmlPreview(_selectFormName);
+				}
 			}
 
 			if (ImGui::Button("reload all", { 200, 30 })) {
-				setSkinPath(_uiSkinPath);
+				reloadXmlForms();
 			}
 		}
 		ImGui::End();
+	}
+
+	void ImFormUIViewer::showCppPreview()
+	{
+		hideXmlPreview();
+		showCppPreviewForms();
+	}
+
+	void ImFormUIViewer::showXmlPreview(const std::string& formName)
+	{
+		hideCppPreviewForms();
+
+		if (formName.empty())
+		{
+			hideXmlPreview();
+			return;
+		}
+
+		if (!_xmlPreviewFormName.empty() && _xmlPreviewFormName != formName)
+		{
+			hideXmlPreview();
+		}
+
+		_xmlPreviewFormName = formName;
+
+		auto form = ui::GuiManager::inst().getForm<ui::Form>(_xmlPreviewFormName);
+		if (form)
+		{
+			form->show();
+			return;
+		}
+
+		ui::GuiManager::inst().loadForm(_xmlPreviewFormName, _application->resPath() / _xmlPreviewFormName);
+	}
+
+	void ImFormUIViewer::hideCppPreviewForms()
+	{
+		for (const auto& formName : kCppPreviewFormNames)
+		{
+			auto form = ui::GuiManager::inst().getForm<ui::Form>(formName);
+			if (!form || !form->visible())
+			{
+				continue;
+			}
+
+			form->hide();
+			if (std::find(_hiddenCppFormNames.begin(), _hiddenCppFormNames.end(), formName) == _hiddenCppFormNames.end())
+			{
+				_hiddenCppFormNames.push_back(formName);
+			}
+		}
+	}
+
+	void ImFormUIViewer::showCppPreviewForms()
+	{
+		for (const auto& formName : _hiddenCppFormNames)
+		{
+			auto form = ui::GuiManager::inst().getForm<ui::Form>(formName);
+			if (form)
+			{
+				form->show();
+			}
+		}
+
+		_hiddenCppFormNames.clear();
+	}
+
+	void ImFormUIViewer::hideXmlPreview()
+	{
+		if (_xmlPreviewFormName.empty())
+		{
+			return;
+		}
+
+		auto form = ui::GuiManager::inst().getForm<ui::Form>(_xmlPreviewFormName);
+		if (form)
+		{
+			form->hide();
+		}
+	}
+
+	void ImFormUIViewer::reloadXmlForms()
+	{
+		setSkinPath(_uiSkinPath);
+
+		for (const auto& formName : _formNames)
+		{
+			auto form = ui::GuiManager::inst().getForm<ui::Form>(formName);
+			if (!form)
+			{
+				continue;
+			}
+
+			form->load(_application->resPath() / formName);
+		}
+
+		if (_previewMode == PreviewMode::Xml)
+		{
+			showXmlPreview(_selectFormName);
+		}
+	}
+
+	void ImFormUIViewer::updateSelectedFormName()
+	{
+		if (_formNames.empty())
+		{
+			_selectFormIndex = 0;
+			_selectFormName.clear();
+			return;
+		}
+
+		if (_selectFormIndex < 0 || _selectFormIndex >= (int)_formNames.size())
+		{
+			_selectFormIndex = 0;
+		}
+
+		_selectFormName = _formNames[_selectFormIndex];
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -483,7 +623,7 @@ namespace samples
 			btn->on_click.connect([](ui::Button* btn) {
 				bool visible = btn->getData<bool>("cards_show");
 				if (!visible) {
-					ui::GuiManager::inst().createForm<FormCards>("form_cars");
+					ui::GuiManager::inst().showForm<FormCards>("form_cars");
 				}
 				else {
 					ui::GuiManager::inst().closeForm("form_cars");
@@ -501,7 +641,7 @@ namespace samples
 			btn->on_click.connect([](ui::Button* btn) {
 				bool visible = btn->getData<bool>("layout_show");
 				if (!visible) {
-					ui::GuiManager::inst().createForm<FormLayout>("form_layout");
+					ui::GuiManager::inst().showForm<FormLayout>("form_layout");
 				}
 				else {
 					ui::GuiManager::inst().closeForm("form_layout");
@@ -612,7 +752,7 @@ namespace samples
 
     void SamplePluginUI::onEnable()
     {
-		auto form = ui::GuiManager::inst().createForm<FormDemo>("form_sample_demo", _application);
+		auto form = ui::GuiManager::inst().showForm<FormDemo>("form_sample_demo", _application);
 		form->on_list_select.connect(this, &SamplePluginUI::onSelectBackGroud);
 
 		auto tex = _application.resourceManager().textureManager().get("textures/bot/etc.png"_hs);

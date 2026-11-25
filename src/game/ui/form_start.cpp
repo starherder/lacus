@@ -1,6 +1,9 @@
 ﻿#include "form_start.h"
 #include "form_config.h"
+
 #include "game/ui/ui_logic_events.h"
+#include "game/logic/game_logic.h"
+#include "game/scene/game_context.h"
 
 namespace game 
 {
@@ -50,21 +53,19 @@ void FormStart::onStart(Button* btn)
 
 void FormStart::onTileBattle(Button* btn)
 {
-	ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_SelectScene, 
-		{ std::string{"demo_4_1"}, (int)SceneGameMode::GameMode_Test});
-	//on_resume_game.emit();
+	_context.gameLogic().switchScene("demo_4_1");
+	_context.gameLogic().setGameMode(SceneGameMode::GameMode_Test);
 }
 
 void FormStart::onAutoChess(Button* btn)
 {
-	ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_SelectScene, 
-		{ std::string{"demo_4"}, (int)SceneGameMode::GameMode_Test});
+	_context.gameLogic().switchScene("demo_4");
+	_context.gameLogic().setGameMode(SceneGameMode::GameMode_Test);
 }
 
 void FormStart::onConfig(Button* btn)
 {
-	//on_config_game.emit();
-	GuiManager::inst().createForm<FormConfig>("from_config", _context);
+	GuiManager::inst().showForm<FormConfig>("from_config", _context);
 }
 
 void FormStart::onExit(Button* btn)

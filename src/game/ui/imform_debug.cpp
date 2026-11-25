@@ -5,7 +5,9 @@
 #include "game/scene/game_data.h"
 #include "game/scene/object_manager.h"
 #include "game/logic/game_play.h"
+#include "game/logic/game_logic.h"
 #include "game/ecs/comp_fight.h"
+#include "game/scene/game_context.h"
 
 #include "ui/gui_manager.h"
 #include "samples/sample_plugin_manager.h"
@@ -18,7 +20,6 @@
 #include "game/logic_config.h"
 #include "game/ecs/comm_event.h"
 #include "game/scene/story_manager.h"
-#include "game/scene/dialog_manager.h"
 
 
 namespace game 
@@ -81,7 +82,7 @@ void ImFormDebug::draw()
         static bool show_mainform = true;
         if (ImGui::Checkbox("mainform##debug", &show_mainform))
         {
-            ui::GuiManager::inst().emitCustomEvent(Event_ToggleMainForm, { show_mainform });
+            _context->gameLogic().showMainForm(show_mainform);
         }
 
         ImGui::SameLine();
@@ -149,12 +150,6 @@ void ImFormDebug::draw()
 
         if (ImGui::Button("story")) {
             _showStoryWindow = !_showStoryWindow;
-        }
-
-        ImGui::SameLine(0, 20);
-
-        if (ImGui::Button("dialog")) {
-            _showDialogWindow = !_showDialogWindow;
         }
 
         ImGui::SameLine(0, 20);
@@ -306,11 +301,6 @@ void ImFormDebug::draw()
     if (_showStoryWindow)
     {
         drawStoryWindow();
-    }
-
-    if (_showDialogWindow)
-    {
-        drawDialogWindow();
     }
 }
 
@@ -474,66 +464,6 @@ void ImFormDebug::drawStoryWindow()
     if (!canStart)
     {
         ImGui::EndDisabled();
-    }
-
-    ImGui::End();
-}
-
-void ImFormDebug::drawDialogWindow()
-{
-    ImGui::Begin("dialog", &_showDialogWindow);
-
-    const auto& dialogs = DialogManager::inst().getDialogs();
-    if (dialogs.empty())
-    {
-        ImGui::Text("no dialog");
-        ImGui::End();
-        return;
-    }
-
-    std::vector<const DialogConfig*> dialogList;
-    dialogList.reserve(dialogs.size());
-    for (const auto& [name, dialog] : dialogs)
-    {
-        dialogList.push_back(&dialog);
-    }
-
-    static int selectDialogIndex = 0;
-    if (selectDialogIndex >= dialogList.size())
-    {
-        selectDialogIndex = 0;
-    }
-
-    const DialogConfig* dialog = dialogList[selectDialogIndex];
-    ImGui::SetNextItemWidth(220);
-    if (ImGui::BeginCombo("dialog##dialog_select", dialog->name.c_str()))
-    {
-        for (int i = 0; i < dialogList.size(); i++)
-        {
-            bool selected = (selectDialogIndex == i);
-            if (ImGui::Selectable(dialogList[i]->name.c_str(), selected))
-            {
-                selectDialogIndex = i;
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    dialog = dialogList[selectDialogIndex];
-    ImGui::Text("type: %s", dialog->type.c_str());
-    ImGui::Text("desc: %s", dialog->desc.c_str());
-    ImGui::Text("game pause: %s", dialog->game_pause ? "true" : "false");
-
-    ImGui::Separator();
-    for (const auto& line : dialog->dialogue)
-    {
-        ImGui::Text("%s: %s", line.actor.c_str(), line.word.c_str());
-    }
-
-    ImGui::Separator();
-    if (ImGui::Button("start"))
-    {
-        _context->dispatcher().trigger(EvtStartDialog{ dialog->name });
     }
 
     ImGui::End();

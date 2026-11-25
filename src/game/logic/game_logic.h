@@ -53,6 +53,13 @@ namespace game
 		bool restartScene();
 		void finishGame(GameResult result);
 
+		SceneGameMode gameMode() { return _gameMode; }
+		void setGameMode(SceneGameMode mode) { _gameMode = mode; }
+
+		void showLoadingForm(bool visible);
+		void showMainForm(bool visible);
+		void showScenesForm();
+
 	private:
 		void startFirstScene();
 
@@ -62,10 +69,6 @@ namespace game
 		void onResumeGame();
 		void onConfigGame();
 		void onExitGame();
-
-		void showLoadingForm(bool visible);
-		void showMainForm(bool visible);
-		void showScenesForm();
 
 		void onUICustomEvent(int eventId, const utility::VarList& varlist);
 
@@ -81,9 +84,6 @@ namespace game
 
 		void onSceneObjectHover(entt::entity obj);
 		void onSceneObjectLeave(entt::entity obj);
-
-		SceneGameMode gameMode() { return _gameMode; }
-		void setGameMode(SceneGameMode mode) { _gameMode = mode; }
 
 	private:
 		std::string _currentScene;

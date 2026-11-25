@@ -75,7 +75,7 @@ namespace game
 		} bubble;
 
 		struct Scenes {
-			std::string first_scene;
+			std::string start_scene;
 		}scenes;
 
 		bool load(const fs::path& filepath);

@@ -192,7 +192,6 @@ public:
 		return _data.end();
 	}
 
-
 private:
 	data_type _data;
 };

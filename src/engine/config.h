@@ -43,6 +43,11 @@ public:
         fs::path file = "log/lacus.log";
     }log;
 
+    struct consoleCfg
+	{
+        bool visible = true;
+    }console;
+
     struct resCfg
 	{
         fs::path path;

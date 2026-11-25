@@ -215,7 +215,7 @@ namespace game
 
     void GameLogic::start()
     {
-        auto formStart = ui::GuiManager::inst().createForm<FormStart>("form_start", _context);
+        auto formStart = ui::GuiManager::inst().showForm<FormStart>("form_start", _context);
         formStart->on_start_game.connect(this, &GameLogic::onStartNewGame);
         formStart->on_resume_game.connect(this, &GameLogic::onResumeGame);
         formStart->on_config_game.connect(this, &GameLogic::onConfigGame);
@@ -279,7 +279,7 @@ namespace game
         }
 
         _state = GameState::Finish;
-        ui::GuiManager::inst().createForm<FormResult>("form_result", _context, result);
+        ui::GuiManager::inst().showForm<FormResult>("form_result", _context, result);
     }
 
     void GameLogic::pause()
@@ -353,7 +353,7 @@ namespace game
         }
         else
         {
-            ui::GuiManager::inst().createForm<FormScenes>("form_scenes", _context);
+            ui::GuiManager::inst().showForm<FormScenes>("form_scenes", _context);
         }
     }
 
@@ -361,9 +361,9 @@ namespace game
     {
         if (visible)
         {
-            ui::GuiManager::inst().createForm<FormMain>("form_main", _context);
+            ui::GuiManager::inst().showForm<FormMain>("form_main", _context);
 
-            auto form = ui::GuiManager::inst().createForm<FormChessTip>("form_chess_tip", _context);
+            auto form = ui::GuiManager::inst().showForm<FormChessTip>("form_chess_tip", _context);
             if (form)
             {
                 form->setVisible(false);
@@ -381,7 +381,7 @@ namespace game
     {
         if (visible)
         {
-            ui::GuiManager::inst().createForm<FormLoading>("form_loading", _context);
+            ui::GuiManager::inst().showForm<FormLoading>("form_loading", _context);
         }
         else
         {
@@ -409,30 +409,6 @@ namespace game
 
     void GameLogic::onUICustomEvent(int eventId, const utility::VarList& varlist)
     {
-        switch (eventId)
-        {
-        case Event_SelectScene: 
-        {
-            switchScene(varlist[0]);
-            int mode = varlist[1];
-            setGameMode((SceneGameMode)mode);
-        }break;
-        case Event_ToggleMainForm: 
-        {
-            showMainForm(varlist[0]);
-        }break;
-        case Event_ShowScenes: 
-        {
-            showScenesForm();
-        }break;
-        case Event_ReplayLevel: 
-        {
-            restartScene();
-        }break;
-        default: 
-        {
-        }
-        }
     }
 
     void GameLogic::onDebugReloadScript()

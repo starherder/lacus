@@ -9,7 +9,7 @@ namespace ui
 
     Form* GuiManager::loadForm(const std::string& name, const fs::path& filepath)
     {
-        auto form = createForm<Form>(name);
+        auto form = showForm<Form>(name);
         if (!form)
         {
             LogError("create form : {} failed", name);

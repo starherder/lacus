@@ -105,6 +105,12 @@ bool SystemConfig::load(const fs::path& filepath, const fs::path& basePath)
             log.file = basePath / log.file;
         }
 
+        if (json.contains("console"))
+        {
+            auto& console_json = json["console"];
+            console.visible = console_json.value("visible", console.visible);
+        }
+
         if(json.contains("res"))
         {
             auto& res_json = json["res"];
@@ -147,6 +153,8 @@ bool SystemConfig::save()
 
     json["log"]["level"] = log.level;
     json["log"]["pattern"] = log.pattern;
+
+    json["console"]["visible"] = console.visible;
 
     return _json_config.save();
 }

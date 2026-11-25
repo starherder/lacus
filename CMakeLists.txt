@@ -15,6 +15,9 @@ if(WIN32)
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
     # 解决object_factory.cpp等文件节数超过对象文件格式限制的问题
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
+    # 开启MSVC多进程编译，减少单个大target的增量编译等待时间
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/MP>")
+    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/MP>")
     # 解决MSVC并行编译时多个cl.exe同时写入同一个PDB导致的C1041错误
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/FS>")
 endif()
@@ -79,7 +82,6 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # 递归收集所有头文件，用于Visual Studio工程组织
 file(GLOB_RECURSE HEADERS "src/*.h")
-file(GLOB_RECURSE EXT_HEADERS "ext/*.h" "ext/*.hpp")
 
 # Lua 源码（LuaBridge 需要底层 Lua C 库）
 file(GLOB LUA_SOURCES "ext/lua/src/*.c")
@@ -94,7 +96,6 @@ add_executable(${PROJECT_NAME}
                 ${OTHER_SOURCES}
                 ${LUA_SOURCES}
                 ${HEADERS}
-                ${EXT_HEADERS}
 )
 
 # 链接SDL3库和系统库

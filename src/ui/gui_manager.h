@@ -64,7 +64,7 @@ public:
     TexTile* getCfgTexTile(const std::string& cfgTexTile); // tileset:tilename
 
     template<typename FormType, typename... Args>
-    FormType* createForm(const std::string& name, Args&... args);
+    FormType* showForm(const std::string& name, Args&... args);
     
     Form* loadForm(const std::string& name, const fs::path& filepath);
 
@@ -143,7 +143,7 @@ private:
 // ---------------------------------------------------------------------------
 
 template<typename FormType, typename... Args>
-FormType* GuiManager::createForm(const std::string& name, Args&... args)
+FormType* GuiManager::showForm(const std::string& name, Args&... args)
 {
     _pendingNames.erase(name);
 

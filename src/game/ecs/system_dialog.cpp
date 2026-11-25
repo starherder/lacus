@@ -1,6 +1,6 @@
 #include "system_dialog.h"
 
-#include "ui/form_dialog.h"
+#include "game/ui/form_dialog.h"
 
 namespace game
 {
@@ -95,7 +95,7 @@ namespace game
 			return;
 		}
 
-		auto form = ui::GuiManager::inst().createForm<FormDialog>("form_dialog", _context);
+		auto form = ui::GuiManager::inst().showForm<FormDialog>("form_dialog", _context);
 		if (!form)
 		{
 			LogError("DialogSystem::startNextLine create form_dialog failed.");

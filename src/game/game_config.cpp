@@ -21,7 +21,7 @@ namespace game
 		if (json.contains("scene"))
 		{
 			auto& sceneJs = json["scene"];
-			scenes.first_scene = sceneJs.value("first_scene", "");
+			scenes.start_scene = sceneJs.value("start_scene", "");
 		}
 
 		if (json.contains("display"))

@@ -126,17 +126,17 @@ void FormMain::onLeaveScene(Button* btn)
 {
     _context.scene().unload();
 
-    ui::GuiManager::inst().createForm<FormStart>("form_start", _context);
+    ui::GuiManager::inst().showForm<FormStart>("form_start", _context);
 }
 
 void FormMain::onShowScenes(Button* btn)
 {
-    ui::GuiManager::inst().emitCustomEvent(CustomEventId::Event_ShowScenes, {});
+    ui::GuiManager::inst().showForm<FormScenes>("form_scenes", _context);
 }
 
 void FormMain::onShowConfig(Button* btn)
 {
-    ui::GuiManager::inst().createForm<FormConfig>("form_config", _context);
+    ui::GuiManager::inst().showForm<FormConfig>("form_config", _context);
 }
 
 

@@ -4,10 +4,33 @@
 #include <memory>
 #include <spdlog/sinks/basic_file_sink.h>
 
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <Windows.h>
+#endif
+
 namespace engine {
 
 namespace
 {
+#ifdef _WIN32
+	void setConsoleVisible(bool visible)
+	{
+		HWND console = GetConsoleWindow();
+		if (!console)
+		{
+			return;
+		}
+
+		ShowWindow(console, visible ? SW_SHOW : SW_HIDE);
+	}
+#endif
+
 	bool findConfigPath(std::string_view configFile, fs::path& outPath, fs::path& outBasePath)
 	{
 		fs::path configPath = configFile;
@@ -136,6 +159,10 @@ bool Application::init(std::string_view configFile)
         SDL_Log("init config failed.");
         return false;
     }
+
+#ifdef _WIN32
+    setConsoleVisible(_config.console.visible);
+#endif
 
     if(!initLog()) 
     {

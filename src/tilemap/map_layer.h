@@ -9,10 +9,13 @@ namespace tilemap
     {
         int id = -1;
         int gid = -1;
+
         std::string name;
         std::string type;
+
         bool visible = true;
         int rotation = 0;
+        
         Vec2i pos;
         Vec2i size;
 
@@ -52,7 +55,8 @@ namespace tilemap
         bool load(const json& json) override;
     };
 
-    struct TileLayer : public MapLayer {
+    struct TileLayer : public MapLayer 
+    {
         int width = 0;
         int height = 0;
 
@@ -63,7 +67,8 @@ namespace tilemap
         bool load(const json& json) override;
     };
 
-    struct ObjectLayer : public MapLayer {
+    struct ObjectLayer : public MapLayer 
+    {
 
         std::string draw_order;
         std::map<int, MapObject> objects;
@@ -71,7 +76,8 @@ namespace tilemap
         bool load(const json& json) override;
     };
     
-    struct GroupLayer : public MapLayer {
+    struct GroupLayer : public MapLayer 
+    {
         bool load(const json& json) override;
     };
 

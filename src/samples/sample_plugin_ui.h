@@ -25,12 +25,32 @@ namespace samples
         void draw() override;
 
     private:
+        enum class PreviewMode
+        {
+            Cpp,
+            Xml,
+        };
+
+        void showCppPreview();
+        void showXmlPreview(const std::string& formName);
+        void hideCppPreviewForms();
+        void showCppPreviewForms();
+        void hideXmlPreview();
+        void reloadXmlForms();
+        void updateSelectedFormName();
+
         engine::Application* _application = nullptr;
 
         fs::path _uiSkinPath;
 
         std::vector<std::string> _formNames;
         std::vector<const char*> _formList;
+
+        PreviewMode _previewMode = PreviewMode::Cpp;
+        int _selectFormIndex = 0;
+        std::string _selectFormName;
+        std::string _xmlPreviewFormName;
+        std::vector<std::string> _hiddenCppFormNames;
     };
 
 

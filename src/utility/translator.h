@@ -130,7 +130,6 @@ namespace utility
 		AllLanguage _all_text;
 	};
 
-
 }
 
 #define Trans(key) utility::StringTranslator::inst().getUtf8String(key)

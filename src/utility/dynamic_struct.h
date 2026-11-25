@@ -183,7 +183,6 @@ namespace utility
 			return it->second;
 		}
 
-
 	private:
 		template <typename T>
 		void assignMap(const T& map)

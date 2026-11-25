@@ -4,11 +4,11 @@ setlocal enabledelayedexpansion
 :: ===========================================================================
 ::  Lacus one-click run script
 ::
-::  Usage:  run.bat [Debug|Release|RelWithDebInfo|MinSizeRel] [-nopause]
+::  Usage:  run.bat [Debug|Release|RelWithDebInfo|MinSizeRel] [-pause]
 ::
 ::    run.bat                       run Debug (default)
 ::    run.bat Release               run Release
-::    run.bat Debug -nopause        do not wait for a key when finished
+::    run.bat Debug -pause          wait for a key when finished
 ::
 ::  Executable : <root>\bin\<Config>\Lacus.exe
 ::  Working dir: <root>
@@ -23,11 +23,14 @@ set "BIN_DIR=%ROOT%\bin"
 set "EXIT_CODE=0"
 
 set "CONFIG=%~1"
-if /i "%CONFIG%"=="-nopause" (
+if /i "%CONFIG%"=="-pause" (
     set "CONFIG="
-    set "NOPAUSE=-nopause"
+    set "PAUSE_ON_EXIT=-pause"
+) else if /i "%CONFIG%"=="-nopause" (
+    set "CONFIG="
+    set "PAUSE_ON_EXIT="
 ) else (
-    set "NOPAUSE=%~2"
+    set "PAUSE_ON_EXIT=%~2"
 )
 
 if "%CONFIG%"=="" set "CONFIG=Debug"
@@ -67,8 +70,8 @@ if "%EXIT_CODE%"=="0" (
     echo [FAILED] Run failed, exit code %EXIT_CODE%.
 )
 
-:: wait for a key only when the script was started by double-click
-if /i not "%NOPAUSE%"=="-nopause" (
+:: wait for a key only when requested and the script was started by double-click
+if /i "%PAUSE_ON_EXIT%"=="-pause" (
     echo(!cmdcmdline! | find /i "%~nx0" >nul
     if not errorlevel 1 (
         echo.

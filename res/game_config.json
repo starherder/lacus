@@ -36,7 +36,7 @@
 	},
 
 	"scene": {
-		"first_scene": "scenes/demos/one.tmj"
+		"start_scene": "scenes/demos/one.tmj"
 	},
 
 	"dying_ticks" :  1000

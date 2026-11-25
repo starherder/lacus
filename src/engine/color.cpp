@@ -38,6 +38,27 @@ const Color Color::PaleYellow(255, 255, 200);
 const Color Color::LightYellow(255, 255, 128);
 const Color Color::DarkYellow(128, 128, 0);
 
+const Color Color::Orange(255, 165, 0);
+const Color Color::PaleOrange(255, 220, 170);
+const Color Color::LightOrange(255, 190, 80);
+const Color Color::DarkOrange(190, 95, 0);
+
+const Color Color::Brown(140, 88, 48);
+const Color Color::PaleBrown(205, 170, 125);
+const Color Color::LightBrown(180, 125, 75);
+const Color Color::DarkBrown(85, 50, 28);
+
+const Color Color::Olive(112, 125, 55);
+const Color Color::PaleOlive(185, 195, 140);
+const Color Color::LightOlive(150, 165, 80);
+const Color Color::DarkOlive(62, 75, 35);
+
+const Color Color::ForestGreen(34, 88, 56);
+const Color Color::MossGreen(63, 104, 66);
+const Color Color::LeafGreen(95, 135, 67);
+const Color Color::Cream(238, 230, 190);
+const Color Color::SilverWhite(244, 247, 242);
+
 const Color Color::Cyan(0, 255, 255);
 const Color Color::PaleCyan(200, 255, 255);
 const Color Color::LightCyan(128, 255, 255);

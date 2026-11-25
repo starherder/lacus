@@ -51,6 +51,7 @@ bool Form::load(const fs::path& filepath)
     auto noEvent = ele->BoolAttribute("no_event", false);
     setNoEvent(noEvent);
 
+    root()->clear();
     bool res = root()->load(ele);
     if (!res) {
         LogError("load form {} failed.", _name);

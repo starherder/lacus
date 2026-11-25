@@ -12,6 +12,10 @@
     "pattern": "[%H:%M:%S.%e] [%l] [%!():%#] %v"
   },
 
+  "console": {
+    "visible": false
+  },
+
   "sound": {
     "sound_volumn": 0.1,
     "music_volumn" : 0.1

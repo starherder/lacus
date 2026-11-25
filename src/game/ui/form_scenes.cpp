@@ -72,7 +72,7 @@ void FormScenes::onSelectScene(ui::Button* btn)
 {
     auto name = btn->getData<std::string>("scene");
 
-    auto form = ui::GuiManager::inst().createForm<FormEntry>("form_entry", _context);
+    auto form = ui::GuiManager::inst().showForm<FormEntry>("form_entry", _context);
     if (form)
     {
         form->selectScene(name);
@@ -88,7 +88,7 @@ void FormScenes::onShowCards(ui::Button* btn)
     }
     else
     {
-        ui::GuiManager::inst().createForm<FormCards>("form_cards", _context);
+        ui::GuiManager::inst().showForm<FormCards>("form_cards", _context);
     }
 }
 

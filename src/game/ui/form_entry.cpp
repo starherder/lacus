@@ -5,6 +5,7 @@
 #include "game/ui/ui_logic_events.h"
 #include "game/scene/object_manager.h"
 #include "game/scene/game_data.h"
+#include "game/logic/game_logic.h"
 
 namespace game 
 {
@@ -53,8 +54,9 @@ void FormEntry::onUpdate(float delta)
 
 void FormEntry::onStart(Button* btn)
 {
-	ui::GuiManager::inst().emitCustomEvent(Event_SelectScene, 
-		{ _sceneFile, (int)SceneGameMode::GameMode_AutoChess });
+	_context.gameLogic().switchScene(_sceneFile);
+
+	_context.gameLogic().setGameMode(SceneGameMode::GameMode_AutoChess);
 
 	_context.gameData().clearHandCard();
 
@@ -74,7 +76,7 @@ void FormEntry::onShowCardDeck(Button* btn)
 	}
 	else
 	{
-		ui::GuiManager::inst().createForm<FormCards>("form_cards", _context);
+		ui::GuiManager::inst().showForm<FormCards>("form_cards", _context);
 	}
 
 	resize();
