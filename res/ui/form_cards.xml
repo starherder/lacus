@@ -7,73 +7,36 @@
             <widget />
             <label name="lbl_txt" size="200,0" text="cards" text_color="#FFCCAAFF" font_name="fonts/Vonwaon.ttf" font_size="30" />
             <widget />
-            <button name="btn_close" size="100,50" text="关闭"  text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="20" />
+            <button name="btn_confirm" size="100,50" text="确认" ground_color="#FF5500FF" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="20" />
+            <widget size="20,0"/>
+            <button name="btn_close" size="100,50" text="关闭"  text_color="#555555FF" font_name="fonts/msyh.ttf" font_size="20" />
         </hlayout>
 
-        <hlayout name="hlay_card_group" pad="20,20" size="0,400">
-            <gridgroup name="grid_card_preview" pad="20,20" space="16,16" rows="4" cols="7" ground_color="#F6FAF2EE" border_color="#2F6B3FFF" border_size="2">
-                <button name="btn_grid_card_01" size="180,70" text="卡片01" font_size="20" />
-                <button name="btn_grid_card_02" size="180,70" text="卡片02" font_size="20" />
-                <button name="btn_grid_card_03" size="180,70" text="卡片03" font_size="20" />
-                <button name="btn_grid_card_04" size="180,70" text="卡片04" font_size="20" />
-                <button name="btn_grid_card_05" size="180,70" text="卡片05" font_size="20" />
-                <button name="btn_grid_card_06" size="180,70" text="卡片06" font_size="20" />
-                <button name="btn_grid_card_07" size="180,70" text="卡片07" font_size="20" />
-                <button name="btn_grid_card_08" size="180,70" text="卡片08" font_size="20" />
-                <button name="btn_grid_card_09" size="180,70" text="卡片09" font_size="20" />
-                <button name="btn_grid_card_10" size="180,70" text="卡片10" font_size="20" />
-                <button name="btn_grid_card_11" size="180,70" text="卡片11" font_size="20" />
-                <button name="btn_grid_card_12" size="180,70" text="卡片12" font_size="20" />
-                <button name="btn_grid_card_13" size="180,70" text="卡片13" font_size="20" />
-                <button name="btn_grid_card_14" size="180,70" text="卡片14" font_size="20" />
-            </gridgroup>
-
-
-            <!--label name="lbl_card_1" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" /-->
-            <!--label name="lbl_card_2" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" /-->
-            <!--label name="lbl_card_3" size="300,0" ground_color="#8888FFFF" border_color="#000000FF" border_size="1" /-->
-            <!--card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
-              <vlayout name="cards-test" pad="10,10" accept_event="false">
-                <hlayout size="0,50" accept_event="false">
-                  <label name="lbl_name" size="100,0" text="zhangsan" text_color="#222222FF" font_size="25" accept_event="false"/>
-                  <widget  accept_event="false"/>
-                  <label name="lbl_level" size="100,0" text="lv.43" text_color="#008800FF" font_size="20" accept_event="false"/>
-                </hlayout>
-                <hlayout size="0,200" accept_event="false">
-                  <widget  accept_event="false"/>
-                  <label name="lbl_icon" size="200,0" texture="ui:one-0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
-                  <widget  accept_event="false"/>
-                </hlayout>
-                <hlayout>
-                  <widget size="10,0"/>
-                  <text name="txt_desc" text="zhangsan is a good man" ground_color="#AAAAAAFF" text_color="#FFFFFFFF" font_size="20"  accept_event="false"/>
-                  <widget size="10,0"/>
-                </hlayout>
-              </vlayout>
-            </card-->
-
+        <hlayout name="hlay_card_group" pad="20,20" size="0,400"> 
+          <gridgroup name="grid_cards" pad="20,20" space="16,16" child_size="150,200" rows="4" cols="7" can_dropin="true" ground_color="#F6FAF2EE" border_color="#2F6B3FFF" border_size="2">
+          </gridgroup>
         </hlayout>
 
         <hlayout >
         </hlayout>
 
-        <card_group name="all_card_group" size="0,200" can_dropin="true" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
-          <card name="test_card" size="300,400" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
-            <vlayout name="cards-test" pad="10,10" accept_event="false">
-              <hlayout size="0,50" accept_event="false">
-                <label name="lbl_name" size="100,0" text="zhangsan" text_color="#222222FF" font_size="25" accept_event="false"/>
-                <widget  accept_event="false"/>
-                <label name="lbl_level" size="100,0" text="lv.43" text_color="#008800FF" font_size="20" accept_event="false"/>
+        <card_group name="cards_all" size="0,150" can_dropin="true" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
+          <card name="test_card" size="150,200" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
+            <vlayout name="cards-test" pad="5,5" accept_event="false">
+              <hlayout size="0,25" accept_event="false">
+                <label name="lbl_name" size="50,0" text="zhangsan" text_color="#222222FF" font_size="12" accept_event="false"/>
+                <widget accept_event="false"/>
+                <label name="lbl_level" size="50,0" text="lv.43" text_color="#008800FF" font_size="10" accept_event="false"/>
               </hlayout>
-              <hlayout size="0,200" accept_event="false">
+              <hlayout size="0,100" accept_event="false">
                 <widget  accept_event="false"/>
-                <label name="lbl_icon" size="200,0" texture="ui:one-0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
+                <label name="lbl_icon" size="100,0" texture="ui:one-0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
                 <widget  accept_event="false"/>
               </hlayout>
               <hlayout>
-                <widget size="10,0"/>
-                <text name="txt_desc" text="zhangsan is a good man" ground_color="#AAAAAAFF" text_color="#FFFFFFFF" font_size="20"  accept_event="false"/>
-                <widget size="10,0"/>
+                <widget size="5,0"/>
+                <text name="txt_desc" text="zhangsan is a good man" ground_color="#AAAAAAFF" text_color="#555555FF" font_size="10"  accept_event="false"/>
+                <widget size="5,0"/>
               </hlayout>
             </vlayout>
           </card>

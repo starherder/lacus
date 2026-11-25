@@ -602,6 +602,12 @@ namespace ui
         adjustLayout();
     }
 
+    void GridGroup::setChildSize(const Vec2& childSize)
+    {
+        _childSize = childSize;
+        adjustLayout();
+    }
+
     bool GridGroup::onLoad(XmlNode* node)
     {
         if (!ExpandGroup::onLoad(node))
@@ -618,6 +624,10 @@ namespace ui
         _columns = std::max(1, node->IntAttribute("col", _columns));
         _columns = std::max(1, node->IntAttribute("cols", _columns));
         _columns = std::max(1, node->IntAttribute("columns", _columns));
+
+        _childSize = WidgetUtils::parseVec2OrMetric(node->Attribute("cell_size"), _childSize);
+        _childSize = WidgetUtils::parseVec2OrMetric(node->Attribute("item_size"), _childSize);
+        _childSize = WidgetUtils::parseVec2OrMetric(node->Attribute("child_size"), _childSize);
 
         adjustLayout();
         return true;
@@ -644,6 +654,20 @@ namespace ui
             if (!widget || !widget->visible())
             {
                 continue;
+            }
+
+            if (_childSize.x > 0.0f || _childSize.y > 0.0f)
+            {
+                auto size = widget->size();
+                if (_childSize.x > 0.0f)
+                {
+                    size.x = _childSize.x;
+                }
+                if (_childSize.y > 0.0f)
+                {
+                    size.y = _childSize.y;
+                }
+                widget->rawSetSize(size);
             }
 
             visibleWidgets.push_back(widget);

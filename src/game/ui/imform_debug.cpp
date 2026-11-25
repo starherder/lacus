@@ -154,6 +154,11 @@ void ImFormDebug::draw()
 
         ImGui::SameLine(0, 20);
 
+        if (ImGui::Button("reload UI"))
+        {
+            ui::GuiManager::inst().reloadForms();
+        }
+
         if (ImGui::Button("reload resource"))
         {
             on_reload_res.emit();

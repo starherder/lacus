@@ -26,8 +26,6 @@ namespace game
 
         void onWindowResized(const Vec2& size);
 
-        void onDropCard(ui::GuiManager::DraggingPtr ptr);
-        
         void showCardGroup();
 
         void resize();

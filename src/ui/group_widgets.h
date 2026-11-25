@@ -157,6 +157,9 @@ public:
     int columns() const { return _columns; }
     void setColumns(int columns);
 
+    const Vec2& childSize() const { return _childSize; }
+    void setChildSize(const Vec2& childSize);
+
 protected:
     bool onLoad(XmlNode* node) override;
 
@@ -177,6 +180,7 @@ protected:
 
 private:
     Vec2 _spacing = { 20.0f, 20.0f };
+    Vec2 _childSize = { 0.0f, 0.0f };
     Vec2 _contentEndPadding = { 20.0f, 20.0f };
     int _rows = 1;
     int _columns = 1;

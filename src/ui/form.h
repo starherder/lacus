@@ -19,6 +19,8 @@ public:
     virtual ~Form();
 
     bool load(const fs::path& filepath);
+    bool reload();
+    const fs::path& sourceFile() const { return _sourceFile; }
 
     BackGroup* root() { return _rootGroup.get(); }
 
@@ -93,6 +95,7 @@ private:
 
 private:
     std::string _name;
+    fs::path _sourceFile;
 
     tinyxml2::XMLDocument _doc;
 

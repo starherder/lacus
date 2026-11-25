@@ -33,8 +33,6 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 	{
 		btnLeave->on_click.connect([this](ui::Button* btn) { close(); });
 	}
-
-	ui::GuiManager::inst().on_drop.connect(this, &FormEntry::onDropCard);
 }
 
 FormEntry::~FormEntry()
@@ -112,53 +110,8 @@ void FormEntry::resize()
 		formCards->setPos(formpos);
 		formCards->setSize(formsz);
 		formCards->moveToTop();
-	}
-}
 
-void FormEntry::onDropCard(ui::GuiManager::DraggingPtr ptr)
-{
-	if (!ptr || !ptr->dst_group)
-	{
-		LogInfo("FormEntry::onDropCard dragging data error.");
-		return;
-	}
-
-	auto card = dynamic_cast<CardWidget*>(ptr->widget.get());
-	auto srcCardGroup = dynamic_cast<CardGroup*>(ptr->src_group);
-	if (!card || !srcCardGroup)
-	{
-		LogError("FormEntry::onDropCard: drop item is NOT card.");
-		return;
-	}
-
-	auto cfgid = card->getCfgid();
-	auto found = _context.objectManager().findObjectCfg(cfgid);
-	if (!found)
-	{
-		LogError("FormEntry::onDropCard: drop item cfg({}) NOT found.", cfgid);
-		return;
-	}
-
-	auto handCardGroup = getWidget<CardGroup>("card_group");
-
-	// remove from hand card group
-	if (ptr->src_group == handCardGroup && ptr->dst_group != handCardGroup)
-	{
-		handCardGroup->removeCard(card);
-		_context.gameData().removeFromCardGroup(card->getCfgid());
-		return;
-	}
-
-	// add to hand card group
-	if (ptr->dst_group == handCardGroup)
-	{
-		auto& props = _context.objectManager().getObjectCfgProperties(cfgid);
-		handCardGroup->addCard(props);
-
-		_context.gameData().addToCardGroup(cfgid);
-
-		int index = card->getData<int>("index");
-		srcCardGroup->addWidget(ptr->widget, index);
+		formCards->onCardGroupConfirm.connect(this, &FormEntry::showCardGroup);
 	}
 }
 
@@ -170,6 +123,8 @@ void FormEntry::showCardGroup()
 		LogInfo("FormEntry::loadCars card_group NOT found.");
 		return;
 	}
+
+	cardGroup->clear();
 
 	auto& roleCfgs = _context.gameData().getCardGroup();
 	for (auto& cfg : roleCfgs)

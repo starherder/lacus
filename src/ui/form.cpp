@@ -62,7 +62,19 @@ bool Form::load(const fs::path& filepath)
     setSize(_size);
     setMaximize(maximized);
 
+    _sourceFile = filepath;
+
     return true;
+}
+
+bool Form::reload()
+{
+    if (_sourceFile.empty())
+    {
+        return false;
+    }
+
+    return load(_sourceFile);
 }
 
 void Form::setMaximize(bool v)

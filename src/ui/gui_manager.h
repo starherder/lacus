@@ -73,6 +73,7 @@ public:
 
     void closeForm(const std::string& name);
     void closeAllForms();
+    void reloadForms();
 
     void emitCustomEvent(int eventId, const utility::VarList& varlist);
 

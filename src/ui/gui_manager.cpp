@@ -130,6 +130,26 @@ namespace ui
         }
     }
 
+    void GuiManager::reloadForms()
+    {
+        for (auto& form : _forms)
+        {
+            if (!form || form->sourceFile().empty())
+            {
+                continue;
+            }
+
+            const bool visible = form->visible();
+            if (!form->reload())
+            {
+                LogError("reload form {} from {} failed.", form->name(), form->sourceFile().string());
+                continue;
+            }
+
+            form->setVisible(visible);
+        }
+    }
+
     Form* GuiManager::getFormAtPos(const Vec2& pos)
     {
         for(auto it=_forms.rbegin(); it!=_forms.rend(); it++)
