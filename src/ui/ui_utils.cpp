@@ -1,5 +1,7 @@
 ﻿#include "ui_utils.h"
 
+#include "utility/translator.h"
+
 namespace ui {
 
 void UiMetrics::update(const Vec2& window, const Rect& safe, float displayScale_)
@@ -202,6 +204,28 @@ Vec2 WidgetUtils::parseVec2OrMetric(const char* str, const Vec2& defaultValue)
 
     float metric = parseMetric(str, defaultValue.x);
     return { metric, metric };
+}
+
+std::string WidgetUtils::parseTextAttribute(const char* text)
+{
+    if (!text)
+    {
+        return "";
+    }
+
+    std::string value = text;
+    if (value.empty() || value.front() != '@')
+    {
+        return value;
+    }
+
+    std::string key = value.substr(1);
+    if (!utility::StringTranslator::inst().hasUtf8String(key))
+    {
+        return value;
+    }
+
+    return Trans(key);
 }
 
 }

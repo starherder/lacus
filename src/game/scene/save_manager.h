@@ -20,5 +20,8 @@ namespace game
 
 		bool saveGameData(const std::filesystem::path& filepath, const GameData& data);
 		bool loadGameData(const std::filesystem::path& filepath, GameData& data);
+
+	private:
+		static void upgradeHandCards(engine::nJson& json);
 	};
 }

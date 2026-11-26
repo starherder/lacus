@@ -10,8 +10,8 @@
           </hlayout>
           <text name="txt_scene_desc" text="dangerouse! keeep away!" text_color="#FFFFFFFF" font_size="30" border_size="1"/>
             
-          <card_group name="card_group" size="0,150" can_dropin="true" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
-            <card name="test_card" size="150,200" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
+          <card_group name="card_group" size="0,150" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
+            <card name="test_card" size="150,200" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="false">
               <vlayout name="cards-test" pad="5,5" accept_event="false">
                 <hlayout size="0,25" accept_event="false">
                   <label name="lbl_name" size="50,0" text="zhangsan" text_color="#222222FF" font_size="12" accept_event="false"/>

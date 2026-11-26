@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "game/ecs/comm_comp.h"
 #include "game/ui/form_logic_base.h"
 #include "ui/game_widgets.h"
 
@@ -13,7 +14,7 @@ namespace game
         FormCards(const std::string& name, GameContext& context);
         ~FormCards();
 
-        signals::Signal<> onCardGroupConfirm;
+        signals::Signal<> onHandCardsConfirmed;
 
     private:
         void onUpdate(float delta) override;
@@ -22,10 +23,20 @@ namespace game
 
         void onDropCard(ui::GuiManager::DraggingPtr ptr);
 
-        void loadCars();
+        void loadCards();
+        void onConfirm(ui::Button* btn);
+        bool onDropRankMarker(ui::GuiManager::DraggingPtr ptr);
+        void attachRankMarker(ui::CardWidget* card, ui::WidgetPtr marker);
+        ui::WidgetPtr takeRankMarker(RoleRank rank);
+        void returnRankMarker(ui::WidgetPtr marker);
+        void returnCardRankMarkers(ui::CardWidget* card);
+        ui::CardWidget* findGridCardAt(const Vec2& pos);
+        static const char* rankMarkerName(RoleRank rank);
+        static RoleRank markerRank(ui::Label* marker);
 
     private:
         ui::CardGroup* _cardGroup = nullptr;
         ui::GridGroup* _gridGroup = nullptr;
+        ui::Group* _toolsGroup = nullptr;
     };
 }

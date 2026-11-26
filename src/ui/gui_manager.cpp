@@ -266,6 +266,9 @@ namespace ui
 
     void GuiManager::onMouseLeftDown(const Vec2& pos)
     {
+        _mouseLeftCaptureForm = nullptr;
+        _mouseLeftDragWidget = nullptr;
+
         auto uiPos = screenToUiPoint(pos);
         auto form = getFormAtPos(uiPos);
         if (form && form->visible())
@@ -274,6 +277,12 @@ namespace ui
 
             //moveToTop(form->name());
             form->onMouseLeftDown(uiPos);
+
+            auto widget = form->hoverWidget();
+            if (widget && widget->canDragOut())
+            {
+                _mouseLeftDragWidget = widget;
+            }
 
             checkEventBreak(form);
         }
@@ -291,6 +300,7 @@ namespace ui
         }
 
         _mouseLeftCaptureForm = nullptr;
+        _mouseLeftDragWidget = nullptr;
 
         if (_draggingData)
         {
@@ -332,13 +342,13 @@ namespace ui
 
         auto uiPos = screenToUiPoint(pos);
         auto uiOffset = screenToUiDelta(offset);
-        auto form = _mouseLeftCaptureForm ? _mouseLeftCaptureForm : getFormAtPos(uiPos);
+        auto form = _mouseLeftCaptureForm;
         if (!form || !form->visible()) 
         {
             return;
         }
 
-        auto widget = form->hoverWidget();
+        auto widget = _mouseLeftDragWidget;
         if (widget && widget->canDragOut())
         {
             drag(widget);
@@ -423,6 +433,7 @@ namespace ui
         if (event.phase == PointerPhase::Cancel)
         {
             _mouseLeftCaptureForm = nullptr;
+            _mouseLeftDragWidget = nullptr;
             _touchDragging = false;
         }
     }

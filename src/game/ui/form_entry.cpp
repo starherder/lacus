@@ -14,7 +14,12 @@ FormEntry::FormEntry(const std::string& name, GameContext& context) : FormLogicB
 {
 	load(_context.resPath() / "ui/form_entry.xml");
 	
-	showCardGroup();
+	showHandCards();
+
+	if (auto formCards = ui::GuiManager::inst().getForm<FormCards>("form_cards"))
+	{
+		formCards->onHandCardsConfirmed.connect(this, &FormEntry::showHandCards);
+	}
 
 	auto btnEnter = getWidget<ui::Button>("btn_enter");
 	if (btnEnter)
@@ -55,14 +60,6 @@ void FormEntry::onStart(Button* btn)
 	_context.gameLogic().switchScene(_sceneFile);
 
 	_context.gameLogic().setGameMode(SceneGameMode::GameMode_AutoChess);
-
-	_context.gameData().clearHandCard();
-
-	auto& cardGroup = _context.gameData().getCardGroup();
-	for (auto& card : cardGroup) 
-	{
-		_context.gameData().addHandCard(card);
-	}
 }
 
 void FormEntry::onShowCardDeck(Button* btn)
@@ -74,7 +71,8 @@ void FormEntry::onShowCardDeck(Button* btn)
 	}
 	else
 	{
-		ui::GuiManager::inst().showForm<FormCards>("form_cards", _context);
+		formCards = ui::GuiManager::inst().showForm<FormCards>("form_cards", _context);
+		formCards->onHandCardsConfirmed.connect(this, &FormEntry::showHandCards);
 	}
 
 	resize();
@@ -110,29 +108,24 @@ void FormEntry::resize()
 		formCards->setPos(formpos);
 		formCards->setSize(formsz);
 		formCards->moveToTop();
-
-		formCards->onCardGroupConfirm.connect(this, &FormEntry::showCardGroup);
 	}
 }
 
-void FormEntry::showCardGroup()
+void FormEntry::showHandCards()
 {
 	auto cardGroup = getWidget<CardGroup>("card_group");
 	if (!cardGroup)
 	{
-		LogInfo("FormEntry::loadCars card_group NOT found.");
+		LogInfo("FormEntry::showHandCards card_group NOT found.");
 		return;
 	}
 
 	cardGroup->clear();
 
-	auto& roleCfgs = _context.gameData().getCardGroup();
-	for (auto& cfg : roleCfgs)
+	for (const auto& [cfg, handCard] : _context.gameData().getHandCards())
 	{
 		auto& props = _context.objectManager().getObjectCfgProperties(cfg);
 		cardGroup->addCard(props);
 	}
-
-	_context.gameData().clearHandCard();
 }
 }

@@ -12,10 +12,18 @@
             <button name="btn_close" size="100,50" text="关闭"  text_color="#555555FF" font_name="fonts/msyh.ttf" font_size="20" />
         </hlayout>
 
-        <hlayout name="hlay_card_group" pad="20,20" size="0,400"> 
-          <gridgroup name="grid_cards" pad="20,20" space="16,16" child_size="150,200" rows="4" cols="7" can_dropin="true" ground_color="#F6FAF2EE" border_color="#2F6B3FFF" border_size="2">
+        <vlayout name="hlay_card_group" pad="20,20" size="0,400">
+
+          <hlayout name="hlay_tools" pad="10,10" size="0,100" can_dropin="true" border_color="#008800FF" border_size="2">
+            <label text="@rank_mark" text_color="#333333FF" font_size="20" />
+            <label name="lbl_rank_chief" text="@rank_chief" text_color="#FF3333FF" can_dragout="true" font_size="25"  border_color="#AA0000FF" border_size="2"/>
+            <label name="lbl_rank_adviser" text="@rank_adviser" text_color="#FFFF33FF" can_dragout="true" font_size="25" border_color="#AAAA00FF" border_size="2"/>
+          </hlayout>
+
+          <gridgroup name="grid_cards" pad="20,20" space="16,16" child_size="150,200" rows="0" cols="5" can_dropin="true" ground_color="#F6FAF2EE" border_color="#2F6B3FFF" border_size="2">
           </gridgroup>
-        </hlayout>
+
+        </vlayout>
 
         <hlayout >
         </hlayout>
@@ -27,6 +35,8 @@
                 <label name="lbl_name" size="50,0" text="zhangsan" text_color="#222222FF" font_size="12" accept_event="false"/>
                 <widget accept_event="false"/>
                 <label name="lbl_level" size="50,0" text="lv.43" text_color="#008800FF" font_size="10" accept_event="false"/>
+                <widget accept_event="false"/>
+                <label name="lbl_major" size="50,0" text="@major_warrior" text_color="#FF0000FF" font_size="10" accept_event="false"/>
               </hlayout>
               <hlayout size="0,100" accept_event="false">
                 <widget  accept_event="false"/>

@@ -106,6 +106,18 @@ namespace utility
             return StringUtil::utf8_str_to_ansi(getUtf8String(key));
 		}
 
+        bool hasUtf8String(const std::string& key) const
+        {
+            auto it = _all_text.find(_language);
+            if (it == _all_text.end())
+            {
+                return false;
+            }
+
+            auto& text = it->second;
+            return text.find(key) != text.end();
+        }
+
 		std::string getUtf8String(const std::string& key) const
 		{
             auto it = _all_text.find(_language);

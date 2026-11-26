@@ -40,16 +40,7 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
 
     ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
 
-#if 0
-    auto& roleCfgs = _context.objectManager().getAllRoleCfgIds();
-    for (auto& cfgid : roleCfgs)
-    {
-        _context.gameData().addHandCard(cfgid);
-    }
-#endif
-
-    auto& handCards = _context.gameData().getHandCards();
-    for(auto& cfg : handCards)
+    for (const auto& [cfg, handCard] : _context.gameData().getHandCards())
     {
         auto& props = _context.objectManager().getObjectCfgProperties(cfg);
         _cardGroup->addCard(props);
@@ -66,50 +57,53 @@ void FormMain::onUpdate(float delta)
 
 void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
 {   
-    if(!ptr || !ptr->dst_group)
+    if (!ptr || !ptr->dst_group || ptr->src_group != _cardGroup)
     {
-        LogInfo("FormMain::onDropCard dragging data error.");
         return;
     }
 
-    auto wgt_name = ptr->dst_group->name();
-    auto wgtScene = getWidget<Widget>(wgt_name);
-    if (!wgtScene)
+    auto index = ptr->widget->getData<int>("index");
+    if (ptr->dst_group != getWidget<Widget>("wgt_scene"))
     {
-        LogInfo("FormMain::onDropCard not on form_main.");
+        _cardGroup->addWidget(ptr->widget, index);
         return;
     }
-
-    auto pos = _context.camera().screenToWorld(ptr->drop_screen_pos);
-    pos = _context.scene().normalToGridPos(pos);
-    LogInfo("FormMain::onDropCard at ({},{})", pos.x, pos.y);
 
     auto card = dynamic_cast<CardWidget*>(ptr->widget.get());
-    auto cardGroup = dynamic_cast<CardGroup*>(ptr->src_group);
-    if(!card || !cardGroup)
+    if (!card)
     {
         LogError("FormMain::onDropCard: drop item is NOT card.");
         return;
     }
 
     auto cfgid = card->getCfgid();
+    auto handCard = _context.gameData().getHandCard(cfgid);
+    if (!handCard)
+    {
+        return;
+    }
+
+    auto rank = handCard->rank;
+    auto pos = _context.camera().screenToWorld(ptr->drop_screen_pos);
+    pos = _context.scene().normalToGridPos(pos);
+    LogInfo("FormMain::onDropCard at ({},{})", pos.x, pos.y);
+
     auto ent = _context.scene().createObjectInScene(cfgid, pos, CampSide::Gangster);
     if (!_context.registry().valid(ent))
     {
         LogError("FormMain::onDropCard: create actor ({}) failed", cfgid);
+        _cardGroup->addWidget(ptr->widget, index);
         return;
     }
 
     auto pComm = _context.registry().try_get<CompComm>(ent);
     if (pComm)
     {
-        pComm->rank = (RoleRank)card->getData<int>("rank");
+        pComm->rank = rank;
     }
 
     _context.gameData().removeHandCard(cfgid);
 
-    //int index = card->getData<int>("index");
-    //cardGroup->addWidget(ptr->widget, index);
 }
 
 void FormMain::onSizeChanged()

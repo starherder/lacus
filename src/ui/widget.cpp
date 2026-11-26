@@ -1,6 +1,7 @@
 ﻿#include "widget.h"
 #include "gui_manager.h"
 
+#include <algorithm>
 #include <format>
 
 namespace ui {
@@ -249,8 +250,23 @@ void Widget::draw()
             
     if(state.border_color.isValid())
     {
-        auto& painter = GuiManager::inst().painter();
-        painter.drawRect(state.border_color, bksize, round, gui.uiToScreenScalar(borderSize()));
+        float borderThickness = gui.uiToScreenScalar(borderSize());
+        if (borderThickness <= 0.0f)
+        {
+            return;
+        }
+
+        float borderInset = std::min(borderThickness * 0.5f, std::min(bksize.w, bksize.h) * 0.5f);
+        Rect borderRect =
+        {
+            bksize.x + borderInset,
+            bksize.y + borderInset,
+            std::max(0.0f, bksize.w - borderInset * 2.0f),
+            std::max(0.0f, bksize.h - borderInset * 2.0f)
+        };
+        float borderRound = std::max(0.0f, round - borderInset);
+
+        painter.drawRect(state.border_color, borderRect, borderRound, borderThickness);
     }
 }
 

@@ -1,3 +1,17 @@
+major_warrior=武士
+major_shooter=射手
+major_wizard=法师
+major_knight=骑兵
+major_marine=水兵
+major_medic=医生
+major_artisan=技师
+
+rank_mark=身份标志：
+rank_chief=头领
+rank_adviser=军师
+rank_Soldier=战士
+
+
 text_npc_name_0=张散
 text_npc_name_1=李思
 text_npc_name_2=王巫

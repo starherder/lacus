@@ -125,6 +125,7 @@ private:
 
     Widget* _hoverWidget = nullptr;
     Form* _mouseLeftCaptureForm = nullptr;
+    Widget* _mouseLeftDragWidget = nullptr;
 
     DraggingPtr _draggingData = nullptr;
 

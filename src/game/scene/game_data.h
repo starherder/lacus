@@ -1,14 +1,22 @@
 #pragma once
 
 #include "engine/wrapper.h"
+#include "game/ecs/comm_comp.h"
 
+#include <map>
 #include <set>
 
 namespace game
 {
+	struct HandCard 
+	{
+		std::string configId;
+		RoleRank rank = RoleRank::Soldier;
+	};
+
 	using engine::nJson;
 	using StringVector = std::vector<std::string>;
-	using CardSet = std::multiset<std::string>;
+	using CardMap = std::map<std::string, HandCard>;
 	using SceneSet = std::set<std::string>;
 
 	class GameData
@@ -18,27 +26,26 @@ namespace game
 		GameData(GameData&&) = delete;
 		GameData(const GameData&) = delete;
 
-		const CardSet& getHandCards() { return _handCards; }
-		void addHandCard(const std::string& cfgid) { _handCards.insert(cfgid); }
+		const CardMap& getHandCards() { return _handCards; }
+		void setHandCards(CardMap handCards) { _handCards = std::move(handCards); }
+		void addHandCard(const std::string& cfgid, RoleRank rank = RoleRank::Soldier) { _handCards.insert_or_assign(cfgid, HandCard{cfgid, rank}); }
 		void removeHandCard(const std::string& cfgid) { _handCards.erase(cfgid); }
 		void clearHandCard() { _handCards.clear(); }
-
-		const CardSet& getCardGroup() { return _cardGroup; }
-		void addToCardGroup(const std::string& cfgid) { _cardGroup.insert(cfgid); }
-		void removeFromCardGroup(const std::string& cfgid) { _cardGroup.erase(cfgid); }
-		void clearCardCard() { _cardGroup.clear(); }
+		HandCard* getHandCard(const std::string& cfgid) {
+			auto it = _handCards.find(cfgid);
+			return (it == _handCards.end()) ? nullptr : &it->second;
+		}
+		void setHandCardRank(const std::string& cfgid, RoleRank rank) { addHandCard(cfgid, rank); }
 
 		const SceneSet& getClearedScenes() { return _clearedScenes; }
 		bool isSceneCleared(const std::string& sceneId) const { return _clearedScenes.contains(sceneId); }
 		void setSceneCleared(const std::string& sceneId) { _clearedScenes.insert(sceneId); }
 
 		nJson toJson() const;
-		bool fromJson(const nJson& json);
+		void fromJson(const nJson& json);
 
 	private:
-		CardSet _handCards;
-
-		CardSet _cardGroup;
+		CardMap _handCards;
 
 		SceneSet _clearedScenes;
 

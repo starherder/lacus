@@ -29,7 +29,7 @@ namespace game
 
 		try
 		{
-			ofile << data.toJson().dump(4);
+			ofile << data.toJson().dump();
 			LogInfo("save game data to '{}' OK.", filepath.string());
 		}
 		catch (const std::exception& e)
@@ -54,11 +54,8 @@ namespace game
 		{
 			nJson json;
 			ifile >> json;
-			if (!data.fromJson(json))
-			{
-				LogError("load game data from '{}' failed, json root is not object.", filepath.string());
-				return false;
-			}
+			upgradeHandCards(json);
+			data.fromJson(json);
 
 			LogInfo("load game data from '{}' OK.", filepath.string());
 		}
@@ -69,5 +66,30 @@ namespace game
 		}
 
 		return true;
+	}
+
+	void SaveManager::upgradeHandCards(nJson& json)
+	{
+		const auto handCards = json.find("hand_cards");
+		if (handCards == json.end() || !handCards->is_array())
+		{
+			return;
+		}
+
+		nJson cards = nJson::object();
+		for (const auto& item : *handCards)
+		{
+			if (item.is_string())
+			{
+				cards[item.get_ref<const std::string&>()] = { { "configId", item }, { "rank", RoleRank::Soldier } };
+				continue;
+			}
+
+			const auto configId = item.at("cfgid").get<std::string>();
+			const auto savedRank = item.value("rank", nJson(RoleRank::Soldier));
+			const auto rank = savedRank.is_string() ? getRoleRank(savedRank.get_ref<const std::string&>()) : savedRank.get<RoleRank>();
+			cards[configId] = { { "configId", configId }, { "rank", rank } };
+		}
+		*handCards = std::move(cards);
 	}
 }

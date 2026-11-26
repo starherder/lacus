@@ -41,7 +41,7 @@ namespace game
     enum class RoleRank {
         Chief, // 头领
         Adviser, // 军师
-        Soilder, // 战士
+        Soldier, // 战士
     };
 
     // 职业
@@ -337,6 +337,22 @@ namespace game
         if (npctype == "other") return ObjectType::Other;
 
         return ObjectType::Other;
+    };
+
+    inline RoleRank getRoleRank(const std::string& rank)
+    {
+        if (rank == "chief") return RoleRank::Chief;
+        if (rank == "adviser") return RoleRank::Adviser;
+
+        return RoleRank::Soldier;
+    };
+
+    inline const char* getRoleRankName(RoleRank rank)
+    {
+        if (rank == RoleRank::Chief) return "chief";
+        if (rank == RoleRank::Adviser) return "adviser";
+
+        return "soldier";
     };
 
     inline RoleProfession getRoleProfession(const std::string& profession)

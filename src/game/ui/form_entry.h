@@ -26,7 +26,7 @@ namespace game
 
         void onWindowResized(const Vec2& size);
 
-        void showCardGroup();
+        void showHandCards();
 
         void resize();
 

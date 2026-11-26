@@ -62,7 +62,7 @@ namespace ui
             return false;
         }
 
-        _text = node->Attribute("text");
+        _text = WidgetUtils::parseTextAttribute(node->Attribute("text"));
         WidgetUtils::parseColorIfValid(status().text_color, node->Attribute("text_color"));
 
         _textPadding = WidgetUtils::parseVec2(node->Attribute("text_padding"));
@@ -135,7 +135,7 @@ namespace ui
         _fontName = _fontName.empty() ? Label::DefaultFontName : _fontName;
         _fontSize = (int)WidgetUtils::parseMetric(node->Attribute("font_size"), 20.0f);
 
-        _text = node->Attribute("text");
+        _text = WidgetUtils::parseTextAttribute(node->Attribute("text"));
         WidgetUtils::parseColorIfValid(_text_color, node->Attribute("text_color"));
 
         adjust();

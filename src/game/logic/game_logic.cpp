@@ -310,14 +310,6 @@ namespace game
 
     bool GameLogic::restartScene()
     {
-        _context.gameData().clearHandCard();
-
-        auto& cardGroup = _context.gameData().getCardGroup();
-        for (auto& card : cardGroup)
-        {
-            _context.gameData().addHandCard(card);
-        }
-
         return switchScene(_currentScene);
     }
 
