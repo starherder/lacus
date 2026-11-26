@@ -24,6 +24,11 @@ namespace game
 		} float_text;
 
 		struct Display {
+			struct RankIcon {
+				std::string chief;
+				std::string adviser;
+			} rank_icon;
+
 			float chess_corner = 5.0f;
 			Color chess_dead_ground_color = Color::Light;
 			Color chess_dead_border_color = Color::Gray;

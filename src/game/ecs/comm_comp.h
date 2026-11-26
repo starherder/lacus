@@ -137,7 +137,7 @@ namespace game
         ObjectType type;
         std::string desc;
         CampSide side;
-        RoleRank rank;
+        RoleRank rank = RoleRank::Soldier;
         RoleProfession profession;
     };
 

@@ -23,7 +23,12 @@
 
 		"chess_font_color": "#333333FF",
 		"chess_border_color": "#666666FF",
-		"chess_border_size": 2
+		"chess_border_size": 2,
+
+		"rank_icon" : {
+			"chief" : "gizmo:command_flag",
+			"adviser" : "gizmo:adviser_fan"
+		}
 	},
 
 	"float_text": {

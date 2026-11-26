@@ -45,6 +45,13 @@ namespace game
 			display.chess_font_color.fromHexString(displayJs.value("chess_font_color", "#8888FFFF"));
 			display.chess_border_color.fromHexString(displayJs.value("chess_border_color", "#555555FF"));
 			display.chess_border_size = displayJs.value("chess_border_size", 2.0f);
+
+			if (displayJs.contains("rank_icon"))
+			{
+				auto& rankIconJs = displayJs["rank_icon"];
+				display.rank_icon.chief = rankIconJs.value("chief", display.rank_icon.chief);
+				display.rank_icon.adviser = rankIconJs.value("adviser", display.rank_icon.adviser);
+			}
 		}
 
 		if (json.contains("selection"))

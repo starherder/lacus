@@ -24,6 +24,8 @@ private:
     
     void drawMarker();
 
+    void drawRank();
+
     void drawObjects(DisplayLayer layer);
 
     void drawSkillEffect();

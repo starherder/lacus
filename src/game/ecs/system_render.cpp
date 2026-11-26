@@ -82,6 +82,8 @@ void RenderSystem::draw()
 
     drawObjects(DisplayLayer::Middle);
 
+    drawRank();
+
     drawSkillEffect();
 
     drawParticles();
@@ -318,6 +320,59 @@ void RenderSystem::drawMarker()
                 painter.drawRect(border_color, dstrect, corner);
             }
         }
+    }
+}
+
+void RenderSystem::drawRank()
+{
+    auto& rankIconConfig = _context.gameConfig().display.rank_icon;
+    auto chiefIcon = _context.textureMgr().getCfgTexTile(rankIconConfig.chief);
+    auto adviserIcon = _context.textureMgr().getCfgTexTile(rankIconConfig.adviser);
+
+    auto& painter = _context.painter();
+    auto& camera = _context.camera();
+
+    auto ent_view = _context.registry().view<CompTransform, CompComm, CompDisplay>();
+    for (auto ent : ent_view)
+    {
+        const auto& transform = ent_view.get<CompTransform>(ent);
+        const auto& comm = ent_view.get<CompComm>(ent);
+        const auto& display = ent_view.get<CompDisplay>(ent);
+        if (comm.type != ObjectType::Npc || !display.visible)
+        {
+            continue;
+        }
+
+        TexTile* rankIcon = nullptr;
+        switch (comm.rank)
+        {
+        case RoleRank::Chief:
+            rankIcon = chiefIcon;
+            break;
+        case RoleRank::Adviser:
+            rankIcon = adviserIcon;
+            break;
+        default:
+            break;
+        }
+
+        if (!rankIcon)
+        {
+            continue;
+        }
+
+        auto roleRect = _context.scene().getDisplayAABB(transform);
+        if (transform.coord_mode == CoordMode::WorldSpace)
+        {
+            roleRect = camera.projectRect(roleRect);
+        }
+
+        const auto iconSize = rankIcon->rect().size();
+        const Rect iconRect = {
+            { roleRect.x + roleRect.w - iconSize.x/2, roleRect.y-iconSize.y/2 },
+            iconSize
+        };
+        painter.drawTexTile(rankIcon, iconRect);
     }
 }
 

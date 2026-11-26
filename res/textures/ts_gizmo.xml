@@ -1,0 +1,6 @@
+<tilset name="gizmo">
+  <texture file="textures/demo/demo_command_icons.png" >
+    <tile name="command_flag" rect="0,0,32,32" />
+    <tile name="adviser_fan" rect="32,0,32,32" />
+  </texture>
+</tilset>
