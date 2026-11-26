@@ -1,0 +1,34 @@
+{
+  "id": "role_scholar",
+  "template": "npc_0",
+  "name": "text_role_scholar_name",
+  "desc": "text_role_scholar_desc",
+  "icon": "demo_chess:song_scholar",
+  "profession": "wizard",
+  "motion": {
+    "speed": 130,
+    "swim_speed": 45
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_scholar",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 10,
+    "str": 25,
+    "cst": 45,
+    "dex": 50,
+    "met": 100
+  },
+  "skills": [
+    "skill_lightning"
+  ],
+  "items": [
+    "item_coin"
+  ],
+  "trigger": null
+}

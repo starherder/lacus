@@ -1,5 +1,6 @@
 #include "game_widgets.h"
 
+#include "utility/translator.h"
 
 namespace ui
 {
@@ -51,6 +52,7 @@ namespace ui
 
         _title = getChild<Label>("lbl_name", true);
         _level = getChild<Label>("lbl_level", true);
+        _major = getChild<Label>("lbl_major", true);
         _icon = getChild<Label>("lbl_icon", true);
         _desc = getChild<TextBox>("txt_desc", true);
 
@@ -138,6 +140,22 @@ namespace ui
         if (_icon) _icon->setTexTile(icon);
     }
 
+    void CardWidget::setProfession(const std::string& profession)
+    {
+        if (!_major)
+        {
+            return;
+        }
+
+        if (profession.empty())
+        {
+            _major->setText("");
+            return;
+        }
+
+        _major->setText(Trans("major_" + profession));
+    }
+
     std::string CardWidget::getCfgid() 
     { 
         return getData<std::string>("cfgid"); 
@@ -182,6 +200,7 @@ namespace ui
         auto name = props["name"].convert<std::string>();
         auto desc = props["desc"].convert<std::string>();
         auto icon = props["icon"].convert<std::string>();
+        auto profession = props["profession"].convert<std::string>();
 
         auto lvopt = props.get<int>("level");
         int level = lvopt ? lvopt.value() : 0;
@@ -191,6 +210,7 @@ namespace ui
         
         widget->setTitle(name);
         widget->setLevel(level);
+        widget->setProfession(profession);
         widget->setDesc(desc);
         widget->setIcon(icon);
         widget->setData("cfgid", cfgid);

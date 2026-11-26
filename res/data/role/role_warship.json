@@ -1,0 +1,33 @@
+{
+  "id": "role_warship",
+  "template": "npc_0",
+  "name": "text_role_warship_name",
+  "desc": "text_role_warship_desc",
+  "icon": "demo_chess:song_warship",
+  "profession": "marine",
+  "motion": {
+    "speed": 90,
+    "swim_speed": 260
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_warship",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 6,
+    "str": 95,
+    "cst": 100,
+    "dex": 45,
+    "met": 30
+  },
+  "skills": [
+    "skill_wave_range",
+    "skill_archery"
+  ],
+  "items": [],
+  "trigger": null
+}

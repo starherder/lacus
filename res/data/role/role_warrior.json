@@ -1,0 +1,30 @@
+{
+  "id": "role_warrior",
+  "template": "npc_0",
+  "name": "text_role_warrior_name",
+  "desc": "text_role_warrior_desc",
+  "icon": "demo_chess:song_warrior",
+  "profession": "warrior",
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_warrior",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 8,
+    "str": 85,
+    "cst": 80,
+    "dex": 45,
+    "met": 25
+  },
+  "skills": [
+    "skill_combat"
+  ],
+  "items": [
+    "item_coin"
+  ],
+  "trigger": null
+}

@@ -87,9 +87,11 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     }
 
     auto rank = handCard->rank;
-    auto pos = _context.camera().screenToWorld(ptr->drop_screen_pos);
-    pos = _context.scene().normalToGridPos(pos);
-    LogInfo("FormMain::onDropCard at ({},{})", pos.x, pos.y);
+    auto screenPos = ui::GuiManager::inst().uiToScreenPoint(ptr->drop_screen_pos);
+    auto worldPos = _context.camera().screenToWorld(screenPos);
+    auto grid = _context.scene().getGridFromPos(worldPos);
+    auto pos = _context.scene().getGridCenterPos(grid);
+    LogInfo("FormMain::onDropCard at grid ({},{}), pos ({},{})", grid.x, grid.y, pos.x, pos.y);
 
     auto ent = _context.scene().createObjectInScene(cfgid, pos, CampSide::Gangster);
     if (!_context.registry().valid(ent))

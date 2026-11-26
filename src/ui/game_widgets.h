@@ -26,6 +26,7 @@ namespace ui
         void setDesc(const std::string& desc);
         void setLevel(int level);
         void setIcon(const std::string& icon);
+        void setProfession(const std::string& profession);
 
         std::string getCfgid();
         std::string getTitle();
@@ -60,6 +61,7 @@ namespace ui
 
         Label* _title = nullptr;
         Label* _level = nullptr;
+        Label* _major = nullptr;
         Label* _icon = nullptr;
         TextBox* _desc = nullptr;
 

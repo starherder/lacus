@@ -1,0 +1,32 @@
+{
+  "id": "role_cannon",
+  "template": "npc_0",
+  "name": "text_role_cannon_name",
+  "desc": "text_role_cannon_desc",
+  "icon": "demo_chess:song_cannon",
+  "profession": "warrior",
+  "motion": {
+    "speed": 60,
+    "swim_speed": 0
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_cannon",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 6,
+    "str": 100,
+    "cst": 85,
+    "dex": 30,
+    "met": 20
+  },
+  "skills": [
+    "skill_earthquake"
+  ],
+  "items": [],
+  "trigger": null
+}

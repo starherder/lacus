@@ -1,0 +1,35 @@
+{
+  "id": "role_doctor",
+  "template": "npc_0",
+  "name": "text_role_doctor_name",
+  "desc": "text_role_doctor_desc",
+  "icon": "demo_chess:song_doctor",
+  "profession": "medic",
+  "motion": {
+    "speed": 145,
+    "swim_speed": 55
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_doctor",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 8,
+    "str": 35,
+    "cst": 60,
+    "dex": 55,
+    "met": 90
+  },
+  "skills": [
+    "skill_poison"
+  ],
+  "items": [
+    "item_medicine",
+    "item_medicine"
+  ],
+  "trigger": null
+}

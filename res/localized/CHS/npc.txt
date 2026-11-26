@@ -44,6 +44,30 @@ text_npc_desc_103=可爱的一个小姑娘，外表美丽，内心善良。
 text_npc_desc_104=他自己都不知道自己是谁。
 text_npc_desc_105=村中恶霸，欺男霸女，人见狗嫌。
 
+text_role_warrior_name=刀甲武士
+text_role_archer_name=轻甲射手
+text_role_mage_name=束髻法师
+text_role_cavalry_name=轻骑
+text_role_sailor_name=桨手
+text_role_doctor_name=羽冠医者
+text_role_artisan_name=锤匠
+text_role_scholar_name=书生
+text_role_cannon_name=火炮
+text_role_warship_name=战船
+text_role_chariot_name=战车
+
+text_role_warrior_desc=身披札甲，持刀近战，适合守住阵线。
+text_role_archer_desc=轻甲携弓，行动灵活，擅长远距离压制。
+text_role_mage_desc=束髻佩剑，通晓术法，能以雷毒扰敌。
+text_role_cavalry_desc=轻甲乘马，冲锋迅捷，擅长突入敌阵。
+text_role_sailor_desc=赤膊执桨，熟悉水路，水上行动尤其迅速。
+text_role_doctor_desc=羽冠携葫芦，懂药理，可随身携带解药。
+text_role_artisan_desc=束髻持锤，精于器械，能以重击撼动敌阵。
+text_role_scholar_desc=书生衣冠，手执毛笔，心智出众而体魄稍弱。
+text_role_cannon_desc=重型火炮，移动迟缓，但攻势沉重。
+text_role_warship_desc=水战用船，耐久厚重，适合在水面推进。
+text_role_chariot_desc=双轮战车，冲击力强，适合快速突破。
+
 text_spawner_name_0=近
 text_spawner_desc_0="产生战士的刷怪器"
 

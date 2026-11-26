@@ -1,0 +1,36 @@
+{
+  "id": "role_mage",
+  "template": "npc_0",
+  "name": "text_role_mage_name",
+  "desc": "text_role_mage_desc",
+  "icon": "demo_chess:song_mage",
+  "profession": "wizard",
+  "motion": {
+    "speed": 140,
+    "swim_speed": 50
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_mage",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 10,
+    "str": 35,
+    "cst": 50,
+    "dex": 65,
+    "met": 95
+  },
+  "skills": [
+    "skill_lightning",
+    "skill_poison"
+  ],
+  "items": [
+    "item_coin",
+    "item_poision"
+  ],
+  "trigger": null
+}

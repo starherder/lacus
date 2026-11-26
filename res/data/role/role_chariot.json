@@ -1,0 +1,33 @@
+{
+  "id": "role_chariot",
+  "template": "npc_0",
+  "name": "text_role_chariot_name",
+  "desc": "text_role_chariot_desc",
+  "icon": "demo_chess:song_chariot",
+  "profession": "knight",
+  "motion": {
+    "speed": 185,
+    "swim_speed": 20
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_chariot",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 6,
+    "str": 90,
+    "cst": 90,
+    "dex": 60,
+    "met": 25
+  },
+  "skills": [
+    "skill_sprint",
+    "skill_combat"
+  ],
+  "items": [],
+  "trigger": null
+}

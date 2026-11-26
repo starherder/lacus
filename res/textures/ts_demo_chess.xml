@@ -10,4 +10,17 @@
     <tile name="terrain_brown" rect="4,164,76,76" />
     <tile name="terrain_tile" rect="84,164,76,76" />
   </texture>
+  <texture file="textures/demo/song_unit_icons.png" >
+    <tile name="song_warrior" rect="0,0,80,80" />
+    <tile name="song_archer" rect="80,0,80,80" />
+    <tile name="song_mage" rect="160,0,80,80" />
+    <tile name="song_cavalry" rect="240,0,80,80" />
+    <tile name="song_sailor" rect="0,80,80,80" />
+    <tile name="song_doctor" rect="80,80,80,80" />
+    <tile name="song_artisan" rect="160,80,80,80" />
+    <tile name="song_scholar" rect="240,80,80,80" />
+    <tile name="song_cannon" rect="0,160,80,80" />
+    <tile name="song_warship" rect="80,160,80,80" />
+    <tile name="song_chariot" rect="160,160,80,80" />
+  </texture>
 </tilset>

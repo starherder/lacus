@@ -19,6 +19,8 @@
                   <label name="lbl_name" size="50,0" text="zhangsan" text_color="#222222FF" font_size="12" accept_event="false"/>
                   <widget accept_event="false"/>
                   <label name="lbl_level" size="50,0" text="lv.43" text_color="#008800FF" font_size="10" accept_event="false"/>
+                  <widget accept_event="false"/>
+                  <label name="lbl_major" size="50,0" text="@major_warrior" text_color="#FF0000FF" font_size="10" accept_event="false"/>
                 </hlayout>
                 <hlayout size="0,100" accept_event="false">
                   <widget  accept_event="false"/>

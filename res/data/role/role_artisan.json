@@ -1,0 +1,35 @@
+{
+  "id": "role_artisan",
+  "template": "npc_0",
+  "name": "text_role_artisan_name",
+  "desc": "text_role_artisan_desc",
+  "icon": "demo_chess:song_artisan",
+  "profession": "artisan",
+  "motion": {
+    "speed": 135,
+    "swim_speed": 50
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_artisan",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 8,
+    "str": 65,
+    "cst": 70,
+    "dex": 55,
+    "met": 65
+  },
+  "skills": [
+    "skill_combat",
+    "skill_earthquake"
+  ],
+  "items": [
+    "item_coin"
+  ],
+  "trigger": null
+}

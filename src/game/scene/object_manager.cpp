@@ -1075,13 +1075,26 @@ namespace game
 		}
 
 		auto& json = *jsonptr;
+		auto getString = [&json](const char* key) -> std::string {
+			if (!json.contains(key) || !json[key].is_string())
+			{
+				return "";
+			}
+			return json[key].get<std::string>();
+		};
 
-		props["cfgid"] = json.value("id", "");
-		props["name"] = Trans(json.value("name", ""));
-		props["desc"] = Trans(json.value("desc", ""));
-		props["type"] = (int)getNpcType(json.value("type", ""));
-		props["side"] = (int)getCampSide(json.value("side", ""));
-		props["icon"] = json.value("icon", "");
+		props["cfgid"] = getString("id");
+		props["name"] = Trans(getString("name"));
+		props["desc"] = Trans(getString("desc"));
+		props["type"] = (int)getNpcType(getString("type"));
+		props["side"] = (int)getCampSide(getString("side"));
+		props["icon"] = getString("icon");
+		props["profession"] = getString("profession");
+
+		if (json.contains("base_prop") && json["base_prop"].is_object())
+		{
+			props["level"] = json["base_prop"].value("level", 0);
+		}
 
 		return props;
 	}

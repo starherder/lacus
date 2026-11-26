@@ -1,0 +1,35 @@
+{
+  "id": "role_cavalry",
+  "template": "npc_0",
+  "name": "text_role_cavalry_name",
+  "desc": "text_role_cavalry_desc",
+  "icon": "demo_chess:song_cavalry",
+  "profession": "knight",
+  "motion": {
+    "speed": 210,
+    "swim_speed": 35
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_cavalry",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 8,
+    "str": 75,
+    "cst": 70,
+    "dex": 85,
+    "met": 25
+  },
+  "skills": [
+    "skill_sprint",
+    "skill_combat"
+  ],
+  "items": [
+    "item_coin"
+  ],
+  "trigger": null
+}

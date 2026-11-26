@@ -1,0 +1,35 @@
+{
+  "id": "role_sailor",
+  "template": "npc_0",
+  "name": "text_role_sailor_name",
+  "desc": "text_role_sailor_desc",
+  "icon": "demo_chess:song_sailor",
+  "profession": "marine",
+  "motion": {
+    "speed": 145,
+    "swim_speed": 220
+  },
+  "behavior": {
+    "bevtree": "npc_step_battle"
+  },
+  "display": {
+    "texture": "demo_chess:song_sailor",
+    "ground_texture": "demo_chess:jade_white"
+  },
+  "base_prop": {
+    "level": 1,
+    "roll": 8,
+    "str": 70,
+    "cst": 75,
+    "dex": 65,
+    "met": 30
+  },
+  "skills": [
+    "skill_combat",
+    "skill_wave"
+  ],
+  "items": [
+    "item_coin"
+  ],
+  "trigger": null
+}
