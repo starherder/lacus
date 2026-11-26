@@ -4,6 +4,7 @@
     "name": "txt_demo_1_name",
     "desc": "txt_demo_1_desc",
     "level": 1,
+    "icon": "scene:house1",
     "play_type": "TileBattle",
     "map_path": "scenes/demos/one.tmj"
   },
@@ -13,6 +14,7 @@
     "name": "txt_demo_2_name",
     "desc": "txt_demo_2_desc",
     "level": 2,
+    "icon": "scene:tower",
     "play_type": "AutoChess",
     "map_path": "scenes/demos/two.tmj"
   },
@@ -21,6 +23,7 @@
     "name": "txt_demo_3_name",
     "desc": "txt_demo_3_desc",
     "level": 3,
+    "icon": "scene:house3",
     "play_type": "TileBattle",
     "map_path": "scenes/demos/three.tmj"
   },
@@ -29,6 +32,7 @@
     "name": "txt_demo_4_name",
     "desc": "txt_demo_4_desc",
     "level": 1,
+    "icon": "scene:castle",
     "play_type": "AutoChess",
     "map_path": "scenes/demos/four.tmj"
   },
@@ -37,6 +41,7 @@
     "name": "txt_demo_4_1_name",
     "desc": "txt_demo_4_1_desc",
     "level": 1,
+    "icon": "scene:castle",
     "play_type": "TileBattle",
     "map_path": "scenes/demos/four.tmj"
   }

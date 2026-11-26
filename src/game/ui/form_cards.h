@@ -30,8 +30,7 @@ namespace game
         void loadCards();
 
         void attachRankMarker(ui::CardWidget* card, ui::WidgetPtr marker);
-
-        ui::WidgetPtr takeRankMarker(RoleRank rank);
+        void clearSameRankFromOtherCards(ui::CardWidget* keepCard, RoleRank rank);
 
         void returnRankMarker(ui::WidgetPtr marker);
         void returnCardRankMarkers(ui::CardWidget* card);
@@ -40,6 +39,7 @@ namespace game
         
         static const char* rankMarkerName(RoleRank rank);
         static RoleRank markerRank(ui::Label* marker);
+        static int rankMarkerToolIndex(RoleRank rank);
 
     private:
         ui::CardGroup* _cardGroup = nullptr;

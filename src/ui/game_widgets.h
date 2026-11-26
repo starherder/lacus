@@ -76,6 +76,7 @@ namespace ui
 
         CardWidget* addCard(const Properties& props);
         void removeCard(CardWidget*);
+        int getInsertIndexAt(const Vec2& pos) const;
 
         bool isOverlap() { return _overlap; }
         void setOverlap(bool enable);
@@ -90,6 +91,7 @@ namespace ui
         void adjustChildren();
         void overlapChildren();
         void tileChildren();
+        void refreshChildIndices();
 
         void onChildAdded(Widget* child) override;
         void onChildRemoved(Widget* child) override;

@@ -28,6 +28,8 @@ namespace game
 
         void showHandCards();
 
+        void showSceneInfo();
+
         void resize();
 
     private:

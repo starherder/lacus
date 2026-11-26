@@ -7,6 +7,7 @@
 #include "game/scene/game_camera.h"
 #include "game/scene/game_data.h"
 #include "game/scene/game_scene.h"
+#include "game/ui/form_utils.h"
 #include "game/ui/form_scenes.h"
 #include "game/ui/ui_logic_events.h"
 
@@ -43,7 +44,8 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     for (const auto& [cfg, handCard] : _context.gameData().getHandCards())
     {
         auto& props = _context.objectManager().getObjectCfgProperties(cfg);
-        _cardGroup->addCard(props);
+        auto card = _cardGroup->addCard(props);
+        FormUtils::addRankMarker(card, handCard.rank);
     }
 }
 
@@ -65,6 +67,7 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     auto index = ptr->widget->getData<int>("index");
     if (ptr->dst_group != getWidget<Widget>("wgt_scene"))
     {
+        index = ptr->dst_group == _cardGroup ? _cardGroup->getInsertIndexAt(ptr->drop_screen_pos) : index;
         _cardGroup->addWidget(ptr->widget, index);
         return;
     }

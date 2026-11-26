@@ -3,12 +3,14 @@
 <form name="form_entry" maximize="true" accept_event="false" >
     <hlayout accept_event="false" ground_color="#00558855" >
         <vlayout name="vlay_main" size="500, 0" pad="30,30" ground_color="#005588DD" border_color="#000000FF" border_size="2">
-          <hlayout accept_event="false" size="0,300" >
+          <hlayout accept_event="false" size="0,260" >
             <widget />
             <label name="lbl_scene_icon" size="250,0" ground_color="#FFFFFFFF" texture="textures/UI/tiger.svg" border_color="#000000FF" border_size="2"/>
             <widget />
           </hlayout>
-          <text name="txt_scene_desc" text="dangerouse! keeep away!" text_color="#FFFFFFFF" font_size="30" border_size="1"/>
+          <label name="lbl_scene_name" size="0,50" text="" text_color="#FFE699FF" font_name="fonts/msyh.ttf" font_size="32" align="left" />
+          <label name="lbl_scene_level" size="0,30" text="" text_color="#9EF0FFFF" font_name="fonts/Vonwaon.ttf" font_size="22" align="left" />
+          <text name="txt_scene_desc" size="0,90" text="" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="22" border_size="1"/>
             
           <card_group name="card_group" size="0,150" ground_color="#228822FF" border_color="#000000FF" border_size="1"  overlap="true">
             <card name="test_card" size="150,200" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="false">

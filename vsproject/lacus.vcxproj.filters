@@ -379,6 +379,9 @@
     <ClCompile Include="..\src\game\ui\form_result.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\ui\form_tip.cpp">
+      <Filter>game\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\game\ui\form_chess_tip.cpp">
       <Filter>game\ui</Filter>
     </ClCompile>
@@ -858,6 +861,9 @@
     <ClInclude Include="..\src\game\ui\form_result.h">
       <Filter>game\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\ui\form_tip.h">
+      <Filter>game\ui</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\game\ui\form_chess_tip.h">
       <Filter>game\ui</Filter>
     </ClInclude>
@@ -1100,6 +1106,9 @@
       <Filter>res\ui</Filter>
     </Xml>
     <Xml Include="..\res\ui\form_result.xml">
+      <Filter>res\ui</Filter>
+    </Xml>
+    <Xml Include="..\res\ui\form_tip.xml">
       <Filter>res\ui</Filter>
     </Xml>
     <Xml Include="..\res\ui\form_chess_tip.xml">

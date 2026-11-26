@@ -8,3 +8,6 @@ ATS=攻击速度
 ATD=攻击距离
 CRT=  暴击率
 PAR=  闪避率
+
+ui_tip_no_chief=必须要有一个头领
+ui_rank_mark=设置一个头领

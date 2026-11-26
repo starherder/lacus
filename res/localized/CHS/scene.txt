@@ -1,0 +1,10 @@
+txt_demo_1_name=渔村
+txt_demo_1_desc=临海而建的小村落，适合熟悉基础战斗与探索。
+txt_demo_2_name=军营
+txt_demo_2_desc=守备森严的驻军营地，敌人更密集，适合检验队伍强度。
+txt_demo_3_name=衙门
+txt_demo_3_desc=城中衙署，地形更复杂，需要谨慎安排进攻路线。
+txt_demo_4_name=京城
+txt_demo_4_desc=繁华而危险的都城区域，适合挑战更高强度的战斗。
+txt_demo_4_1_name=东都
+txt_demo_4_1_desc=东侧重镇，仍在开放前的准备阶段。

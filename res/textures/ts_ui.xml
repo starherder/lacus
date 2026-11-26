@@ -2,4 +2,10 @@
     <texture file="textures/icon/0.png" >
         <tile name="role" rect="0,0,144,144" />
     </texture>
+    <texture file="textures/UI/rank_stamps.png">
+        <tile name="rank_chief" rect="14,21,142,86" />
+        <tile name="rank_advisor" rect="185,21,142,86" />
+        <tile name="rank_chief_gray" rect="14,149,142,86" />
+        <tile name="rank_advisor_gray" rect="185,149,142,86" />
+    </texture>
 </tilset>

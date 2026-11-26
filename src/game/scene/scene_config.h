@@ -12,6 +12,7 @@ namespace game
 		std::string id;
 		std::string name;
 		std::string desc;
+		std::string icon;
 		int level;
 		GamePlayType play_type;
 		std::string map_path;

@@ -5,6 +5,7 @@
 #include "widget.h"
 
 #include <algorithm>
+#include <cmath>
 
 namespace ui 
 {
@@ -566,7 +567,7 @@ namespace ui
         adjustContent();
     }
 
-    std::vector<Widget*> ExpandGroup::items()
+    std::vector<Widget*> ExpandGroup::items() const
     {
         std::vector<Widget*> result;
         for(auto child : children()) {
@@ -606,6 +607,57 @@ namespace ui
     {
         _childSize = childSize;
         adjustLayout();
+    }
+
+    int GridGroup::getInsertIndexAt(const Vec2& pos) const
+    {
+        int visibleCount = 0;
+        Vec2 cellSize = _childSize;
+        for (auto widget : items())
+        {
+            if (!widget || !widget->visible())
+            {
+                continue;
+            }
+
+            visibleCount++;
+            if (cellSize.x <= 0.0f)
+            {
+                cellSize.x = std::max(cellSize.x, widget->size().x);
+            }
+            if (cellSize.y <= 0.0f)
+            {
+                cellSize.y = std::max(cellSize.y, widget->size().y);
+            }
+        }
+
+        if (visibleCount <= 0 || cellSize.x <= 0.0f || cellSize.y <= 0.0f)
+        {
+            return 0;
+        }
+
+        const int columns = std::max(1, _columns);
+        const Vec2 contentPos = pos - getAbsPos() - _contentPos - _padding;
+        const Vec2 cellStep = cellSize + _spacing;
+
+        int col = cellStep.x > 0.0f ? static_cast<int>(std::floor(contentPos.x / cellStep.x)) : 0;
+        int row = cellStep.y > 0.0f ? static_cast<int>(std::floor(contentPos.y / cellStep.y)) : 0;
+        col = std::clamp(col, 0, columns - 1);
+        row = std::max(0, row);
+
+        const float cellX = contentPos.x - col * cellStep.x;
+        const float cellY = contentPos.y - row * cellStep.y;
+        if (cellX >= cellSize.x * 0.5f)
+        {
+            col++;
+        }
+        if (cellY >= cellSize.y * 0.5f)
+        {
+            row++;
+        }
+
+        int index = row * columns + col;
+        return std::clamp(index, 0, visibleCount);
     }
 
     bool GridGroup::onLoad(XmlNode* node)
@@ -797,7 +849,12 @@ namespace ui
                 continue;
             }
 
-            ptr->rawSetSize({ptr->size().x, scalable_height });
+            auto childSize = ptr->size();
+            if (ptr->scaleInGroup() || childSize.y <= 0.0f)
+            {
+                childSize.y = scalable_height;
+            }
+            ptr->rawSetSize(childSize);
 
             if(ptr->scaleInGroup())
             {

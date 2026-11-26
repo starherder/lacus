@@ -1,8 +1,11 @@
 #include "form_cards.h"
 #include "game/scene/object_manager.h"
 #include "game/scene/game_data.h"
+#include "game/ui/form_tip.h"
+#include "game/ui/form_utils.h"
+#include "utility/translator.h"
 
-#include <algorithm>
+#include <utility>
 
 namespace game
 {
@@ -36,6 +39,19 @@ namespace game
         }
 
         return RoleRank::Soldier;
+    }
+
+    int FormCards::rankMarkerToolIndex(RoleRank rank)
+    {
+        switch (rank)
+        {
+        case RoleRank::Chief:
+            return 1;
+        case RoleRank::Adviser:
+            return 2;
+        default:
+            return -1;
+        }
     }
 
     FormCards::FormCards(const std::string& name, GameContext& context) : FormLogicBase(name, context)
@@ -102,10 +118,9 @@ namespace game
 
             auto card = _cardGroup->addCard(objectManager.getObjectCfgProperties(cfg));
             _gridGroup->addWidget(_cardGroup->moveOut(card));
-            if (auto marker = takeRankMarker(handCard.rank))
-            {
-                attachRankMarker(card, marker);
-            }
+            card->setData("rank", static_cast<int>(handCard.rank));
+            clearSameRankFromOtherCards(card, handCard.rank);
+            FormUtils::addRankMarker(card, handCard.rank);
         }
 
         _cardGroup->setOverlap(_cardGroup->isOverlap());
@@ -114,6 +129,8 @@ namespace game
     void FormCards::onConfirm(Button* btn)
     {
         CardMap handCards;
+        bool hasChief = false;
+
         for (const auto& widget : _gridGroup->children())
         {
             auto card = dynamic_cast<CardWidget*>(widget.get());
@@ -122,18 +139,22 @@ namespace game
                 continue;
             }
 
-            auto rank = RoleRank::Soldier;
-            if (card->getChild<Label>(rankMarkerName(RoleRank::Chief)))
+            auto rank = static_cast<RoleRank>(card->getData<int>("rank"));
+            if (rank == RoleRank::Chief)
             {
-                rank = RoleRank::Chief;
-            }
-            else if (card->getChild<Label>(rankMarkerName(RoleRank::Adviser)))
-            {
-                rank = RoleRank::Adviser;
+                hasChief = true;
             }
 
             auto cfgid = card->getCfgid();
             handCards.emplace(cfgid, HandCard{ cfgid, rank });
+        }
+
+        if (!hasChief)
+        {
+            auto tip = ui::GuiManager::inst().showForm<FormTip>("form_tip", _context);
+            tip->setTipMode(TipMode::Ok);
+            tip->setText(Trans("ui_tip_no_chief"));
+            return;
         }
 
         _context.gameData().setHandCards(std::move(handCards));
@@ -167,14 +188,26 @@ namespace game
 
         if (ptr->dst_group == _gridGroup)
         {
-            _gridGroup->addWidget(ptr->widget);
+            _gridGroup->addWidget(ptr->widget, _gridGroup->getInsertIndexAt(ptr->drop_screen_pos));
+            if (ptr->src_group != _gridGroup)
+            {
+                card->setData("rank", static_cast<int>(RoleRank::Soldier));
+                FormUtils::clearRankMarker(card);
+            }
             return;
         }
 
         if (ptr->src_group == _gridGroup && ptr->dst_group == _cardGroup)
         {
             returnCardRankMarkers(card);
-            _cardGroup->addWidget(ptr->widget);
+            card->setData("rank", static_cast<int>(RoleRank::Soldier));
+            _cardGroup->addWidget(ptr->widget, _cardGroup->getInsertIndexAt(ptr->drop_screen_pos));
+            return;
+        }
+
+        if (ptr->src_group == _cardGroup && ptr->dst_group == _cardGroup)
+        {
+            _cardGroup->addWidget(ptr->widget, _cardGroup->getInsertIndexAt(ptr->drop_screen_pos));
             return;
         }
 
@@ -224,28 +257,34 @@ namespace game
 
         returnCardRankMarkers(card);
 
-        marker->setScaleInGroup(false);
-        marker->setSize({ 72.0f, 28.0f });
-        marker->setPos({ std::max(0.0f, card->size().x - marker->size().x - 8.0f), 8.0f });
-        card->addWidget(marker);
-        card->bringTop(marker.get());
+        auto rank = markerRank(dynamic_cast<Label*>(marker.get()));
+        clearSameRankFromOtherCards(card, rank);
+        card->setData("rank", static_cast<int>(rank));
+        FormUtils::addRankMarker(card, rank);
+        returnRankMarker(marker);
     }
 
-    ui::WidgetPtr FormCards::takeRankMarker(RoleRank rank)
+    void FormCards::clearSameRankFromOtherCards(ui::CardWidget* keepCard, RoleRank rank)
     {
-        if (!_toolsGroup)
+        if (!_gridGroup || rank == RoleRank::Soldier)
         {
-            return nullptr;
+            return;
         }
 
-        auto markerName = rankMarkerName(rank);
-        if (markerName[0] == '\0')
+        for (auto& widget : _gridGroup->children())
         {
-            return nullptr;
-        }
+            auto card = dynamic_cast<CardWidget*>(widget.get());
+            if (!card || card == keepCard)
+            {
+                continue;
+            }
 
-        auto marker = _toolsGroup->getChild<Label>(markerName);
-        return marker ? _toolsGroup->moveOut(marker) : nullptr;
+            if (static_cast<RoleRank>(card->getData<int>("rank")) == rank)
+            {
+                card->setData("rank", static_cast<int>(RoleRank::Soldier));
+                FormUtils::clearRankMarker(card);
+            }
+        }
     }
 
     void FormCards::returnRankMarker(ui::WidgetPtr marker)
@@ -255,10 +294,12 @@ namespace game
             return;
         }
 
+        auto rank = markerRank(dynamic_cast<Label*>(marker.get()));
         marker->setCanDragOut(true);
         marker->setAcceptEvent(true);
-        marker->setScaleInGroup(true);
-        _toolsGroup->addWidget(marker);
+        _toolsGroup->addWidget(marker, rankMarkerToolIndex(rank));
+        marker->setScaleInGroup(false);
+        marker->setSize({ 64.0f, 39.0f });
     }
 
     void FormCards::returnCardRankMarkers(ui::CardWidget* card)
@@ -268,16 +309,7 @@ namespace game
             return;
         }
 
-        for (auto rankName : { rankMarkerName(RoleRank::Chief), rankMarkerName(RoleRank::Adviser) })
-        {
-            auto marker = card->getChild<Label>(rankName);
-            if (!marker)
-            {
-                continue;
-            }
-
-            returnRankMarker(card->moveOut(marker));
-        }
+        FormUtils::clearRankMarker(card);
     }
 
     ui::CardWidget* FormCards::findGridCardAt(const Vec2& pos)

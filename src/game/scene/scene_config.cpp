@@ -39,6 +39,7 @@ namespace game
 			config.id = item.value("id", "");
 			config.name = Trans(item.value("name", ""));
 			config.desc = Trans(item.value("desc", ""));
+			config.icon = item.value("icon", "");
 			config.level = item.value("level", 1);
 			config.play_type = getGamePlayType(item.value("play_type", ""));
 			config.map_path = item.value("map_path", "");

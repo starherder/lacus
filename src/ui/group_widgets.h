@@ -102,7 +102,7 @@ public:
     ExpandGroup(const std::string& name, Widget* parent = nullptr);
     ~ExpandGroup();
 
-    std::vector<Widget*> items();
+    std::vector<Widget*> items() const;
 
 protected:
     bool onLoad(XmlNode* node) override;
@@ -159,6 +159,8 @@ public:
 
     const Vec2& childSize() const { return _childSize; }
     void setChildSize(const Vec2& childSize);
+
+    int getInsertIndexAt(const Vec2& pos) const;
 
 protected:
     bool onLoad(XmlNode* node) override;

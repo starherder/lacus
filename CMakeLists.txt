@@ -78,10 +78,10 @@ set(OTHER_SOURCES
 )
 
 # 递归收集所有子目录的 cpp 文件
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 # 递归收集所有头文件，用于Visual Studio工程组织
-file(GLOB_RECURSE HEADERS "src/*.h")
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "src/*.h")
 
 # Lua 源码（LuaBridge 需要底层 Lua C 库）
 file(GLOB LUA_SOURCES "ext/lua/src/*.c")

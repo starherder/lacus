@@ -3,9 +3,13 @@
 #include "form_cards.h"
 
 #include "game/ui/ui_logic_events.h"
+#include "game/ui/form_utils.h"
 #include "game/scene/object_manager.h"
 #include "game/scene/game_data.h"
+#include "game/scene/scene_config.h"
 #include "game/logic/game_logic.h"
+
+#include <algorithm>
 
 namespace game 
 {
@@ -48,7 +52,7 @@ void FormEntry::selectScene(const std::string& scene)
 {
 	_sceneFile = scene;
 
-	//showDescript();
+	showSceneInfo();
 }
 
 void FormEntry::onUpdate(float delta)
@@ -125,7 +129,50 @@ void FormEntry::showHandCards()
 	for (const auto& [cfg, handCard] : _context.gameData().getHandCards())
 	{
 		auto& props = _context.objectManager().getObjectCfgProperties(cfg);
-		cardGroup->addCard(props);
+		auto card = cardGroup->addCard(props);
+		FormUtils::addRankMarker(card, handCard.rank);
+	}
+}
+
+void FormEntry::showSceneInfo()
+{
+	auto mapConfig = _context.sceneConfig().getMapConfig(_sceneFile);
+	if (!mapConfig)
+	{
+		LogWarn("FormEntry::showSceneInfo scene config ({}) not found.", _sceneFile);
+		return;
+	}
+
+	if (auto icon = getWidget<Label>("lbl_scene_icon"))
+	{
+		if (!mapConfig->icon.empty())
+		{
+			auto tile = ui::GuiManager::inst().getCfgTexTile(mapConfig->icon);
+			if (tile)
+			{
+				icon->setTexTile(tile);
+
+				const Vec2 maxIconSize = { 320.0f, 220.0f };
+				auto tileSize = tile->rect().size();
+				auto scale = std::min(maxIconSize.x / tileSize.x, maxIconSize.y / tileSize.y);
+				icon->setSize(tileSize * scale);
+			}
+		}
+	}
+
+	if (auto name = getWidget<Label>("lbl_scene_name"))
+	{
+		name->setText(mapConfig->name);
+	}
+
+	if (auto level = getWidget<Label>("lbl_scene_level"))
+	{
+		level->setText("Lv." + std::to_string(mapConfig->level));
+	}
+
+	if (auto desc = getWidget<TextBox>("txt_scene_desc"))
+	{
+		desc->setText(mapConfig->desc);
 	}
 }
 }

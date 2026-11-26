@@ -218,6 +218,31 @@ namespace ui
         }
     }
 
+    int CardGroup::getInsertIndexAt(const Vec2& pos) const
+    {
+        int index = 0;
+        for (const auto& widget : children())
+        {
+            auto card = dynamic_cast<CardWidget*>(widget.get());
+            if (!card)
+            {
+                continue;
+            }
+
+            auto rect = card->getAbsRect();
+            float middle = (_coord == Coordinate::Horizontal) ? rect.x + rect.w * 0.5f : rect.y + rect.h * 0.5f;
+            float value = (_coord == Coordinate::Horizontal) ? pos.x : pos.y;
+            if (value < middle)
+            {
+                return index;
+            }
+
+            index++;
+        }
+
+        return index;
+    }
+
     void CardGroup::onChildSelect(CardWidget* card, bool selected)
     {
         if(selected)
@@ -254,6 +279,8 @@ namespace ui
         {
             tileChildren();
         }
+
+        refreshChildIndices();
     }
 
     void CardGroup::overlapChildren()
@@ -310,6 +337,16 @@ namespace ui
             float y = (_coord == Coordinate::Vertical) ? _padding.y + index * (_space + card->size().y) : _padding.y;
 
             card->setPos({x, y});
+            index++;
+        }
+    }
+
+    void CardGroup::refreshChildIndices()
+    {
+        int index = 0;
+        for (auto& widget : children())
+        {
+            widget->setData("index", index);
             index++;
         }
     }
