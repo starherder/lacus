@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <form maximize="true" accept_event="true">
-    <vlayout name="vlay_bg" ground_color="#00000088">
+    <vlayout name="vlay_bg" ground_color="#000000BB">
         <widget />
         <hlayout name="hlay_center" size="0,300">
             <widget />
-            <vlayout size="500,0" ground_color="#00FF0077" border_color="#007700FF" border_size="2">
+            <vlayout size="500,0" ground_color="#00FF0077" border_color="#005500FF" border_size="3">
                 <widget />
-                <label name="lbl_tip" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="20" />
+                <label name="lbl_tip" text="啊！多好美好的一天啊！" text_color="#CCCCCCFF" font_name="fonts/msyh.ttf" font_size="25" />
                 <widget />
                 <hlayout name="hlay_footer" size="0,80" pad="10,10">
                     <hlayout name="hlay_confirm_cancel" visible="false">
-                        <button name="btn_confirm" text="确认" text_color="#333333FF" font_size="25" />
-                        <button name="btn_cancel" text="取消" text_color="#333333FF" font_size="25" />
+                        <button name="btn_confirm" text="确认" text_color="#333333FF" font_size="30" />
+                        <button name="btn_cancel" text="取消" text_color="#333333FF" font_size="30" />
                     </hlayout>
                     <hlayout name="hlay_ok">
                         <widget />
-                        <button name="btn_ok" text="知道了" size="160,0" text_color="#333333FF" font_size="25" />
+                        <button name="btn_ok" text="知道了" size="160,0" text_color="#333333FF" font_size="30" />
                         <widget />
                     </hlayout>
                 </hlayout>

@@ -340,7 +340,7 @@ namespace game
 		}
 
 		auto comm = context().registry().try_get<CompComm>(entity);
-		return comm && comm->type == ObjectType::Npc;
+		return comm && comm->type == ObjectType::Npc && comm->side == CampSide::Gangster;
 	}
 
 	void GamePlayTileBattle::onSkipMove()
