@@ -23,14 +23,21 @@ namespace game
 
         void onDropCard(ui::GuiManager::DraggingPtr ptr);
 
-        void loadCards();
-        void onConfirm(ui::Button* btn);
         bool onDropRankMarker(ui::GuiManager::DraggingPtr ptr);
+
+        void onConfirm(ui::Button* btn);
+        
+        void loadCards();
+
         void attachRankMarker(ui::CardWidget* card, ui::WidgetPtr marker);
+
         ui::WidgetPtr takeRankMarker(RoleRank rank);
+
         void returnRankMarker(ui::WidgetPtr marker);
         void returnCardRankMarkers(ui::CardWidget* card);
+
         ui::CardWidget* findGridCardAt(const Vec2& pos);
+        
         static const char* rankMarkerName(RoleRank rank);
         static RoleRank markerRank(ui::Label* marker);
 
