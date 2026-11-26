@@ -35,7 +35,7 @@
     "font_file": "fonts/msyh.ttf",
     "font_size": 18,
     "texture": "chess:guard",
-    "ground_texture": "chess:chess_bg"
+    "ground_texture": "demo_chess:jade_white"
   },
   "base_prop": {
     "level": 1,

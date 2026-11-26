@@ -1,0 +1,13 @@
+<tilset name="demo_chess">
+  <texture file="textures/demo/ground_tiles_jade_added.png" >
+    <tile name="chess_bg" rect="4,4,76,76" />
+    <tile name="chess_bg_dark" rect="84,4,76,76" />
+    <tile name="grass" rect="244,4,76,76" />
+    <tile name="terrain_red" rect="4,84,76,76" />
+    <tile name="terrain_gray" rect="84,84,76,76" />
+    <tile name="jade_white" rect="164,84,76,76" />
+    <tile name="jade_green" rect="244,84,76,76" />
+    <tile name="terrain_brown" rect="4,164,76,76" />
+    <tile name="terrain_tile" rect="84,164,76,76" />
+  </texture>
+</tilset>

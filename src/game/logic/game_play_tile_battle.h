@@ -62,6 +62,9 @@ namespace game
 		void unselectAll();
 		void onSelectChange(const EntitySet& selectEntities);
 		bool canSelectEntity(entt::entity entity);
+		bool isSelectedEntity(entt::entity entity) const;
+		bool hasStepBattleBehavior(entt::entity entity);
+		void setBehaviorTreeEnabled(entt::entity entity, bool enabled);
 
 		void startAutoFightFlow(entt::entity actor);
 

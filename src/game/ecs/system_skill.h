@@ -49,7 +49,7 @@ namespace game
 
         entt::entity createTrapAtPos(entt::entity srcid, const Vec2& target, entt::entity skill, ShapeType shape_type);
 
-        void createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill);
+        void createWaveRange(int r, entt::entity srcid, const Vec2& targetPos, entt::entity skill);
 
         void createLightningToTarget(entt::entity srcid, entt::entity target, entt::entity skill);
     };

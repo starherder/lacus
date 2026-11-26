@@ -288,6 +288,7 @@ namespace game
 		auto selviews = context().registry().view<CompSelection>();
 		for (auto& ent : selviews)
 		{
+			setBehaviorTreeEnabled(ent, true);
 			context().registry().remove<CompSelection>(ent);
 		}
 
@@ -317,6 +318,7 @@ namespace game
 			{
 				// not selected, select now
 				context().registry().emplace_or_replace<CompSelection>(ent, CompSelection{});
+				setBehaviorTreeEnabled(ent, false);
 			}
 		}
 		
@@ -325,6 +327,7 @@ namespace game
 			if (!intersetVec.contains(ent))
 			{
 				// not select now, unselect
+				setBehaviorTreeEnabled(ent, true);
 				context().registry().remove<CompSelection>(ent);
 			}
 		}
@@ -341,6 +344,35 @@ namespace game
 
 		auto comm = context().registry().try_get<CompComm>(entity);
 		return comm && comm->type == ObjectType::Npc && comm->side == CampSide::Gangster;
+	}
+
+	bool GamePlayTileBattle::isSelectedEntity(entt::entity entity) const
+	{
+		return _selectEntities.contains(entity);
+	}
+
+	bool GamePlayTileBattle::hasStepBattleBehavior(entt::entity entity)
+	{
+		auto behavior = context().registry().try_get<CompBehavior>(entity);
+		return behavior && behavior->bevtree && behavior->bevtree->name() == "npc_step_battle";
+	}
+
+	void GamePlayTileBattle::setBehaviorTreeEnabled(entt::entity entity, bool enabled)
+	{
+		auto behavior = context().registry().try_get<CompBehavior>(entity);
+		if (!behavior || !behavior->bevtree)
+		{
+			return;
+		}
+
+		if (enabled)
+		{
+			behavior->bevtree->start();
+		}
+		else
+		{
+			behavior->bevtree->stop();
+		}
 	}
 
 	void GamePlayTileBattle::onSkipMove()
@@ -532,8 +564,7 @@ namespace game
 
 			if (_turnType == GameTurnType::Fighting)
 			{
-				auto behavior = context().registry().try_get<CompBehavior>(actor);
-				if (!behavior || !behavior->bevtree || behavior->bevtree->name() != "npc_step_battle")
+				if (isSelectedEntity(actor) || !hasStepBattleBehavior(actor))
 				{
 					startAutoFightFlow(actor);
 				}
@@ -572,8 +603,7 @@ namespace game
 	{
 		if (_turnType == GameTurnType::Moving)
 		{
-			auto behavior = context().registry().try_get<CompBehavior>(actor);
-			if (behavior && behavior->bevtree && behavior->bevtree->name() == "npc_step_battle")
+			if (!isSelectedEntity(actor) && hasStepBattleBehavior(actor))
 			{
 				return;
 			}

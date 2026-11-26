@@ -303,8 +303,13 @@ namespace game
 			return;
 		}
 
-		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
-		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
+		auto pCompSrcTrans = _context.registry().try_get<CompTransform>(srcid);
+		auto pCompDstTrans = _context.registry().try_get<CompTransform>(tarid);
+		if (!pCompSrcTrans || !pCompDstTrans)
+		{
+			return;
+		}
+		auto targetPos = pCompDstTrans->position;
 
 		auto wave = _context.registry().create();
 		_context.registry().emplace<CompWave>(wave);
@@ -312,14 +317,22 @@ namespace game
 		auto& compWave = _context.registry().get<CompWave>(wave);
 		compWave.wave_ticks = 0;
 		compWave.cur_wave = 0;
-		compWave.onUpdate = [this, srcid, tarid, skill, wave](int64_t tick) 
+		compWave.onUpdate = [this, srcid, targetPos, skill, wave](int64_t tick)
 		{
-			auto& waveCfg = _context.registry().get<CompWaveCfg>(skill);
-			auto& compWave = _context.registry().get<CompWave>(wave);
+			auto pWaveCfg = _context.registry().try_get<CompWaveCfg>(skill);
+			auto pCompWave = _context.registry().try_get<CompWave>(wave);
+			auto pCompSrcTrans = _context.registry().try_get<CompTransform>(srcid);
+			if (!pWaveCfg || !pCompWave || !pCompSrcTrans)
+			{
+				_context.scene().destroyObject(wave);
+				return;
+			}
+			auto& waveCfg = *pWaveCfg;
+			auto& compWave = *pCompWave;
 
 			if (compWave.wave_ticks == 0)
 			{
-				createWaveRange(compWave.cur_wave, srcid, tarid, skill);
+				createWaveRange(compWave.cur_wave, srcid, targetPos, skill);
 				compWave.cur_wave++;
 			}
 			else if (compWave.wave_ticks >= waveCfg.interval)
@@ -460,11 +473,17 @@ namespace game
 		}
 	}
 
-	void SkillSystem::createWaveRange(int r, entt::entity srcid, entt::entity tarid, entt::entity skill)
+	void SkillSystem::createWaveRange(int r, entt::entity srcid, const Vec2& targetPos, entt::entity skill)
 	{
-		auto& waveCfg = _context.registry().get<CompWaveCfg>(skill);
-		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
-		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
+		auto pWaveCfg = _context.registry().try_get<CompWaveCfg>(skill);
+		auto pCompSrcTrans = _context.registry().try_get<CompTransform>(srcid);
+		if (!pWaveCfg || !pCompSrcTrans)
+		{
+			return;
+		}
+
+		auto& waveCfg = *pWaveCfg;
+		auto& compSrcTrans = *pCompSrcTrans;
 
 		auto normlToCoord = [](const Vec2& dir) {
 			float x = std::fabs(dir.x) > std::fabs(dir.y) ? dir.x : 0;
@@ -474,7 +493,7 @@ namespace game
 
 		if (waveCfg.type == 1)
 		{
-			auto dir = normlToCoord(compDstTrans.position - compSrcTrans.position);
+			auto dir = normlToCoord(targetPos - compSrcTrans.position);
 			auto trapPos = compSrcTrans.position + _context.scene().tileSize() * dir * (float)(r+1);
 			createTrapAtPos(srcid, trapPos, skill, ShapeType::Rect);
 		}
