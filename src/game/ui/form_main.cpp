@@ -1,4 +1,5 @@
 #include "form_main.h"
+#include "form_bag.h"
 #include "form_scenes.h"
 #include "form_config.h"
 #include "form_start.h"
@@ -34,6 +35,12 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
     if (btnConfig)
     {
         btnConfig->on_click.connect(this, &FormMain::onShowConfig);
+    }
+
+    auto btnBag = getWidget<Button>("btn_bag");
+    if (btnBag)
+    {
+        btnBag->on_click.connect(this, &FormMain::onShowBag);
     }
 
     _cardGroup = getWidget<CardGroup>("card_group");
@@ -136,6 +143,15 @@ void FormMain::onShowScenes(Button* btn)
 void FormMain::onShowConfig(Button* btn)
 {
     ui::GuiManager::inst().showForm<FormConfig>("form_config", _context);
+}
+
+void FormMain::onShowBag(Button* btn)
+{
+    auto formBag = ui::GuiManager::inst().showForm<FormBag>("form_bag", _context);
+    if (formBag)
+    {
+        formBag->refreshBag();
+    }
 }
 
 

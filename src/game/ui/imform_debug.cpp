@@ -133,6 +133,9 @@ void ImFormDebug::draw()
             _context->scene().camera().setLimitArea(camera_limit, area);
         }
 
+        ImGui::SameLine();
+        ImGui::Checkbox("show turn prompt", &_showTurnPrompt);
+
         ImGui::Separator();
 
         if (ImGui::Button("sky")) 
@@ -307,6 +310,8 @@ void ImFormDebug::draw()
     {
         drawStoryWindow();
     }
+
+    drawTurnPrompt();
 }
 
 void ImFormDebug::drawSceneInfo()
@@ -324,6 +329,31 @@ void ImFormDebug::drawSceneInfo()
         
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "grid: {%d, %d}", _curGridInfo.grid.x, _curGridInfo.grid.y);
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "objs: %lu", _curGridInfo.objs.size());
+}
+
+void ImFormDebug::drawTurnPrompt()
+{
+    if (!_showTurnPrompt)
+    {
+        return;
+    }
+
+    const bool fighting = _turnInfo == (int)GameTurnType::Fighting;
+    const char* text = fighting ? "战斗" : "移动";
+    const float fontSize = 50.0f;
+    const ImU32 textColor = fighting ? IM_COL32(255, 110, 90, 180) : IM_COL32(120, 220, 255, 180);
+
+    auto viewport = ImGui::GetMainViewport();
+    auto font = ImGui::GetFont();
+    auto textSize = font->CalcTextSizeA(fontSize, 10000.0f, 0.0f, text);
+    ImVec2 pos{
+        viewport->Pos.x + (viewport->Size.x - textSize.x) * 0.5f,
+        viewport->Pos.y + 36.0f
+    };
+
+    auto drawList = ImGui::GetForegroundDrawList();
+    drawList->AddText(font, fontSize, ImVec2(pos.x + 3.0f, pos.y + 3.0f), IM_COL32(0, 0, 0, 110), text);
+    drawList->AddText(font, fontSize, pos, textColor, text);
 }
 
 void ImFormDebug::drawStoryWindow()

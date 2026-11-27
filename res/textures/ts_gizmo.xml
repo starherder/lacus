@@ -2,5 +2,13 @@
   <texture file="textures/demo/demo_command_icons.png" >
     <tile name="command_flag" rect="0,0,32,32" />
     <tile name="adviser_fan" rect="32,0,32,32" />
+    <tile name="item_coin" rect="64,0,32,32" />
+    <tile name="item_poision" rect="96,0,32,32" />
+    <tile name="item_medicine" rect="128,0,32,32" />
+    <tile name="item_blade" rect="160,0,32,32" />
+    <tile name="item_sword" rect="192,0,32,32" />
+    <tile name="item_wine" rect="224,0,32,32" />
+    <tile name="item_helmet" rect="256,0,32,32" />
+    <tile name="item_armor" rect="288,0,32,32" />
   </texture>
 </tilset>

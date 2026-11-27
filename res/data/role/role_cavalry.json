@@ -29,7 +29,9 @@
     "skill_combat"
   ],
   "items": [
-    "item_coin"
+    "item_coin",
+    "item_sword",
+    "item_helmet"
   ],
   "trigger": null
 }

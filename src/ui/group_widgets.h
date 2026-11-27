@@ -36,7 +36,7 @@ public:
 
     void removeChild(const std::string& name);
 
-    void clear();
+    virtual void clear();
 
     void bringTop(Widget* child);
     void bringBottom(Widget* child);
@@ -102,6 +102,8 @@ public:
     ExpandGroup(const std::string& name, Widget* parent = nullptr);
     ~ExpandGroup();
 
+    void clear() override;
+
     std::vector<Widget*> items() const;
 
 protected:
@@ -137,6 +139,9 @@ protected:
 
     class SliderBar* _horizonSlider = nullptr;
     class SliderBar* _verticalSlider = nullptr;
+
+    bool _scrollHorizontal = false;
+    bool _scrollVertical = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////

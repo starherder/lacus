@@ -27,6 +27,8 @@
   "skills": [
     "skill_earthquake"
   ],
-  "items": [],
+  "items": [
+    "item_armor"
+  ],
   "trigger": null
 }

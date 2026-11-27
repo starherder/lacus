@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form size="720,520" pos="280,80" ground_color="#005555DD" border_color="#555555FF" border_size="1">
+    <vlayout name="vlay_bg" ground_color="#335F66EE" border_color="#555555FF" border_size="1">
+        <hlayout name="hlay_title" size="0,60" pad="10,10">
+            <widget size="20,0"/>
+            <label name="lbl_title" size="160,0" text="背包" text_color="#FFCCAAFF" font_name="fonts/msyh.ttf" font_size="28"/>
+            <widget/>
+            <button name="btn_clear" size="120,0" text="清空" ground_color="#AA5544FF" text_color="#FFFFFFFF" font_name="fonts/msyh.ttf" font_size="20"/>
+            <widget size="12,0"/>
+            <button name="btn_close" size="120,0" text="关闭" text_color="#555555FF" font_name="fonts/msyh.ttf" font_size="20"/>
+            <widget size="20,0"/>
+        </hlayout>
+
+        <gridgroup name="grid_bag" pad="18,18" space="12,12" child_size="150,72" rows="5" cols="4" ground_color="#F6FAF2EE" border_color="#2F6B3FFF" border_size="2">
+        </gridgroup>
+    </vlayout>
+</form>

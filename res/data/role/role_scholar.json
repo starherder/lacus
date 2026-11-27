@@ -28,7 +28,8 @@
     "skill_lightning"
   ],
   "items": [
-    "item_coin"
+    "item_coin",
+    "item_wine"
   ],
   "trigger": null
 }

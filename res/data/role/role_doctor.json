@@ -29,7 +29,8 @@
   ],
   "items": [
     "item_medicine",
-    "item_medicine"
+    "item_medicine",
+    "item_wine"
   ],
   "trigger": null
 }

@@ -1,0 +1,22 @@
+{
+  "id": "item_wine",
+  "name": "text_item_name_wine",
+  "type": "item",
+  "desc": "text_item_desc_wine",
+  "icon": "gizmo:item_wine",
+
+  "display": {
+    "size": "32,32",
+    "texture": "gizmo:item_wine",
+    "font_file": "fonts/msyh.ttf",
+    "font_size": 12
+  },
+
+  "pickable": {
+    "effect": "effect_pick_use",
+    "amount": 1,
+    "pick_use": true,
+    "use_ticks": 1000,
+    "func": "hp+300"
+  }
+}

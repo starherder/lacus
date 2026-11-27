@@ -28,6 +28,9 @@
     "skill_wave_range",
     "skill_archery"
   ],
-  "items": [],
+  "items": [
+    "item_wine",
+    "item_armor"
+  ],
   "trigger": null
 }

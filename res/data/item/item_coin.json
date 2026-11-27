@@ -3,9 +3,11 @@
 	"name" : "text_item_name_coin",
 	"type" : "item",
 	"desc" : "text_item_desc_coin",	
+	"icon": "gizmo:item_coin",
 
 	"display": {
 		"size": "32,32",
+		"texture": "gizmo:item_coin",
 		"#groud_color": "#FFFFAAFF",
 		"#border_color": "#FFFF55FF",
 		"#font_color": "#555555FF",

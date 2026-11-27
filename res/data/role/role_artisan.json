@@ -29,7 +29,9 @@
     "skill_earthquake"
   ],
   "items": [
-    "item_coin"
+    "item_coin",
+    "item_helmet",
+    "item_armor"
   ],
   "trigger": null
 }

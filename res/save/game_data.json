@@ -4,6 +4,32 @@
     "demo_4_1"
   ],
   "hand_cards": {},
+  "bag_items": {
+    "item_coin": {
+      "configId": "item_coin",
+      "amount": 120
+    },
+    "item_sword": {
+      "configId": "item_sword",
+      "amount": 1
+    },
+    "item_armor": {
+      "configId": "item_armor",
+      "amount": 1
+    },
+    "item_helmet": {
+      "configId": "item_helmet",
+      "amount": 1
+    },
+    "item_blade": {
+      "configId": "item_blade",
+      "amount": 3
+    },
+    "item_poision": {
+      "configId": "item_poision",
+      "amount": 2
+    }
+  },
   "unlocked_cards": [
     "role_archer",
     "role_artisan",

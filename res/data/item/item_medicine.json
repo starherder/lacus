@@ -3,9 +3,11 @@
   "name": "text_item_name_medicine",
   "type": "item",
   "desc": "text_item_desc_medicine",
+  "icon": "gizmo:item_medicine",
 
   "display": {
     "size": "32,32",
+    "texture": "gizmo:item_medicine",
     "#groud_color": "#AAFFAAFF",
     "#border_color": "#55FF55FF",
     "#font_color": "#555555FF",

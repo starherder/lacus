@@ -28,10 +28,13 @@ namespace game {
 
         void onShowConfig(Button* btn);
 
+        void onShowBag(Button* btn);
+
 
     private:
         ui::Button* _btnScenes = nullptr;
         ui::Button* _btnConfig = nullptr;
+        ui::Button* _btnBag = nullptr;
 
         ui::CardGroup* _cardGroup = nullptr;
     };

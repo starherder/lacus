@@ -28,6 +28,9 @@
     "skill_sprint",
     "skill_combat"
   ],
-  "items": [],
+  "items": [
+    "item_helmet",
+    "item_armor"
+  ],
   "trigger": null
 }

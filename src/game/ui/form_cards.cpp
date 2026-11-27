@@ -1,6 +1,7 @@
 #include "form_cards.h"
 #include "game/scene/object_manager.h"
 #include "game/scene/game_data.h"
+#include "game/scene/save_manager.h"
 #include "game/ui/form_tip.h"
 #include "game/ui/form_utils.h"
 #include "utility/translator.h"
@@ -97,6 +98,9 @@ namespace game
 
     void FormCards::loadCards()
     {
+        _gridGroup->clear();
+        _cardGroup->clear();
+
         auto& objectManager = _context.objectManager();
         auto& gameData = _context.gameData();
         const auto& handCards = _context.gameData().getHandCards();
@@ -159,6 +163,7 @@ namespace game
         }
 
         _context.gameData().setHandCards(std::move(handCards));
+        SaveManager::inst().saveGameData(_context.resPath() / "save/game_data.json", _context.gameData());
         onHandCardsConfirmed();
     }
 

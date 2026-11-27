@@ -60,6 +60,8 @@ namespace game
         void drawSkillWindow();
 
         void drawSceneInfo();
+
+        void drawTurnPrompt();
         
         void onMouseLeftClick(const Vec2& pos);
 
@@ -83,7 +85,8 @@ namespace game
         std::vector<std::string> _emotionNames;
 
         GridInfo _curGridInfo;
-        int _turnInfo;
+        int _turnInfo = 1;
+        bool _showTurnPrompt = true;
     };
 
 }

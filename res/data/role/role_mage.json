@@ -30,7 +30,8 @@
   ],
   "items": [
     "item_coin",
-    "item_poision"
+    "item_poision",
+    "item_sword"
   ],
   "trigger": null
 }

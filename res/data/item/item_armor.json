@@ -1,0 +1,21 @@
+{
+  "id": "item_armor",
+  "name": "text_item_name_armor",
+  "type": "item",
+  "desc": "text_item_desc_armor",
+  "icon": "gizmo:item_armor",
+
+  "display": {
+    "size": "32,32",
+    "texture": "gizmo:item_armor",
+    "font_file": "fonts/msyh.ttf",
+    "font_size": 12
+  },
+
+  "pickable": {
+    "effect": "golden_trail",
+    "amount": 1,
+    "pick_use": false,
+    "use_ticks": 1000
+  }
+}

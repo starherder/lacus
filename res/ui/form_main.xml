@@ -7,6 +7,7 @@
         <widget accept_event="false"/>
         <button name="btn_scenes" size="100,50" text="场景" text_color="#555555FF" text_font="fonts/msyh.ttf" font_size="20" />
         <button name="btn_config" size="100,50" text="配置" text_color="#555555FF" text_font="fonts/msyh.ttf" font_size="20" />
+        <button name="btn_bag" size="100,50" text="背包" text_color="#555555FF" text_font="fonts/msyh.ttf" font_size="20" />
         <button name="btn_close" size="100,50" text="退出" text_color="#555555FF" text_font="fonts/msyh.ttf" font_size="20" />
       </hlayout>
   

@@ -29,7 +29,9 @@
     "skill_wave"
   ],
   "items": [
-    "item_coin"
+    "item_coin",
+    "item_blade",
+    "item_wine"
   ],
   "trigger": null
 }

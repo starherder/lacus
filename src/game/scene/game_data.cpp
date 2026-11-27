@@ -6,6 +6,7 @@
 namespace game
 {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HandCard, configId, rank)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BagItem, configId, amount)
 
 	GameData::GameData() = default;
 
@@ -90,6 +91,40 @@ namespace game
 		return _hasUnlockedCardData;
 	}
 
+	const BagMap& GameData::getBagItems() const
+	{
+		return _bagItems;
+	}
+
+	void GameData::addBagItem(const std::string& cfgid, int amount)
+	{
+		if (cfgid.empty() || amount <= 0)
+		{
+			return;
+		}
+
+		auto& item = _bagItems[cfgid];
+		item.configId = cfgid;
+		item.amount += amount;
+	}
+
+	BagItem* GameData::getBagItem(const std::string& cfgid)
+	{
+		auto it = _bagItems.find(cfgid);
+		return (it == _bagItems.end()) ? nullptr : &it->second;
+	}
+
+	const BagItem* GameData::getBagItem(const std::string& cfgid) const
+	{
+		auto it = _bagItems.find(cfgid);
+		return (it == _bagItems.end()) ? nullptr : &it->second;
+	}
+
+	void GameData::clearBagItems()
+	{
+		_bagItems.clear();
+	}
+
 	const SceneSet& GameData::getClearedScenes()
 	{
 		return _clearedScenes;
@@ -111,6 +146,7 @@ namespace game
 			{ "hand_cards", _handCards },
 			{ "unlocked_cards", _unlockedCards },
 			{ "cleared_scenes", _clearedScenes },
+			{ "bag_items", _bagItems },
 		};
 	}
 
@@ -119,10 +155,12 @@ namespace game
 		auto handCards = json.value("hand_cards", CardMap{});
 		auto unlockedCards = json.value("unlocked_cards", CardSet{});
 		auto clearedScenes = json.value("cleared_scenes", SceneSet{});
+		auto bagItems = json.value("bag_items", BagMap{});
 
 		_handCards = std::move(handCards);
 		_unlockedCards = std::move(unlockedCards);
 		_clearedScenes = std::move(clearedScenes);
+		_bagItems = std::move(bagItems);
 		_hasUnlockedCardData = json.contains("unlocked_cards");
 
 		if (!_hasUnlockedCardData)

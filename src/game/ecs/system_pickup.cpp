@@ -1,5 +1,8 @@
 #include "system_pickup.h"
 #include "game/game_config.h"
+#include "game/scene/game_data.h"
+
+#include <algorithm>
 
 namespace game 
 {
@@ -57,6 +60,8 @@ namespace game
 
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
+        auto cfgid = nameComp.cfg_id;
+        auto amount = std::max(1, pickableComp.amount);
 
         _context.objectManager().createParticleOnObject(obj, pickableComp.effect);
 
@@ -64,19 +69,19 @@ namespace game
                                     .to(uipos.x, uipos.y)
                                     .via("quadraticIn")
                                     .during(pickableComp.use_ticks)
-                                    .onStep([this, role, obj](auto& t, float x, float y) {
+                                    .onStep([this, role, obj, cfgid, amount](auto& t, float x, float y) {
                                         if (!_context.registry().valid(obj)) 
                                         {
                                             return false;
                                         }
 
-                                        auto& nameComp = _context.registry().get<CompNameId>(obj);
                                         auto& transComp = _context.registry().get<CompTransform>(obj);
                                         //transComp.position = {x,y };
                                         _context.scene().setObjectPos(obj, { x, y });
 
                                         if (t.isFinished()) 
                                         {
+                                            _context.gameData().addBagItem(cfgid, amount);
                                             _context.scene().destroyObject(obj);
                                             _context.dispatcher().trigger<EvtRolePickItemFinish>(EvtRolePickItemFinish{ role, obj });
                                         }

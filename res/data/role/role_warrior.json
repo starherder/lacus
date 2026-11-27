@@ -24,7 +24,9 @@
     "skill_combat"
   ],
   "items": [
-    "item_coin"
+    "item_coin",
+    "item_blade",
+    "item_armor"
   ],
   "trigger": null
 }

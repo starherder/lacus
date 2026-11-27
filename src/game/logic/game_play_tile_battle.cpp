@@ -509,6 +509,15 @@ namespace game
 
 		auto rect = context().camera().projectRect(_selectRect);
 		context().painter().drawRect(Color::Red, rect, 0, 2);
+		
+#ifdef _DevelopMode
+    auto form = imgui::ImFormManager::inst().getForm<ImFormDebug>("ImFormDebug");
+    auto pBotPlay = dynamic_cast<GamePlayTileBattle*>(_gamePlay.get());
+    if (form && pBotPlay)
+    {
+        form->showTurnInfo((int)pBotPlay->getTurn());
+    }
+#endif
 	}
 
 	bool GamePlayTileBattle::hasMovingSelectedEntity()

@@ -14,11 +14,18 @@ namespace game
 		RoleRank rank = RoleRank::Soldier;
 	};
 
+	struct BagItem
+	{
+		std::string configId;
+		int amount = 0;
+	};
+
 	using engine::nJson;
 	using StringVector = std::vector<std::string>;
 	using CardMap = std::map<std::string, HandCard>;
 	using CardSet = std::set<std::string>;
 	using SceneSet = std::set<std::string>;
+	using BagMap = std::map<std::string, BagItem>;
 
 	class GameData
 	{
@@ -77,6 +84,21 @@ namespace game
 		// 判断存档是否包含解锁数据。
 		bool hasUnlockedCardData() const;
 
+		// 获取当前背包物品。
+		const BagMap& getBagItems() const;
+
+		// 添加或叠加背包物品。
+		void addBagItem(const std::string& cfgid, int amount = 1);
+
+		// 查找背包物品。
+		BagItem* getBagItem(const std::string& cfgid);
+
+		// 查找背包物品。
+		const BagItem* getBagItem(const std::string& cfgid) const;
+
+		// 清空背包。
+		void clearBagItems();
+
 		// 获取已通关场景。
 		const SceneSet& getClearedScenes();
 
@@ -98,6 +120,8 @@ namespace game
 		CardSet _unlockedCards;
 
 		SceneSet _clearedScenes;
+
+		BagMap _bagItems;
 
 		bool _hasUnlockedCardData = false;
 	};

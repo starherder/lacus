@@ -334,16 +334,18 @@ namespace ui
         _contentPos = {0, 0};
         _contentSize = size();
 
-        setMovable(true);
+        setMovable(false);
 
         setAcceptEvent(true);
 
         _horizonSlider = createChild<ui::SliderBar>("__h_slider__");
         _horizonSlider->setDirection(ui::Coordinate::Horizontal);
+        _horizonSlider->rawSetVisible(false);
         _horizonSlider->on_value_changed.connect(this, &ExpandGroup::onHorizontalSlide);
 
         _verticalSlider = createChild<ui::SliderBar>("__v_slider__");
         _verticalSlider->setDirection(ui::Coordinate::Vertical);
+        _verticalSlider->rawSetVisible(false);
         _verticalSlider->on_value_changed.connect(this, &ExpandGroup::onVerticalSlide);
 
         adjustScrollbar();
@@ -351,6 +353,23 @@ namespace ui
 
     ExpandGroup::~ExpandGroup()
     {
+    }
+
+    void ExpandGroup::clear()
+    {
+        std::vector<std::string> contentNames;
+        for (auto& child : children())
+        {
+            if (isContentWidget(child.get()))
+            {
+                contentNames.push_back(child->name());
+            }
+        }
+
+        for (const auto& name : contentNames)
+        {
+            removeChild(name);
+        }
     }
 
     bool ExpandGroup::onLoad(XmlNode* node)
@@ -409,13 +428,13 @@ namespace ui
 
     void ExpandGroup::onMouseLeftDrag(const Vec2& pos, const Vec2& offset)
     {
-        if (_horizonSlider)
+        if (_scrollHorizontal && _horizonSlider)
         {
             float val = _horizonSlider->value() - offset.x;
             _horizonSlider->setValue(val);
         }
 
-        if (_verticalSlider)
+        if (_scrollVertical && _verticalSlider)
         {
             float val = _verticalSlider->value() - offset.y;
             _verticalSlider->setValue(val);
@@ -424,7 +443,7 @@ namespace ui
 
     void ExpandGroup::onMouseWheel(const Vec2& pos, float dir)
     {
-        if (_verticalSlider)
+        if (_scrollVertical && _verticalSlider)
         {
             float val = _verticalSlider->value() - dir * 10;
             _verticalSlider->setValue(val);
@@ -512,6 +531,11 @@ namespace ui
 
         _contentPos.x = showHorizontal ? std::clamp(_contentPos.x, -maxHorizontal, 0.0f) : 0.0f;
         _contentPos.y = showVertical ? std::clamp(_contentPos.y, -maxVertical, 0.0f) : 0.0f;
+
+        // 只有内容真正超出显示区域时才允许拖动/滚轮滚动。
+        _scrollHorizontal = showHorizontal;
+        _scrollVertical = showVertical;
+        setMovable(_scrollHorizontal || _scrollVertical);
 
         if (_horizonSlider)
         {

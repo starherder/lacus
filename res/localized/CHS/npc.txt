@@ -89,6 +89,16 @@ text_spawner_desc_5="产生神仙的刷怪器"
 text_item_name_coin=金币
 text_item_name_poision=毒药
 text_item_name_medicine=解药
+text_item_name_blade=刀
+text_item_desc_blade=常见短柄战刀，可作为战利品收进背包。
+text_item_name_sword=剑
+text_item_desc_sword=轻便长剑，可作为战利品收进背包。
+text_item_name_wine=酒
+text_item_desc_wine=烈酒一壶，拾取后回复少量生命。
+text_item_name_helmet=盔
+text_item_desc_helmet=旧制战盔，可作为战利品收进背包。
+text_item_name_armor=甲
+text_item_desc_armor=札甲残件，可作为战利品收进背包。
 
 buff_name_poision=毒
 buff_name_medicine=解
