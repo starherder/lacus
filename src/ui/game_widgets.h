@@ -106,6 +106,8 @@ namespace ui
 
         void onChildMouseEnter(CardWidget* card);
         void onChildMouseLeave(CardWidget* card);
+        void restoreHoveredCard();
+        int getChildIndex(Widget* child) const;
 
         bool onLoad(XmlNode* node);
 
@@ -117,6 +119,9 @@ namespace ui
         bool _overlap = false;
 
         XmlNode* _tempCardNode = nullptr;
+
+        CardWidget* _hoverCard = nullptr;
+        int _hoverCardIndex = -1;
 	};
 
 

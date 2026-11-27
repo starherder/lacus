@@ -398,7 +398,8 @@ namespace game
 				return createSpawner(json);
 			}break;
 			default:
-			break;
+			{
+			}break;
 		}
 
 		return entt::null;

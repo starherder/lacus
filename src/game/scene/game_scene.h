@@ -63,6 +63,8 @@ namespace game {
         Vec2 mapSize();
         Vec2 tileSize();
 
+        Vec2 getStartPoint() { return _startPoint; }
+
         Vec2i getGridFromPos(const Vec2& pos);
         Vec2 getGridLeftTopPos(const Vec2i& grid);
         Vec2 getGridCenterPos(const Vec2i& grid);
@@ -154,6 +156,8 @@ namespace game {
         std::unordered_map<entt::entity, BoxType> _quadBoxes;
 
         std::unique_ptr<GamePlay> _gamePlay = nullptr;
+
+        Vec2 _startPoint;
 
         // debug
         std::vector<Rect> _collisionDebugRects;

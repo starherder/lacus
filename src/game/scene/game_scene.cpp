@@ -334,15 +334,6 @@ void GameScene::onUpdate(float deltaTime)
     _camera.update(deltaTime);
 
     _gamePlay->update(deltaTime);
-
-#ifdef _DevelopMode
-    auto form = imgui::ImFormManager::inst().getForm<ImFormDebug>("ImFormDebug");
-    auto pBotPlay = dynamic_cast<GamePlayTileBattle*>(_gamePlay.get());
-    if (form && pBotPlay)
-    {
-        form->showTurnInfo((int)pBotPlay->getTurn());
-    }
-#endif
 }
 
 void GameScene::onDraw() 
@@ -503,6 +494,13 @@ entt::entity GameScene::createMapObject(const tilemap::MapObject& mapObj)
     if(ent==entt::null)
     {
         return ent;
+    }
+
+    // 如果是起始点，则记录起始点
+	auto objType = getNpcType(mapObj.type);
+    if(objType == ObjectType::StartPoint)
+    {
+        _startPoint = mapObj.pos;
     }
 
     return ent;

@@ -78,6 +78,7 @@ namespace game
 
         _toolsGroup = getWidget<Group>("hlay_tools");
         assert(_toolsGroup);
+        cacheRankMarkerToolSizes();
 
 	    ui::GuiManager::inst().on_drop.connect(this, &FormCards::onDropCard);
 
@@ -305,7 +306,11 @@ namespace game
         marker->setAcceptEvent(true);
         _toolsGroup->addWidget(marker, rankMarkerToolIndex(rank));
         marker->setScaleInGroup(false);
-        marker->setSize({ 64.0f, 39.0f });
+        auto sizeIt = _rankMarkerToolSizes.find(rank);
+        if (sizeIt != _rankMarkerToolSizes.end())
+        {
+            marker->setSize(sizeIt->second);
+        }
     }
 
     void FormCards::returnCardRankMarkers(ui::CardWidget* card)
@@ -316,6 +321,18 @@ namespace game
         }
 
         FormUtils::clearRankMarker(card);
+    }
+
+    void FormCards::cacheRankMarkerToolSizes()
+    {
+        for (auto rank : { RoleRank::Chief, RoleRank::Adviser })
+        {
+            auto marker = getWidget<Label>(rankMarkerName(rank));
+            if (marker)
+            {
+                _rankMarkerToolSizes[rank] = marker->size();
+            }
+        }
     }
 
     ui::CardWidget* FormCards::findGridCardAt(const Vec2& pos)

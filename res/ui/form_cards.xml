@@ -16,8 +16,8 @@
 
           <hlayout name="hlay_tools" pad="10,10" size="0,100" can_dropin="true" border_color="#008800FF" border_size="2">
             <label text="@ui_rank_mark" text_color="#FAFAFAFF" font_size="20" />
-            <label name="lbl_rank_chief" size="64,39" texture="ui:rank_chief" ground_color="#FFFFFFFF" can_dragout="true" border_color="#00000000" border_size="0"/>
-            <label name="lbl_rank_adviser" size="64,39" texture="ui:rank_advisor" ground_color="#FFFFFFFF" can_dragout="true" border_color="#00000000" border_size="0"/>
+            <label name="lbl_rank_chief" size="150,80" texture="ui:rank_chief" ground_color="#FFFFFFFF" can_dragout="true" border_color="#00000000" border_size="0"/>
+            <label name="lbl_rank_adviser" size="150,80" texture="ui:rank_advisor" ground_color="#FFFFFFFF" can_dragout="true" border_color="#00000000" border_size="0"/>
             <widget/>
           </hlayout>
 

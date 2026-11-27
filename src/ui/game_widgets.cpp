@@ -277,16 +277,72 @@ namespace ui
 
     void CardGroup::onChildMouseEnter(CardWidget* card)
     {
+        if (!card)
+        {
+            return;
+        }
+
+        if (getChildIndex(card) < 0)
+        {
+            restoreHoveredCard();
+            return;
+        }
+
+        restoreHoveredCard();
+        _hoverCard = card;
+        _hoverCardIndex = getChildIndex(card);
+
         auto wpos = card->pos();
         wpos.y = -20;
         card->setPos(wpos);
+        bringTop(card);
     }
     
     void CardGroup::onChildMouseLeave(CardWidget* card)
     {
-        auto wpos = card->pos();
-        wpos.y = padding().y;
-        card->setPos(wpos);
+        if (card == _hoverCard)
+        {
+            restoreHoveredCard();
+        }
+    }
+
+    void CardGroup::restoreHoveredCard()
+    {
+        if (!_hoverCard)
+        {
+            return;
+        }
+
+        auto card = _hoverCard;
+        auto index = _hoverCardIndex;
+
+        _hoverCard = nullptr;
+        _hoverCardIndex = -1;
+
+        if (getChildIndex(card) < 0)
+        {
+            return;
+        }
+
+        // 鼠标悬停只临时改变绘制层级，离开时恢复卡牌在牌组中的真实顺序。
+        auto widget = moveOut(card);
+        addWidget(widget, index);
+    }
+
+    int CardGroup::getChildIndex(Widget* child) const
+    {
+        int index = 0;
+        for (auto& widget : children())
+        {
+            if (widget.get() == child)
+            {
+                return index;
+            }
+
+            index++;
+        }
+
+        return -1;
     }
 
     void CardGroup::adjustChildren()
@@ -378,6 +434,12 @@ namespace ui
 
     void CardGroup::onChildRemoved(Widget* child)
     {
+        if (child == _hoverCard)
+        {
+            _hoverCard = nullptr;
+            _hoverCardIndex = -1;
+        }
+
         adjustChildren();
     }
 
