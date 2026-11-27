@@ -173,6 +173,11 @@ namespace game
         {
             SaveManager::inst().loadGameData(savePath, _context.gameData());
         }
+
+        if (!_context.gameData().hasUnlockedCardData())
+        {
+            _context.gameData().unlockCards(ObjectManager::inst().getAllRoleCfgIds());
+        }
     }
 
     void GameLogic::init()

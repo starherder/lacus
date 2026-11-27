@@ -17,37 +17,88 @@ namespace game
 	using engine::nJson;
 	using StringVector = std::vector<std::string>;
 	using CardMap = std::map<std::string, HandCard>;
+	using CardSet = std::set<std::string>;
 	using SceneSet = std::set<std::string>;
 
 	class GameData
 	{
 	public:
-		GameData() = default;
+		// 创建一份空的游戏数据。
+		GameData();
+
+		// 禁止移动构造。
 		GameData(GameData&&) = delete;
+
+		// 禁止拷贝构造。
 		GameData(const GameData&) = delete;
 
-		const CardMap& getHandCards() { return _handCards; }
-		void setHandCards(CardMap handCards) { _handCards = std::move(handCards); }
-		void addHandCard(const std::string& cfgid, RoleRank rank = RoleRank::Soldier) { _handCards.insert_or_assign(cfgid, HandCard{cfgid, rank}); }
-		void removeHandCard(const std::string& cfgid) { _handCards.erase(cfgid); }
-		void clearHandCard() { _handCards.clear(); }
-		HandCard* getHandCard(const std::string& cfgid) {
-			auto it = _handCards.find(cfgid);
-			return (it == _handCards.end()) ? nullptr : &it->second;
-		}
-		void setHandCardRank(const std::string& cfgid, RoleRank rank) { addHandCard(cfgid, rank); }
+		// 获取当前手牌。
+		const CardMap& getHandCards();
 
-		const SceneSet& getClearedScenes() { return _clearedScenes; }
-		bool isSceneCleared(const std::string& sceneId) const { return _clearedScenes.contains(sceneId); }
-		void setSceneCleared(const std::string& sceneId) { _clearedScenes.insert(sceneId); }
+		// 替换当前手牌。
+		void setHandCards(CardMap handCards);
 
+		// 添加或更新一张手牌。
+		void addHandCard(const std::string& cfgid, RoleRank rank = RoleRank::Soldier);
+
+		// 移除一张手牌。
+		void removeHandCard(const std::string& cfgid);
+
+		// 清空所有手牌。
+		void clearHandCard();
+
+		// 查找一张手牌。
+		HandCard* getHandCard(const std::string& cfgid);
+
+		// 设置手牌身份。
+		void setHandCardRank(const std::string& cfgid, RoleRank rank);
+
+		// 获取已解锁卡牌。
+		const CardSet& getUnlockedCards() const;
+
+		// 替换已解锁卡牌。
+		void setUnlockedCards(CardSet cards);
+
+		// 解锁一张卡牌。
+		void unlockCard(const std::string& cfgid);
+
+		// 批量解锁卡牌。
+		void unlockCards(const StringVector& cfgids);
+
+		// 锁定一张卡牌。
+		void lockCard(const std::string& cfgid);
+
+		// 清空已解锁卡牌。
+		void clearUnlockedCards();
+
+		// 判断卡牌是否已解锁。
+		bool isCardUnlocked(const std::string& cfgid) const;
+
+		// 判断存档是否包含解锁数据。
+		bool hasUnlockedCardData() const;
+
+		// 获取已通关场景。
+		const SceneSet& getClearedScenes();
+
+		// 判断场景是否已通关。
+		bool isSceneCleared(const std::string& sceneId) const;
+
+		// 标记场景已通关。
+		void setSceneCleared(const std::string& sceneId);
+
+		// 序列化游戏数据。
 		nJson toJson() const;
+
+		// 反序列化游戏数据。
 		void fromJson(const nJson& json);
 
 	private:
 		CardMap _handCards;
 
+		CardSet _unlockedCards;
+
 		SceneSet _clearedScenes;
 
+		bool _hasUnlockedCardData = false;
 	};
 }

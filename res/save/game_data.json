@@ -1,1 +1,20 @@
-{"cleared_scenes":["demo_1","demo_4_1"],"hand_cards":{}}
+{
+  "cleared_scenes": [
+    "demo_1",
+    "demo_4_1"
+  ],
+  "hand_cards": {},
+  "unlocked_cards": [
+    "role_archer",
+    "role_artisan",
+    "role_cannon",
+    "role_cavalry",
+    "role_chariot",
+    "role_doctor",
+    "role_mage",
+    "role_sailor",
+    "role_scholar",
+    "role_warrior",
+    "role_warship"
+  ]
+}

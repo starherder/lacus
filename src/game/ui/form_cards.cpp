@@ -98,11 +98,12 @@ namespace game
     void FormCards::loadCards()
     {
         auto& objectManager = _context.objectManager();
+        auto& gameData = _context.gameData();
         const auto& handCards = _context.gameData().getHandCards();
 
         for (const auto& cfg : objectManager.getAllRoleCfgIds())
         {
-            if (!handCards.contains(cfg))
+            if (gameData.isCardUnlocked(cfg) && !handCards.contains(cfg))
             {
                 _cardGroup->addCard(objectManager.getObjectCfgProperties(cfg));
             }
