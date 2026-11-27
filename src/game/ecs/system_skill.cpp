@@ -1,7 +1,10 @@
 #include "system_skill.h"
 #include "comm_comp.h"
 
+#include <algorithm>
 #include <array>
+#include <cmath>
+#include <set>
 
 namespace game 
 {
@@ -365,21 +368,21 @@ namespace game
 		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
 		auto& compDstTrans = _context.registry().get<CompTransform>(tarid);
 
-		auto& srcPos = compSrcTrans.position;
+		auto srcPos = compSrcTrans.position;
 		auto dstPos = srcPos + SafeNormal(compDstTrans.position - srcPos) * sprintComp.dis;
 		auto during = (int)(1000 * glm::distance(dstPos, srcPos) / sprintComp.speed);
 
 		sprintComp.running = true;
+		sprintComp.passed_targets.clear();
 		sprintComp.tween = tweeny::from(srcPos.x, srcPos.y)
 								.to(dstPos.x, dstPos.y)
 								.via(sprintComp.tween_mode)
-								.during(during).onStep(
+								.during(during)
+								.to(srcPos.x, srcPos.y)
+								.via(sprintComp.return_tween_mode)
+								.during(during)
+								.onStep(
 									[this, srcid, skill](auto& t, float x, float y) {
-										if (t.isFinished()) {
-											_context.scene().normalToGridPos(srcid);
-											return true;
-										}
-
 										auto pSrcSprint = _context.registry().try_get<CompSprint>(skill);
 										auto pSrcTrans = _context.registry().try_get<CompTransform>(srcid);
 										auto pSrcComm = _context.registry().try_get<CompComm>(srcid);
@@ -391,6 +394,7 @@ namespace game
 
 										if (t.isFinished()) {
 											pSrcSprint->running = false;
+											_context.scene().normalToGridPos(srcid);
 											return true;
 										}
 
@@ -398,6 +402,7 @@ namespace game
 										if (_context.scene().getGridWalkType(grid) == (int)tilemap::WalkType::Collision) 
 										{
 											pSrcSprint->running = false;
+											_context.scene().normalToGridPos(srcid);
 											LogError("next grid({}, {}) is collision.", grid.x, grid.y);
 											return true;
 										}
@@ -405,21 +410,20 @@ namespace game
 										//pSrcTrans->position = Vec2{x, y};
 										_context.scene().setObjectPos(srcid, { x,y });
 
-										auto sprintComp = _context.registry().get<CompSprint>(skill);
-										auto it = sprintComp.passed_grids.find(grid);
-										if (it == sprintComp.passed_grids.end())
+										const auto& objects = _context.scene().getObjectsInGrid(grid);
+										for (auto& obj : objects)
 										{
-											const auto& objects = _context.scene().getObjectsInGrid(grid);
-											for (auto& obj : objects)
+											if (pSrcSprint->passed_targets.contains(obj))
 											{
-												auto pObjComm = _context.registry().try_get<CompComm>(obj);
-												if (pObjComm && pObjComm->type == ObjectType::Npc && pObjComm->side != pSrcComm->side)
-												{
-													_context.dispatcher().trigger(EvtRoleOnAttack{ srcid, obj, skill });
-												}
+												continue;
 											}
 
-											sprintComp.passed_grids.insert(grid);
+											auto pObjComm = _context.registry().try_get<CompComm>(obj);
+											if (pObjComm && pObjComm->type == ObjectType::Npc && pObjComm->side != pSrcComm->side)
+											{
+												_context.dispatcher().trigger(EvtRoleOnAttack{ srcid, obj, skill });
+												pSrcSprint->passed_targets.insert(obj);
+											}
 										}
 
 										return false;
@@ -689,10 +693,12 @@ namespace game
 			.during(200);
 
 		// 生效，等200ms再销毁，立刻摧毁显得效果僵硬
-		compShoot.tween.onPoint([this, srcid, skill, target](auto& t, float x, float y) {
+		compShoot.tween.onPoint([this, srcid, skill, target, hitEffect = compProjectile.hit_effect](auto& t, float x, float y) {
 			if (t.isFinished()) {
 				return true;
 			}
+
+			_context.objectManager().createParticleEffect(target, hitEffect);
 
 			EvtSkillHitPos e;
 			e.source = srcid;
@@ -727,9 +733,39 @@ namespace game
 
 		auto& compSrcComm = _context.registry().get<CompComm>(e.source);
 		auto& compAffect = _context.registry().get<CompSkillAffect>(e.skill);
-		
-		auto objects = _context.scene().getObjectsInCircle(e.pos, compAffect.range);
-		for (auto& [d,obj] : objects) 
+		auto& skillComm = _context.registry().get<CompSkillComm>(e.skill);
+
+		std::set<entt::entity> targets;
+		if (skillComm.type == SkillType::Projectile)
+		{
+			// 抛射物的 range 表示落点周围 range * range 个格子的正方形区域。
+			int sideLength = std::max(1, static_cast<int>(std::round(compAffect.range)));
+			int minOffset = -(sideLength / 2);
+			int maxOffset = minOffset + sideLength - 1;
+			auto centerGrid = _context.scene().getGridFromPos(e.pos);
+
+			for (int y = minOffset; y <= maxOffset; ++y)
+			{
+				for (int x = minOffset; x <= maxOffset; ++x)
+				{
+					Vec2i grid = { centerGrid.x + x, centerGrid.y + y };
+					for (auto obj : _context.scene().getObjectsInGrid(grid))
+					{
+						targets.insert(obj);
+					}
+				}
+			}
+		}
+		else
+		{
+			auto objects = _context.scene().getObjectsInCircle(e.pos, compAffect.range);
+			for (auto& [d, obj] : objects)
+			{
+				targets.insert(obj);
+			}
+		}
+
+		for (auto obj : targets)
 		{
 			auto pCompDead = _context.registry().try_get<CompDead>(obj);
 			if (pCompDead) 

@@ -1,0 +1,38 @@
+{
+  "cfgid": "skill_cannon",
+  "type": "projectile",
+  "name": "text_skill_cannon",
+  "desc": "text_skill_cannon_desc",
+
+  "distance": 420,
+  "cd_ticks": 1800,
+  "sound": "audio/bot/arrow.wav",
+
+  "affect": {
+    "prev_ticks": 200,
+    "post_ticks": 200,
+
+    "func": "hp-80",
+    "target": "role",
+    "range": 3,
+
+    "event": ""
+  },
+
+  "tween": {
+    "trans_type": "scale",
+    "trans_value": 10,
+    "prev_tween": "cubicIn",
+    "post_tween": "cubicOut"
+  },
+
+  "projectile": {
+    "name": "",
+    "hit_effect":"bomb",
+    "particle": "golden_trail",
+    "texture": "",
+    "texangle": -90,
+    "speed": 900,
+    "tween": "quinticIn"
+  }
+}

@@ -781,6 +781,7 @@ namespace game
 			compProjectile.speed = projectJs.value("speed", 10.0f);
 			compProjectile.tween = projectJs.value("tween", "linear");
 			compProjectile.particle = projectJs.value("particle", "");
+			compProjectile.hit_effect = projectJs.value("hit_effect", "");
 			compProjectile.texture = projectJs.value("texture", "");
 			compProjectile.texangle = projectJs.value("texangle", 0.0f);
 
@@ -796,6 +797,7 @@ namespace game
 			sprint.speed = sprintJs.value("speed", 100.0f);
 			sprint.particle = sprintJs.value("particle", "");
 			sprint.tween_mode = sprintJs.value("tween_mode", "linear");
+			sprint.return_tween_mode = sprintJs.value("return_tween_mode", sprint.tween_mode);
 
 			_context->registry().emplace<CompSprint>(skill, sprint);
 		}
@@ -870,6 +872,38 @@ namespace game
 		}
 
 		return nullptr;
+	}
+
+	entt::entity ObjectManager::createParticleEffect(const Vec2& pos, const std::string& particle)
+	{
+		if (particle.empty())
+		{
+			return entt::null;
+		}
+
+		auto effect = _context->registry().create();
+
+		CompNameId compName;
+		compName.cfg_id = "";
+		compName.name = fmt::format("particle_effect_{}", (uint32_t)effect);
+		compName.id = effect;
+		_context->registry().emplace<CompNameId>(effect, compName);
+
+		CompTransform compTrans;
+		compTrans.position = pos;
+		_context->registry().emplace<CompTransform>(effect, compTrans);
+
+		auto particlePtr = createParticleOnObject(effect, particle);
+		if (!particlePtr)
+		{
+			_context->registry().destroy(effect);
+			return entt::null;
+		}
+
+		// 一次性粒子播完后自动销毁，避免命中特效实体残留在场景中。
+		auto& bindParticle = _context->registry().get<CompBindParticle>(effect);
+		bindParticle.auto_destroy = true;
+		return effect;
 	}
 
 	entt::entity ObjectManager::createProjectile(const Vec2& source, const Vec2& target, const CompProjectileCfg& cfg)

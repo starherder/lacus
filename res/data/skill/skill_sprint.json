@@ -30,6 +30,7 @@
     "dis": 300,
     "speed": 2000,
     "particle": "",
-    "tween_mode": "cubicIn"
+    "tween_mode": "cubicIn",
+    "return_tween_mode": "cubicOut"
   }
 }

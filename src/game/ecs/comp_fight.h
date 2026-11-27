@@ -85,6 +85,7 @@ namespace game
 		float texangle = 0.0f;
 
 		std::string particle;
+		std::string hit_effect;
 		std::string tween;
 	};
 	
@@ -159,8 +160,9 @@ namespace game
 
 		std::string particle;
 		std::string tween_mode = "linear";
+		std::string return_tween_mode = "linear";
 
-		std::set<Vec2i, Geometry::Vec2iComparator> passed_grids;
+		std::set<entt::entity> passed_targets;
 		tweeny::tween<float, float> tween;
 	};
 

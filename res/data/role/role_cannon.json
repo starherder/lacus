@@ -17,15 +17,15 @@
     "ground_texture": "demo_chess:jade_white"
   },
   "base_prop": {
-    "level": 1,
+    "level": 100,
     "roll": 6,
     "str": 100,
-    "cst": 85,
+    "cst": 1000,
     "dex": 30,
     "met": 20
   },
   "skills": [
-    "skill_earthquake"
+    "skill_cannon"
   ],
   "items": [
     "item_armor"

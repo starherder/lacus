@@ -14,7 +14,7 @@
 
     "func": "buf+buff_poison",
     "target": "role",
-    "range": 0,
+    "range": 1,
 
     "event": ""
   },

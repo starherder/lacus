@@ -6,7 +6,7 @@
         <prop name="blend_mode" value="2"/>
     </system>
     <emmiter>
-        <prop name="start_pos" value="640.000000,390.000000"/>
+        <prop name="start_pos" value="0.000000,0.000000"/>
         <prop name="start_pos_variance" value="80.000000,28.000000"/>
         <prop name="emitter_shape" value="3"/>
         <prop name="emitter_shape_size" value="0.000000,0.000000"/>

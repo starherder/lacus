@@ -3,7 +3,7 @@
 #include "engine/application.h"
 #include "particle/particle_manager.h"
 
-#include <cmath>
+#include <algorithm>
 
 namespace samples 
 {
@@ -63,31 +63,15 @@ namespace samples
 		return modified;
 	}
 
-	static Vec2 editorScreenCenter()
+	static Vec2 editorPreviewParticlePos()
 	{
 		ImVec2 size = ImGui::GetIO().DisplaySize;
 		if (size.x <= 0.0f || size.y <= 0.0f)
 		{
-			return {640.0f, 360.0f};
-		}
-		return {size.x * 0.5f, size.y * 0.5f};
-	}
-
-	static bool movePointEmitterFromOrigin(ParticleDescription& desc)
-	{
-		if (desc.emitterShape != EmitterShape::Point)
-		{
-			return false;
+			return {480.0f, 360.0f};
 		}
 
-		if (std::abs(desc.emitPos.x) > 0.001f || std::abs(desc.emitPos.y) > 0.001f)
-		{
-			return false;
-		}
-
-		desc.emitPos = editorScreenCenter();
-		desc.emitPosVar = {0.0f, 0.0f};
-		return true;
+		return {size.x * 0.5f - std::min(240.0f, size.x * 0.18f), size.y * 0.5f};
 	}
 
 	static const EnumItem CoordinateSpaceItems[] = {
@@ -252,7 +236,6 @@ namespace samples
 			if (enumCombo("emitter shape", emitShape, EmitterShapeItems, IM_ARRAYSIZE(EmitterShapeItems)))
 			{
 				_particleDescript.emitterShape = (EmitterShape)emitShape;
-				movePointEmitterFromOrigin(_particleDescript);
 				_modified = true;
 			}
 
@@ -543,8 +526,10 @@ namespace samples
 
 			if (_modified)
 			{
+				auto previewPos = _particle->getPos();
                 _particle->correctDescription(_particleDescript);
                 _particle->setDescription(_particleDescript);
+				_particle->setPos(previewPos);
                 
 				_modified = false;
 			}
@@ -640,12 +625,7 @@ namespace samples
         }
 
         _particle->start();
-		auto& desc = _particle->description();
-		if (movePointEmitterFromOrigin(desc))
-		{
-			_particle->setDescription(desc);
-			_particle->start();
-		}
+		_particle->setPos(editorPreviewParticlePos());
 
         auto form = imgui::ImFormManager::inst().getForm<ImParticleEditor>("particle_editor");
         if(form)

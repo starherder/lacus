@@ -14,13 +14,13 @@ namespace game {
         ~FormMain();
 
     private:
-        void onUpdate(float delta) override;
-
-        void onDropCard(ui::GuiManager::DraggingPtr ptr);
-
         void onSizeChanged() override;
 
         void onWindowResized(const Vec2& size);
+
+        void onUpdate(float delta) override;
+
+        //void onDropCard(ui::GuiManager::DraggingPtr ptr);
 
         void onLeaveScene(Button* btn);
         

@@ -44,6 +44,7 @@ namespace game
 			const std::string& texture, const std::string& particle, ShapeType shape_type);
 
 		particle::ParticlePtr createParticleOnObject(entt::entity owner, const std::string& particle);
+		entt::entity createParticleEffect(const Vec2& pos, const std::string& particle);
 
 		void createSkyEffect(const SkyEffectParam& param);
 

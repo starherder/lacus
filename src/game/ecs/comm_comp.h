@@ -196,6 +196,7 @@ namespace game
     struct CompBindParticle 
     {
         particle::ParticlePtr particle = nullptr;
+        bool auto_destroy = false;
     };
 
     struct CompDisplay

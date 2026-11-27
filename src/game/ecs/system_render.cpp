@@ -50,6 +50,11 @@ void RenderSystem::update(float delta)
             compParticle.particle->setOwnerPos(compTransform.position + compTransform.visual_offset);
             compParticle.particle->update(delta);
         }
+
+        if (compParticle.auto_destroy && (!compParticle.particle || !compParticle.particle->isPlaying()))
+        {
+            _context.scene().destroyObject(ent);
+        }
     }
 
     auto sky_view = _context.registry().view<CompSkyEffect>();
