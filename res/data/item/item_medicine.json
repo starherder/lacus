@@ -16,7 +16,7 @@
   },
 
   "pickable": {
-    "effect": "bomb",
+    "effect": "effect_pick_use",
     "use_ticks": 1000,
     "pick_use": true,
     "func": "hp+1000,buf-buff_poison"
