@@ -9,6 +9,10 @@
 #include "engine/camera.h"
 #include "utility/i_singleton.h"
 
+namespace engine
+{
+	class IPainter;
+}
 
 namespace particle
 {
@@ -32,7 +36,7 @@ namespace particle
 		void setDescription(const ParticleDescription& desc);
 
 		void update(float dt);
-		void draw(engine::Camera* camera = nullptr, bool screenSpace = false);
+		void draw(engine::IPainter& painter, engine::Camera* camera = nullptr, bool screenSpace = false);
 
 		void start();
 		void stop();
@@ -58,7 +62,7 @@ namespace particle
 
 		void setTexture(const std::string& file);
 		void emitSubParticle(const Vec2& pos);
-		void drawParticleList(const std::vector<ParticleCfg*>* particleList, engine::Camera* camera, bool screenSpace);
+		void drawParticleList(engine::IPainter& painter, const std::vector<ParticleCfg*>* particleList, engine::Camera* camera, bool screenSpace);
 
 	private:
 		std::string _name;

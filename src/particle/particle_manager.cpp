@@ -2,9 +2,9 @@
 #include "particle_memory.h"
 
 #include "engine/application.h"
+#include "engine/i_painter.h"
 #include "tinyxml2/tinyxml2.h"
 
-#include <SDL3/SDL.h>
 #include <algorithm>
 #include <cmath>
 
@@ -256,7 +256,7 @@ namespace particle
 		}
 	}
 
-	void Particle::draw(engine::Camera* camera, bool screenSpace)
+	void Particle::draw(engine::IPainter& painter, engine::Camera* camera, bool screenSpace)
 	{
 		if (!_emitter || !_texTile || !_texTile->texture())
 		{
@@ -264,18 +264,18 @@ namespace particle
 		}
 
 		auto particleList = _emitter->getParticleList();
-		drawParticleList(particleList, camera, screenSpace);
+		drawParticleList(painter, particleList, camera, screenSpace);
 
 		for (auto& child : _subParticles)
 		{
 			if (child)
 			{
-				child->draw(camera, screenSpace);
+				child->draw(painter, camera, screenSpace);
 			}
 		}
 	}
 
-	void Particle::drawParticleList(const std::vector<ParticleCfg*>* particleList, engine::Camera* camera, bool screenSpace)
+	void Particle::drawParticleList(engine::IPainter& painter, const std::vector<ParticleCfg*>* particleList, engine::Camera* camera, bool screenSpace)
 	{
 		if (!particleList || particleList->empty() || !_texTile || !_texTile->texture())
 		{
@@ -378,18 +378,8 @@ namespace particle
 		int vex_count = particleList->size() * 4;
 		int idx_count = particleList->size() * 6;
 
-		auto& renderer = ParticleManager::inst().getApplication()->renderer();
-		SDL_BlendMode oldBlendMode = SDL_BLENDMODE_BLEND;
-		if (texture->texture())
-		{
-			SDL_GetTextureBlendMode(texture->texture(), &oldBlendMode);
-			SDL_SetTextureBlendMode(texture->texture(), (SDL_BlendMode)_descript.blendMode);
-		}
-		renderer.drawGeometry(texture, _vertexData.data(), vex_count, _indices.data(), idx_count);
-		if (texture->texture())
-		{
-			SDL_SetTextureBlendMode(texture->texture(), oldBlendMode);
-		}
+		painter.drawGeometry(texture, _vertexData.data(), vex_count, _indices.data(), idx_count,
+			{ 0.0f, 0.0f }, 1.0f, _descript.blendMode);
 	}
 
 	ParticleDescription Particle::createParticleDescription(const std::string& filename)

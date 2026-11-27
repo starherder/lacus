@@ -593,7 +593,7 @@ namespace samples
     {
         if (_particle) 
         {
-            _particle->draw();
+            _particle->draw(application()->painter());
 			auto form = imgui::ImFormManager::inst().getForm<ImParticleEditor>("particle_editor");
 			auto emitter = _particle->getEmitter();
 			if (form && form->showEmitterDebug() && emitter)

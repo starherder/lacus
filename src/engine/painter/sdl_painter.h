@@ -47,7 +47,8 @@ namespace engine
 			const Color& color = Color{ 255,255,255,255 }, float wrap_line = 0.0f) override;
 
 		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
-			const int* indices, int num_indices, const Vec2& pos = { 0,0 }, float scale = 1.0f) override;
+			const int* indices, int num_indices, const Vec2& pos = { 0,0 }, float scale = 1.0f,
+			BlendMode blendMode = BlendMode::Blend) override;
 
 	private:
 		Rect defaultClipRect() const;

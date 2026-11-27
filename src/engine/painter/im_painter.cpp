@@ -1,5 +1,6 @@
 #include "im_painter.h"
 #include "engine/application.h"
+#include "engine/render.h"
 #include "engine/texture.h"
 #include "engine/font.h"
 
@@ -62,6 +63,7 @@ namespace engine
 
 	void ImPainter::preFrame()
 	{
+		_textureBlendStates.clear();
 		ImGui_ImplSDLRenderer3_NewFrame();
 		ImGui_ImplSDL3_NewFrame();
 		ImGui::NewFrame();
@@ -319,15 +321,34 @@ namespace engine
 		}
 	}
 
-	void ImPainter::drawGeometry(Texture* texture, const Vertex* vertices, int vertices_count, const int* indices, int indices_count, const Vec2& pos, float scale)
+	void ImPainter::applyTextureBlendCallback(const ImDrawList*, const ImDrawCmd* cmd)
+	{
+		auto* state = static_cast<TextureBlendState*>(cmd->UserCallbackData);
+		if (state && state->renderer)
+		{
+			state->renderer->setTextureBlendMode(state->texture, state->blendMode);
+		}
+	}
+
+	void ImPainter::drawGeometry(Texture* texture, const Vertex* vertices, int vertices_count,
+		const int* indices, int indices_count, const Vec2& pos, float scale, BlendMode blendMode)
 	{
 		bool has_indices = (indices != nullptr && indices_count > 0);
 		indices_count = has_indices ? indices_count : vertices_count;
 
 		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
+		BlendMode oldBlendMode = BlendMode::Blend;
 		if (texture) 
 		{
+			auto& renderer = _application.renderer();
+			// ImGui 的 SDLRenderer 后端在稍后提交 draw list，用 callback 保证提交到这一批次时才切换混合模式。
+			oldBlendMode = renderer.getTextureBlendMode(texture);
+			auto& blendState = _textureBlendStates.emplace_back();
+			blendState.renderer = &renderer;
+			blendState.texture = texture;
+			blendState.blendMode = blendMode;
+			drawList->AddCallback(applyTextureBlendCallback, &blendState);
 			drawList->PushTextureID((void*)texture->texture());
 		}
 
@@ -361,6 +382,12 @@ namespace engine
 		if (texture)
 		{
 			drawList->PopTextureID();
+			auto& renderer = _application.renderer();
+			auto& restoreState = _textureBlendStates.emplace_back();
+			restoreState.renderer = &renderer;
+			restoreState.texture = texture;
+			restoreState.blendMode = oldBlendMode;
+			drawList->AddCallback(applyTextureBlendCallback, &restoreState);
 		}
 	}
 }

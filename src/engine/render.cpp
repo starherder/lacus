@@ -116,6 +116,21 @@ BlendMode Renderer::getDrawBlendMode() const {
     return (BlendMode)blendMode;
 }
 
+bool Renderer::setTextureBlendMode(Texture* texture, BlendMode blendMode) const {
+    if (!texture || !texture->texture()) {
+        return false;
+    }
+    return SDL_SetTextureBlendMode(texture->texture(), (SDL_BlendMode)blendMode);
+}
+
+BlendMode Renderer::getTextureBlendMode(Texture* texture) const {
+    SDL_BlendMode blendMode = (SDL_BlendMode)BlendMode::Blend;
+    if (texture && texture->texture()) {
+        SDL_GetTextureBlendMode(texture->texture(), &blendMode);
+    }
+    return (BlendMode)blendMode;
+}
+
 bool Renderer::clear() const {
     return SDL_RenderClear(_renderer);
 }

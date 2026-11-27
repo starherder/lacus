@@ -275,7 +275,7 @@ namespace engine
 	}
 
 	void Painter::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
-		const int* indices, int num_indices, const Vec2& pos, float scale)
+		const int* indices, int num_indices, const Vec2& pos, float scale, BlendMode blendMode)
 	{
 		if (!vertices || num_vertices <= 0)
 		{
@@ -284,7 +284,7 @@ namespace engine
 
 		const bool hasIndices = indices && num_indices > 0;
 		const int writeIdxCount = hasIndices ? num_indices : num_vertices;
-		PrimReservation reservation = primReserve(texture, writeIdxCount, num_vertices);
+		PrimReservation reservation = primReserve(texture, writeIdxCount, num_vertices, blendMode);
 
 		for (int i = 0; i < num_vertices; ++i)
 		{
@@ -329,9 +329,22 @@ namespace engine
 			}
 
 			renderer.setClipRect(cmd.clipRect);
+
+			const bool hasTexture = cmd.texture && cmd.texture->texture();
+			const BlendMode oldBlendMode = hasTexture ? renderer.getTextureBlendMode(cmd.texture) : BlendMode::Blend;
+			if (hasTexture)
+			{
+				renderer.setTextureBlendMode(cmd.texture, cmd.blendMode);
+			}
+
 			renderer.drawGeometry(cmd.texture,
 				_vtxBuffer.data() + cmd.vtxOffset, cmd.vtxCount,
 				_idxBuffer.data() + cmd.idxOffset, cmd.idxCount);
+
+			if (hasTexture)
+			{
+				renderer.setTextureBlendMode(cmd.texture, oldBlendMode);
+			}
 		}
 
 		clearDrawList();
@@ -349,13 +362,13 @@ namespace engine
 		return _clipStack.empty() ? defaultClipRect() : _clipStack.back();
 	}
 
-	Painter::DrawCmd& Painter::requireDrawCmd(Texture* texture)
+	Painter::DrawCmd& Painter::requireDrawCmd(Texture* texture, BlendMode blendMode)
 	{
 		const Rect clipRect = currentClipRect();
 		if (!_cmdBuffer.empty())
 		{
 			DrawCmd& cmd = _cmdBuffer.back();
-			if (cmd.texture == texture && cmd.clipRect == clipRect)
+			if (cmd.texture == texture && cmd.clipRect == clipRect && cmd.blendMode == blendMode)
 			{
 				return cmd;
 			}
@@ -364,17 +377,18 @@ namespace engine
 		DrawCmd& cmd = _cmdBuffer.emplace_back();
 		cmd.texture = texture;
 		cmd.clipRect = clipRect;
+		cmd.blendMode = blendMode;
 		cmd.idxOffset = (int)_idxBuffer.size();
 		cmd.vtxOffset = (int)_vtxBuffer.size();
 		return cmd;
 	}
 
-	Painter::PrimReservation Painter::primReserve(Texture* texture, int idxCount, int vtxCount)
+	Painter::PrimReservation Painter::primReserve(Texture* texture, int idxCount, int vtxCount, BlendMode blendMode)
 	{
 		assert(idxCount >= 0);
 		assert(vtxCount >= 0);
 
-		DrawCmd& cmd = requireDrawCmd(texture);
+		DrawCmd& cmd = requireDrawCmd(texture, blendMode);
 		PrimReservation reservation;
 		reservation.idxOffset = (int)_idxBuffer.size();
 		reservation.vtxOffset = (int)_vtxBuffer.size();

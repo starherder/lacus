@@ -48,6 +48,9 @@ public:
     // 绘制混合模式
     bool setDrawBlendMode(BlendMode blendMode) const;
     BlendMode getDrawBlendMode() const;
+
+    bool setTextureBlendMode(Texture* texture, BlendMode blendMode) const;
+    BlendMode getTextureBlendMode(Texture* texture) const;
     
     bool drawPoint(const Vec2& point) const;
     bool drawPoints(const Vec2* points, int count) const;

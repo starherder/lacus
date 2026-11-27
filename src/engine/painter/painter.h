@@ -51,7 +51,8 @@ namespace engine
 		void drawText(const std::string& text, Font* font, const Vec2& pos, const Color& color = Color{ 255,255,255,255 }, float wrap_line=0.0f) override;
 
 		void drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
-			const int* indices, int num_indices, const Vec2& pos = { 0,0 }, float scale = 1.0f) override;
+			const int* indices, int num_indices, const Vec2& pos = { 0,0 }, float scale = 1.0f,
+			BlendMode blendMode = BlendMode::Blend) override;
 
 		bool isAntiAlaised() const { return _antiAliased; }
 		void setAntiAlaised(bool anti_aliased = true);
@@ -65,6 +66,7 @@ namespace engine
 			int idxCount = 0;
 			int vtxOffset = 0;
 			int vtxCount = 0;
+			BlendMode blendMode = BlendMode::Blend;
 		};
 
 		struct PrimReservation
@@ -81,8 +83,8 @@ namespace engine
 		Rect defaultClipRect() const;
 		Rect currentClipRect() const;
 
-		DrawCmd& requireDrawCmd(Texture* texture);
-		PrimReservation primReserve(Texture* texture, int idxCount, int vtxCount);
+		DrawCmd& requireDrawCmd(Texture* texture, BlendMode blendMode = BlendMode::Blend);
+		PrimReservation primReserve(Texture* texture, int idxCount, int vtxCount, BlendMode blendMode = BlendMode::Blend);
 		void primRect(const Color& color, const Vec2& tl, const Vec2& br);
 		void primRectUV(Texture* texture, const Rect& dst, const Rect& uv, const Color& color);
 		void primQuadUV(Texture* texture, const Vec2* points, const Vec2* uvs, const Color& color);

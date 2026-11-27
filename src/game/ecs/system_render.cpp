@@ -526,6 +526,7 @@ void RenderSystem::drawObjects(DisplayLayer layer)
 
 void RenderSystem::drawParticles()
 {
+    auto& painter = _context.painter();
     auto& camera = _context.camera();
 
     // draw particles
@@ -538,7 +539,7 @@ void RenderSystem::drawParticles()
         auto& particle = compParticle.particle;
         if (particle)
         {
-            particle->draw(&camera, compTransform.coord_mode == CoordMode::ScreenSpace);
+            particle->draw(painter, &camera, compTransform.coord_mode == CoordMode::ScreenSpace);
         }
     }
 }

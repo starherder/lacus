@@ -219,16 +219,28 @@ namespace engine
 	}
 
 	void SdlPainter::drawGeometry(Texture* texture, const Vertex* vertices, int num_vertices,
-		const int* indices, int num_indices, const Vec2& pos, float scale)
+		const int* indices, int num_indices, const Vec2& pos, float scale, BlendMode blendMode)
 	{
 		if (!vertices || num_vertices <= 0)
 		{
 			return;
 		}
 
+		auto& renderer = _application.renderer();
+		const bool hasTexture = texture && texture->texture();
+		const BlendMode oldBlendMode = hasTexture ? renderer.getTextureBlendMode(texture) : BlendMode::Blend;
+		if (hasTexture)
+		{
+			renderer.setTextureBlendMode(texture, blendMode);
+		}
+
 		if (pos == Vec2{ 0.0f, 0.0f } && scale == 1.0f)
 		{
-			_application.renderer().drawGeometry(texture, vertices, num_vertices, indices, num_indices);
+			renderer.drawGeometry(texture, vertices, num_vertices, indices, num_indices);
+			if (hasTexture)
+			{
+				renderer.setTextureBlendMode(texture, oldBlendMode);
+			}
 			return;
 		}
 
@@ -239,7 +251,12 @@ namespace engine
 			vertex.position.y = pos.y + vertex.position.y * scale;
 		}
 
-		_application.renderer().drawGeometry(texture, transformed.data(), (int)transformed.size(), indices, num_indices);
+		renderer.drawGeometry(texture, transformed.data(), (int)transformed.size(), indices, num_indices);
+
+		if (hasTexture)
+		{
+			renderer.setTextureBlendMode(texture, oldBlendMode);
+		}
 	}
 
 	Rect SdlPainter::defaultClipRect() const
