@@ -118,6 +118,18 @@
                  "width":0,
                  "x":1065.22717049033,
                  "y":957.264957264957
+                }, 
+                {
+                 "height":0,
+                 "id":83,
+                 "name":"starter",
+                 "point":true,
+                 "rotation":0,
+                 "type":"starter",
+                 "visible":true,
+                 "width":0,
+                 "x":1306.66666666667,
+                 "y":240.242424242424
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -167,7 +179,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":83,
+ "nextobjectid":84,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

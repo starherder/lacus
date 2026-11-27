@@ -43,10 +43,11 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
         btnBag->on_click.connect(this, &FormMain::onShowBag);
     }
 
+/*
+    ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
+
     _cardGroup = getWidget<CardGroup>("card_group");
     assert(_cardGroup);
-
-    ui::GuiManager::inst().on_drop.connect(this, &FormMain::onDropCard);
 
     for (const auto& [cfg, handCard] : _context.gameData().getHandCards())
     {
@@ -54,6 +55,9 @@ FormMain::FormMain(const std::string& name, GameContext& context) : FormLogicBas
         auto card = _cardGroup->addCard(props);
         FormUtils::addRankMarker(card, handCard.rank);
     }
+
+    _cardGroup->setVisible(false);
+*/
 }
 
 FormMain::~FormMain()
@@ -64,6 +68,7 @@ void FormMain::onUpdate(float delta)
 {
 }
 
+/*
 void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
 {   
     if (!ptr || !ptr->dst_group || ptr->src_group != _cardGroup)
@@ -115,8 +120,8 @@ void FormMain::onDropCard(ui::GuiManager::DraggingPtr ptr)
     }
 
     _context.gameData().removeHandCard(cfgid);
-
 }
+*/
 
 void FormMain::onSizeChanged()
 {

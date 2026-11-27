@@ -16,6 +16,7 @@
 #include <thread>
 #include <chrono>
 #include <unordered_map>
+#include <optional>
 
 namespace game {
 
@@ -123,6 +124,12 @@ namespace game {
 
         void loadObjects();
         void unloadObjects();
+        void spawnHandCardsAtStartPoint();
+        entt::entity createObjectEntity(const std::string& cfgid, CampSide side);
+        void placeObjectInScene(entt::entity ent, const Vec2& pos);
+        std::vector<Vec2i> getStartPointPlacementOffsets(size_t count);
+        std::optional<Vec2i> findPlaceGridNear(const Vec2i& originGrid, const CompTransform& trans);
+        bool canPlaceActorAtGrid(const Vec2i& grid, const CompTransform& trans);
 
         void onRoleCrossGrid(const EvtRoleCrossGrid& e);
         void onRoleDestroyed(const EvtRoleDestroyed& e);

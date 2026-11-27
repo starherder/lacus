@@ -59,7 +59,19 @@
          "draworder":"topdown",
          "id":3,
          "name":"object",
-         "objects":[],
+         "objects":[
+                {
+                 "height":0,
+                 "id":95,
+                 "name":"starter",
+                 "point":true,
+                 "rotation":0,
+                 "type":"starter",
+                 "visible":true,
+                 "width":0,
+                 "x":293,
+                 "y":295
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -108,7 +120,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":95,
+ "nextobjectid":96,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

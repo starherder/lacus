@@ -13,7 +13,7 @@
   
       <widget name="wgt_scene" accept_event="false" can_dropin="true" />
 
-        <hlayout name="hlay_tools" size="0,200" clip_children="false" accept_event="false">
+        <!--hlayout name="hlay_tools" size="0,200" clip_children="false" accept_event="false">
           <group size ="200,0" ground_color="#8888FF00" border_color="#00000000" border_size="1" />
             <card_group name="card_group" size="0,150" can_dropin="true" ground_color="#22882200" border_color="#00000000" border_size="1"  overlap="true">
               <card name="test_card" size="150,200" ground_color="#8888FFFF" border_color="#000099FF" border_size="1" border_round="10" can_dragout="true">
@@ -39,6 +39,6 @@
               </card>
             </card_group >
           <group size ="300,0" ground_color="#88FFFF00" border_color="#00000000" border_size="1" />
-        </hlayout>
+        </hlayout-->
     </vlayout>
   </form>

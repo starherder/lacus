@@ -335,7 +335,7 @@ namespace game
         if (npctype == "item") return ObjectType::Item;
         if (npctype == "npc") return ObjectType::Npc;
         if (npctype == "spawner") return ObjectType::Spawner;
-        if (npctype == "StartPoint") return ObjectType::StartPoint;
+        if (npctype == "StartPoint" || npctype == "starter") return ObjectType::StartPoint;
         if (npctype == "other") return ObjectType::Other;
 
         return ObjectType::Other;

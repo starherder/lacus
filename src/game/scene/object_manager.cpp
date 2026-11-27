@@ -391,7 +391,6 @@ namespace game
 			case ObjectType::Npc:
 			{
 				return createRole(json);
-			
 			}break;
 			case ObjectType::Spawner:
 			{

@@ -1,6 +1,7 @@
 #include "game_scene.h"
 #include "game/game_config.h"
 #include "game/scene/scene_config.h"
+#include "game/scene/game_data.h"
 #include "game/logic/game_play_tile_battle.h"
 #include "game/logic/game_play_auto_chess.h"
 
@@ -285,6 +286,7 @@ void GameScene::loadInThread(const MapConfig& mapCfg)
     on_load_progress(0.5f);
 
     _tileMap.bake(application().resourceManager());
+    _startPoint = getGridCenterPos({ 0, 0 });
 
     // TODO: remove this
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -303,6 +305,7 @@ void GameScene::loadInThread(const MapConfig& mapCfg)
     on_load_progress(0.9f);
 
     loadObjects();
+    spawnHandCardsAtStartPoint();
 
     // TODO: remove this
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -445,6 +448,95 @@ void GameScene::loadObjects()
     }
 }
 
+void GameScene::spawnHandCardsAtStartPoint()
+{
+    auto handCards = _context.gameData().getHandCards();
+    if (handCards.empty())
+    {
+        return;
+    }
+
+    std::vector<std::pair<std::string, HandCard>> spawnCards;
+    spawnCards.reserve(handCards.size());
+    for (const auto& [cfgid, handCard] : handCards)
+    {
+        spawnCards.emplace_back(cfgid, handCard);
+    }
+
+    auto chiefIt = std::find_if(spawnCards.begin(), spawnCards.end(), [](const auto& card)
+    {
+        return card.second.rank == RoleRank::Chief;
+    });
+
+    if (chiefIt != spawnCards.end())
+    {
+        std::iter_swap(spawnCards.begin(), chiefIt);
+    }
+
+    auto originGrid = getGridFromPos(_startPoint);
+    auto hasChief = !spawnCards.empty() && spawnCards.front().second.rank == RoleRank::Chief;
+    std::optional<Vec2i> chiefGrid;
+    auto offsets = getStartPointPlacementOffsets(hasChief ? spawnCards.size() - 1 : spawnCards.size());
+
+    for (size_t index = 0; index < spawnCards.size(); ++index)
+    {
+        const auto& [cfgid, handCard] = spawnCards[index];
+        auto ent = createObjectEntity(cfgid, CampSide::Gangster);
+        if (!_context.registry().valid(ent))
+        {
+            LogError("GameScene::spawnHandCardsAtStartPoint create actor ({}) failed.", cfgid);
+            continue;
+        }
+
+        auto trans = _context.registry().try_get<CompTransform>(ent);
+        if (!trans)
+        {
+            LogError("GameScene::spawnHandCardsAtStartPoint actor ({}) has no transform.", cfgid);
+            ObjectManager::inst().destroyObject(ent);
+            continue;
+        }
+
+        Vec2i placeOriginGrid = originGrid;
+        if (hasChief)
+        {
+            if (index > 0 && chiefGrid)
+            {
+                auto offsetIndex = index - 1;
+                if (offsetIndex < offsets.size())
+                {
+                    placeOriginGrid = { chiefGrid->x + offsets[offsetIndex].x, chiefGrid->y + offsets[offsetIndex].y };
+                }
+            }
+        }
+        else if (index < offsets.size())
+        {
+            placeOriginGrid = { originGrid.x + offsets[index].x, originGrid.y + offsets[index].y };
+        }
+
+        auto grid = findPlaceGridNear(placeOriginGrid, *trans);
+        if (!grid)
+        {
+            LogError("GameScene::spawnHandCardsAtStartPoint no valid grid for actor ({}).", cfgid);
+            ObjectManager::inst().destroyObject(ent);
+            continue;
+        }
+
+        auto comm = _context.registry().try_get<CompComm>(ent);
+        if (comm)
+        {
+            comm->rank = handCard.rank;
+        }
+
+        placeObjectInScene(ent, getGridCenterPos(grid.value()));
+        _context.gameData().removeHandCard(cfgid);
+
+        if (hasChief && index == 0)
+        {
+            chiefGrid = grid.value();
+        }
+    }
+}
+
 void GameScene::unloadObjects()
 {
     if (_quadtree)
@@ -487,6 +579,18 @@ entt::entity GameScene::findObjectAtPos(const Vec2& pos)
 
 entt::entity GameScene::createMapObject(const tilemap::MapObject& mapObj)
 {
+    // 起始点只是地图标记，不需要创建实体。
+    auto objType = getNpcType(mapObj.type);
+    if(objType == ObjectType::StartPoint)
+    {
+        auto grid = getGridFromPos(mapObj.pos);
+        auto map = _tileMap.mapSize();
+        grid.x = std::clamp(grid.x, 0, std::max(0, map.x - 1));
+        grid.y = std::clamp(grid.y, 0, std::max(0, map.y - 1));
+        _startPoint = getGridCenterPos(grid);
+        return entt::null;
+    }
+
     auto optSide = _tileMap.getObjectProperty<int>(mapObj.id, "side");
     auto side = optSide ? (CampSide)optSide.value() : CampSide::None;
 
@@ -496,38 +600,31 @@ entt::entity GameScene::createMapObject(const tilemap::MapObject& mapObj)
         return ent;
     }
 
-    // 如果是起始点，则记录起始点
-	auto objType = getNpcType(mapObj.type);
-    if(objType == ObjectType::StartPoint)
-    {
-        _startPoint = mapObj.pos;
-    }
-
     return ent;
 }
 
 entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2& pos, CampSide side)
 {
-    auto ent = ObjectManager::inst().createObject(cfgid);
-    if(ent==entt::null) 
+    auto ent = createObjectEntity(cfgid, side);
+    if(ent==entt::null)
     {
         return ent;
     }
 
-    auto* trans = _context.registry().try_get<CompTransform>(ent);
-    if(trans) 
-    {
-        trans->position = pos;
-    }
+    placeObjectInScene(ent, pos);
+    return ent;
+}
 
-    auto* patrol = _context.registry().try_get<CompNpcPatrol>(ent);
-    if(patrol) 
+entt::entity GameScene::createObjectEntity(const std::string& cfgid, CampSide side)
+{
+    auto ent = ObjectManager::inst().createObject(cfgid);
+    if(ent==entt::null)
     {
-        patrol->origin_pos = pos;
+        return ent;
     }
 
     auto* btree = _context.registry().try_get<CompBehavior>(ent);
-    if (btree && btree->bevtree) 
+    if (btree && btree->bevtree)
     {
         btree->bevtree->getBlackboard()->set("context", &_context);
         btree->bevtree->getBlackboard()->set("actor", ent);
@@ -543,10 +640,169 @@ entt::entity GameScene::createObjectInScene(const std::string& cfgid, const Vec2
         }
     }
 
-    _context.gamePlay().onActorCreate(ent);
-
-    addObjectToScene(ent);
     return ent;
+}
+
+void GameScene::placeObjectInScene(entt::entity ent, const Vec2& pos)
+{
+    auto* trans = _context.registry().try_get<CompTransform>(ent);
+    if(trans)
+    {
+        trans->position = pos;
+    }
+
+    auto* patrol = _context.registry().try_get<CompNpcPatrol>(ent);
+    if(patrol)
+    {
+        patrol->origin_pos = pos;
+    }
+
+    _context.gamePlay().onActorCreate(ent);
+    addObjectToScene(ent);
+}
+
+std::vector<Vec2i> GameScene::getStartPointPlacementOffsets(size_t count)
+{
+    std::vector<Vec2i> offsets;
+    offsets.reserve(count);
+    if (count == 0)
+    {
+        return offsets;
+    }
+
+    auto pushOffset = [&offsets, count](int x, int y)
+    {
+        if (offsets.size() < count)
+        {
+            offsets.push_back({ x, y });
+        }
+    };
+
+    if (count < 8)
+    {
+        for (int radius = 1; offsets.size() < count; ++radius)
+        {
+            pushOffset(radius, 0);
+            pushOffset(0, radius);
+            for (int i = 1; i < radius; ++i)
+            {
+                pushOffset(radius, i);
+                pushOffset(i, radius);
+            }
+            pushOffset(radius, radius);
+        }
+
+        return offsets;
+    }
+
+    for (int radius = 1; offsets.size() < count; ++radius)
+    {
+        pushOffset(radius, 0);
+        pushOffset(0, radius);
+        pushOffset(radius, radius);
+        pushOffset(-radius, 0);
+        pushOffset(0, -radius);
+        pushOffset(-radius, -radius);
+        pushOffset(radius, -radius);
+        pushOffset(-radius, radius);
+
+        for (int i = 1; i < radius && offsets.size() < count; ++i)
+        {
+            pushOffset(radius, i);
+            pushOffset(i, radius);
+            pushOffset(radius, -i);
+            pushOffset(-i, radius);
+            pushOffset(-radius, i);
+            pushOffset(i, -radius);
+            pushOffset(-radius, -i);
+            pushOffset(-i, -radius);
+        }
+    }
+
+    return offsets;
+}
+
+std::optional<Vec2i> GameScene::findPlaceGridNear(const Vec2i& originGrid, const CompTransform& trans)
+{
+    auto map = _tileMap.mapSize();
+    int maxRadius = std::max(map.x, map.y);
+
+    for (int radius = 0; radius <= maxRadius; ++radius)
+    {
+        std::vector<Vec2i> offsets;
+        offsets.reserve(radius == 0 ? 1 : radius * 8);
+
+        auto pushOffset = [&offsets](int x, int y)
+        {
+            offsets.push_back({ x, y });
+        };
+
+        if (radius == 0)
+        {
+            pushOffset(0, 0);
+        }
+        else
+        {
+            pushOffset(radius, 0);
+            pushOffset(0, radius);
+            pushOffset(radius, radius);
+            pushOffset(-radius, 0);
+            pushOffset(0, -radius);
+            pushOffset(-radius, -radius);
+            pushOffset(radius, -radius);
+            pushOffset(-radius, radius);
+
+            for (int i = 1; i < radius; ++i)
+            {
+                pushOffset(radius, i);
+                pushOffset(i, radius);
+                pushOffset(radius, -i);
+                pushOffset(-i, radius);
+                pushOffset(-radius, i);
+                pushOffset(i, -radius);
+                pushOffset(-radius, -i);
+                pushOffset(-i, -radius);
+            }
+        }
+
+        for (auto& offset : offsets)
+        {
+            Vec2i grid{ originGrid.x + offset.x, originGrid.y + offset.y };
+            if (canPlaceActorAtGrid(grid, trans))
+            {
+                return grid;
+            }
+        }
+    }
+
+    return std::nullopt;
+}
+
+bool GameScene::canPlaceActorAtGrid(const Vec2i& grid, const CompTransform& trans)
+{
+    auto map = _tileMap.mapSize();
+    CompTransform testTrans = trans;
+    testTrans.position = getGridCenterPos(grid);
+
+    for (auto& actorGrid : getObjectGrids(testTrans))
+    {
+        if (actorGrid.x < 0 || actorGrid.y < 0 || actorGrid.x >= map.x || actorGrid.y >= map.y)
+        {
+            return false;
+        }
+
+        if (getGridWalkType(actorGrid) == (int)tilemap::WalkType::Collision)
+        {
+            return false;
+        }
+
+        if (hasObjectInGrid(actorGrid, ObjectType::Npc))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void GameScene::destroyObject(entt::entity id)
