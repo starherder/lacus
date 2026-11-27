@@ -25,7 +25,9 @@
     "met": 35
   },
   "skills": [
-    "skill_archery"
+    "skill_archery",
+    "skill_archery_burst",
+    "skill_archery_multi"
   ],
   "items": [
     "item_coin",

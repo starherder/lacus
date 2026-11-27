@@ -4,10 +4,21 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <memory>
 #include <set>
+#include <vector>
 
 namespace game 
 {
+	namespace
+	{
+		float calcAABBDistance(const Rect& a, const Rect& b)
+		{
+			float dx = std::max({ b.x - (a.x + a.w), a.x - (b.x + b.w), 0.0f });
+			float dy = std::max({ b.y - (a.y + a.h), a.y - (b.y + b.h), 0.0f });
+			return std::sqrt(dx * dx + dy * dy);
+		}
+	}
 
 	DeclareEcsSystem(SkillSystem, EcsPriority::Middle);
 
@@ -70,6 +81,8 @@ namespace game
 				}
 			}
 		}
+
+		updateProjectileBursts(deltaTicks);
 
 		// 冲刺
 		auto viewsSprint = _context.registry().view<CompSprint>();
@@ -659,6 +672,49 @@ namespace game
 		}
 
 		auto& compProjectile = *projectComp;
+		int count = std::max(1, compProjectile.count);
+		if (compProjectile.multi_target)
+		{
+			auto hitTargets = std::make_shared<std::set<entt::entity>>();
+			auto targets = findProjectileTargets(srcid, tarid, skill, count);
+			for (auto target : targets)
+			{
+				fireProjectileToTarget(srcid, target, skill, hitTargets);
+			}
+			return;
+		}
+
+		fireProjectileToTarget(srcid, tarid, skill);
+		if (count <= 1)
+		{
+			return;
+		}
+
+		auto burst = _context.registry().create();
+		CompProjectileBurst compBurst;
+		compBurst.source = srcid;
+		compBurst.target = tarid;
+		compBurst.skill = skill;
+		compBurst.remaining_count = count - 1;
+		compBurst.interval_ticks = compProjectile.burst_interval;
+		_context.registry().emplace<CompProjectileBurst>(burst, compBurst);
+	}
+
+	void SkillSystem::fireProjectileToTarget(entt::entity srcid, entt::entity tarid, entt::entity skill,
+		std::shared_ptr<std::set<entt::entity>> hitTargets)
+	{
+		if (!canProjectileAttackTarget(srcid, tarid, skill))
+		{
+			return;
+		}
+
+		auto projectComp = _context.registry().try_get<CompProjectileCfg>(skill);
+		if (!projectComp)
+		{
+			return;
+		}
+
+		auto& compProjectile = *projectComp;
 		auto& compSrcTrans = _context.registry().get<CompTransform>(srcid);
 		auto& compTgtTrans = _context.registry().get<CompTransform>(tarid);
 
@@ -693,7 +749,7 @@ namespace game
 			.during(200);
 
 		// 生效，等200ms再销毁，立刻摧毁显得效果僵硬
-		compShoot.tween.onPoint([this, srcid, skill, target, hitEffect = compProjectile.hit_effect](auto& t, float x, float y) {
+		compShoot.tween.onPoint([this, srcid, skill, target, hitEffect = compProjectile.hit_effect, hitTargets](auto& t, float x, float y) {
 			if (t.isFinished()) {
 				return true;
 			}
@@ -704,6 +760,7 @@ namespace game
 			e.source = srcid;
 			e.skill = skill;
 			e.pos = target;
+			e.hit_targets = hitTargets;
 			_context.dispatcher().trigger(e);
 			return false;
 		});
@@ -722,6 +779,123 @@ namespace game
 			compTrans.position = { x, y };
 			return false;
 		});
+	}
+
+	void SkillSystem::updateProjectileBursts(int deltaTicks)
+	{
+		std::vector<entt::entity> finishedBursts;
+		auto burstView = _context.registry().view<CompProjectileBurst>();
+		for (auto burst : burstView)
+		{
+			auto& compBurst = burstView.get<CompProjectileBurst>(burst);
+			if (compBurst.remaining_count <= 0
+				|| !canProjectileAttackTarget(compBurst.source, compBurst.target, compBurst.skill))
+			{
+				finishedBursts.push_back(burst);
+				continue;
+			}
+
+			compBurst.elapsed_ticks += deltaTicks;
+			if (compBurst.elapsed_ticks < compBurst.interval_ticks)
+			{
+				continue;
+			}
+
+			compBurst.elapsed_ticks = 0;
+			fireProjectileToTarget(compBurst.source, compBurst.target, compBurst.skill);
+			--compBurst.remaining_count;
+			if (compBurst.remaining_count <= 0)
+			{
+				finishedBursts.push_back(burst);
+			}
+		}
+
+		for (auto burst : finishedBursts)
+		{
+			if (_context.registry().valid(burst))
+			{
+				_context.registry().destroy(burst);
+			}
+		}
+	}
+
+	std::vector<entt::entity> SkillSystem::findProjectileTargets(entt::entity srcid, entt::entity firstTarget, entt::entity skill, int count)
+	{
+		std::vector<entt::entity> targets;
+		if (count <= 0 || !canProjectileAttackTarget(srcid, firstTarget, skill))
+		{
+			return targets;
+		}
+
+		targets.push_back(firstTarget);
+		if (count <= 1)
+		{
+			return targets;
+		}
+
+		auto pSrcTrans = _context.registry().try_get<CompTransform>(srcid);
+		auto pSkillComm = _context.registry().try_get<CompSkillComm>(skill);
+		if (!pSrcTrans || !pSkillComm)
+		{
+			return targets;
+		}
+
+		auto actorRect = _context.scene().getGridAlignedAABB(*pSrcTrans);
+		float actorQueryRadius = std::sqrt(actorRect.w * actorRect.w + actorRect.h * actorRect.h) / 2.0f;
+		const auto& objects = _context.scene().getObjectsInCircle(pSrcTrans->position, actorQueryRadius + pSkillComm->distance);
+		for (auto& [dis, target] : objects)
+		{
+			if ((int)targets.size() >= count)
+			{
+				break;
+			}
+
+			if (std::find(targets.begin(), targets.end(), target) != targets.end())
+			{
+				continue;
+			}
+
+			if (canProjectileAttackTarget(srcid, target, skill))
+			{
+				targets.push_back(target);
+			}
+		}
+
+		return targets;
+	}
+
+	bool SkillSystem::canProjectileAttackTarget(entt::entity srcid, entt::entity tarid, entt::entity skill)
+	{
+		if (!_context.registry().valid(srcid) || !_context.registry().valid(tarid) || !_context.registry().valid(skill)
+			|| srcid == tarid)
+		{
+			return false;
+		}
+
+		if (_context.registry().any_of<CompDead, CompDestroy>(srcid)
+			|| _context.registry().any_of<CompDead, CompDestroy>(tarid))
+		{
+			return false;
+		}
+
+		auto pSrcComm = _context.registry().try_get<CompComm>(srcid);
+		auto pTarComm = _context.registry().try_get<CompComm>(tarid);
+		auto pSrcTrans = _context.registry().try_get<CompTransform>(srcid);
+		auto pTarTrans = _context.registry().try_get<CompTransform>(tarid);
+		auto pSkillComm = _context.registry().try_get<CompSkillComm>(skill);
+		if (!pSrcComm || !pTarComm || !pSrcTrans || !pTarTrans || !pSkillComm)
+		{
+			return false;
+		}
+
+		if (pTarComm->type != ObjectType::Npc || pTarComm->side == pSrcComm->side)
+		{
+			return false;
+		}
+
+		auto srcRect = _context.scene().getGridAlignedAABB(*pSrcTrans);
+		auto tarRect = _context.scene().getGridAlignedAABB(*pTarTrans);
+		return calcAABBDistance(srcRect, tarRect) <= pSkillComm->distance;
 	}
 
 	void SkillSystem::onSkillHitPos(const EvtSkillHitPos& e)
@@ -767,6 +941,11 @@ namespace game
 
 		for (auto obj : targets)
 		{
+			if (e.hit_targets && e.hit_targets->contains(obj))
+			{
+				continue;
+			}
+
 			auto pCompDead = _context.registry().try_get<CompDead>(obj);
 			if (pCompDead) 
 			{
@@ -777,6 +956,10 @@ namespace game
 			if (pCompDstComm && pCompDstComm->type == ObjectType::Npc && pCompDstComm->side != compSrcComm.side)
 			{
 				_context.dispatcher().trigger(EvtRoleOnAttack{ e.source, obj, e.skill });
+				if (e.hit_targets)
+				{
+					e.hit_targets->insert(obj);
+				}
 			}
 		}
 	}

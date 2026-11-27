@@ -5,6 +5,10 @@
 
 #include "tweeny/tweeny.h"
 
+#include <memory>
+#include <set>
+#include <vector>
+
 namespace game 
 {
 
@@ -20,6 +24,15 @@ namespace game
         void skillApplyToTarget(const EvtCastSkillToObject& e);
 
         void startProjectile(entt::entity source, entt::entity target, entt::entity skill);
+
+        void fireProjectileToTarget(entt::entity source, entt::entity target, entt::entity skill,
+            std::shared_ptr<std::set<entt::entity>> hitTargets = nullptr);
+
+        void updateProjectileBursts(int deltaTicks);
+
+        std::vector<entt::entity> findProjectileTargets(entt::entity source, entt::entity firstTarget, entt::entity skill, int count);
+
+        bool canProjectileAttackTarget(entt::entity source, entt::entity target, entt::entity skill);
         
         void startTraps(entt::entity srcid, entt::entity tarid, entt::entity skill);
 

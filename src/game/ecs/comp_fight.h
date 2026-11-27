@@ -87,6 +87,21 @@ namespace game
 		std::string particle;
 		std::string hit_effect;
 		std::string tween;
+
+		int count = 1;
+		int burst_interval = 100;
+		bool multi_target = false;
+	};
+
+	struct CompProjectileBurst
+	{
+		entt::entity source = entt::null;
+		entt::entity target = entt::null;
+		entt::entity skill = entt::null;
+
+		int remaining_count = 0;
+		int interval_ticks = 100;
+		int elapsed_ticks = 0;
 	};
 	
 	struct CompTrapCfg

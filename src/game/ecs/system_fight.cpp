@@ -1,9 +1,11 @@
 #include "system_fight.h"
 
 #include "game/logic/game_play.h"
+#include "utility/random.h"
 
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 
 namespace game
@@ -16,6 +18,12 @@ namespace game
             float dy = std::max({ b.y - (a.y + a.h), a.y - (b.y + b.h), 0.0f });
             return std::sqrt(dx * dx + dy * dy);
         }
+
+        struct FightSkillCandidate
+        {
+            entt::entity skill = entt::null;
+            entt::entity target = entt::null;
+        };
     }
 
     DeclareEcsSystem(FightSystem, EcsPriority::Middle);
@@ -219,8 +227,6 @@ namespace game
             return;
         }
 
-        bool enemyFound = false;
-
         auto compSkills = _context.registry().try_get<CompSkills>(actor);
         if (!compSkills)
         {
@@ -228,50 +234,64 @@ namespace game
             return;
         }
 
+        std::vector<FightSkillCandidate> candidates;
         for (auto& skill_id : compSkills->skills)
         {
-            auto& compName = _context.registry().get<CompNameId>(skill_id);
-            auto& compSkill = _context.registry().get<CompSkillComm>(skill_id);
-
-            if (compSkill.type != SkillType::Invalid)
+            if (!_context.registry().valid(skill_id))
             {
-                const auto& objects = _context.scene().getObjectsInCircle(rolePos, actorQueryRadius + compSkill.distance);
-                for (auto& [dis, target] : objects)
+                continue;
+            }
+
+            auto& compSkill = _context.registry().get<CompSkillComm>(skill_id);
+            if (compSkill.type == SkillType::Invalid || compSkill.state != SkillState::OK)
+            {
+                continue;
+            }
+
+            const auto& objects = _context.scene().getObjectsInCircle(rolePos, actorQueryRadius + compSkill.distance);
+            for (auto& [dis, target] : objects)
+            {
+                if (_context.registry().valid(target) == false || target == actor)
                 {
-                    if (_context.registry().valid(target) == false || target == actor)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    auto pdead = _context.registry().try_get<CompDead>(target);
-                    if (pdead)
-                    {
-                        continue;
-                    }
+                auto pdead = _context.registry().try_get<CompDead>(target);
+                if (pdead)
+                {
+                    continue;
+                }
 
-                    auto targetTrans = _context.registry().try_get<CompTransform>(target);
-                    if (!targetTrans)
-                    {
-                        continue;
-                    }
+                auto targetTrans = _context.registry().try_get<CompTransform>(target);
+                if (!targetTrans)
+                {
+                    continue;
+                }
 
-                    auto targetRect = _context.scene().getGridAlignedAABB(*targetTrans);
-                    if (calcAABBDistance(actorRect, targetRect) > compSkill.distance)
-                    {
-                        continue;
-                    }
+                auto targetRect = _context.scene().getGridAlignedAABB(*targetTrans);
+                if (calcAABBDistance(actorRect, targetRect) > compSkill.distance)
+                {
+                    continue;
+                }
 
-                    auto pCompComm = _context.registry().try_get<CompComm>(target);
-                    if (pCompComm && pCompComm->type == ObjectType::Npc && pCompComm->side != pComm->side)
-                    {
-                        enemyFound = true;
-                        _context.dispatcher().trigger(EvtMotionSwitchState{ actor, MotionState::Paused });
-                        _context.dispatcher().trigger(EvtCastSkillToObject{ actor, target, skill_id });
-
-                        LogInfo("autoFight: {} cast skill {}({}) to {}", actor, compName.name, skill_id, target);
-                    }
+                auto pCompComm = _context.registry().try_get<CompComm>(target);
+                if (pCompComm && pCompComm->type == ObjectType::Npc && pCompComm->side != pComm->side)
+                {
+                    candidates.push_back({ skill_id, target });
+                    break;
                 }
             }
+        }
+
+        if (!candidates.empty())
+        {
+            auto& candidate = candidates[utility::random(0, (int)candidates.size() - 1)];
+            auto& compName = _context.registry().get<CompNameId>(candidate.skill);
+
+            _context.dispatcher().trigger(EvtMotionSwitchState{ actor, MotionState::Paused });
+            _context.dispatcher().trigger(EvtCastSkillToObject{ actor, candidate.target, candidate.skill });
+
+            LogInfo("autoFight: {} cast skill {}({}) to {}", actor, compName.name, candidate.skill, candidate.target);
         }
 
         //if (!enemyFound)

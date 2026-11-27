@@ -29,7 +29,9 @@
   "projectile": {
     "name": "",
     "count": 1,
+    "burst_interval":100,
     "multi_target":false,
+    "hit_effect": "bomb_small",
     "#particle": "trail",
     "texture": "skill:arrow",
     "texangle": -90,

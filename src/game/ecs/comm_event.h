@@ -3,6 +3,9 @@
 #include "game/scene/game_context.h"
 #include "game/ecs/comp_fight.h"
 
+#include <memory>
+#include <set>
+
 
 namespace game 
 {
@@ -152,6 +155,7 @@ namespace game
 		entt::entity source;
 		entt::entity skill;
 		Vec2 pos;
+		std::shared_ptr<std::set<entt::entity>> hit_targets;
 	};
 
 	struct EvtSkillHitTarget

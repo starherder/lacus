@@ -1,0 +1,43 @@
+{
+  "cfgid" : "skill_archery_burst",
+  "type" : "projectile",
+  "name" : "text_skill_archery",
+  "desc" : "text_skill_archery_desc",
+
+  "distance" : 350,
+  "cd_ticks": 1000,
+  "sound" :  "audio/bot/arrow.wav",
+
+  "affect" : {
+    "prev_ticks" : 200,
+    "post_ticks" : 200,
+
+    "func" : "hp-50",
+    "target" : "role",
+    "range" : 1,
+
+    "event" : ""
+  },
+
+  "tween" : {
+    "trans_type" : "scale",
+    "trans_value" : 10,
+    "prev_tween" : "cubicIn",
+    "post_tween" : "cubicOut"
+  },
+
+  "projectile": {
+    "name": "",
+    "count": 3,
+    "burst_interval":200,
+    "multi_target": false,
+    "hit_effect": "bomb_small",
+    "#particle": "trail",
+    "texture": "skill:arrow",
+    "texangle": -90,
+    "texscale": "0.5,0.5",
+    "speed": 2000,
+    "tween": "quinticIn"
+  }
+
+}

@@ -784,6 +784,9 @@ namespace game
 			compProjectile.hit_effect = projectJs.value("hit_effect", "");
 			compProjectile.texture = projectJs.value("texture", "");
 			compProjectile.texangle = projectJs.value("texangle", 0.0f);
+			compProjectile.count = std::max(1, projectJs.value("count", 1));
+			compProjectile.burst_interval = projectJs.value("burst_interval", compProjectile.burst_interval);
+			compProjectile.multi_target = projectJs.value("multi_target", false);
 
 			_context->registry().emplace<CompProjectileCfg>(skill, compProjectile);
 		}
