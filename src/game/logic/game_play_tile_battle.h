@@ -42,6 +42,7 @@ namespace game
 		
 		void onMotionStart(entt::entity actor) override;  
 		void onMotionFinish(entt::entity actor) override;
+		void onMotionUpdate() override;
 
 		void onMouseLeftPressed(const Vec2& pos);
 		void onMouseLeftRelease(const Vec2& pos);
@@ -68,8 +69,14 @@ namespace game
 
 		void startAutoFightFlow(entt::entity actor);
 
-		EntitySet getMovableSelectedEntities(const Vec2i& dir);
+		EntitySet getMovableSelectedEntities(const Vec2i& dir, const Rect* viewRect = nullptr);
 		bool hasMovingSelectedEntity();
+		bool isLeaderAtViewCenter();
+		bool hasLeaderReachedViewCenter(entt::entity leader);
+		bool willLeaderReachViewCenter(entt::entity leader, const Vec2i& dir);
+		Rect getEntityMoveAABB(entt::entity entity, const Vec2i& dir);
+		bool arePlayerRolesInsideView(const Vec2& cameraPos);
+		bool arePlayerRolesInsideView(const Vec2& cameraPos, const EntitySet& movingEntities, const Vec2i& dir);
 		std::optional<Vec2> getSelectedEntitiesCenter();
 		Vec2 clampCameraPos(const Vec2& pos);
 		void followMovingSelection();
@@ -78,5 +85,7 @@ namespace game
 		GameTurnType _turnType = GameTurnType::Moving;
 		Rect _selectRect;
 		EntitySet _selectEntities;
+		Vec2i _leaderMoveDir = { 0, 0 };
+		bool _followLeaderCamera = false;
 	};
 }

@@ -35,6 +35,8 @@ namespace game
             auto delta = _context.frameTicker().deltaMs();
             motion.tween.step(delta);
         }
+
+        _context.gamePlay().onMotionUpdate();
     }
 
     void StepMotionSystem::onEventStepMove(const EvtStepMove& e)

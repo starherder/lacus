@@ -15,7 +15,7 @@
     "desc": "txt_demo_2_desc",
     "level": 2,
     "icon": "scene:tower",
-    "play_type": "AutoChess",
+    "play_type": "TileBattle",
     "map_path": "scenes/demos/two.tmj"
   },
   {
@@ -33,7 +33,7 @@
     "desc": "txt_demo_4_desc",
     "level": 1,
     "icon": "scene:castle",
-    "play_type": "AutoChess",
+    "play_type": "TileBattle",
     "map_path": "scenes/demos/four.tmj"
   },
   {

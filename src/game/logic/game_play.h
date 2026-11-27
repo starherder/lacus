@@ -44,6 +44,7 @@ namespace game
 		
 		virtual void onMotionStart(entt::entity actor) {}
 		virtual void onMotionFinish(entt::entity actor) {}
+		virtual void onMotionUpdate() {}
 		
 	protected:	
 		GameContext& _context;

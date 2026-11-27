@@ -374,9 +374,16 @@ void GameScene::initQuadTree()
 {
     auto sceneSize = _tileMap.mapSize() * _tileMap.tileSize();
     auto scenebox = BoxType(0.0f, 0.0f, sceneSize.x, sceneSize.y);
+    _quadBoxes.clear();
 
     auto getAABB = [this](const entt::entity ent)
     {
+        auto iter = _quadBoxes.find(ent);
+        if (iter != _quadBoxes.end())
+        {
+            return iter->second;
+        }
+
         auto comp = _context.registry().try_get<CompTransform>(ent);
         if (comp)
         {
@@ -390,6 +397,18 @@ void GameScene::initQuadTree()
     _quadtree = std::make_unique<QuadTreeType>(scenebox, getAABB);
     //_quadtree->setQueryMode(quadtree::QueryMode::ContainCenter);
     _quadtree->setQueryMode(quadtree::QueryMode::Intersect);
+}
+
+GameScene::BoxType GameScene::getObjectQuadBox(entt::entity id)
+{
+    auto comp = _context.registry().try_get<CompTransform>(id);
+    if (!comp)
+    {
+        return BoxType{ 0, 0, 0, 0 };
+    }
+
+    auto rect = getGridAlignedAABB(*comp);
+    return BoxType{ rect.x, rect.y, rect.w, rect.h };
 }
 
 void GameScene::initPathFind()
@@ -441,6 +460,7 @@ void GameScene::unloadObjects()
     {
         _quadtree->clear();
     }
+    _quadBoxes.clear();
 
     _context.registry().clear();
 
@@ -550,6 +570,7 @@ void GameScene::addObjectToScene(entt::entity id)
     auto [iter, inserted] = _sceneObjects.insert(id);
     if (inserted && _quadtree)
     {
+        _quadBoxes[id] = getObjectQuadBox(id);
         _quadtree->add(id);
     }
 }
@@ -565,6 +586,7 @@ void GameScene::removeObjectFromScene(entt::entity id)
     if (_quadtree && _quadtree->has(id))
     {
         _quadtree->remove(id);
+        _quadBoxes.erase(id);
     }
 
     _sceneObjects.erase(iter);
@@ -594,7 +616,7 @@ Vec2 GameScene::getObjectPos(entt::entity id)
 void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 {
     auto comp = _registry.try_get<CompTransform>(id);
-    if (!comp || comp->position == pos)
+    if (!comp)
     {
         return;
     }
@@ -602,17 +624,21 @@ void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
     bool updateQuadTree = false;
     if (_quadtree && _quadtree->has(id))
     {
+        const auto oldBoxIter = _quadBoxes.find(id);
+        const auto oldBox = oldBoxIter != _quadBoxes.end() ? oldBoxIter->second : getObjectQuadBox(id);
+
         auto newTransform = *comp;
         newTransform.position = pos;
 
-        const auto oldBox = getGridAlignedAABB(*comp);
         const auto newBox = getGridAlignedAABB(newTransform);
-        updateQuadTree = oldBox.x != newBox.x || oldBox.y != newBox.y
-            || oldBox.w != newBox.w || oldBox.h != newBox.h;
+        const auto newQuadBox = BoxType{ newBox.x, newBox.y, newBox.w, newBox.h };
+        updateQuadTree = oldBox.left != newQuadBox.left || oldBox.top != newQuadBox.top
+            || oldBox.width != newQuadBox.width || oldBox.height != newQuadBox.height;
 
         if (updateQuadTree)
         {
             _quadtree->remove(id);
+            _quadBoxes.erase(id);
         }
     }
 
@@ -620,6 +646,7 @@ void GameScene::setObjectPos(entt::entity id, const Vec2& pos)
 
     if (updateQuadTree)
     {
+        _quadBoxes[id] = getObjectQuadBox(id);
         _quadtree->add(id);
     }
 }

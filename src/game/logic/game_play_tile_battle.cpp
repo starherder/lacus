@@ -109,10 +109,62 @@ namespace game
 		    return;
 		}
 		
-		auto movableEntities = getMovableSelectedEntities(dir);
+		auto baseMovableEntities = getMovableSelectedEntities(dir);
+		if (baseMovableEntities.empty())
+		{
+			_followLeaderCamera = false;
+			_leaderMoveDir = { 0, 0 };
+			return;
+		}
+
+		auto leader = getSelectEntity();
+		auto cameraPos = context().camera().getPos();
+		Rect currentView{ cameraPos, context().camera().getSize() };
+		auto movableEntities = getMovableSelectedEntities(dir, &currentView);
+		bool canFollowCamera = false;
+
+		if (leader != entt::null && baseMovableEntities.contains(leader) &&
+			(isLeaderAtViewCenter() || willLeaderReachViewCenter(leader, dir)))
+		{
+			auto leaderTransform = context().registry().try_get<CompTransform>(leader);
+			if (!leaderTransform)
+			{
+				_followLeaderCamera = false;
+				_leaderMoveDir = { 0, 0 };
+				return;
+			}
+
+			auto leaderTargetGrid = context().scene().getGridFromPos(leaderTransform->position) + dir;
+			auto leaderTargetPos = context().scene().getGridCenterPos(leaderTargetGrid);
+			auto followCameraPos = clampCameraPos(leaderTargetPos - context().camera().getSize() / 2.0f);
+			Rect followView{ followCameraPos, context().camera().getSize() };
+
+			// 用“本步结束后的视野”重新解析移动队列，避免选中角色走出画面。
+			auto followMovableEntities = getMovableSelectedEntities(dir, &followView);
+			if (followMovableEntities.contains(leader) &&
+				arePlayerRolesInsideView(followCameraPos, followMovableEntities, dir))
+			{
+				movableEntities = followMovableEntities;
+				canFollowCamera = true;
+			}
+		}
+
 		if (movableEntities.empty())
 		{
+			_followLeaderCamera = false;
+			_leaderMoveDir = { 0, 0 };
 			return;
+		}
+
+		if (leader != entt::null && movableEntities.contains(leader) && canFollowCamera)
+		{
+			_leaderMoveDir = dir;
+			_followLeaderCamera = isLeaderAtViewCenter();
+		}
+		else
+		{
+			_leaderMoveDir = { 0, 0 };
+			_followLeaderCamera = false;
 		}
 		
 		for(auto& entity : _selectEntities)
@@ -127,7 +179,7 @@ namespace game
 		}
 	}
 
-	GamePlayTileBattle::EntitySet GamePlayTileBattle::getMovableSelectedEntities(const Vec2i& dir)
+	GamePlayTileBattle::EntitySet GamePlayTileBattle::getMovableSelectedEntities(const Vec2i& dir, const Rect* viewRect)
 	{
 		EntitySet movableEntities;
 
@@ -221,6 +273,12 @@ namespace game
 				return MoveCheckResult::Blocked;
 			}
 
+			if (viewRect && !viewRect->contains(getEntityMoveAABB(entity, dir)))
+			{
+				// 选中角色本步移动后的占格不能离开最终视野；被跳过的角色仍会阻挡后面的队列。
+				return MoveCheckResult::Blocked;
+			}
+
 			MoveCheckResult result = MoveCheckResult::Clear;
 			auto enterGrids = context().scene().getObjectMoveEnterGrids(*transform, dir);
 			for (auto& grid : enterGrids)
@@ -285,6 +343,9 @@ namespace game
 
 	void GamePlayTileBattle::unselectAll()
 	{
+		_followLeaderCamera = false;
+		_leaderMoveDir = { 0, 0 };
+
 		auto selviews = context().registry().view<CompSelection>();
 		for (auto& ent : selviews)
 		{
@@ -307,6 +368,9 @@ namespace game
 
 	void GamePlayTileBattle::onSelectChange(const EntitySet& selectEntities)
 	{
+		_followLeaderCamera = false;
+		_leaderMoveDir = { 0, 0 };
+
 		std::set<entt::entity> intersetVec;
 		std::set_intersection(_selectEntities.begin(), _selectEntities.end(),
 								selectEntities.begin(), selectEntities.end(),
@@ -466,6 +530,112 @@ namespace game
 		return false;
 	}
 
+	bool GamePlayTileBattle::isLeaderAtViewCenter()
+	{
+		auto leader = getSelectEntity();
+		if (leader == entt::null || !context().registry().valid(leader))
+		{
+			return false;
+		}
+
+		auto transform = context().registry().try_get<CompTransform>(leader);
+		if (!transform)
+		{
+			return false;
+		}
+
+		auto viewCenter = context().camera().getPos() + context().camera().getSize() / 2.0f;
+		return glm::length(transform->position - viewCenter) <= 1.0f;
+	}
+
+	bool GamePlayTileBattle::hasLeaderReachedViewCenter(entt::entity leader)
+	{
+		if (_leaderMoveDir.x == 0 && _leaderMoveDir.y == 0)
+		{
+			return false;
+		}
+
+		auto transform = context().registry().try_get<CompTransform>(leader);
+		if (!transform)
+		{
+			return false;
+		}
+
+		auto viewCenter = context().camera().getPos() + context().camera().getSize() / 2.0f;
+		auto offset = transform->position - viewCenter;
+		return offset.x * _leaderMoveDir.x + offset.y * _leaderMoveDir.y >= -1.0f;
+	}
+
+	bool GamePlayTileBattle::willLeaderReachViewCenter(entt::entity leader, const Vec2i& dir)
+	{
+		if (dir.x == 0 && dir.y == 0)
+		{
+			return false;
+		}
+
+		auto viewCenter = context().camera().getPos() + context().camera().getSize() / 2.0f;
+		auto transform = context().registry().try_get<CompTransform>(leader);
+		if (!transform)
+		{
+			return false;
+		}
+
+		auto targetGrid = context().scene().getGridFromPos(transform->position) + dir;
+		auto targetPos = context().scene().getGridCenterPos(targetGrid);
+		auto offset = targetPos - viewCenter;
+		return offset.x * dir.x + offset.y * dir.y >= -1.0f;
+	}
+
+	Rect GamePlayTileBattle::getEntityMoveAABB(entt::entity entity, const Vec2i& dir)
+	{
+		auto transform = context().registry().try_get<CompTransform>(entity);
+		if (!transform)
+		{
+			return {};
+		}
+
+		auto nextTransform = *transform;
+		auto nextGrid = context().scene().getGridFromPos(transform->position) + dir;
+		nextTransform.position = context().scene().getGridCenterPos(nextGrid);
+		return context().scene().getGridAlignedAABB(nextTransform);
+	}
+
+	bool GamePlayTileBattle::arePlayerRolesInsideView(const Vec2& cameraPos)
+	{
+		return arePlayerRolesInsideView(cameraPos, {}, { 0, 0 });
+	}
+
+	bool GamePlayTileBattle::arePlayerRolesInsideView(const Vec2& cameraPos, const EntitySet& movingEntities, const Vec2i& dir)
+	{
+		Rect viewRect{ cameraPos, context().camera().getSize() };
+		auto views = context().registry().view<CompComm, CompTransform>();
+		for (auto& entity : views)
+		{
+			if (context().registry().try_get<CompDead>(entity))
+			{
+				continue;
+			}
+
+			auto& comm = views.get<CompComm>(entity);
+			if (comm.type != ObjectType::Npc || comm.side != CampSide::Gangster)
+			{
+				continue;
+			}
+
+			auto& transform = views.get<CompTransform>(entity);
+			// 正在执行本次移动的角色，用目标格占用范围验证最终画面。
+			auto roleAABB = movingEntities.contains(entity) ?
+				getEntityMoveAABB(entity, dir) :
+				context().scene().getGridAlignedAABB(transform);
+			if (!viewRect.contains(roleAABB))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	std::optional<Vec2> GamePlayTileBattle::getSelectedEntitiesCenter()
 	{
 		Vec2 center = { 0.0f, 0.0f };
@@ -509,23 +679,55 @@ namespace game
 	{
 		if (!hasMovingSelectedEntity())
 		{
+			_followLeaderCamera = false;
+			_leaderMoveDir = { 0, 0 };
 			return;
 		}
 
-		auto center = getSelectedEntitiesCenter();
-		if (!center)
+		auto leader = getSelectEntity();
+		if (leader == entt::null || !context().registry().valid(leader))
 		{
+			_followLeaderCamera = false;
+			_leaderMoveDir = { 0, 0 };
 			return;
 		}
 
-		auto target = center.value() - context().camera().getSize() / 2.0f;
-		context().camera().setPos(clampCameraPos(target));
+		auto motion = context().registry().try_get<CompStepMotion>(leader);
+		if (!motion || motion->state != MotionState::Moving)
+		{
+			_followLeaderCamera = false;
+			_leaderMoveDir = { 0, 0 };
+			return;
+		}
+
+		auto transform = context().registry().try_get<CompTransform>(leader);
+		if (!transform)
+		{
+			_followLeaderCamera = false;
+			_leaderMoveDir = { 0, 0 };
+			return;
+		}
+
+		if (!_followLeaderCamera)
+		{
+			// Start following once the leader reaches or passes the view center.
+			_followLeaderCamera = hasLeaderReachedViewCenter(leader);
+			if (!_followLeaderCamera)
+			{
+				return;
+			}
+		}
+
+		auto target = transform->position - context().camera().getSize() / 2.0f;
+		target = clampCameraPos(target);
+		if (arePlayerRolesInsideView(target))
+		{
+			context().camera().setPos(target);
+		}
 	}
 
 	void GamePlayTileBattle::update(float deltaTime)
 	{
-		followMovingSelection();
-
 		bool isTurnOver = false;
 
 		if (_turnType == GameTurnType::Fighting)
@@ -577,6 +779,12 @@ namespace game
 		auto compComm = context().registry().try_get<CompComm>(actor);
 		if(compComm && compComm->type == ObjectType::Npc)
 		{
+			if (compComm->side == CampSide::Gangster && context().registry().all_of<CompBehavior>(actor))
+			{
+				// Player-side roles are moved by TileBattle input, not by behavior trees.
+				context().registry().remove<CompBehavior>(actor);
+			}
+
 			context().registry().emplace<CompGameTurn>(actor, CompGameTurn{ _turnType == GameTurnType::Moving });
 		}
 	}
@@ -611,6 +819,11 @@ namespace game
 
 		auto& turn = context().registry().get<CompGameTurn>(actor);
 		turn.running = false;
+	}
+
+	void GamePlayTileBattle::onMotionUpdate()
+	{
+		followMovingSelection();
 	}
 
 	void GamePlayTileBattle::startAutoFightFlow(entt::entity actor)

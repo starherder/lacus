@@ -15,6 +15,7 @@
 
 #include <thread>
 #include <chrono>
+#include <unordered_map>
 
 namespace game {
 
@@ -116,6 +117,7 @@ namespace game {
     private:
         void initPathFind();
         void initQuadTree();
+        BoxType getObjectQuadBox(entt::entity id);
 
         void loadObjects();
         void unloadObjects();
@@ -149,6 +151,7 @@ namespace game {
         EntitySet _sceneObjects;
 
         QuadTreePtr _quadtree = nullptr;
+        std::unordered_map<entt::entity, BoxType> _quadBoxes;
 
         std::unique_ptr<GamePlay> _gamePlay = nullptr;
 

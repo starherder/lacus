@@ -128,7 +128,8 @@ public:
 
     void remove(const T& value)
     {
-        remove(mRoot.get(), mBox, value);
+        if (!remove(mRoot.get(), mBox, value))
+            removeValueInTree(mRoot.get(), value);
 
         mAllValues.erase(value);
     }
@@ -340,8 +341,7 @@ private:
         if (isLeaf(node))
         {
             // Remove the value from node
-            removeValue(node, value);
-            return true;
+            return removeValue(node, value);
         }
         else
         {
@@ -350,24 +350,42 @@ private:
             if (i != -1)
             {
                 if (remove(node->children[static_cast<std::size_t>(i)].get(), computeBox(box, i), value))
-                    return tryMerge(node);
+                {
+                    tryMerge(node);
+                    return true;
+                }
             }
             // Otherwise, we remove the value from the current node
             else
-                removeValue(node, value);
+                return removeValue(node, value);
             return false;
         }
     }
 
-    void removeValue(Node* node, const T& value)
+    bool removeValue(Node* node, const T& value)
     {
         // Find the value in node->values
         auto it = std::find_if(std::begin(node->values), std::end(node->values),
             [this, &value](const auto& rhs){ return mEqual(value, rhs); });
-        assert(it != std::end(node->values) && "Trying to remove a value that is not present in the node");
+        if (it == std::end(node->values)) return false;
         // Swap with the last element and pop back
         *it = std::move(node->values.back());
         node->values.pop_back();
+        return true;
+    }
+
+    bool removeValueInTree(Node* node, const T& value)
+    {
+        if (node == nullptr) return false;
+        if (removeValue(node, value)) return true;
+
+        for (const auto& child : node->children)
+        {
+            if (removeValueInTree(child.get(), value))
+                return true;
+        }
+
+        return false;
     }
 
     bool tryMerge(Node* node)

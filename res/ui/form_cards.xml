@@ -41,7 +41,7 @@
               </hlayout>
               <hlayout size="0,100" accept_event="false">
                 <widget  accept_event="false"/>
-                <label name="lbl_icon" size="100,0" texture="ui:one-0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
+                <label name="lbl_icon" size="100,0" ground_color="#FFFFFFFF" border_color="#FFFFFFFF" border_round="5" border_size="3"  accept_event="false"/>
                 <widget  accept_event="false"/>
               </hlayout>
               <hlayout>
