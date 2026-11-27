@@ -21,6 +21,8 @@ namespace game {
 
         void pickUp(entt::entity role, entt::entity obj);
         void useItem(entt::entity actor, entt::entity obj);
+
+        Vec2 getBagButtonCenter() const;
     };
 
 }

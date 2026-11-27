@@ -258,9 +258,7 @@ namespace game
             }
         }
 
-        int handCards = (int)_context.gameData().getHandCards().size();
-
-        if (liveRole == 0 && handCards == 0)
+        if (liveRole == 0 )
         {
             finishGame(GameResult::Failed);
         }

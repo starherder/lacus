@@ -1,6 +1,9 @@
 #include "system_pickup.h"
 #include "game/game_config.h"
 #include "game/scene/game_data.h"
+#include "ui/gui_manager.h"
+#include "ui/group_widgets.h"
+#include "ui/widget.h"
 
 #include <algorithm>
 
@@ -56,7 +59,7 @@ namespace game
         _context.scene().swichCoord(transComp, CoordMode::ScreenSpace);
 
         const auto& curpos = transComp.position;
-        const Vec2 uipos = { 0, 0 };
+        const Vec2 uipos = getBagButtonCenter();
 
         auto& pickableComp = _context.registry().get<CompPickable>(obj);
         pickableComp.picked = true;
@@ -90,6 +93,25 @@ namespace game
                                     });
         
         _context.dispatcher().trigger<EvtRolePickItemStart>(EvtRolePickItemStart{role, obj});
+    }
+
+    Vec2 PickupSystem::getBagButtonCenter() const
+    {
+        auto& gui = ui::GuiManager::inst();
+        auto form = gui.getForm<ui::Form>("form_main");
+        if (!form)
+        {
+            return { 0.0f, 0.0f };
+        }
+
+        auto button = form->getWidget<ui::Widget>("btn_bag");
+        if (!button)
+        {
+            return { 0.0f, 0.0f };
+        }
+
+        auto screenRect = gui.uiToScreenRect(button->getAbsRect());
+        return screenRect.pos() + screenRect.size() / 2.0f;
     }
 
     void PickupSystem::useItem(entt::entity actor, entt::entity obj)

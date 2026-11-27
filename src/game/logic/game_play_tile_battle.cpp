@@ -1,6 +1,8 @@
 #include "game/logic/game_play_tile_battle.h"
 #include "game/ecs/comm_event.h"
+#include "game/logic/game_logic.h"
 #include "game/scene/game_scene.h"
+#include "game/ui/form_result.h"
 #include "ui/gui_manager.h"
 #include "magic_enum/magic_enum.h"
 #include <algorithm>
@@ -500,6 +502,21 @@ namespace game
 		return false;
 	}
 
+	bool GamePlayTileBattle::isLeaderDead()
+	{
+		auto entviews = context().registry().view<CompComm, CompDead>();
+		for (auto& actor : entviews)
+		{
+			auto& comm = entviews.get<CompComm>(actor);
+			if (comm.type == ObjectType::Npc && comm.side == CampSide::Gangster && comm.rank == RoleRank::Chief)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	void GamePlayTileBattle::draw()
 	{
 		if (ui::GuiManager::inst().isDragging() || (_selectRect.w == 0.0f && _selectRect.h == 0.0f))
@@ -737,6 +754,13 @@ namespace game
 
 	void GamePlayTileBattle::update(float deltaTime)
 	{
+		// TileBattle 中首领是玩家队伍核心，首领死亡立即判定失败。
+		if (isLeaderDead())
+		{
+			context().gameLogic().finishGame(GameResult::Failed);
+			return;
+		}
+
 		bool isTurnOver = false;
 
 		if (_turnType == GameTurnType::Fighting)

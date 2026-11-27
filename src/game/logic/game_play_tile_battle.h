@@ -56,6 +56,7 @@ namespace game
 
 		bool isFightTurnOver();
 		bool isMotionTurnOver();
+		bool isLeaderDead();
 		
 		void onMoveStep(const Vec2i& dir);
 		void onSkipMove();
